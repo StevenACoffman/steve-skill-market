@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+# skill-install — install skills from this marketplace into a target repo
+#
+# Usage:
+#   skill-install <skill-name> [target-dir]   install one skill
+#   skill-install --all [target-dir]          install all skills
+#   skill-install --from-manifest <file>      re-install from a manifest
+#   skill-install --update <skill-name> [target-dir]  overwrite installed skill
+#   skill-install --list                      list available skills (delegates to skill-list)
+#
+# target-dir defaults to the current working directory.
+# Skills are installed into <target-dir>/.agents/skills/<name>/SKILL.md
+# A manifest entry is written to <target-dir>/.agents/skill-manifest.yml
+
+set -euo pipefail
+
+MARKET_DIR="$(cd "$(dirname "$0")" && pwd)"
+SKILLS_DIR="$MARKET_DIR/skills"
+
+usage() {
+  sed -n '2,12p' "$0" | sed 's/^# //'
+  exit 1
+}
+
+# Resolve marketplace git SHA for manifest
+market_sha() {
+  git -C "$MARKET_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown"
+}
+
+install_skill() {
+  local skill="$1"
+  local target="$2"
+  local mode="${3:-install}"  # install | update
+
+  local src="$SKILLS_DIR/$skill/SKILL.md"
+  local dst_dir="$target/.agents/skills/$skill"
+  local dst="$dst_dir/SKILL.md"
+
+  if [[ ! -f "$src" ]]; then
+    echo "error: skill '$skill' not found in marketplace" >&2
+    exit 1
+  fi
+
+  if [[ "$mode" == "install" && -f "$dst" ]]; then
+    echo "skip (already installed): $skill  (use --update to overwrite)"
+    return
+  fi
+
+  mkdir -p "$dst_dir"
+  cp "$src" "$dst"
+
+  # Write/update manifest entry
+  local manifest="$target/.agents/skill-manifest.yml"
+  local sha
+  sha=$(market_sha)
+  local date
+  date=$(date +%Y-%m-%d)
+
+  mkdir -p "$target/.agents"
+  touch "$manifest"
+
+  # Remove existing entry for this skill, then append updated one
+  local tmp
+  tmp=$(mktemp)
+  grep -v "^- skill: $skill$" "$manifest" > "$tmp" || true
+  # Also remove the 3 lines following a matching entry (source/sha/installed_at)
+  python3 - "$skill" "$manifest" "$tmp" << 'PYEOF'
+import sys, re
+skill, src_path, dst_path = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(src_path) as f:
+    lines = f.readlines()
+result = []
+skip = 0
+for line in lines:
+    if skip > 0:
+        skip -= 1
+        continue
+    if line.strip() == f"- skill: {skill}":
+        skip = 3  # skip skill + source + sha + installed_at lines
+        continue
+    result.append(line)
+with open(dst_path, 'w') as f:
+    f.writelines(result)
+PYEOF
+
+  cat >> "$tmp" << EOF
+- skill: $skill
+  source: $MARKET_DIR
+  sha: $sha
+  installed_at: $date
+EOF
+  mv "$tmp" "$manifest"
+
+  echo "installed: $skill"
+}
+
+# Parse arguments
+MODE=""
+TARGET=""
+SKILL_ARG=""
+MANIFEST_FILE=""
+
+case "${1:-}" in
+  --list)
+    exec "$MARKET_DIR/skill-list"
+    ;;
+  --all)
+    MODE="all"
+    TARGET="${2:-.}"
+    ;;
+  --update)
+    MODE="update"
+    SKILL_ARG="${2:?error: --update requires a skill name}"
+    TARGET="${3:-.}"
+    ;;
+  --from-manifest)
+    MODE="from-manifest"
+    MANIFEST_FILE="${2:?error: --from-manifest requires a manifest file path}"
+    TARGET="$(dirname "$MANIFEST_FILE")/.."
+    ;;
+  --help|-h)
+    usage
+    ;;
+  "")
+    usage
+    ;;
+  -*)
+    echo "error: unknown option '$1'" >&2
+    usage
+    ;;
+  *)
+    MODE="one"
+    SKILL_ARG="$1"
+    TARGET="${2:-.}"
+    ;;
+esac
+
+# Resolve target to absolute path
+TARGET="$(cd "$TARGET" && pwd)"
+
+case "$MODE" in
+  one)
+    install_skill "$SKILL_ARG" "$TARGET" install
+    ;;
+  update)
+    install_skill "$SKILL_ARG" "$TARGET" update
+    ;;
+  all)
+    for skill_dir in "$SKILLS_DIR"/*/; do
+      install_skill "$(basename "$skill_dir")" "$TARGET" install
+    done
+    ;;
+  from-manifest)
+    MANIFEST_FILE="$(cd "$(dirname "$MANIFEST_FILE")" && pwd)/$(basename "$MANIFEST_FILE")"
+    while IFS= read -r line; do
+      if [[ "$line" =~ ^-\ skill:\ (.+)$ ]]; then
+        install_skill "${BASH_REMATCH[1]}" "$TARGET" update
+      fi
+    done < "$MANIFEST_FILE"
+    ;;
+esac

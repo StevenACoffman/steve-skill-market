@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+# skill-list — list skills available in this marketplace
+#
+# Usage:
+#   skill-list              grouped by cluster tag, with description
+#   skill-list --names      plain name list (one per line, for scripting)
+
+set -euo pipefail
+
+MARKET_DIR="$(cd "$(dirname "$0")" && pwd)"
+SKILLS_DIR="$MARKET_DIR/skills"
+
+if [[ "${1:-}" == "--names" ]]; then
+  for skill_dir in "$SKILLS_DIR"/*/; do
+    basename "$skill_dir"
+  done
+  exit 0
+fi
+
+python3 - "$SKILLS_DIR" << 'PYEOF'
+import os, re, sys
+from collections import defaultdict
+
+skills_dir = sys.argv[1]
+
+skills = []
+for name in sorted(os.listdir(skills_dir)):
+    path = os.path.join(skills_dir, name, "SKILL.md")
+    if not os.path.isfile(path):
+        continue
+    with open(path) as f:
+        content = f.read()
+
+    # Extract frontmatter
+    fm = {}
+    m = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+    if m:
+        for line in m.group(1).splitlines():
+            kv = re.match(r'^(\w[\w-]*):\s*(.*)', line)
+            if kv:
+                fm[kv.group(1)] = kv.group(2).strip()
+
+    # Extract first sentence of description (strip YAML block markers)
+    desc_raw = fm.get("description", "")
+    desc_raw = desc_raw.strip("|>").strip()
+    # Grab up to first period or 120 chars
+    first_sentence = re.split(r'(?<=\.)\s', desc_raw.replace("\n", " "))[0]
+    if len(first_sentence) > 120:
+        first_sentence = first_sentence[:117] + "..."
+
+    tags_raw = fm.get("tags", "[]")
+    tags = re.findall(r'[\w-]+', tags_raw)
+    skill_type = fm.get("type", "")
+
+    # Derive cluster from tags or type
+    cluster = "Other"
+    for tag in tags:
+        if tag in ("grpc", "gRPC"):
+            cluster = "gRPC"; break
+        elif tag in ("sre", "slo", "sli", "incident"):
+            cluster = "SRE / Reliability"; break
+        elif tag in ("testing", "test-methodology", "testable-code"):
+            cluster = "Go Testing"; break
+        elif tag in ("ddd", "architecture", "repository"):
+            cluster = "Go Architecture"; break
+        elif tag in ("go", "http", "middleware", "dependency-injection"):
+            cluster = "Go Patterns"; break
+        elif tag in ("distributed-systems", "replication", "consistency", "transactions"):
+            cluster = "Distributed Data"; break
+        elif tag in ("batch-processing", "stream-processing", "temporal", "data-modeling"):
+            cluster = "Data Modeling"; break
+        elif tag in ("refactoring", "design", "legacy"):
+            cluster = "Software Design"; break
+        elif tag in ("ml", "machine-learning"):
+            cluster = "ML"; break
+
+    if cluster == "Other":
+        if "merged-skill" in skill_type:
+            # Infer from name
+            n = name
+            if any(x in n for x in ("grpc", "proto", "interceptor")):
+                cluster = "gRPC"
+            elif any(x in n for x in ("slo", "sli", "sre", "oncall", "incident", "error-budget")):
+                cluster = "SRE / Reliability"
+            elif any(x in n for x in ("go-http", "go-constructor", "go-consumer", "go-test", "di-comp", "middleware")):
+                cluster = "Go Patterns"
+            elif any(x in n for x in ("domain", "repository", "persistence")):
+                cluster = "Go Architecture"
+            elif any(x in n for x in ("characterization", "test-double", "seam")):
+                cluster = "Software Design"
+            elif any(x in n for x in ("design-stamina", "structural-diagnosis")):
+                cluster = "Software Design"
+            elif any(x in n for x in ("distributed-fault", "end-to-end")):
+                cluster = "Distributed Data"
+            elif "ml-pipeline" in n:
+                cluster = "ML"
+
+    skills.append((cluster, name, first_sentence))
+
+# Group by cluster
+by_cluster = defaultdict(list)
+for cluster, name, desc in skills:
+    by_cluster[cluster].append((name, desc))
+
+CLUSTER_ORDER = [
+    "Go Patterns", "Go Architecture", "Go Testing", "gRPC",
+    "Software Design", "SRE / Reliability", "Distributed Data",
+    "Data Modeling", "ML", "Other"
+]
+
+total = 0
+for cluster in CLUSTER_ORDER:
+    entries = by_cluster.get(cluster)
+    if not entries:
+        continue
+    print(f"\n## {cluster} ({len(entries)})")
+    for name, desc in sorted(entries):
+        print(f"  {name}")
+        if desc:
+            print(f"    {desc}")
+    total += len(entries)
+
+# Any clusters not in order
+for cluster, entries in sorted(by_cluster.items()):
+    if cluster not in CLUSTER_ORDER:
+        print(f"\n## {cluster} ({len(entries)})")
+        for name, desc in sorted(entries):
+            print(f"  {name}")
+        total += len(entries)
+
+print(f"\n{total} skills total")
+PYEOF
