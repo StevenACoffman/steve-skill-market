@@ -1,36 +1,6 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: custom-framework-within-go-test
-description: |
-  For complex, pluggable systems where every plugin or backend must pass the
-  same multi-step acceptance scenario, the correct Go answer is to write a
-  custom harness as a Go library — not a separate test binary or external test
-  runner. The harness defines a TestCase struct and a Test(t *testing.T, tc
-  TestCase) function. Plugin authors write a standard go test function that
-  calls the harness. go test orchestrates everything.
-
-  The harness handles orchestration: calling PreCheck, executing each step in
-  order, propagating failures via t.Fatalf, and running Cleanup on defer. Each
-  step receives the state produced by the previous step, enabling multi-step
-  scenarios (configure, create role, read credentials) where later steps depend
-  on earlier results. The step itself calls t.Fatalf or returns an error — the
-  harness decides how failures propagate.
-
-  Because the harness runs inside go test, all Go test infrastructure is
-  preserved for free: -run filtering selects individual backends, -v shows
-  step-by-step output, -race detects concurrent access in the backend, -cover
-  measures real coverage, -timeout kills hung acceptance tests, and CI failure
-  output is standard go test output. A separate test binary would require
-  reimplementing every one of these.
-
-  The pattern gates expensive runs with a PreCheck function (check env vars,
-  call t.Skip) or a build tag. Unit tests run normally; acceptance tests run
-  only when real infrastructure is present.
-
-  Scope: this pattern pays for itself when you have multiple plugin
-  implementations that must all satisfy the same behavioral contract under
-  multi-step scenarios. For simple, non-pluggable code, use table-driven tests.
-  For a single implementation with complex setup, use test helpers.
+description: Invoke when building a pluggable system where multiple backends or plugins must satisfy the same multi-step acceptance scenario, or when considering a separate test binary or external test runner. Covers building a custom harness (TestCase struct + Test function) as a Go library so go test orchestrates all backends with full -run/-race/-cover support.
 source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
 source_chapter: Part 2 — Writing Testable Code / Custom Frameworks
 tags: [go, testing, custom-framework, plugin-systems, acceptance-testing]
@@ -39,17 +9,6 @@ related_skills:
 ---
 
 # R — Raw Source
-
-## Current State
-
-Acceptance or integration test harnesses:
-!`find . -name '*acceptance*' -o -name '*harness*' -o -name '*e2e*' 2>/dev/null | grep -v vendor | head -8`
-
-Step-driven test frameworks or scenario runners:
-!`grep -rn 'Step\|scenario\|Scenario\|harness\|Harness\|Suite' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -8`
-
-TestMain usage (test framework entry points):
-!`grep -rn 'func TestMain' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -5`
 
 From "Advanced Testing with Go" (Mitchell Hashimoto, GopherCon):
 
@@ -62,19 +21,19 @@ From "Advanced Testing with Go" (Mitchell Hashimoto, GopherCon):
 ```go
 // Example from Vault
 func TestBackend_basic(t *testing.T) {
-    b, _ := Factory(logical.TestBackendConfig())
-    logicaltest.Test(t, logicaltest.TestCase{
-        PreCheck: func() { testAccPreCheck(t) },
-        Backend:  b,
-        Steps: []logicaltest.TestStep{
-            testAccStepConfig(t, false),
-            testAccStepRole(t),
-            testAccStepReadCreds(t, b, "web"),
-            testAccStepConfig(t, false),
-            testAccStepRole(t),
-            testAccStepReadCreds(t, b, "web"),
-        },
-    })
+	b, _ := Factory(logical.TestBackendConfig())
+	logicaltest.Test(t, logicaltest.TestCase{
+		PreCheck: func() { testAccPreCheck(t) },
+		Backend:  b,
+		Steps: []logicaltest.TestStep{
+			testAccStepConfig(t, false),
+			testAccStepRole(t),
+			testAccStepReadCreds(t, b, "web"),
+			testAccStepConfig(t, false),
+			testAccStepRole(t),
+			testAccStepReadCreds(t, b, "web"),
+		},
+	})
 }
 ```
 
@@ -90,7 +49,7 @@ func TestBackend_basic(t *testing.T) {
 > resources on something like 50 different providers every night… and we use
 > `go test` to trigger this even though they're not unit tests.
 
----
+______________________________________________________________________
 
 ## I — Interpretation
 
@@ -123,8 +82,7 @@ the test at the first step that fails.
 
 **PreCheck gates expensive infrastructure.**
 
-Acceptance tests that hit real cloud infrastructure must not run on every `go
-test ./...`. The PreCheck function is the correct gate: check for required
+Acceptance tests that hit real cloud infrastructure must not run on every `go test ./...`. The PreCheck function is the correct gate: check for required
 environment variables, call `t.Skip` if they are absent. Unit tests are
 unaffected; acceptance tests run only in environments configured for them. This
 is a better separation than a separate binary: you get both unit tests and
@@ -140,7 +98,7 @@ file so it is importable. Publishing it in `testing.go` (see the
 API. Plugin authors import the package and call the harness — they do not copy
 it.
 
----
+______________________________________________________________________
 
 ## A1 — Worked Cases
 
@@ -159,41 +117,41 @@ package logicaltest
 import "testing"
 
 type TestCase struct {
-    PreCheck func()
-    Backend  logical.Backend
-    Steps    []TestStep
-    Cleanup  func()
+	PreCheck func()
+	Backend  logical.Backend
+	Steps    []TestStep
+	Cleanup  func()
 }
 
 type TestStep struct {
-    Description string
-    Operation   logical.Operation
-    Path        string
-    Data        map[string]interface{}
-    Check       func(resp *logical.Response) error
-    ErrorOk     bool
+	Description string
+	Operation   logical.Operation
+	Path        string
+	Data        map[string]interface{}
+	Check       func(resp *logical.Response) error
+	ErrorOk     bool
 }
 
 func Test(t *testing.T, c TestCase) {
-    t.Helper()
-    if c.PreCheck != nil {
-        c.PreCheck()
-    }
-    if c.Cleanup != nil {
-        defer c.Cleanup()
-    }
+	t.Helper()
+	if c.PreCheck != nil {
+		c.PreCheck()
+	}
+	if c.Cleanup != nil {
+		defer c.Cleanup()
+	}
 
-    for i, step := range c.Steps {
-        resp, err := c.Backend.HandleRequest(buildRequest(step))
-        if err != nil && !step.ErrorOk {
-            t.Fatalf("step %d (%s): request error: %s", i+1, step.Description, err)
-        }
-        if step.Check != nil {
-            if err := step.Check(resp); err != nil {
-                t.Fatalf("step %d (%s): check failed: %s", i+1, step.Description, err)
-            }
-        }
-    }
+	for i, step := range c.Steps {
+		resp, err := c.Backend.HandleRequest(buildRequest(step))
+		if err != nil && !step.ErrorOk {
+			t.Fatalf("step %d (%s): request error: %s", i+1, step.Description, err)
+		}
+		if step.Check != nil {
+			if err := step.Check(resp); err != nil {
+				t.Fatalf("step %d (%s): check failed: %s", i+1, step.Description, err)
+			}
+		}
+	}
 }
 ```
 
@@ -243,8 +201,7 @@ func TestBackend_CredentialRead(t *testing.T) {
 ```
 
 Running `go test ./backend/aws/` with AWS credentials set exercises the full
-workflow. Without credentials, the PreCheck skips the test cleanly. The `-run
-TestBackend_CredentialRead` flag selects only this backend. `-race` detects
+workflow. Without credentials, the PreCheck skips the test cleanly. The `-run TestBackend_CredentialRead` flag selects only this backend. `-race` detects
 concurrent access in the backend's request handler. All go test flags work
 because this is just a test function.
 
@@ -257,26 +214,26 @@ Datadog, and 50+ more) uses the same harness to write their tests:
 ```go
 // terraform-provider-aws/aws/resource_aws_s3_bucket_test.go
 func TestAccAWSS3Bucket_basic(t *testing.T) {
-    resource.Test(t, resource.TestCase{
-        PreCheck:     func() { testAccPreCheck(t) },
-        Providers:    testAccProviders,
-        CheckDestroy: testAccCheckAWSS3BucketDestroy,
-        Steps: []resource.TestStep{
-            {
-                Config: testAccAWSS3BucketConfig,
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheckAWSS3BucketExists("aws_s3_bucket.bucket"),
-                    resource.TestCheckResourceAttr("aws_s3_bucket.bucket", "bucket", "my-tf-test-bucket"),
-                ),
-            },
-            {
-                Config: testAccAWSS3BucketConfigWithVersioning,
-                Check: resource.ComposeTestCheckFunc(
-                    resource.TestCheckResourceAttr("aws_s3_bucket.bucket", "versioning.0.enabled", "true"),
-                ),
-            },
-        },
-    })
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckAWSS3BucketDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAWSS3BucketConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSS3BucketExists("aws_s3_bucket.bucket"),
+					resource.TestCheckResourceAttr("aws_s3_bucket.bucket", "bucket", "my-tf-test-bucket"),
+				),
+			},
+			{
+				Config: testAccAWSS3BucketConfigWithVersioning,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("aws_s3_bucket.bucket", "versioning.0.enabled", "true"),
+				),
+			},
+		},
+	})
 }
 ```
 
@@ -290,7 +247,7 @@ real cloud resources. The command is `go test -run TestAcc ./aws/ -v`. The
 `-run TestAcc` convention gates acceptance tests by name prefix; the PreCheck
 gates by environment. No separate runner. No separate binary. Just `go test`.
 
----
+______________________________________________________________________
 
 ## A2 — Activation
 
@@ -309,7 +266,7 @@ This skill applies when:
 - "How does Terraform test 50+ cloud providers from the same codebase?"
 - "Should I write a test harness or use a test framework library?"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -318,10 +275,10 @@ This skill applies when:
 
    ```go
    type TestCase struct {
-       PreCheck func()              // gates the test; call t.Skip if env not configured
-       Backend  YourPluginInterface // the implementation under test
-       Steps    []TestStep          // ordered scenario steps
-       Cleanup  func()              // teardown after all steps (optional)
+   	PreCheck func()              // gates the test; call t.Skip if env not configured
+   	Backend  YourPluginInterface // the implementation under test
+   	Steps    []TestStep          // ordered scenario steps
+   	Cleanup  func()              // teardown after all steps (optional)
    }
    ```
 
@@ -331,14 +288,15 @@ This skill applies when:
 
    ```go
    type TestStep struct {
-       Description string
-       // fields for the operation the harness will execute
-       Check func(response YourResponseType) error
-       ErrorOk bool // set true when the step expects an error
+   	Description string
+   	// fields for the operation the harness will execute
+   	Check   func(response YourResponseType) error
+   	ErrorOk bool // set true when the step expects an error
    }
    ```
 
 3. **Write `func Test(t *testing.T, tc TestCase)`** as the harness entry point:
+
    - Call `t.Helper()` as the first line.
    - Call `tc.PreCheck()` if non-nil (this is where `t.Skip` lives).
    - `defer tc.Cleanup()` if non-nil.
@@ -380,13 +338,14 @@ This skill applies when:
    This is a normal `go test` function. No new concepts for the plugin author.
 
 7. **Verify that standard go test flags work unchanged:**
+
    - `-run TestMyPlugin` selects this specific backend.
    - `-v` prints each step's description as the test progresses.
    - `-race` detects concurrent access in the plugin implementation.
    - `-cover` measures coverage of the plugin code under the acceptance scenario.
    - `-timeout 10m` terminates hung infrastructure calls.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Blind Spots
 
@@ -437,7 +396,7 @@ than a fully custom one:
 - `testcontainers-go`: Docker-based harness for tests that require real database
   or service infrastructure.
 - `gotestfmt` + `gotestsum`: improved output formatting without a custom runner.
-Evaluate these before building a custom harness from scratch.
+  Evaluate these before building a custom harness from scratch.
 
 **Confusion with `testing-go-public-test-api`.**
 That skill is about exporting helpers, mocks, and `TestConfig(t)` / `TestServer(t)`

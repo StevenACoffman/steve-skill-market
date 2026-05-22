@@ -1,0 +1,62 @@
+{
+  "skill": "breakglass-design",
+  "description": "Use this skill when designing a strict access control, implementing Zero Trust networking, enforcing MFA, or tightening any security control where the team or operations staff object \"but what if we get locked out?\" Breakglass is the design answer to that objection — and it must be designed, not improvised.",
+  "test_prompts": [
+    {
+      "id": "breakglass-design-should-01",
+      "category": "should_invoke",
+      "prompt": "We're rolling out mandatory hardware security keys for all production SSH access. The ops team is blocking the rollout because they're worried that if a key breaks or gets lost during an incident, they'll be locked out of production at the worst possible time. How do we address this concern without weakening the control?",
+      "expected": "invoke",
+      "rationale": "Classic breakglass trigger: a strict security control (hardware key enforcement) is facing resistance due to legitimate lockout fear. The answer is to design a proper breakglass, not to weaken the MFA requirement."
+    },
+    {
+      "id": "breakglass-design-should-02",
+      "category": "should_invoke",
+      "prompt": "We implemented BeyondCorp-style zero trust last year and removed all VPN access. Three times in the past month, engineers couldn't connect because our identity provider had an outage. They ended up calling each other and improvising workarounds. We need to formalize the emergency access path before someone does something worse next time.",
+      "expected": "invoke",
+      "rationale": "Ad-hoc emergency paths improvised during incidents is precisely the anti-pattern breakglass design solves. The existing access path (BeyondCorp/ZTN) is strict, and the emergency bypass needs to be formally designed with logging, rate-limiting, and location restriction (panic room)."
+    },
+    {
+      "id": "breakglass-design-should-03",
+      "category": "should_invoke",
+      "prompt": "Our SREs are using the breakglass credentials for production about a dozen times a week — it's become their default way to do emergency fixes. My manager says we should just widen the normal access since the breakglass is obviously too narrow. Is that the right call?",
+      "expected": "invoke",
+      "rationale": "High breakglass frequency is a signal that the normal access model is mis-specified, not that breakglass should be normalized or that the control should be loosened. This is a textbook breakglass misuse scenario requiring framework application."
+    },
+    {
+      "id": "breakglass-design-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "Our authentication service went down last night and our payment gateway kept processing transactions without checking user sessions. We need to decide: should the gateway default to denying all transactions or allowing them when auth is unavailable?",
+      "expected": "skip",
+      "rationale": "This is a fail-safe vs. fail-secure question (automatic system behavior when a dependency fails), not a breakglass question. Breakglass covers deliberate human override of a functioning control; this is about what an automated system does under unintentional dependency failure."
+    },
+    {
+      "id": "breakglass-design-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We want to enforce that all production database schema changes require approval from two senior engineers before they can be executed. What's the best way to implement this gate?",
+      "expected": "skip",
+      "rationale": "This is a multi-party authorization (MPA) design question for the normal access path. Breakglass is about the emergency bypass of strict controls, not about designing the normal approval workflow itself."
+    },
+    {
+      "id": "breakglass-design-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We have a shared admin account that our entire ops team uses for production deployments. A new security audit flagged it. How should we restructure access so individuals have only the permissions they need for their specific role?",
+      "expected": "skip",
+      "rationale": "This is a least-privilege tooling enforcement question about the normal access model — classifying access by risk tier, narrowing API surfaces, and time-bounding grants. Breakglass only becomes relevant once strict least-privilege controls exist and teams fear lockout."
+    },
+    {
+      "id": "breakglass-design-boundary-01",
+      "category": "boundary",
+      "prompt": "We're implementing strict role-based access controls for our internal wiki — only editors can publish pages. A few people asked what happens if the RBAC service is down and someone urgently needs to publish an incident postmortem. Should we design an emergency path for this?",
+      "expected": "skip",
+      "rationale": "The boundary condition is whether the control is strict enough that lockout is a meaningful concern. An internal wiki publishing gate is low-stakes — the overhead of designing, testing, and auditing a breakglass is disproportionate. The fail-safe/fail-secure question (what happens when RBAC is unavailable) may be worth answering simply, but formal breakglass design is not warranted."
+    },
+    {
+      "id": "breakglass-design-boundary-02",
+      "category": "boundary",
+      "prompt": "We have a breakglass key pair stored in a physical safe for our production Kubernetes cluster. We've never actually tested whether it works. The security team wants to do a quarterly drill where we use it in a controlled way — is that overkill?",
+      "expected": "invoke",
+      "rationale": "The question is whether testing breakglass is overkill. The skill is clear: untested breakglass is worse than no breakglass. This warrants invoking the skill to explain why quarterly drills are mandatory, not optional — the breakglass exists but isn't operationally sound until tested."
+    }
+  ]
+}

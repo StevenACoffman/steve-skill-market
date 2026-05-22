@@ -2,27 +2,12 @@
 allowed-tools: Bash, Read, Edit
 name: time-multiplier-over-fake-time
 description: |
-  When testing code that waits on asynchronous behavior (goroutines, channels,
-  events), use a real timeout via `select` + `time.After` instead of injecting a
-  fake clock. Make the timeout configurable with a package-level `var
-  timeMultiplier = time.Duration(1)`. In slow CI environments, set that variable
-  to a larger value through `TestMain` or an environment variable — no production
-  code changes required. Mitchell Hashimoto's team at HashiCorp explicitly tried
-  clock-injection and found it "not effective" and "too intrusive": the Clock
-  interface spreads through every layer that touches time, complicating production
-  code to satisfy a test concern. The `timeMultiplier` approach delivers the
-  essential CI-tuning benefit with a single package variable. It is not
-  theoretically perfect — tests run on real goroutine scheduling, which is
-  non-deterministic — but it is practical: correctness tests for distributed
-  systems (Consul, Nomad, Vault) depend on actual scheduler behavior, and fake
-  time would not exercise that. The tradeoff is explicit: accept some test-speed
-  overhead and environmental variance in exchange for zero production-code
-  intrusion. Apply when: a test waits on a goroutine, channel, or event; the test
-  passes locally but times out in CI; a colleague suggests injecting a Clock
-  interface. Do not apply when: the test must assert on the *ordering* of time
-  events (e.g., cache TTL expires before retry fires) — real time is too
-  non-deterministic for that specific correctness concern, and a proper clock mock
-  is warranted.
+  Apply when a test waits on a goroutine, channel, or event; the test passes locally
+  but times out in CI; or a colleague suggests injecting a Clock interface. Use a
+  real timeout via `select` + `time.After` with a package-level `var timeMultiplier`
+  — set it larger in CI via TestMain or an env var, with no production code changes.
+  Do not apply when the test must assert on ordering of time events (cache TTL vs
+  retry); real time is too non-deterministic for that, and a clock mock is warranted.
 source_book: "Advanced Testing with Go" by Mitchell Hashimoto
 source_chapter: Part 1 — Test Methodology / Timing-Dependent Tests
 tags: [go, testing, timing, async, concurrency, test-methodology]
@@ -54,12 +39,12 @@ From the **Timing-Dependent Tests** section of *Advanced Testing with Go*:
 
 ```go
 func TestThing(t *testing.T) {
-    // …
-    select {
-    case <-thingHappened:
-    case <-time.After(timeout):
-        t.Fatal("timeout")
-    }
+	// …
+	select {
+	case <-thingHappened:
+	case <-time.After(timeout):
+		t.Fatal("timeout")
+	}
 }
 ```
 
@@ -68,13 +53,13 @@ func TestThing(t *testing.T) {
 
 ```go
 func TestThing(t *testing.T) {
-    // …
-    timeout := 3 * time.Minute * timeMultiplier
-    select {
-    case <-thingHappened:
-    case <-time.After(timeout):
-        t.Fatal("timeout")
-    }
+	// …
+	timeout := 3 * time.Minute * timeMultiplier
+	select {
+	case <-thingHappened:
+	case <-time.After(timeout):
+		t.Fatal("timeout")
+	}
 }
 ```
 
@@ -91,7 +76,7 @@ Its default value of `1` means all timeouts are unchanged in local development.
 In CI, an environment variable (e.g., `TEST_TIMEOUT_MULTIPLIER=5`) is read in
 `TestMain` or a package-level `init()` and assigned to `timeMultiplier`.
 
----
+______________________________________________________________________
 
 ## I — Interpretation (What It Means and Why)
 
@@ -129,7 +114,7 @@ separate problems:
 Most async test failures are problem 1, not problem 2. `timeMultiplier` gives
 80% of the benefit of fake time with nearly none of the production-code cost.
 
----
+______________________________________________________________________
 
 ## A1 — Application (Cases from the Book)
 
@@ -152,7 +137,7 @@ resource-constrained runners. Local development uses the default multiplier of `
 so tests run at full speed. The pattern is never project-specific; it is the
 house standard for any test that issues a `select` with a timeout channel.
 
----
+______________________________________________________________________
 
 ## A2 — Activation (When to Apply This Skill)
 
@@ -179,7 +164,7 @@ Apply this skill when you encounter any of the following:
   If tests only check eventual outcomes, the `Clock` field is likely unnecessary
   complexity.
 
----
+______________________________________________________________________
 
 ## E — Execution (Step-by-Step)
 
@@ -205,9 +190,9 @@ timeout := 3 * time.Minute * timeMultiplier
 ```go
 select {
 case <-thingHappened:
-    // success — event arrived within timeout
+	// success — event arrived within timeout
 case <-time.After(timeout):
-    t.Fatal("timeout waiting for thingHappened")
+	t.Fatal("timeout waiting for thingHappened")
 }
 ```
 
@@ -215,15 +200,15 @@ case <-time.After(timeout):
 
 ```go
 func TestMain(m *testing.M) {
-    if v := os.Getenv("TEST_TIMEOUT_MULTIPLIER"); v != "" {
-        n, err := strconv.Atoi(v)
-        if err != nil {
-            fmt.Fprintf(os.Stderr, "invalid TEST_TIMEOUT_MULTIPLIER: %v\n", err)
-            os.Exit(1)
-        }
-        timeMultiplier = time.Duration(n)
-    }
-    os.Exit(m.Run())
+	if v := os.Getenv("TEST_TIMEOUT_MULTIPLIER"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "invalid TEST_TIMEOUT_MULTIPLIER: %v\n", err)
+			os.Exit(1)
+		}
+		timeMultiplier = time.Duration(n)
+	}
+	os.Exit(m.Run())
 }
 ```
 
@@ -232,7 +217,7 @@ func TestMain(m *testing.M) {
 ```yaml
 # GitHub Actions example
 env:
-  TEST_TIMEOUT_MULTIPLIER: "5"
+  TEST_TIMEOUT_MULTIPLIER: '5'
 ```
 
 Or in a Makefile:
@@ -251,7 +236,7 @@ go test ./...
 Local runs use `timeMultiplier = 1` (unchanged timeouts). CI runs use `5`
 (5× timeouts). No production code was modified.
 
----
+______________________________________________________________________
 
 ## B — Boundaries (Where This Skill Does Not Apply)
 

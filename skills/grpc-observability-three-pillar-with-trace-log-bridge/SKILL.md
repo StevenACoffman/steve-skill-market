@@ -13,10 +13,10 @@ description: >
 type: merged-skill
 source_skills:
   - slug: grpc-up-and-running/grpc-observability-three-pillar
-    book: "gRPC: Up and Running"
+    book: 'gRPC: Up and Running'
     author: Kasun Indrasiri and Danesh Kuruppu
   - slug: grpc-microservices-in-go/grpc-traceid-log-correlation
-    book: "gRPC Microservices in Go"
+    book: gRPC Microservices in Go
     author: Hüseyin Babal
 related_skills:
   - slug: grpc-up-and-running/grpc-observability-three-pillar
@@ -135,15 +135,15 @@ grpcMetrics := grpc_prometheus.NewServerMetrics()
 zapLogger, _ := zap.NewProduction()
 
 s := grpc.NewServer(
-    grpc.StatsHandler(otelgrpc.NewServerHandler()),
-    grpc.ChainUnaryInterceptor(
-        grpcMetrics.UnaryServerInterceptor(),
-        grpc_zap.UnaryServerInterceptor(zapLogger),
-    ),
-    grpc.ChainStreamInterceptor(
-        grpcMetrics.StreamServerInterceptor(),
-        grpc_zap.StreamServerInterceptor(zapLogger),
-    ),
+	grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	grpc.ChainUnaryInterceptor(
+		grpcMetrics.UnaryServerInterceptor(),
+		grpc_zap.UnaryServerInterceptor(zapLogger),
+	),
+	grpc.ChainStreamInterceptor(
+		grpcMetrics.StreamServerInterceptor(),
+		grpc_zap.StreamServerInterceptor(zapLogger),
+	),
 )
 pb.RegisterProductInfoServer(s, &productInfoServer{})
 grpcMetrics.InitializeMetrics(s)
@@ -161,16 +161,16 @@ The bridge is implemented as:
 
 ```go
 type traceAwareFormatter struct {
-    inner logrus.Formatter
+	inner logrus.Formatter
 }
 
 func (f *traceAwareFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-    span := trace.SpanFromContext(entry.Context)
-    if span.SpanContext().IsValid() {
-        entry.Data["trace_id"] = span.SpanContext().TraceID().String()
-        entry.Data["span_id"] = span.SpanContext().SpanID().String()
-    }
-    return f.inner.Format(entry)
+	span := trace.SpanFromContext(entry.Context)
+	if span.SpanContext().IsValid() {
+		entry.Data["trace_id"] = span.SpanContext().TraceID().String()
+		entry.Data["span_id"] = span.SpanContext().SpanID().String()
+	}
+	return f.inner.Format(entry)
 }
 ```
 
@@ -178,7 +178,7 @@ Registered globally in `cmd/main.go`:
 
 ```go
 func init() {
-    logrus.SetFormatter(&traceAwareFormatter{inner: &logrus.JSONFormatter{}})
+	logrus.SetFormatter(&traceAwareFormatter{inner: &logrus.JSONFormatter{}})
 }
 ```
 
@@ -221,15 +221,15 @@ Instead of applying the three-pillar pattern (Up and Running) or the trace-log b
    zapLogger, _ := zap.NewProduction()
 
    s := grpc.NewServer(
-       grpc.StatsHandler(otelgrpc.NewServerHandler()),
-       grpc.ChainUnaryInterceptor(
-           grpcMetrics.UnaryServerInterceptor(),
-           grpc_zap.UnaryServerInterceptor(zapLogger),
-       ),
-       grpc.ChainStreamInterceptor(
-           grpcMetrics.StreamServerInterceptor(),
-           grpc_zap.StreamServerInterceptor(zapLogger),
-       ),
+   	grpc.StatsHandler(otelgrpc.NewServerHandler()),
+   	grpc.ChainUnaryInterceptor(
+   		grpcMetrics.UnaryServerInterceptor(),
+   		grpc_zap.UnaryServerInterceptor(zapLogger),
+   	),
+   	grpc.ChainStreamInterceptor(
+   		grpcMetrics.StreamServerInterceptor(),
+   		grpc_zap.StreamServerInterceptor(zapLogger),
+   	),
    )
    ```
 
@@ -239,7 +239,7 @@ Instead of applying the three-pillar pattern (Up and Running) or the trace-log b
 
    ```go
    pb.RegisterYourServiceServer(s, &yourServer{})
-   grpcMetrics.InitializeMetrics(s)  // pre-populate label combinations to avoid zero-gap monitoring
+   grpcMetrics.InitializeMetrics(s) // pre-populate label combinations to avoid zero-gap monitoring
    http.Handle("/metrics", promhttp.Handler())
    go http.ListenAndServe(":9092", nil)
    ```
@@ -260,16 +260,17 @@ Instead of applying the three-pillar pattern (Up and Running) or the trace-log b
 
    ```go
    conn, _ := grpc.Dial(address,
-       grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+   	grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
    )
    ```
 
    This propagates the trace context to downstream services so their log lines share the same `trace_id`.
 
 7. **Configure the observability backend for signal linking.**
+
    - Grafana: pair Loki (logs) with Tempo (traces); configure the Loki data source with a derived field that extracts `trace_id` and links to Tempo.
    - Elastic Stack: configure Kibana with a trace-ID–based filter panel.
-   Without backend support for linking, the `trace_id` fields in log lines are present but not clickable.
+     Without backend support for linking, the `trace_id` fields in log lines are present but not clickable.
 
 8. **Verify the bridge in a test.**
    Call an endpoint, capture log output, and assert that `trace_id` and `span_id` fields are present and non-empty in the JSON. If either is absent, check: (a) the formatter is registered, (b) the log call uses `WithContext(ctx)`, (c) the OTel stats handler is registered on the server.

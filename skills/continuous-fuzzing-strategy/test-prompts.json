@@ -1,0 +1,62 @@
+{
+  "skill": "continuous-fuzzing-strategy",
+  "description": "Use this skill when a user is designing a test strategy for a parser, serializer, protocol handler, or any component that processes external input — and needs to determine whether fuzzing is required and how to structure it.",
+  "test_prompts": [
+    {
+      "id": "continuous-fuzzing-strategy-should-01",
+      "category": "should_invoke",
+      "prompt": "We've got 90% line coverage on our C++ binary protocol parser for our IoT gateway — every message type in the spec has unit tests. Our security team is now asking whether we need to add fuzzing on top of that. The parser handles messages from third-party devices we don't control. Is the unit test coverage sufficient?",
+      "expected": "invoke",
+      "rationale": "Direct match to the A2 trigger scenario: C++ parser, external input, high unit test coverage, security review asking the question. The coverage conflates bug classes — fuzzing is needed for the adversarial input space the unit tests cannot cover."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-should-02",
+      "category": "should_invoke",
+      "prompt": "We're building a service that accepts user-uploaded PDF files and extracts text from them. We're using a Go wrapper around a C library for the PDF parsing. What security testing do we need beyond our existing integration tests?",
+      "expected": "invoke",
+      "rationale": "User-uploaded files processed by a C library are an exact match: external attacker-controlled input, memory-unsafe language (C under the Go wrapper), complex branching behavior (PDF format). Fuzzing is warranted and should be structured as continuous CI infrastructure."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-should-03",
+      "category": "should_invoke",
+      "prompt": "We implemented a custom TLS 1.3 handshake handler in Rust for our embedded firmware. We have property-based tests using proptest that generate random handshake sequences. A colleague says we should also set up libFuzzer. Are property-based tests enough, or do we need both?",
+      "expected": "invoke",
+      "rationale": "TLS handshake handler in Rust processing external network input is a high-priority fuzz target (TCB component, complex state machine, adversary-controlled input). The question of whether property-based tests substitute for fuzzing is a direct application of the skill: they test different bug classes and are not substitutable."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We have a YAML configuration file that our server reads at startup to configure database connection strings, feature flags, and log levels. Only our DevOps team can modify this file through a gitops pipeline. What's the right level of testing for our config parser?",
+      "expected": "skip",
+      "rationale": "Developer-controlled internal configuration with no external input is explicitly excluded from the fuzzing skill. The threat model does not include adversarial input crafting. The right approach is code review, schema validation, and unit tests — not fuzzing."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our team has never done penetration testing and we're preparing for a SOC 2 audit in three months. Which security testing activities should we prioritize to find business logic flaws, privilege escalation paths, and authentication bypasses in our web app?",
+      "expected": "skip",
+      "rationale": "This is a penetration testing and security audit scoping question, not a fuzzing question. The concerns (business logic flaws, auth bypasses, privilege escalation) are the class that pen testing finds through domain-expert adversarial reasoning, not the memory safety and parsing robustness bugs that fuzzing covers."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We want to improve test coverage across our Python Django monolith. Currently we're at 55% line coverage. How should we prioritize which modules to write tests for first?",
+      "expected": "skip",
+      "rationale": "This is a general test coverage strategy question with no external input or security concern flagged. The right tool is a standard testing skill (risk-based coverage prioritization). Fuzzing is not indicated without a component that processes complex external input."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-boundary-01",
+      "category": "boundary",
+      "prompt": "We have a JSON deserialization endpoint in Java that accepts API requests from our mobile clients. We control the mobile app and the schema is well-defined with strict JSON Schema validation at the API gateway before the request reaches our service. Is fuzzing necessary?",
+      "expected": "skip",
+      "rationale": "Boundary case: Java (memory-safe language) + schema-validated input + clients we control. The memory corruption risk is low and the input has been pre-validated. The DoS risk from unexpected JSON still exists but the threat model is attenuated. With strict schema validation at the gateway as a first line and memory-safe deserialization, the cost-benefit for fuzzing this specific endpoint does not clearly warrant it — code review and schema boundary tests are the right tools. A non-TCB Java endpoint behind schema validation is a defensible Priority 3 deferral."
+    },
+    {
+      "id": "continuous-fuzzing-strategy-boundary-02",
+      "category": "boundary",
+      "prompt": "We're about to do a pre-release security review for our new gRPC API server written in Go. Someone suggested running a fuzzer against the protobuf parsing layer for a few hours before we ship. Is that a good use of time?",
+      "expected": "skip",
+      "rationale": "Point-in-time pre-release fuzzing is explicitly called out as a failure mode the skill warns against: it finds some bugs but misses all new parsing surface introduced after the run. Running a fuzzer for a few hours before a release is not the model the skill endorses. The correct answer is to invest in continuous CI infrastructure or not at all — the skill would redirect to setting up persistent fuzzing rather than validating the one-time approach."
+    }
+  ]
+}

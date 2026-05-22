@@ -1,0 +1,103 @@
+{
+  "skill_id": "go-http-middleware-construction-and-organization",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "lets-go/letsgo-middleware-composition",
+    "matryer-http-services/matryer-middleware-constructor"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm writing a JWT authentication middleware for my Go HTTP service that needs a logger, a database pool, and a JWT signing key. Should I write it as a plain func(http.Handler) http.Handler or something else?",
+      "expected_behavior": "Apply Ryer's multi-dep classification: three external dependencies triggers the constructor shape. Write newAuthMiddleware(logger, db, jwtKey) returning func(http.Handler) http.Handler. Show that expensive initialization (parsing the JWT key) happens in the outer constructor body, not in the returned closure which runs per request. Hoist the call to a variable before the route block.",
+      "expected_not": "Should not suggest defining a Middleware type alias or embedding the logger/db as package-level variables"
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My routes.go file is becoming unreadable. Every mux.Handle call looks like: mux.Handle('/api/v1/users', newAuthMW(logger, db, key, newRateMW(logger, 100, newCORSMW(handleUsers(app))))). How do I clean this up?",
+      "expected_behavior": "Apply Ryer's hoisting discipline: call each constructor once before the route block and store it in a named variable. Then compose variables per route: authMW(rateMW(corsMiddleware(handleUsers(app)))). Show before/after. The argument lists disappear from the route block — only variable names remain.",
+      "expected_not": "Should not suggest a middleware registry or a framework router as the fix"
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I need to audit which routes in my Go HTTP service have CSRF protection and which have authentication. Currently this requires reading five different files. How should I organize the middleware?",
+      "expected_behavior": "Apply Edwards's named chain hierarchy in routes.go: define named chains in order of increasing specificity (dynamic for session+CSRF, protected for authenticated-only). All middleware registration in one routes() method. Reading routes.go answers 'does this route have CSRF?' without grepping the codebase. Show the alice.New chain composition.",
+      "expected_not": "Should not suggest adding middleware documentation comments or a separate middleware registry struct"
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "My static file handler is creating session cookies for every CSS and JS asset request, filling up my session store. Why is this happening and how do I fix it?",
+      "expected_behavior": "Identify Edwards's static-file exception: the static file server was placed inside the dynamic chain (which includes sessionManager.LoadAndSave). Fix: serve static files directly on the bare mux before applying the dynamic chain — they receive security headers from the outermost standard chain but not session or CSRF middleware.",
+      "expected_not": "Should not suggest disabling the session manager for specific routes via request inspection inside the middleware"
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "A teammate suggests adding 'type Middleware func(http.Handler) http.Handler' as a named type in our middleware package so all middleware functions have a consistent return type. What's the tradeoff?",
+      "expected_behavior": "Present Ryer's readability argument: the named alias adds an extra indirection for every reader who has not memorized it. The literal func(http.Handler) http.Handler is self-documenting. Decline the alias for internal use. Exception: for an exported library where third-party packages consume the type, a named Middleware type can improve documentation and autocomplete. Present the tradeoff without being absolutist.",
+      "expected_not": "Should not give a blanket 'never use type aliases' answer without addressing the public API exception"
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I'm using the Gin framework and want to add rate limiting middleware. How do I register middleware for a specific route group in Gin?",
+      "expected_behavior": "Answer using Gin's router.Group() and group.Use() middleware registration API. The skill explicitly excludes framework middleware chains (router.Use() registration) — it describes the hand-written net/http approach.",
+      "expected_not": "Should not invoke go-http-middleware-construction-and-organization"
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I want to add distributed tracing to all my gRPC service calls using OpenTelemetry interceptors. How do I chain multiple unary interceptors?",
+      "expected_behavior": "Answer using grpc.ChainUnaryInterceptor or otelgrpc interceptors. This is gRPC interceptor chaining, not Go HTTP middleware construction.",
+      "expected_not": "Should not invoke go-http-middleware-construction-and-organization"
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I want to profile which HTTP handlers are slowest using pprof. How do I add pprof endpoints to my Go HTTP server?",
+      "expected_behavior": "Answer by registering net/http/pprof handler routes (net/http/pprof.init() side-effect import, or explicit mux.Handle for the pprof routes). This is observability instrumentation, not middleware construction or chain organization.",
+      "expected_not": "Should not invoke go-http-middleware-construction-and-organization"
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I have a middleware that compiles a regular expression to extract a version number from the URL path. Should the regex compilation go inside the plain adapter function or somewhere else?",
+      "expected_behavior": "Apply the initialization placement rule: the regex is expensive per-call and should be compiled once. If the middleware has zero/one other dependency (the regex is self-contained), use the plain adapter shape but move the regex compilation to a package-level var or a package init, NOT inside the closure. If other dependencies also exist, use the constructor shape and compile the regex in the outer constructor body. The closure runs per request — regex compilation inside it is per-request overhead.",
+      "decision_axis": "Initialization placement rule in I: expensive initialization (compile regex, create sub-logger) belongs in the constructor body or package-level, never in the returned closure that runs per request."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "My new middleware has exactly one external dependency: a rate limiter client. Should I use the plain adapter shape or the constructor shape?",
+      "expected_behavior": "Apply Ryer's single-dependency edge case: either shape is defensible. The plain adapter captures the single dependency as a closure argument (zero allocation advantage), and the constructor shape also works cleanly with one parameter. The important thing is consistency with the rest of the codebase. Prefer the constructor shape if the dependency is anything other than a primitive value derivable from the request — even one struct/pointer dependency benefits from hoisting in routes.go.",
+      "decision_axis": "The B section single-dependency edge case: one dependency is a judgment call. The skill does not mandate one answer — consistency with codebase convention is the deciding factor."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I want to write an end-to-end test that exercises the full middleware stack — CSRF protection, session management, auth — without a real database. Can I do this cleanly?",
+      "expected_behavior": "Apply Edwards's routes() returning http.Handler: httptest.NewTLSServer(app.routes()) gives a real test server running the full middleware stack in one line. Inject a mock database via newTestApplication(t) before calling routes(). The test exercises CSRF, sessions, and auth middleware with no real database or real TLS infrastructure.",
+      "decision_axis": "The routes() return type discipline: returning http.Handler enables httptest.NewTLSServer(app.routes()) — this is the specific design choice that makes full-stack middleware testing single-line."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I need to write an auth middleware with three dependencies (logger, db, jwtKey) and organize 12 routes into groups by access level (public, session-only, authenticated). I want the result to be both readable per-route and auditable at a glance.",
+      "merged_advantage": "The merged skill is the only source that answers both halves of the question: Ryer's construction decision tree determines the constructor shape and hoisting discipline for the auth middleware (multi-dep → constructor, hoist before route block), and Edwards's named chain hierarchy organizes the 12 routes into public/dynamic/protected chains in routes.go. Neither source addresses the other's concern.",
+      "source1_gap": "lets-go/letsgo-middleware-composition (Edwards) provides named chain hierarchy but not the construction shape decision — with alice, all middleware functions have the same signature and the zero-dep vs. multi-dep question does not arise. The hoisting discipline for multi-dep constructors is not addressed.",
+      "source2_gap": "matryer-http-services/matryer-middleware-constructor (Ryer) provides the construction decision tree and hoisting but does not describe a named chain hierarchy — he addresses each route explicitly without grouping. The 'which routes have auth?' audit question is not answered."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "I used alice chains for all my middleware and now I realize my static file server is calling the session middleware on every asset. I also need to add a new multi-dep rate limiter middleware to just the API routes. Walk me through both fixes in routes.go.",
+      "merged_advantage": "The merged skill handles both fixes from a unified routes.go mental model: the static-file exception (Edwards — serve assets on bare mux before standard.Then(mux)) and the hoisted constructor for the new rate limiter (Ryer — rateMW := newRateLimiter(logger, 100), then apply rateMW inside the API route group). The skill explicitly states that Ryer-style hoisting and Edwards-style named chains are compatible in the same routes.go.",
+      "source1_gap": "Edwards (Let's Go) explains the static-file exception and named chains but does not address multi-dep middleware constructors — alice makes all functions the same shape, so the hoisting question does not arise from Edwards's material alone.",
+      "source2_gap": "Ryer explains the hoisted constructor discipline but does not describe named chain hierarchies or the static-file exception — the dynamic chain concept and its implications for session cookie generation are not in his material."
+    }
+  ]
+}

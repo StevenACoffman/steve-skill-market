@@ -53,7 +53,7 @@ Constructor arguments repeated inline (anti-pattern):
 
 **Convergence note:** Both sources independently prescribe `routes.go` as the canonical location for middleware registration, using `func(http.Handler) http.Handler` as the shape, motivated by auditability of which middleware applies to which routes; Edwards uniquely contributes the named chain hierarchy (`standard ⊃ dynamic ⊃ protected`) for organizing multiple chains, while Ryer uniquely contributes the zero-dep/multi-dep construction decision tree and the discipline of hoisting multi-dep constructor calls to variables before the route block.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -80,7 +80,7 @@ Neither source alone answers both questions.
 
 **Convergence note:** Both sources independently prescribe `routes.go` as the canonical location for middleware registration, using `func(http.Handler) http.Handler` as the shape, motivated by auditability of which middleware applies to which routes; Edwards uniquely contributes the named chain hierarchy (`standard ⊃ dynamic ⊃ protected`) for organizing multiple chains, while Ryer uniquely contributes the zero-dep/multi-dep construction decision tree and the discipline of hoisting multi-dep constructor calls to variables before the route block.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -97,13 +97,13 @@ Neither source alone answers both questions.
 
 ```go
 func adminOnly(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if !currentUser(r).IsAdmin {
-            http.NotFound(w, r)
-            return
-        }
-        next.ServeHTTP(w, r)
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !currentUser(r).IsAdmin {
+			http.NotFound(w, r)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 ```
 
@@ -113,16 +113,16 @@ Apply inline at the route: `mux.Handle("/admin", adminOnly(handleAdmin()))`.
 
 ```go
 func newAuthMiddleware(
-    logger *slog.Logger,
-    db     *pgxpool.Pool,
-    jwtKey []byte,
+	logger *slog.Logger,
+	db *pgxpool.Pool,
+	jwtKey []byte,
 ) func(h http.Handler) http.Handler {
-    return func(next http.Handler) http.Handler {
-        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            // use logger, db, jwtKey
-            next.ServeHTTP(w, r)
-        })
-    }
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// use logger, db, jwtKey
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 ```
 
@@ -151,25 +151,25 @@ Define named chains in order of increasing specificity:
 
 ```go
 func (app *application) routes() http.Handler {
-    mux := http.NewServeMux()
+	mux := http.NewServeMux()
 
-    // Static files: security headers only, no session/CSRF
-    fileServer := http.FileServer(http.Dir("./ui/static/"))
-    mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	// Static files: security headers only, no session/CSRF
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-    // HTML routes: session, CSRF, authentication identity
-    dynamic := alice.New(app.sessionManager.LoadAndSave, nosurf.NewPure, app.authenticate)
+	// HTML routes: session, CSRF, authentication identity
+	dynamic := alice.New(app.sessionManager.LoadAndSave, nosurf.NewPure, app.authenticate)
 
-    // Authenticated-only routes: dynamic + authorization enforcement
-    protected := dynamic.Append(app.requireAuthentication)
+	// Authenticated-only routes: dynamic + authorization enforcement
+	protected := dynamic.Append(app.requireAuthentication)
 
-    mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
-    mux.Handle("GET /snippet/view/{id}", dynamic.ThenFunc(app.snippetView))
-    mux.Handle("GET /snippet/create", protected.ThenFunc(app.snippetCreate))
-    mux.Handle("POST /snippet/create", protected.ThenFunc(app.snippetCreatePost))
+	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
+	mux.Handle("GET /snippet/view/{id}", dynamic.ThenFunc(app.snippetView))
+	mux.Handle("GET /snippet/create", protected.ThenFunc(app.snippetCreate))
+	mux.Handle("POST /snippet/create", protected.ThenFunc(app.snippetCreatePost))
 
-    standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
-    return standard.Then(mux)
+	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
+	return standard.Then(mux)
 }
 ```
 
@@ -188,7 +188,7 @@ In a Ryer-style service without `alice`, multi-dep constructor variables play th
 
 The alice library is not a prerequisite. In a service without alice, define named variables: `authMW := newAuthMiddleware(...)`, `rateMW := newRateLimiter(...)`, then compose them inline: `authMW(rateMW(handleAPI()))`.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -215,7 +215,7 @@ mux.Handle("/route2", middleware(logger, db, slackClient, rroll, handleSomething
 
 **What this demonstrates:** The construction decision is not about architecture — it is about routes.go readability. The constructor shape exists to remove noise from the route block, not to introduce abstraction for its own sake.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger ★
 
@@ -228,7 +228,7 @@ mux.Handle("/route2", middleware(logger, db, slackClient, rroll, handleSomething
 - You are debugging why static file requests trigger session cookie creation — the static-file exception in Edwards's chain organization explains the fix.
 - You are setting up end-to-end tests that need the full middleware stack without a real database.
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -258,14 +258,14 @@ Do any expensive initialization (compile regex, create sub-logger) in the outer 
 ## Step 3 — Hoist the Constructor Call in Routes.go
 
 ```go
-func (app *application) routes() http.Handler {  // or addRoutes(mux, deps)
-    authMW  := newAuthMiddleware(app.logger, app.db, app.jwtKey)
-    rateMW  := newRateLimiter(app.logger, 100)
+func (app *application) routes() http.Handler { // or addRoutes(mux, deps)
+	authMW := newAuthMiddleware(app.logger, app.db, app.jwtKey)
+	rateMW := newRateLimiter(app.logger, 100)
 
-    // route block — no dependency noise
-    mux.Handle("GET /users/{id}", authMW(handleGetUser(app)))
-    mux.Handle("POST /users",     authMW(handleCreateUser(app)))
-    // ...
+	// route block — no dependency noise
+	mux.Handle("GET /users/{id}", authMW(handleGetUser(app)))
+	mux.Handle("POST /users", authMW(handleCreateUser(app)))
+	// ...
 }
 ```
 
@@ -273,13 +273,13 @@ func (app *application) routes() http.Handler {  // or addRoutes(mux, deps)
 
 ```go
 func adminOnly(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if !currentUser(r).IsAdmin {
-            http.NotFound(w, r)
-            return
-        }
-        next.ServeHTTP(w, r)
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !currentUser(r).IsAdmin {
+			http.NotFound(w, r)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 ```
 
@@ -296,7 +296,7 @@ If not using alice: use hoisted constructor variables from Step 3; compose inlin
 
 Return the literal `func(h http.Handler) http.Handler` from constructors. Decline named type aliases unless the type is exported and consumed by third-party packages.
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

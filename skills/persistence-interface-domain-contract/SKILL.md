@@ -112,8 +112,8 @@ Instead of applying only Jean's type rule (which leaves the package placement un
    package order
 
    type Repository interface {
-       Save(ctx context.Context, o Order) error
-       FindByID(ctx context.Context, id string) (*Order, error)
+   	Save(ctx context.Context, o Order) error
+   	FindByID(ctx context.Context, id string) (*Order, error)
    }
    ```
 
@@ -125,9 +125,11 @@ Instead of applying only Jean's type rule (which leaves the package placement un
 
    ```go
    func (s *server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
-       id, err := s.orderRepo.Save(ctx, order.New(req.GetCustomerId(), req.GetAmount()))
-       if err != nil { return nil, err }
-       return &pb.CreateOrderResponse{OrderId: id.String()}, nil
+   	id, err := s.orderRepo.Save(ctx, order.New(req.GetCustomerId(), req.GetAmount()))
+   	if err != nil {
+   		return nil, err
+   	}
+   	return &pb.CreateOrderResponse{OrderId: id.String()}, nil
    }
    ```
 
@@ -140,11 +142,23 @@ Instead of applying only Jean's type rule (which leaves the package placement un
 
    import "myapp/domain/order"
 
-   type PostgresRepository struct { db *sql.DB }
+   type PostgresRepository struct { db *sql.DB }  // database/sql
 
    func (r *PostgresRepository) Save(ctx context.Context, o order.Order) error { ... }
    func (r *PostgresRepository) FindByID(ctx context.Context, id string) (*order.Order, error) { ... }
    ```
+
+   > **pgx/sqlc (this repo):** Use `districtsql.DBTX` instead of `*sql.DB` for struct fields that
+   > must accept either a pool connection or a `pgx.Tx` (e.g., when a transaction is passed in):
+   >
+   > ```go
+   > type PostgresRepository struct{ db districtsql.DBTX }
+   > ```
+   >
+   > Both `*pgxpool.Pool` and `pgx.Tx` satisfy `districtsql.DBTX`. If the repository manages
+   > its own transactions internally (calling `Begin` itself), hold `sqldb.DBTX` instead — but
+   > note that `pgx.Tx` does not satisfy `sqldb.DBTX` (no `Begin` method), so that field can only
+   > be populated by a pool. See the `sqlc` skill for the `NewDistrictStore(db sqldb.DBTX)` pattern.
 
 5. **Implement the test double (`FakeRepository` or `InMemoryRepository`) without importing the proto package.** Verify: `grep -r '"myapp/pb"' ./order/` should return nothing; `grep -r '"myapp/infrastructure"' ./domain/order/` should return nothing.
 

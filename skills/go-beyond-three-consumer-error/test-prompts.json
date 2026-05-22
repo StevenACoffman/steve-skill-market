@@ -1,0 +1,94 @@
+{
+  "skill": "go-beyond-three-consumer-error",
+  "version": "0.1.0",
+  "source_book": "Go Beyond — Ben B. Johnson",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "How should I design my custom error type in Go? I need to return different errors from my service layer.",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. Apply the three-consumer framework: identify application needs (Code field with ENOTFOUND/EINVALID/ECONFLICT/EINTERNAL), end user needs (Message field with safe display text), and operator needs (Op+Err fields for logical stack trace). Define Error struct in root package. Provide ErrorCode() and ErrorMessage() helper functions.",
+      "notes": "Direct error design question — the primary trigger."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "My HTTP API handlers are returning postgres error messages like 'pq: duplicate key value violates unique constraint' to end users. How do I fix this?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. This is the ce07+ce09 failure mode: raw database errors leaking to the end user consumer. Fix: translate at the postgres/ package boundary — pq duplicate key error → Error{Code: ECONFLICT, Message: 'An entry with this name already exists.'}. HTTP handler calls ErrorMessage() to get the safe display message, not err.Error().",
+      "notes": "Security/UX failure from not applying the three-consumer design."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "How do I make my HTTP handler return the right status code when a service returns an error? I want 404 for not found, 422 for validation errors, etc.",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. Apply the application-consumer design: define error codes (ENOTFOUND → 404, EINVALID → 422, ECONFLICT → 409, EINTERNAL → 500). HTTP handler calls ErrorCode(err) and switches on the code, not on error message strings. This is the machine-readable code serving the application consumer.",
+      "notes": "HTTP status code mapping — direct application of error codes serving the application consumer."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I'm switching from SQLite to PostgreSQL. Will I need to update my error handling code throughout the application?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. If the three-consumer design was applied correctly (translation at the package boundary), the answer is NO: only the sqlite/ adapter changes. If sql.ErrNoRows was translated to ENOTFOUND at the sqlite/ boundary, that translation just moves to the postgres/ boundary with different syntax. Domain, HTTP layer, and tests are untouched.",
+      "notes": "Tests the error boundary translation consequence of the design."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "How do I build useful error messages for debugging without full goroutine stack traces? I want something more readable.",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. Apply the operator-consumer design: Op-chain wrapping. At each meaningful operation boundary, wrap: &Error{Op: 'UserService.CreateUser', Err: err}. The result when printed: 'UserService.CreateUser: insertUser: INSERT INTO users: unique constraint'. This logical trace names developer-meaningful operations without the noise of every runtime frame.",
+      "notes": "Operator consumer need — logical stack trace via Op chaining."
+    },
+    {
+      "id": "should-trigger-06",
+      "type": "should_trigger",
+      "prompt": "Where should I put my custom error type in Go? In an errors/ subpackage or somewhere else?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. Apply ce08: do NOT put it in an errors/ subpackage — that produces errors.Error stutter. The Error type belongs in the root package as myapp.Error, alongside User, Order, and other domain types. Errors are domain citizens.",
+      "notes": "Error type placement question — direct ce08 scenario."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I use errors.Is and errors.As in Go?",
+      "expected_behavior": "Do not invoke go-beyond-three-consumer-error. This is a standard library error wrapping question about built-in Go error comparison mechanisms. The three-consumer design is complementary to but separate from errors.Is/As mechanics.",
+      "notes": "Lure: error handling, but about standard library usage not custom error design."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I recover from a panic in Go?",
+      "expected_behavior": "Do not invoke go-beyond-three-consumer-error. Panic recovery is a separate Go mechanism from error design. The three-consumer framework is about structured error types, not about panic/recover flow.",
+      "notes": "Lure: error/failure handling, but panic not errors."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "What logging library should I use in my Go application?",
+      "expected_behavior": "Do not invoke go-beyond-three-consumer-error. Logging library selection is a separate decision from error type design. The operator consumer (Op-chain) is about error information structure, not about which logging library to use.",
+      "notes": "Lure: operator/logging concern, but library choice question not error design."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I'm writing a Go library (not an application) that will be imported by others. Should I use the three-consumer error design?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error with the library boundary caveat: for published libraries, follow standard Go conventions (sentinel errors, errors.Is/As, typed error values) so callers can use standard library mechanisms. The three-consumer design with custom Error structs is an application-level pattern — it requires callers to import your error type. For libraries, that creates coupling. Use it within application code; at library API boundaries, follow Go standard error conventions.",
+      "notes": "Library vs application context changes the applicability."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "My application only has developers as users — no end users, no ops team. Do I still need the three-consumer error design?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error with the simplification: when all three consumers are the same person (the developer), the design overhead is not justified. fmt.Errorf with %w for wrapping, standard sentinel errors for codes, and stack traces from your IDE are sufficient. Apply the three-consumer design when the application has real end users (public-facing messages) or a dedicated ops team (structured traces).",
+      "notes": "When all consumers are the same, the framework overhead may exceed the benefit."
+    },
+    {
+      "id": "edge-03",
+      "type": "edge_case",
+      "prompt": "The four ECONFLICT/EINTERNAL/EINVALID/ENOTFOUND error codes aren't enough for my application. I need EUNAUTHORIZED and EFORBIDDEN. How do I extend the system?",
+      "expected_behavior": "Invoke go-beyond-three-consumer-error. The four starter codes are a minimum, not a maximum. Add EUNAUTHORIZED and EFORBIDDEN as additional string constants in the root package. The principle is: add a new code only when callers genuinely need to branch differently on it (e.g., HTTP 401 vs 403 are different responses to the client). Don't add codes for categories that all map to the same handling behavior.",
+      "notes": "Extension of the error code system — testing understanding of the starter-set design."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "6 should_trigger + 3 should_not_trigger + 3 edge_case = 12 total. All should_not_triggers must pass."
+}

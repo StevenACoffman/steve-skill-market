@@ -1,0 +1,111 @@
+{
+  "skill_id": "design-stamina-strategic-investment",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "fowler-refactoring/fowler-design-stamina",
+    "jousterhout/strategic-vs-tactical-programming"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "My team is debating whether to add a dependency injection framework to our codebase — we keep accumulating tech debt. How should I frame the cost-benefit argument to my non-technical product manager?",
+      "expected_behavior": "Advise translating the investment into concrete delivery-speed terms (e.g., 'this refactoring will cut the login feature from 5 days to 2') rather than using 'clean code' or 'tech debt' language with a non-technical audience; recommend embedding the refactoring invisibly into feature work rather than proposing a separate DI-framework adoption sprint.",
+      "expected_not": "Should not frame the argument around engineering aesthetics, code quality principles, or abstract debt metrics — and should not recommend scheduling a standalone refactoring sprint."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "We have a senior engineer who ships features at an incredible pace — two or three pull requests a day, always on time, always passing CI. But other developers on the team say touching his code is a nightmare. His performance review is coming up. How do I evaluate this situation?",
+      "expected_behavior": "Apply the tactical tornado diagnostic: measure downstream signals (bug rate on his features 3-6 months post-ship, other developers' velocity when touching his code, complexity of onboarding notes, accumulating special-case branches) rather than feature count alone. Frame the concern in terms of team velocity impact, not code aesthetics. Name the pattern explicitly for a technical audience.",
+      "expected_not": "Should not conclude the engineer is productive based on feature count alone, and should not raise the concern using purely aesthetic arguments like 'his code is messy'."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "During sprint planning my manager keeps cutting refactoring stories, saying 'let's just ship the feature and clean it up later.' How do I push back effectively?",
+      "expected_behavior": "Provide Fowler's economic reframing: translate each refactoring story into a concrete before/after delivery estimate for the associated feature. Invoke the two-curve model to explain why 'clean up later' produces compounding slowdown. Recommend against ever proposing a standalone 'tech debt sprint' — instead embed the refactoring inside the feature story so it's not a separate line item to cut.",
+      "expected_not": "Should not argue from engineering virtue or code cleanliness, and should not recommend scheduling a 'refactoring sprint' or 'debt reduction quarter'."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I'm trying to get my team to agree that we should spend about 15% of each sprint on design quality — better abstractions, cleaning up before adding features. My tech lead is technically literate but skeptical. How do I make the case?",
+      "expected_behavior": "Use Ousterhout's 10-20% investment budget framing explicitly with a technical audience — name the budget, make the two-curve velocity model visible, and explain it as an order-of-magnitude guideline not an empirical measurement. Distinguish this from aesthetic arguments. Raise the tactical tornado failure mode as the alternative: what happens if the team goes fully tactical.",
+      "expected_not": "Should not hide the investment rationale or embed it invisibly — that approach is for non-technical stakeholders. Should not use 'clean code' language even with a technical audience."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "Our startup is six months in. We're under pressure to ship fast but I'm seeing the codebase already getting hard to work in. Should we start investing in design quality now, or wait until after we get more users?",
+      "expected_behavior": "Apply Ousterhout's greenfield investment prescription: on new/ongoing code, the 10-20% budget should be built in from the start to prevent accumulation. Distinguish this from refactoring justification (Fowler's framework, which addresses existing code). Flag the boundary: if this is a true throwaway prototype — not the codebase that will become production — tactical programming is a valid explicit choice. Ask whether the current codebase is the production trajectory.",
+      "expected_not": "Should not give a blanket 'wait until later' answer, and should not ignore the prototype-vs-production distinction that determines which framework applies."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "What's the fastest way to rename a method across our codebase when callers are in five different packages?",
+      "expected_behavior": "A targeted answer about rename refactoring mechanics — IDE tooling (Rename Symbol in VS Code / IntelliJ), search-and-replace with scoped patterns, or running a codemod. This is a mechanics question, not a design investment or communication question.",
+      "expected_not": "Should not invoke design-stamina-strategic-investment — this is not about justifying refactoring investment or diagnosing tactical tornado behavior."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "Our golangci-lint config is producing too many false positives on our codebase. How do I configure it to suppress specific linter warnings per file?",
+      "expected_behavior": "A direct answer about golangci-lint configuration: per-file nolint directives, issues.exclude-rules in .golangci.yml, or per-linter severity settings. This is a build/tooling configuration question.",
+      "expected_not": "Should not invoke design-stamina-strategic-investment — there is no design investment justification or tactical tornado scenario here."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I need a code review checklist that covers naming, error handling, and test coverage for Go PRs at our company. Can you draft one?",
+      "expected_behavior": "A practical Go code review checklist covering naming conventions (Go-idiomatic exported/unexported names), error wrapping with %w, table-driven tests, and test coverage expectations. This is a checklist/process artifact request.",
+      "expected_not": "Should not invoke design-stamina-strategic-investment — the user wants a concrete checklist artifact, not guidance on justifying design investment or identifying tactical tornado behavior."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "We have a prototype we built in two weeks for a pitch deck demo. The demo went well and now the business team is saying 'let's just clean this up and ship it as the real product.' The codebase is a mess. Should I advocate for design investment?",
+      "expected_behavior": "This is the prototype-becoming-production edge case. The skill must apply the Boundaries conditional: if the system was a known throwaway, the two-curve payback never arrived during prototype phase and that was a valid explicit choice. But the question has now changed — it is no longer a prototype. The correct analysis: the prototype codebase cannot be 'cleaned up' piecemeal to production quality without a specific Fowler-style economic justification for each chunk of work. The team must decide explicitly whether to (a) rewrite the core infrastructure with strategic investment from the start, or (b) treat each production feature as an opportunity to refactor the prototype code it touches. Option (a) uses Ousterhout's greenfield prescription; option (b) uses Fowler's existing-code economic framework. The skill should NOT apply Fowler's 'don't tell' framing to a decision of this scale — this is a technical architecture decision requiring explicit alignment, not invisible embedding.",
+      "decision_axis": "The Boundaries section conditional: 'throwaway prototype or known short-lived system — the two-curve payback never arrives; tactical programming is a conscious, explicit choice in this context.' The prototype phase is over; the codebase is transitioning to production trajectory, which shifts which framework applies."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "A developer on my team isn't a tactical tornado — they actually write good abstractions and clean code. But they're extremely slow, spending weeks polishing modules that the product doesn't need yet. How do I address this?",
+      "expected_behavior": "This is the gold-plating failure mode named in Source A Failures. Fowler's framework explicitly warns: 'if a change doesn't make the next feature faster, it is not refactoring in Fowler's sense.' The skill should recognize this as the inverse of the tactical tornado — a developer over-applying the strategic mindset to code not on the critical path. Apply the Fowler check: is the code being changed? If not, there is no benefit to improving it now. The 10-20% budget (Ousterhout) is a ceiling, not a floor — gold-plating is a failure mode too. Frame feedback in terms of: what delivery does this investment accelerate? If the answer is nothing in the near term, the investment is misallocated.",
+      "decision_axis": "Fowler's Boundaries conditional: 'The code is not on the critical path — Fowler explicitly says there is no benefit in refactoring code you don't need to change.' The skill must recognize that strategic investment has a scope limit, not just a minimum."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I want to raise the tactical tornado concern about a colleague with our engineering manager, but the manager doesn't have a technical background. How do I explain the problem without using technical vocabulary?",
+      "expected_behavior": "This edge case crosses both audience conditionals at once: the tornado diagnostic (technical vocabulary, needs technical audience to land) is being raised to a non-technical manager. The skill must navigate the tension in the Synthesis-specific failure mode section: 'The two framings are not interchangeable — non-technical audiences need the economic frame; technical audiences need the tornado vocabulary.' For a non-technical manager, translate the tornado's downstream signals into economic terms: 'Features built by X take twice as long for other developers to extend, and our bug rate on X's modules is 3x the team average — this is slowing us down.' Do not use 'tactical tornado' vocabulary. Frame in delivery velocity terms the manager can verify.",
+      "decision_axis": "The audience conditional for naming vs. embedding: the tornado diagnostic requires the economic translation when the audience is non-technical — the vocabulary itself (tactical tornado) is not the argument, the downstream delivery signals are."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our team has been going fast for eight months — lots of features shipped — but I'm starting to worry we're in Fowler's 'cruft accumulation' zone. We're also onboarding two new senior engineers next month and I want to set expectations about how we work. How do I decide whether to invest in design quality now, AND how do I introduce this expectation to the team as a norm rather than just my personal preference?",
+      "merged_advantage": "The merged skill handles both dimensions simultaneously: (1) Fowler's economic framework for deciding whether there is a near-term payoff that justifies investment in the existing codebase, and (2) Ousterhout's 10-20% budget as a team norm, including the tactical tornado diagnostic to set expectations about what 'productive' looks like when onboarding senior engineers. The merged skill also encodes the institutional-support condition: 'individual strategic behavior requires institutional support' — individual discipline is insufficient against structural incentives, so the norm must be established at team level.",
+      "source1_gap": "fowler-design-stamina alone gives the economic justification framework for existing code but does not provide vocabulary for naming the failure mode to technical peers (tactical tornado) or a concrete budget figure to use when establishing a team norm.",
+      "source2_gap": "strategic-vs-tactical-programming alone gives the 10-20% budget and the tornado diagnostic, but does not address whether the near-term payoff justifies investment in this specific existing codebase (Fowler's check), and does not provide the communication framing for introducing the norm to a mixed-literacy team."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "My manager just asked me to mentor a developer who ships a lot of features but whose code other people struggle with. I need to both make the case to my manager that this is a real problem worth addressing AND coach the developer on a different way of working. These are two different conversations requiring different framings.",
+      "merged_advantage": "The merged skill explicitly encodes the two-audience conditional and the two-axis coverage: for the manager (potentially non-technical), use Fowler's economic framing and downstream signals (other developers' velocity on their code, bug rate) without tornado vocabulary. For the developer (technical), use Ousterhout's tactical tornado name directly, the 10-20% investment budget as a concrete alternative practice, and the two-curve model to show the trajectory. Neither source skill alone encodes both framings and their audience-dependent deployment.",
+      "source1_gap": "fowler-design-stamina provides the economic argument for the manager conversation but does not name the failure mode (tactical tornado) for use in the developer coaching conversation, and provides no concrete investment budget to offer as an alternative practice.",
+      "source2_gap": "strategic-vs-tactical-programming names the tornado and provides the budget for the developer coaching conversation but does not provide the communication nuance for the manager conversation — it would frame everything as a technical argument, which is politically fragile with a non-technical manager."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "We're in the middle of a six-month legacy modernization. Leadership keeps asking 'when will this be done?' and developers keep pushing back that they need more time to do it right. I need to help leadership understand why the investment is worth it AND help the engineering team scope the investment appropriately so it doesn't become indefinite.",
+      "merged_advantage": "The merged skill handles the scoping problem (Ousterhout's 10-20% ceiling prevents gold-plating; the investment must tie to delivery speed) AND the leadership communication problem (Fowler's economic framing: translate to concrete delivery speed differences, never use 'clean code' or 'tech debt' language). It also encodes Fowler's warning against large scheduled refactoring blocks ('avoid scheduling large refactoring blocks — propose continuous investment embedded in feature work'), which applies directly to a six-month modernization that has no delivery schedule.",
+      "source1_gap": "fowler-design-stamina gives the economic communication framework and warns against large refactoring blocks, but does not provide the concrete budget figure (10-20%) that lets engineers scope their investment and gives leadership a bound to negotiate against.",
+      "source2_gap": "strategic-vs-tactical-programming gives the budget figure and the investment mindset, but does not provide the political communication framing for leadership, and does not encode Fowler's continuous-over-scheduled principle that prevents the modernization from becoming a perpetual cost center."
+    }
+  ]
+}

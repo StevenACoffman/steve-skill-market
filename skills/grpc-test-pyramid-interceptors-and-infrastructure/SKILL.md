@@ -14,10 +14,10 @@ description: >
 type: merged-skill
 source_skills:
   - slug: grpc-go-for-professionals/grpc-testing-level-selection
-    book: "gRPC Go for Professionals"
+    book: gRPC Go for Professionals
     author: Clément Jean
   - slug: grpc-microservices-in-go/grpc-testcontainers-pyramid
-    book: "gRPC Microservices in Go"
+    book: gRPC Microservices in Go
     author: Hüseyin Babal
 related_skills:
   - slug: grpc-go-for-professionals/grpc-testing-level-selection
@@ -145,18 +145,18 @@ Integration tests in `internal/adapters/db/db_integration_test.go` use:
 
 ```go
 func (s *DBTestSuite) SetupSuite() {
-    ctx := context.Background()
-    container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-        ContainerRequest: testcontainers.ContainerRequest{
-            Image:        "mysql:8.0.30",
-            ExposedPorts: []string{"3306/tcp"},
-            WaitingFor:   wait.ForSQL("orders", "mysql", dataSourceName),
-        },
-        Started: true,
-    })
-    port, _ := container.MappedPort(ctx, "3306/tcp")
-    dsn := fmt.Sprintf("root:password@tcp(localhost:%s)/orders", port.Port())
-    s.db = db.NewAdapter(dsn)
+	ctx := context.Background()
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: testcontainers.ContainerRequest{
+			Image:        "mysql:8.0.30",
+			ExposedPorts: []string{"3306/tcp"},
+			WaitingFor:   wait.ForSQL("orders", "mysql", dataSourceName),
+		},
+		Started: true,
+	})
+	port, _ := container.MappedPort(ctx, "3306/tcp")
+	dsn := fmt.Sprintf("root:password@tcp(localhost:%s)/orders", port.Port())
+	s.db = db.NewAdapter(dsn)
 }
 ```
 
@@ -179,6 +179,7 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 ## E — Execution
 
 1. **Define four explicit test tiers in your test plan:**
+
    - Unit: bufconn, no interceptors, mocks/fakes, insecure credentials
    - Integration (interceptors): full server from `main.go`, real TLS test credentials, bufconn transport
    - Integration (infrastructure): testcontainers + `wait.ForSQL`, real adapter, no gRPC server
@@ -189,37 +190,38 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 
    ```go
    func TestAddTask(t *testing.T) {
-       listener := bufconn.Listen(1024 * 1024)
-       s := grpc.NewServer() // zero server options — no interceptors, no TLS
-       pb.RegisterTodoServiceServer(s, &todoServer{db: &FakeDb{}})
-       go s.Serve(listener)
+   	listener := bufconn.Listen(1024 * 1024)
+   	s := grpc.NewServer() // zero server options — no interceptors, no TLS
+   	pb.RegisterTodoServiceServer(s, &todoServer{db: &FakeDb{}})
+   	go s.Serve(listener)
 
-       conn, _ := grpc.DialContext(ctx, "bufnet",
-           grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
-               return listener.Dial()
-           }),
-           grpc.WithTransportCredentials(insecure.NewCredentials()),
-       )
-       client := pb.NewTodoServiceClient(conn)
-       // test endpoint logic only
+   	conn, _ := grpc.DialContext(ctx, "bufnet",
+   		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
+   			return listener.Dial()
+   		}),
+   		grpc.WithTransportCredentials(insecure.NewCredentials()),
+   	)
+   	client := pb.NewTodoServiceClient(conn)
+   	// test endpoint logic only
    }
    ```
 
 3. **Integration tier (interceptors) — start the server as `main.go` starts it.**
 
    ```go
-   //go:build integration
+   integration
 
+   package p
    func TestAuthInterceptorRejectsUnauthenticated(t *testing.T) {
-       // Load TLS test credentials from testdata/
-       creds, _ := credentials.NewServerTLSFromFile("testdata/server.crt", "testdata/server.key")
-       s := grpc.NewServer(
-           grpc.Creds(creds),
-           grpc.ChainUnaryInterceptor(rateLimitInterceptor, authInterceptor, metricsInterceptor),
-       )
-       pb.RegisterYourServiceServer(s, &yourServer{})
-       // ... start on bufconn
-       // assert unauthenticated call returns codes.Unauthenticated
+   	// Load TLS test credentials from testdata/
+   	creds, _ := credentials.NewServerTLSFromFile("testdata/server.crt", "testdata/server.key")
+   	s := grpc.NewServer(
+   		grpc.Creds(creds),
+   		grpc.ChainUnaryInterceptor(rateLimitInterceptor, authInterceptor, metricsInterceptor),
+   	)
+   	pb.RegisterYourServiceServer(s, &yourServer{})
+   	// ... start on bufconn
+   	// assert unauthenticated call returns codes.Unauthenticated
    }
    ```
 
@@ -266,16 +268,17 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 5. **E2e tier — `LocalDockerCompose`.**
 
    ```go
-   //go:build e2e
+   e2e
 
+   package p
    func (s *E2eSuite) SetupSuite() {
-       compose := testcontainers.NewLocalDockerCompose(
-           []string{"docker-compose.yml"}, "e2e",
-       )
-       compose.WithCommand([]string{"up", "-d"}).Invoke()
-       s.compose = compose
-       // wait for service to be ready, then dial
-       s.conn, _ = grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+   	compose := testcontainers.NewLocalDockerCompose(
+   		[]string{"docker-compose.yml"}, "e2e",
+   	)
+   	compose.WithCommand([]string{"up", "-d"}).Invoke()
+   	s.compose = compose
+   	// wait for service to be ready, then dial
+   	s.conn, _ = grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
    }
    ```
 
@@ -283,11 +286,11 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 
    ```sh
    ghz --insecure \
-       --proto service.proto \
-       --call TodoService.AddTask \
-       -d '{"description":"test","due_date":"2026-12-01"}' \
-       -n 1000 -c 10 \
-       localhost:50051
+   	--proto service.proto \
+   	--call TodoService.AddTask \
+   	-d '{"description":"test","due_date":"2026-12-01"}' \
+   	-n 1000 -c 10 \
+   	localhost:50051
    ```
 
    Inspect status-code distribution for unexpected error codes and latency histogram for p99 target.
@@ -295,8 +298,10 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 7. **Use build tags to separate all tiers from `go test ./...`.**
 
    ```go
-   //go:build integration   // interceptor and infrastructure suites
+   integration   // interceptor and infrastructure suites
    //go:build e2e           // e2e suite
+
+   package p
    ```
 
    Run in CI with `go test -tags integration ./...` and `go test -tags e2e ./...` as separate pipeline stages. Load tests run in a dedicated deployment pipeline, not in CI unit test runs.

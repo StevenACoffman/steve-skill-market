@@ -1,0 +1,74 @@
+[
+  {
+    "id": "tp01",
+    "segment": "A2",
+    "trigger": "AWS NLB proposal for gRPC",
+    "prompt": "We're deploying a gRPC service to AWS with multiple instances. Can we use an AWS Network Load Balancer to distribute traffic?",
+    "expected_behavior": "Should warn that AWS NLB is an L4/TCP load balancer and will not distribute gRPC RPCs correctly. HTTP/2 multiplexing means all RPCs from a given client share one TCP connection; the NLB sees one connection and routes it to one backend for the connection's lifetime. Should recommend alternatives: AWS ALB (which supports gRPC as an HTTP/2 target type and operates at L7), Envoy proxy, or client-side load balancing with a round-robin service config and a name resolver that returns all backend addresses. Should explain the failure mode: one backend hot, others idle.",
+    "should_not": "Should not say NLB is fine for gRPC. Should not omit that ALB has native gRPC support (a post-book development)."
+  },
+  {
+    "id": "tp02",
+    "segment": "R",
+    "trigger": "source quote — LB requirements",
+    "prompt": "What does gRPC Up and Running say about load balancer requirements for gRPC?",
+    "expected_behavior": "Should quote or closely paraphrase: 'it must have full HTTP/2 support. Thus it's always a good idea to specifically choose load balancers that explicitly offer gRPC support. If you don't use a gRPC load balancer, then you can implement the load-balancing logic as part of the client applications you write.' Should explain what 'full HTTP/2 support' means: the LB must balance at the HTTP/2 stream level (per-RPC), not at the TCP connection level.",
+    "should_not": "Should not quote a position that generic L4 LBs work fine for gRPC."
+  },
+  {
+    "id": "tp03",
+    "segment": "I",
+    "trigger": "explain the L4 failure mechanism",
+    "prompt": "Why does a TCP load balancer fail to distribute gRPC traffic evenly? Explain the HTTP/2 multiplexing interaction.",
+    "expected_behavior": "Should explain the full mechanism: (1) TCP LBs distribute connections — each TCP connection is routed to one backend for its lifetime; (2) HTTP/1.1 opened one connection per request, so per-connection routing approximated per-request routing; (3) HTTP/2 multiplexes all RPCs from a client onto one long-lived TCP connection — the gRPC channel; (4) the TCP LB sees one connection and routes it to backend A; (5) all RPCs from that client go to backend A; backends B, C, D receive zero traffic from that client. Should note the failure is invisible in development (one client, one backend) and only manifests at production scale with multiple clients.",
+    "should_not": "Should not say HTTP/2 itself is the problem. Should not omit the connection-vs-RPC distinction that is the root of the failure."
+  },
+  {
+    "id": "tp04",
+    "segment": "E",
+    "trigger": "implementation — client-side round-robin on Kubernetes",
+    "prompt": "How do I configure client-side load balancing for a gRPC service on Kubernetes?",
+    "expected_behavior": "Should describe: (1) create a headless Kubernetes Service (clusterIP: None) so DNS returns per-pod A records instead of a single virtual IP; (2) configure the gRPC client with round_robin service config and a dns:/// target URI; (3) the DNS resolver returns all pod IPs; the gRPC client creates one connection per pod and distributes RPCs in round-robin. Should show or reference the Go code: grpc.WithDefaultServiceConfig('{\"loadBalancingPolicy\":\"round_robin\"}') and the dns:///service-name:port URI format. Should note that a standard ClusterIP Service will not work because DNS returns one IP and round_robin has nothing to balance over.",
+    "should_not": "Should not describe a ClusterIP Service as compatible with client-side round_robin. Should not omit the headless Service requirement."
+  },
+  {
+    "id": "tp05",
+    "segment": "I",
+    "trigger": "client-side LB vs L7 proxy tradeoffs",
+    "prompt": "When should I choose client-side load balancing vs an L7 proxy like Envoy for gRPC?",
+    "expected_behavior": "Should describe the tradeoffs: Client-side LB (round_robin + DNS) is simpler to operate, has no additional infrastructure component, but requires the gRPC client code to be aware of and configured for load balancing — language-specific, application-level concern. L7 proxy (Envoy, Nginx) is language-agnostic, handles routing outside the application, can provide additional features (circuit breaking, retries, observability), but adds operational complexity (sidecar deployment, proxy configuration). Service mesh (Istio/Linkerd with Envoy sidecar) is the most capable but also most complex. Should recommend: service mesh for Kubernetes environments where operational teams manage it; client-side LB for simple deployments where proxy overhead is unwanted.",
+    "should_not": "Should not say one option is universally better. Should not omit the operational complexity of each approach."
+  },
+  {
+    "id": "tp06",
+    "segment": "A1",
+    "trigger": "book example — failure mode scenario",
+    "prompt": "How does the gRPC Up and Running book demonstrate the L4 LB failure mode?",
+    "expected_behavior": "Should describe the Chapter 5 scenario: multiple replicas of the ProductInfo service behind a TCP load balancer. A client sending continuous GetProduct RPCs. Expected: even distribution. Actual: all RPCs go to one backend because the HTTP/2 connection was routed to that backend at connection establishment. The book then shows the fix via client-side round_robin load balancing with a name resolver that returns all backend addresses, causing the client to create separate connections to each backend and distribute RPCs in rotation.",
+    "should_not": "Should not describe the scenario as the load balancer working correctly. Should not omit that the fix required name resolver configuration on the client."
+  },
+  {
+    "id": "tp07",
+    "segment": "A2",
+    "trigger": "scaling that doesn't help",
+    "prompt": "We scaled our gRPC service from 3 replicas to 10 replicas. CPU on the original pods dropped slightly but the new pods are idle. Adding more replicas isn't helping. What's wrong?",
+    "expected_behavior": "Should identify this as the L4 LB failure mode. New replicas receive no traffic because existing TCP connections are sticky to the original backends. Adding more replicas behind an L4 LB has diminishing returns — connections from established clients will never reach the new pods unless the client reconnects. Should recommend diagnosing by checking the load balancer type and per-pod gRPC metrics. Should describe the fix options: L7 proxy, client-side LB, or service mesh.",
+    "should_not": "Should not suggest that adding even more replicas will solve the problem. Should not diagnose this as an application performance issue without first ruling out LB failure."
+  },
+  {
+    "id": "tp08",
+    "segment": "B",
+    "trigger": "boundary — service mesh replaces LB concern",
+    "prompt": "We're using Istio for our Kubernetes gRPC services. Do we need to configure client-side load balancing in our Go code?",
+    "expected_behavior": "Should explain that in Istio, the Envoy sidecar handles per-RPC load balancing transparently. The application code connects to a regular ClusterIP Service or direct pod address; the sidecar proxy intercepts the traffic and applies the DestinationRule load balancing policy (ROUND_ROBIN, LEAST_CONN, etc.) at the HTTP/2 stream level. Client-side load balancing in application code is not needed and can produce unexpected behavior if both the application and the sidecar attempt to balance. Should note that configuring a headless Service + round_robin in application code and Istio simultaneously creates two load balancing layers.",
+    "should_not": "Should not say client-side LB is still required when Istio is present. Should not say Istio does not handle gRPC specifically."
+  },
+  {
+    "id": "tp09",
+    "segment": "B",
+    "trigger": "boundary — post-book AWS/GCP managed LBs",
+    "prompt": "The book recommends Envoy or client-side LB for gRPC. Are there other options that have become available since the book was published?",
+    "expected_behavior": "Should acknowledge the book was published in 2020 and managed cloud load balancers have since added gRPC support. Should mention: AWS ALB (HTTP/2 target type with gRPC health check support), GCP Cloud Load Balancing (HTTP/2 backend service), Google Cloud Run/GKE Ingress (native gRPC), Kubernetes Gateway API (GA 2023, standardized L7 gRPC routing). Should note that for teams on managed cloud, checking whether the cloud provider's L7 LB supports gRPC is now the first step before deploying Envoy as a standalone proxy.",
+    "should_not": "Should not claim the book covers managed cloud LB gRPC support. Should not say Envoy is always the only correct answer."
+  }
+]

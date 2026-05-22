@@ -1,0 +1,59 @@
+{
+  "skill_id": "test-layer-architecture-mapping",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "type": "should_invoke",
+      "prompt": "I have a new command handler that calls a Firestore adapter and an external gRPC service. Should I write an integration test or a component test to verify it works end-to-end?",
+      "rationale": "Asks exactly the integration-vs-component decision the taxonomy answers — command handler wiring is a component test target."
+    },
+    {
+      "id": "tp-02",
+      "type": "should_invoke",
+      "prompt": "My team is writing E2E tests for every feature because we don't trust the lower-level tests. The suite takes 40 minutes. How should we restructure our test strategy?",
+      "rationale": "Over-reliance on E2E tests is the anti-pattern; the skill explains why component tests should be the primary safety net."
+    },
+    {
+      "id": "tp-03",
+      "type": "should_invoke",
+      "prompt": "How do I test my Firestore repository adapter without mocking the Firestore SDK? I want to verify actual document writes.",
+      "rationale": "Integration test for an adapter — real DB via Docker, parallel isolation, the book's four quality principles apply."
+    },
+    {
+      "id": "tp-04",
+      "type": "should_invoke",
+      "prompt": "I want to write a component test for my Go HTTP service that uses a real database but doesn't require the external payment service to be running. How do I set that up?",
+      "rationale": "Asks for the dual-constructor / NewComponentTestApplication pattern directly."
+    },
+    {
+      "id": "tp-05",
+      "type": "should_not_invoke",
+      "prompt": "How do I use testify/assert for table-driven unit tests in Go?",
+      "rationale": "Asks about unit test library syntax, not test architecture or layer mapping."
+    },
+    {
+      "id": "tp-06",
+      "type": "should_not_invoke",
+      "prompt": "How do I set up GitHub Actions to run my Go tests in CI?",
+      "rationale": "CI pipeline configuration, not test architecture or layer mapping."
+    },
+    {
+      "id": "tp-07",
+      "type": "blurred_boundary",
+      "prompt": "Should I mock the database in my command handler tests, or use a real database?",
+      "rationale": "Asks the mock-vs-real-DB question, which the taxonomy answers indirectly: command handler wiring → component test (real DB via Docker); adapter → integration test (real DB). Whether to mock depends on which layer the test covers."
+    },
+    {
+      "id": "tp-08",
+      "type": "blurred_boundary",
+      "prompt": "My domain unit tests are slow because they use time.Sleep to wait for async operations. How do I fix this?",
+      "rationale": "Addresses flaky/slow test infrastructure (sleep), which relates to integration test quality principles but in a domain unit test context — the fix is channel sync or WaitGroup, not a layer-mapping issue."
+    },
+    {
+      "id": "tp-09",
+      "type": "blurred_boundary",
+      "prompt": "I need to verify that my service correctly handles a Pub/Sub message that triggers a domain operation and persists the result. What kind of test should I write?",
+      "rationale": "Pub/Sub-triggered domain operation — this is full service wiring (port → handler → domain → adapter), which maps to a component test, but the async nature introduces additional synchronization concerns."
+    }
+  ]
+}

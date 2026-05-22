@@ -1,0 +1,62 @@
+{
+  "skill": "zero-touch-production",
+  "description": "Use this skill when designing or auditing production access controls, evaluating whether direct human access to production systems is acceptable, or planning the automation of operational tasks.",
+  "test_prompts": [
+    {
+      "id": "zero-touch-production-should-01",
+      "category": "should_invoke",
+      "prompt": "Our on-call rotation handles incidents by SSHing directly into production servers. Last month an engineer ran a restart command scoped to the wrong service and took down our payment processing tier for 20 minutes. The team is resistant to eliminating SSH access because they say they need it for emergencies. How do we get to a model where humans aren't making direct changes to production?",
+      "expected": "invoke",
+      "rationale": "Direct SSH to production, human error causing an outage, team resistance to eliminating access — this is exactly the ZTP trigger scenario. The question is about designing the transition from ad-hoc SSH to automated + breakglass access, which ZTP addresses directly including the political challenge (breakglass makes strict controls deployable)."
+    },
+    {
+      "id": "zero-touch-production-should-02",
+      "category": "should_invoke",
+      "prompt": "We're designing an admin CLI for our infrastructure team. Engineers will use it to restart services, drain traffic from nodes, update configuration, and query logs. We want to make sure this doesn't become a security risk. What controls should the CLI enforce?",
+      "expected": "invoke",
+      "rationale": "Designing an admin CLI for production systems is a direct ZTP trigger — this is exactly the safe proxy pattern. The answer covers: route all operations through the CLI (not direct access), enforce per-command policy, require MPA for destructive operations (drain, restart), log all actions with caller identity, block direct connections at the target. The ZTP framework tells the user exactly how to design this."
+    },
+    {
+      "id": "zero-touch-production-should-03",
+      "category": "should_invoke",
+      "prompt": "We track our breakglass mechanism usage and noticed it's being invoked 15-20 times per week. It was supposed to be an emergency escape valve but the team uses it constantly. Is this a problem and what should we do about it?",
+      "expected": "invoke",
+      "rationale": "High breakglass frequency is a ZTP feedback signal — it means automation coverage is insufficient and the safe proxy's operational API is too narrow. ZTP explicitly frames breakglass frequency as the metric to measure and act on: each invocation is a backlog item for automation. This is a nuanced ZTP application that isn't a textbook setup scenario."
+    },
+    {
+      "id": "zero-touch-production-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "Our developers have too much access in our dev and staging environments. A junior engineer accidentally deleted the staging database last week. We want to lock down who can do what in non-production environments.",
+      "expected": "skip",
+      "rationale": "ZTP explicitly does not apply to development and staging environments — applying it adds friction without meaningful security benefit. The right skill here is least-privilege-tooling-enforced for scoping role-based access in non-production environments. Deleting a staging database is a process and permissions problem, not a ZTP scenario."
+    },
+    {
+      "id": "zero-touch-production-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We're worried about supply chain attacks. A malicious package was published to npm that mimics a popular library we use. How do we verify that what gets deployed to production is what we built and hasn't been tampered with in the pipeline?",
+      "expected": "skip",
+      "rationale": "This is a binary provenance and supply chain integrity question, not a human-access-to-production question. The right skill is supply-chain-binary-provenance-deployment-policy — cryptographic signing of artifacts, verifying what gets deployed matches what was built. ZTP is about who makes changes and through what mechanism; this is about verifying the artifact itself is uncompromised."
+    },
+    {
+      "id": "zero-touch-production-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We have a sensitive database migration that needs two engineers to approve before it runs. How do we enforce that no single engineer can apply a schema change unilaterally?",
+      "expected": "skip",
+      "rationale": "This is a multi-party authorization (MPA) question in isolation. MPA is one enforcement technique within ZTP (required at the safe proxy for sensitive operations), but the user is asking specifically about the dual-approval gate design — not about the broader ZTP architecture. The multi-party-authorization skill covers the approval workflow design, quorum requirements, and how to implement the two-actor constraint."
+    },
+    {
+      "id": "zero-touch-production-boundary-01",
+      "category": "boundary",
+      "prompt": "We're a 3-person team running a production service. We currently deploy via Terraform from our laptops — each of us can run `terraform apply` directly. We know this is not ideal but we're moving fast. What's the minimum we should do to reduce risk without adding a lot of process?",
+      "expected": "invoke",
+      "rationale": "Boundary case resolved as invoke: ZTP notes that very small teams (<5 engineers) at early stage should focus on logging over proxy infrastructure, but a 3-person team running Terraform apply from laptops is a specific ZTP-addressable problem. The answer is targeted: route `terraform apply` through CI/CD with mandatory PR approval and logging — not a full safe proxy. ZTP's insight that 'Infrastructure-as-code is not sufficient; the apply itself must flow through an audited CI pipeline' directly addresses this scenario without requiring the full proxy build-out."
+    },
+    {
+      "id": "zero-touch-production-boundary-02",
+      "category": "boundary",
+      "prompt": "Our CI/CD pipeline itself is down — the deployment orchestrator crashed during a production incident and we can't use our normal automated deployment path to push a fix. Can we just SSH into the servers directly to apply the hotfix?",
+      "expected": "skip",
+      "rationale": "Boundary case resolved as skip: this is the breakglass scenario, not a ZTP design question. ZTP explicitly states that emergency response where automation has failed is exactly what breakglass is for — ZTP does not prohibit emergency access, it requires that emergency access is audited. The right guidance is: invoke the pre-designed breakglass mechanism, log everything, and treat the breakglass use as a signal that the CI/CD system's own resilience needs improvement. The breakglass-design skill applies here."
+    }
+  ]
+}

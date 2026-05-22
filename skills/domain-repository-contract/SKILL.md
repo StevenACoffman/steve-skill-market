@@ -70,7 +70,7 @@ A repository interface in a Go DDD project has two invariants that must hold sim
 
 ```go
 err = h.hourRepository.UpdateHour(ctx, hourTime, func(h *Hour) (*Hour, error) {
-    return h, h.MakeAvailable()
+	return h, h.MakeAvailable()
 })
 ```
 
@@ -111,9 +111,9 @@ Instead of applying Boyle's placement rule alone (which misses the mutation safe
    package purchase
 
    type Repository interface {
-       Store(ctx context.Context, p Purchase) error
-       FindByID(ctx context.Context, id uuid.UUID) (*Purchase, error)
-       UpdatePurchase(ctx context.Context, id uuid.UUID, updateFn func(*Purchase) (*Purchase, error)) error
+   	Store(ctx context.Context, p Purchase) error
+   	FindByID(ctx context.Context, id uuid.UUID) (*Purchase, error)
+   	UpdatePurchase(ctx context.Context, id uuid.UUID, updateFn func(*Purchase) (*Purchase, error)) error
    }
    ```
 
@@ -123,20 +123,44 @@ Instead of applying Boyle's placement rule alone (which misses the mutation safe
 
 4. **Keep one interface per aggregate root**, not one per table or query concern. If a bounded context needs a query interface backed by a different store, define it as a separate interface in the same domain package.
 
-5. **For each read-modify-write operation, implement the concrete adapter's method as: begin transaction → fetch entity → call `updateFn(entity)` → on non-nil error, rollback; on nil error, persist returned entity and commit.** For in-memory adapters, use a mutex instead of a transaction. Example MySQL shape:
+5. **For each read-modify-write operation, implement the concrete adapter's method as: begin transaction → fetch entity → call `updateFn(entity)` → on non-nil error, rollback; on nil error, persist returned entity and commit.** For in-memory adapters, use a mutex instead of a transaction. Example MySQL/database-sql shape:
 
    ```go
    func (r *MySQLRepository) UpdatePurchase(ctx context.Context, id uuid.UUID, updateFn func(*Purchase) (*Purchase, error)) error {
-       tx, err := r.db.BeginTx(ctx, nil)
-       if err != nil { return err }
-       p, err := r.fetchByID(ctx, tx, id)
-       if err != nil { tx.Rollback(); return err }
-       updated, err := updateFn(p)
-       if err != nil { tx.Rollback(); return err }
-       if err := r.persist(ctx, tx, updated); err != nil { tx.Rollback(); return err }
-       return tx.Commit()
+   	tx, err := r.db.BeginTx(ctx, nil)
+   	if err != nil {
+   		return err
+   	}
+   	p, err := r.fetchByID(ctx, tx, id)
+   	if err != nil {
+   		tx.Rollback()
+   		return err
+   	}
+   	updated, err := updateFn(p)
+   	if err != nil {
+   		tx.Rollback()
+   		return err
+   	}
+   	if err := r.persist(ctx, tx, updated); err != nil {
+   		tx.Rollback()
+   		return err
+   	}
+   	return tx.Commit()
    }
    ```
+
+   > **pgx/sqlc (this repo):** `pgx.Tx.Rollback` and `pgx.Tx.Commit` both take a context. Use
+   > `pool.Begin(ctx)` to start the transaction and always pass `ctx` to `Rollback`/`Commit`:
+   >
+   > ```go
+   > tx, err := r.pool.Begin(ctx)
+   > if err != nil {
+   > 	return err
+   > }
+   > defer tx.Rollback(ctx)
+   > // ... fetch, call updateFn, persist via districtsql.New(tx) ...
+   > return tx.Commit(ctx)
+   > ```
 
 6. **Create the concrete implementation in the infrastructure package** — e.g., `infrastructure/purchasestore/mongo_repository.go`. Import the domain package for the interface and domain types. Never import infrastructure from the domain package.
 
@@ -150,8 +174,8 @@ Instead of applying Boyle's placement rule alone (which misses the mutation safe
 
    ```go
    func testUpdatePurchase_parallel(t *testing.T, repo purchase.Repository) {
-       // 20 goroutines attempt to update the same purchase simultaneously
-       // Assert exactly one succeeds
+   	// 20 goroutines attempt to update the same purchase simultaneously
+   	// Assert exactly one succeeds
    }
    ```
 

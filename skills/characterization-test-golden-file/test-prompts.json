@@ -1,0 +1,103 @@
+{
+  "skill_id": "characterization-test-golden-file",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "welc/welc-characterization-test",
+    "hashimoto/golden-files-update-flag"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I have to refactor a Go `ReportRenderer` package that has no tests and no documentation. The original author left the company. The `Render()` method produces a multi-page HTML report — hundreds of lines of output with nested tables. I need some kind of safety net before I touch anything. How do I write tests when I don't even know what the correct output is supposed to be?",
+      "expected_behavior": "Skill explains the characterization test posture: write a failing test with a nonsense placeholder, run it, observe the actual output, then use the -update flag to capture that output as a golden file in test-fixtures/. Walks through steps 1–7: get code into a test harness, add the update flag, add a String() or testString() method, write the failing assertion, run go test -update, inspect via git diff, commit. Emphasizes that pinning is not the same as correct.",
+      "expected_not": "Should not tell the user to guess expected values and inline them, should not suggest skipping the inspection step (step 6), should not suggest this is TDD or spec testing."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "I'm rewriting a legacy Go billing service from scratch. The old service has been running in production for 8 years. I want to verify that my new implementation produces byte-for-byte identical invoice PDFs (serialized as text via a String() method) compared to the old one. How do I set up this verification in Go tests?",
+      "expected_behavior": "Skill describes the rewrite-with-behavioral-invariant scenario: write characterization tests at the public API boundary of the old service (result = oldService.GenerateInvoice(input)), capture golden files from the old implementation, then run the same tests against the new implementation. Explains that golden files committed to the repo are the machine-checkable contract for the rewrite. Mentions that tests must be at the API boundary to survive the structural rewrite.",
+      "expected_not": "Should not suggest unit tests on internal methods of the old service, should not suggest DeepEqual on complex structs without a String() method first, should not suggest skipping the golden file commit step."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "My Go unit test for a config parser is 300 lines of manually constructed expected-value maps. Every time we add a new config field, someone has to update the expected map by hand, and it always has mistakes. The function output is a deeply nested struct. How do I simplify this?",
+      "expected_behavior": "Skill recommends replacing the inline expected map with golden files: add a String() or testString() method to produce a deterministic human-readable representation, store expected output in test-fixtures/, use go test -update to regenerate when the schema changes intentionally. Explains that git diff test-fixtures/ shows what changed — which is much more reviewable than a hand-maintained map.",
+      "expected_not": "Should not suggest using reflect.DeepEqual with the full struct inline, should not suggest fuzzing or property-based testing, should not suggest mocking the config parser."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I inherited a Go AST transformation library. There are no tests. I need to add coverage for the Transform() function before the team starts adding new node types. The Transform() output is a serialized AST — potentially thousands of nodes. What's the fastest way to add tests without reading every line of the Transform() implementation?",
+      "expected_behavior": "Skill applies the fail-observe-pin posture: for each distinct input tree, write an assertion that will fail (missing golden file), run the test to observe the actual output, then run go test -update to create the golden files. Uses a map[string]struct{} table where each key is an input AST scenario (empty tree, single node, nested nodes) and each golden file is named after the map key. The act of running the tests builds a mental model of what Transform() actually produces.",
+      "expected_not": "Should not suggest reading the implementation first, should not suggest writing spec tests without understanding the code, should not suggest the -update flag as a substitute for inspection."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "Our Go team has characterization tests that compare against golden files for a graph rendering package. We just intentionally changed the graph layout algorithm — all the golden files are now wrong. How do I update all of them at once without touching each one by hand?",
+      "expected_behavior": "Skill explains the -update flag: run go test -update ./path/to/package/... to regenerate all golden files in one command. Then run git diff test-fixtures/ to inspect exactly what changed. Explicitly warns that the -update flag bypasses the comprehension step — only use it when you have already decided the output is correct (this is an intentional change). Commit the updated golden files with a commit message explaining the algorithm change.",
+      "expected_not": "Should not suggest deleting the test-fixtures/ directory and starting over, should not suggest running -update without the inspection step, should not suggest inlining the new expected values."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to set up property-based testing in Go for my JSON serializer. How do I generate thousands of random inputs and verify that the output is always valid JSON?",
+      "expected_behavior": "This is a property-based / fuzz testing question. The appropriate approach is Go's built-in fuzzing (go test -fuzz) or a library like rapid or gopter. The test verifies a structural invariant (always valid JSON) across generated inputs, not the exact byte-for-byte output of specific inputs.",
+      "expected_not": "Should not invoke characterization-test-golden-file, which is for pinning specific known outputs, not for verifying structural properties across random inputs."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "Our Go CI pipeline requires 80% test coverage. How do I configure the coverage threshold in GitHub Actions and enforce it on pull requests?",
+      "expected_behavior": "This is a CI configuration question. The appropriate approach involves go test -coverprofile, a coverage reporting tool (e.g. goverage, codecov), and GitHub Actions workflow configuration with a coverage gate step. No golden files or characterization tests are involved.",
+      "expected_not": "Should not invoke characterization-test-golden-file, which addresses how to write tests for unknown behavior, not how to enforce coverage thresholds in CI."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I'm writing a new Go microservice for order processing from scratch using TDD. I have a full spec. How do I write the first test for the CreateOrder function?",
+      "expected_behavior": "This is a TDD / specification-test question for new code with a known spec. The appropriate approach is to write a failing spec test expressing the intended behavior, then implement to make it pass. No characterization or golden files are needed — the expected behavior is known upfront.",
+      "expected_not": "Should not invoke characterization-test-golden-file, which explicitly does not apply when writing tests for new code or when a specification is available."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "Our Go service generates quarterly financial reports. The report format is deterministic, but every quarter we legitimately add two or three new data fields to the output (because regulations change). After each quarter's feature flag enables a new field, our golden files are wrong and we have to update them. A junior developer suggested just running go test -update before every release and committing without reading the diffs. Is that okay?",
+      "expected_behavior": "No — the -update flag is safe only when a human inspects the diff and confirms the change is intentional. The skill's step 6 (git diff test-fixtures/ + human eyeballing) is the moral authority check: pinning does not mean correct. Skipping inspection means that a regression that adds an extra field could be committed as if it were an intentional change. The right process: run -update after a feature flag is enabled, then use git diff to verify that exactly the new fields and no other changes appear, then commit with a message explaining which field was added and why. The risk of the junior's proposal is that it makes the golden file update a mindless mechanical step that defeats the comprehension benefit.",
+      "decision_axis": "The -update flag is for re-pinning after confirmed intentional changes; the inspection step (step 6) is mandatory and not optional even when the change is expected. The distinction is: you already decided the output is correct (Hashimoto context) vs. you are using -update as a substitute for deciding (the synthesis-specific failure mode)."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I'm using characterization tests with golden files to build a safety net before refactoring a Go PDF generation package. When I run go test -update for the first time, the golden files contain empty documents — the function appears to produce empty output for all my test inputs. Should I fix the bug before committing the golden files?",
+      "expected_behavior": "No — at the characterization stage, the goal is empirical documentation, not correctness. The skill's key guardrail at step 6 says: if the golden file content looks like a bug, accept it anyway. Your job right now is to document reality. Pin the empty output. This actually reveals important information: the function produces empty output for these inputs, which is now documented. The decision of whether to fix the bug belongs to a later, explicit step. Fixing bugs during characterization contaminates the safety net — the tests now pin corrected behavior, not historical behavior, and the refactoring may not produce the same corrected output.",
+      "decision_axis": "The characterization posture (Feathers) requires accepting the actual output even when it looks wrong. Fixing bugs during characterization conflates two distinct activities: comprehension (what does it do?) and correction (is it doing the right thing?)."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I have a Go function that generates a deployment manifest. Its output includes a timestamp of when the manifest was generated (e.g. generatedAt: 2026-05-05T10:30:00Z). Every time I run go test -update, the timestamp changes and the golden file is invalidated. How do I handle this?",
+      "expected_behavior": "Non-deterministic output (timestamps, UUIDs, memory addresses) is a B-section failure mode for golden files. The skill requires normalizing or stripping these values before writing to the golden file. Options: (1) inject a clock interface that returns a fixed time in tests; (2) post-process the output before golden file comparison using a regexp to replace the timestamp with a stable placeholder; (3) add a String() or testString() method that omits the timestamp field from the golden representation. The key requirement is that the bytes written to the golden file are deterministic across runs. Never use golden files for non-deterministic output without this normalization step.",
+      "decision_axis": "The B-section failure mode: non-deterministic output causes spurious byte-comparison failures on every run. Normalize or strip non-deterministic values before comparison, or choose a different assertion strategy."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I've just joined a team that maintains a Go service that generates XML export files for an ERP integration. There are no tests. I don't understand what the service is supposed to produce — I can read the code but the business rules are opaque. I need to (a) build a safety net before touching anything, and (b) make sure the tests can be maintained long-term as the ERP schema evolves intentionally. How do I approach this?",
+      "merged_advantage": "The merged skill addresses both the comprehension problem and the long-term maintainability problem in a sequenced workflow. Steps 1–6 apply the Feathers fail-observe-pin posture to build comprehension: write a failing assertion, observe the actual XML output, inspect it to build a mental model of what the service does. Step 5 uses the Hashimoto -update flag to automate expected-value capture across all test cases at once. Step 6 requires human inspection of git diff test-fixtures/ — which simultaneously provides comprehension and serves as the correctness gate. Subsequent evolutions use -update after confirmed intentional schema changes, with git diff as the review mechanism.",
+      "source1_gap": "Feathers (welc/welc-characterization-test) alone provides the fail-observe-pin mechanism for building comprehension, but gives no guidance on how to store the expected output for complex multi-page XML blobs, how to update the expected output when the schema evolves intentionally, or how to scale to dozens of test cases without inline expected strings that are unmaintainable.",
+      "source2_gap": "Hashimoto (hashimoto/golden-files-update-flag) alone provides the -update flag and golden file storage, but gives no guidance on how to write tests for code whose behavior you don't know, no posture for treating the first run as a comprehension exercise, and no lifecycle guidance (when are these tests permanent fixtures vs. temporary scaffolding for a rewrite)."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "My team is doing a full rewrite of our Go reporting engine in a new architecture. The old engine has complex output — formatted CSV reports with calculated subtotals and headers. I want to make sure the new engine is a drop-in replacement. The old engine has no tests. How do I set up the verification that the new engine is behaviorally equivalent to the old one?",
+      "merged_advantage": "The merged skill provides the complete rewrite-with-behavioral-invariant workflow: (1) use the Feathers posture to write characterization tests against the old engine's public API — discover what it actually produces for each input category; (2) use golden files (Hashimoto) as the committed byte-for-byte contract stored in test-fixtures/; (3) run the identical tests against the new engine in CI — any behavioral divergence appears as a named golden file failure. The Feathers posture ensures the tests are written at the API boundary (so they survive the structural rewrite). The Hashimoto golden file mechanism makes the contract machine-checkable in CI with readable diffs.",
+      "source1_gap": "Feathers alone handles the comprehension and API-boundary targeting but has no answer for how to store the complex expected values (multi-row CSV with dynamic data) or how to make the comparison readable when the new engine diverges (raw bytes.Equal on a 500-line CSV is an unreadable failure message).",
+      "source2_gap": "Hashimoto alone provides golden file storage and the -update flag but assumes you already know what the correct output is. For a legacy engine with no spec and no tests, there is no known-correct output to pin — the first-run fail-observe-pin posture (Feathers) is required to discover and validate the expected values before committing them."
+    }
+  ]
+}

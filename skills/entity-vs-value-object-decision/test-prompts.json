@@ -1,0 +1,48 @@
+{
+  "skill_id": "entity-vs-value-object-decision",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "I'm modeling a logistics domain. Should `ShippingAddress` be an entity or a value object in Go? What about `Shipment`?",
+      "expected_behavior": "Apply the three-question framework to both types. ShippingAddress: immutable per-order (yes), describes a location (yes), value-comparable (yes) → value object: value-type struct, unexported fields, no UUID. Shipment: tracked across status transitions (no to immutability) → entity: pointer struct, UUID field, pointer receivers."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "My team is arguing about whether `Money` (amount + currency code) should have a UUID so we can track individual money values. How do I settle this?",
+      "expected_behavior": "Invoke the framework: Money is immutable (yes), measures a domain concept (yes), value-comparable (yes). UUID is incorrect — two Money values with the same amount and currency are equal regardless of origin. Implement as value-type struct with unexported fields; Add/Subtract return new Money instances."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "During modeling I'm not sure whether `ProductVariant` (size, color, SKU) needs its own identity or can be treated as a value. How do I decide?",
+      "expected_behavior": "Walk through the three questions: Is it immutable? Does it describe a product configuration? Can two variants with the same size/color/SKU be considered equal? If all yes → value object. If the business tracks individual variant inventory separately with its own lifecycle → entity. Guide the developer to ask the identity-tracking question in domain terms."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_not_invoke",
+      "prompt": "How do I connect my Go application to a PostgreSQL database using pgx?",
+      "expected_behavior": "No invocation of the entity/value-object framework. This is an infrastructure question about database connectivity, not a domain modeling decision."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "Should I use goroutines or channels for processing a batch of 10,000 records in my data pipeline?",
+      "expected_behavior": "No invocation of the framework. This is a concurrency design question unrelated to DDD domain type classification."
+    },
+    {
+      "id": "tp-06",
+      "category": "blurred_boundary",
+      "prompt": "I have a `Customer` type. In the Orders bounded context it only needs name and email. In the CRM context it has a full history and must be tracked. Should it be a value object or entity?",
+      "expected_behavior": "Invoke the framework per-context: in Orders, Customer may be a value object if it is immutable per order (snapshot semantics). In CRM, Customer requires identity tracking → entity. Clarify that the classification applies within a single bounded context, not globally across the system."
+    },
+    {
+      "id": "tp-07",
+      "category": "blurred_boundary",
+      "prompt": "I want to use GORM for my domain model. My `Address` struct passes all three value-object questions but GORM needs exported fields. Should I still model it as a value object?",
+      "expected_behavior": "Acknowledge the ORM impedance mismatch: the domain type should remain a value object with unexported fields; a separate persistence/ORM struct (adapter) handles the GORM mapping. The domain model's purity takes precedence; the persistence model translates. Flag this as a known limitation of the framework."
+    }
+  ]
+}

@@ -17,8 +17,8 @@ description: |
   - The question is about write conflicts between concurrent writers (use `transaction-isolation-level-selection`).
 
   Key signals: "user sees old data after update," "eventual consistency is fine," "it'll catch up," "read replica routing," "monotonic reads," "read-your-writes."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 6: Replication"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 6: Replication'
 tags: [replication, replication-lag, read-your-writes, monotonic-reads, consistent-prefix, consistency, correctness]
 related_skills: [replication-topology-selection, transaction-isolation-level-selection, timeliness-vs-integrity-distinction]
 ---
@@ -46,7 +46,7 @@ Replication lag handling or stale-read guards:
 >
 > — Kleppmann & Riccomini, Chapter 6: Replication
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -64,7 +64,7 @@ The key non-obvious insight: these are correctness problems, not performance pro
 
 Implementation options for read-your-writes: route reads of recently-written data to the leader; or pass the write's replication position (log sequence number) to the client in the response, and require that the replica serving subsequent reads has caught up to at least that position before answering.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -82,7 +82,7 @@ Implementation options for read-your-writes: route reads of recently-written dat
 - **Conclusion:** The fix is sticky routing: route a given user's reads to the same replica for the duration of their session. If that replica fails, routing can switch, accepting a one-time regression. Sticky routing does not require the replica to be current, only consistent with itself across a user's session.
 - **Result:** Users experience a non-monotonic view of data — a causally impossible sequence (items appear, then vanish, then re-appear as lag catches up). This erodes trust in the system even though no data was lost.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -105,29 +105,33 @@ Implementation options for read-your-writes: route reads of recently-written dat
 - Difference from `replication-topology-selection`: lag-as-correctness operates within an already-chosen single-leader topology and addresses routing and position-tracking logic; topology selection decides how many leaders exist and how conflicts are resolved.
 - Difference from `transaction-isolation-level-selection`: isolation levels govern concurrent transaction interference on the primary; replication lag governs what followers return relative to the primary — these are distinct layers of the correctness problem.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Classify the lag violation type**
+
    - Identify which of the three guarantees is violated: read-your-writes (user reads their own recent write and sees old value), monotonic reads (user sees data go backward in time), or consistent prefix (causally-ordered sequence appears out of order).
    - Completion criteria: The violation is named. This determines which routing or gating mechanism is applicable.
 
 2. **Identify the specific read paths that require the guarantee**
+
    - Not all reads require read-your-writes. A public profile page read by anyone does not; a user's own account settings page read immediately after editing does. Map each read path to its consistency requirement.
    - Completion criteria: A list of read paths tagged as requiring read-your-writes / monotonic reads / consistent prefix, with justification.
 
 3. **Implement the appropriate routing or position-tracking mechanism**
+
    - **Read-your-writes**: Option A — route reads of recently-modified data to the leader for a time window (e.g., 1 minute after any write by this user). Option B — return the write LSN in the write response; gate subsequent reads until the follower's replication position equals or exceeds that LSN.
    - **Monotonic reads**: Implement session-sticky routing — route a user's reads to the same replica for the session. Store the selected replica ID in the session.
    - **Consistent prefix reads**: Ensure causally-related writes are sent to the same shard or replication stream so their ordering is preserved.
    - Completion criteria: Routing logic is implemented and the specific read path no longer exhibits the violation under simulated lag (test by artificially pausing a replica).
 
 4. **Do not treat lag reduction as the fix**
+
    - Lag reduction (tuning network, adding replicas) is an operational improvement that reduces the probability window but does not eliminate the violation. A system with 10ms lag still violates read-your-writes for users who act within those 10ms. The fix must be structural (routing or gating), not operational (lag tuning).
    - Completion criteria: The architecture document states which paths are leader-routed or LSN-gated, not "we minimize lag."
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -152,7 +156,7 @@ Implementation options for read-your-writes: route reads of recently-written dat
 
 - **Lag reduction vs. lag routing**: The most common mistake is treating lag as a tuning problem. Engineers who see a read-your-writes violation attempt to reduce replication lag via hardware or configuration. This reduces the probability window but does not eliminate the guarantee violation. The correct methodology is routing-based: guarantee that specific reads go to the right source, regardless of lag level.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -160,7 +164,7 @@ Implementation options for read-your-writes: route reads of recently-written dat
 - **contrasts_with**: transaction-isolation-level-selection — isolation levels address concurrent transaction interference on the primary; replication lag addresses what followers return relative to the primary; they are distinct correctness layers.
 - **composes_with**: timeliness-vs-integrity-distinction — lag violations are timeliness violations by default, but the TVI framework determines whether a specific lag-induced stale read can cascade into a permanent integrity violation requiring different treatment.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

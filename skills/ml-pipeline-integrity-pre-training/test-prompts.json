@@ -1,0 +1,111 @@
+{
+  "skill_id": "ml-pipeline-integrity-pre-training",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "ml-with-go/ml-evaluate-before-you-build",
+    "practical-data-modeling/point-in-time-ml-feature-correctness"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm about to train a churn prediction model. What should I check before I run the training job?",
+      "expected_behavior": "Skill runs both pre-training phases in sequence. Phase 1 (Whitenack): is the evaluation metric defined and documented with business-cost justification before any model code runs? Are the training/test/holdout splits created before training? Phase 2 (Reis): does every feature join in the training pipeline include an AS OF temporal constraint anchored to the label date? Does each feature table preserve history with valid_from/valid_to? Both phases must pass before the training loop runs.",
+      "expected_not": "Should not skip the temporal feature check or the pre-committed metric check. Should not advise starting with model selection before the evaluation metric is defined."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My churn model gets 0.91 AUC on the holdout set but only 0.72 AUC in production from the first day it was deployed. What is the likely cause?",
+      "expected_behavior": "Skill runs the two-part diagnostic. First (Whitenack): was the evaluation metric defined before training? If the metric was chosen to flatter results, the holdout metric is biased. Second (Reis): do all feature joins have AS OF temporal constraints? An immediate, large training-production gap that appears from first deployment — not gradually — is the structural leakage diagnostic signal. If feature tables join by entity key without temporal constraints, the model learned patterns from future information unavailable at prediction time.",
+      "expected_not": "Should not recommend hyperparameter tuning or architecture changes as the first response to an immediate production gap. Should not prescribe only one of the two diagnostic checks."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "Our training pipeline joins the customer features table to churn labels by customer_id. There is no date parameter in the join. Is this a problem?",
+      "expected_behavior": "Skill identifies this as structural temporal leakage: the join retrieves the current feature values at training time, which may reflect events after the label date. The fix is the AS OF join pattern anchored to label.label_date. Additionally, the fix requires verifying the feature table preserves history (valid_from, valid_to) — if it stores only current values, the AS OF join is structurally impossible and a data model change is required first.",
+      "expected_not": "Should not say the join is safe if the data is 'recent enough' or if the model is retrained frequently."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "Let's train the model first and then decide which evaluation metric to use based on what looks best.",
+      "expected_behavior": "Skill stops and flags this as the Whitenack failure trigger: choosing the metric after seeing model results is selection bias. The metric must be defined with its business-cost justification before any model code is written. The skill requires defining the metric (and holdout split) as a gate that must pass before proceeding to feature engineering and training.",
+      "expected_not": "Should not permit proceeding to training before the metric is defined."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We retrained our model on recent data but the training-production gap is still large. We expected retraining to fix it. What is happening?",
+      "expected_behavior": "Skill identifies this as the Reis structural leakage signal: retraining on a leaking pipeline produces a new leaking model. The gap persists through retraining because the training data continues to encode future information via feature joins without temporal constraints. Retraining on new data does not fix a structural pipeline problem. The fix requires correcting the pipeline before retraining, not retraining on different data.",
+      "expected_not": "Should not suggest collecting more data or training for more epochs as the solution to a persistent training-production gap."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How should I tune the learning rate and regularization parameters for my gradient boosting model?",
+      "expected_behavior": "This is a hyperparameter tuning question. Appropriate response covers cross-validation strategies, grid search vs. random search vs. Bayesian optimization, and regularization parameter effects. The ml-pipeline-integrity-pre-training skill addresses pre-training structural checks, not post-architecture hyperparameter tuning.",
+      "expected_not": "Should not invoke ml-pipeline-integrity-pre-training skill."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "What is the best way to serve my trained churn model in production with low latency?",
+      "expected_behavior": "This is a model deployment and serving question. Appropriate response covers model serving frameworks, inference optimization, caching strategies, and monitoring. The ml-pipeline-integrity-pre-training skill addresses pre-training pipeline integrity checks, not model serving.",
+      "expected_not": "Should not invoke ml-pipeline-integrity-pre-training skill."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "How do I design features for predicting customer lifetime value? What signals are most predictive?",
+      "expected_behavior": "This is a feature engineering design question for a specific domain. Appropriate response covers domain knowledge application, feature categories (behavioral, transactional, demographic), and feature selection approaches. The ml-pipeline-integrity-pre-training skill checks temporal constraints on existing features, not feature design or domain-specific signal selection.",
+      "expected_not": "Should not invoke ml-pipeline-integrity-pre-training skill."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "We retrain our fraud detection model every week on live transaction data — not historical batches. The training labels come from real-time fraud flags that are reviewed within 24 hours. How does the AS OF temporal constraint apply when 'now' is effectively always the feature timestamp?",
+      "expected_behavior": "The AS OF constraint still applies but takes a different form. In continuous retraining on live data, the label_date for each training example is the transaction timestamp, not a historical date. The constraint must ensure that features joined to each training example reflect the state of the feature at the time of that specific transaction — not the current state at retraining time. If the feature store is updated in place without history preservation, retraining on live data re-introduces temporal leakage for recent transactions where feature values have changed since the transaction occurred. The fix: the feature store must still preserve history (valid_from/valid_to per feature update), and the AS OF join must anchor to the transaction timestamp for each label, even when that timestamp is recent. The 24-hour review window introduces a separate concern: fraud flags reviewed after the label date may also be future-contaminated if the review process uses post-transaction information. This is a label leakage concern that the skill's scope limitation notes it does not fully cover.",
+      "decision_axis": "Phase 2 (Reis) AS OF pattern: the temporal anchor is always the label event timestamp, regardless of whether training is batch or continuous. The 'now = feature timestamp' framing only applies if the feature values at the transaction timestamp can be retrieved — which requires history preservation in the feature store."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "We applied Whitenack's pre-training metric commitment to our pipeline. The holdout AUC is 0.88. After investigating, we realize our feature joins were temporally leaking. We fix the leakage. Now what metric should we report?",
+      "expected_behavior": "The holdout set that was split from the temporally contaminated dataset is also contaminated — it was split before the AS OF fix was applied. The 0.88 holdout AUC measures the model's ability to exploit future information, not its genuine generalization. After fixing the leakage, the team must reconstruct the splits using AS OF joins on the full historical data and re-evaluate on a clean holdout set. The pre-committed metric (AUC) remains valid — the metric definition is correct, it was the data that was wrong. The 0.88 result should be documented as an integrity-compromised measurement and discarded from the performance record. The re-evaluation on clean data with the same metric is the valid result.",
+      "decision_axis": "Synthesis-specific failure mode: Whitenack's holdout integrity check passes (metric was pre-committed, holdout touched once) but Reis' leakage contaminates the holdout data by the same mechanism as the training data. Both checks must pass on the same data pipeline — a clean metric on contaminated data is not a valid result."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "A team member says: 'The model performs better after we changed the evaluation metric from F1 to AUC-PR.' The metric change happened after seeing the model's results on the current data. Is this an acceptable improvement?",
+      "expected_behavior": "No — this is the Whitenack selection bias failure mode. Changing the evaluation metric after seeing model results allows the developer to choose the metric that flatters the current model, not the one that reflects the business problem. AUC-PR may be a genuinely better metric for an imbalanced classification problem, but the correct procedure is: (1) document the original F1 result, (2) define AUC-PR with an explicit rationale (why does precision-recall area capture the business cost of errors better than F1?), (3) evaluate on data not yet seen under the new metric. Retroactively applying AUC-PR to already-evaluated data is a metric integrity failure. If the team cannot run on fresh held-out data, they must at minimum document the metric change with its rationale and acknowledge the integrity limitation.",
+      "decision_axis": "Whitenack's metric integrity rule: if the metric is changed post-training without documentation on data not yet seen under the new metric, it is selection bias regardless of whether the new metric is technically superior."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our model evaluation metrics look great on the holdout set (pre-committed metric, holdout touched once) but the model fails in production immediately from day one. Two engineers disagree about the cause: one says the holdout procedure is wrong, the other says the features are leaking. How do I determine which is the issue?",
+      "merged_advantage": "The merged skill runs the two-part sequential diagnostic and explains that BOTH can be true simultaneously, and one can mask the other. If the holdout was split from a temporally contaminated dataset (Reis), the holdout metric is inflated by the same leakage as the training metric — Whitenack's holdout integrity procedure was followed correctly on dishonest data. The Reis diagnostic (AS OF constraint audit) identifies the source of inflation. Conversely, even with clean data, a post-hoc metric change could inflate the holdout result. The merged skill instructs: run Whitenack's check first (metric committed before training, holdout untouched) and Reis' check second (every join has AS OF constraint). An immediate, large, day-one gap with retraining persistence points to Reis; a gap that appeared after a metric change points to Whitenack.",
+      "source1_gap": "Whitenack's source skill confirms the holdout procedure was followed correctly and has no mechanism to detect that the holdout data itself is temporally contaminated — it trusts the data.",
+      "source2_gap": "Reis' source skill detects the temporal leakage and prescribes the AS OF fix but does not assess whether the holdout metric was honestly derived from a pre-committed evaluation framework."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "Before our next model training run, what is the complete pre-flight checklist to maximize confidence that our training-production metrics will align?",
+      "merged_advantage": "The merged skill provides a sequenced two-phase checklist with gates: Phase 1 (Whitenack, before feature engineering) — metric defined with business cost justification, splits created and versioned, holdout locked; Phase 2 (Reis, before training loop) — every feature join audited for AS OF temporal constraint, every feature table verified to preserve history, spot-check comparing AS OF values to current values. Both gates must pass before the training loop runs. The merged skill explains that passing Phase 1 alone does not protect against Reis-contaminated data inflating the holdout metric, and passing Phase 2 alone does not protect against a retroactive metric change invalidating the evaluation.",
+      "source1_gap": "Whitenack's source skill provides the metric integrity checklist but has no feature temporal correctness phase — a developer following only this checklist can produce an honest evaluation of a dishonest model.",
+      "source2_gap": "Reis' source skill provides the feature temporal correctness audit but has no metric pre-commitment phase — a developer following only this checklist can have clean data evaluated against a biased metric."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our agent performance tier prediction model shows high training accuracy but fails in production. Investigation shows that agents promoted from Tier 2 to Tier 1 in 2024 appear as Tier 1 for all their 2023 tickets in the training data. The metric was defined before training. Why does the model still fail?",
+      "merged_advantage": "The merged skill identifies this as the Reis temporal contamination pattern (slowly changing dimensions — the agent's tier attribute changed and history was not preserved) masking itself from Whitenack's check. Whitenack's metric pre-commitment procedure was correctly followed — the metric is valid and unbiased. But the training data encodes the future attribute value (Tier 1) for historical events (2023 tickets assigned when the agent was Tier 2). The AS OF join must use the ticket's assigned_at timestamp to retrieve the agent's tier at assignment time. The fix requires the agent performance tier table to preserve history (valid_from/valid_to per tier change) — a data model change, not a query change. Whitenack's check alone cannot detect this; Reis' check is the diagnostic.",
+      "source1_gap": "Whitenack's source skill confirms the metric integrity is sound and provides no further diagnostic — the check passed, and there is nothing further to examine from the metric validity perspective.",
+      "source2_gap": "Reis' source skill identifies the slowly-changing dimension leakage and the AS OF fix but does not confirm that the metric integrity is sound — without Whitenack's check, it is unknown whether the evaluation framework itself is also compromised."
+    }
+  ]
+}

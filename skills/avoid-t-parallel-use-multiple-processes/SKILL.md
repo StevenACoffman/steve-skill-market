@@ -51,7 +51,7 @@ Per-package test targets in CI config:
 >
 > ```go
 > func TestThing(t *testing.T) {
->     t.Parallel()
+> 	t.Parallel()
 > }
 > ```
 >
@@ -128,7 +128,7 @@ sequential tests within each package in exchange for unambiguous failures.
 this policy. When a test fails, the root cause is always a logic bug in that
 package. Race conditions are a separate signal from a separate CI stage.
 
----
+______________________________________________________________________
 
 ### Case 2: the -Parallel=1 and -parallel=N Investigation Protocol (C10)
 
@@ -211,13 +211,13 @@ methodology if you are already using parallelism and cannot remove it.
 ```go
 // Before (avoid this)
 func TestProcessOrder(t *testing.T) {
-    t.Parallel()
-    // test body
+	t.Parallel()
+	// test body
 }
 
 // After
 func TestProcessOrder(t *testing.T) {
-    // test body — no t.Parallel()
+	// test body — no t.Parallel()
 }
 ```
 

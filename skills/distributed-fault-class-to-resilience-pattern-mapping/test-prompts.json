@@ -1,0 +1,111 @@
+{
+  "skill_id": "distributed-fault-class-to-resilience-pattern-mapping",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "grpc-microservices-in-go/grpc-resilience-pattern-layering",
+    "kleppmann/distributed-fault-taxonomy"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "My gRPC service uses retries for all errors. Now I'm seeing cascading failures when a downstream service goes down for several minutes. What should I fix?",
+      "expected_behavior": "Skill classifies this as a network-availability persistent fault. Retry without a circuit breaker floods a recovering downstream service. The fix is a circuit breaker wrapping the retry, configured as a single shared interceptor per downstream connection (not per-call). When the failure rate exceeds a threshold, the circuit opens and the retry loop does not execute.",
+      "expected_not": "Should not prescribe fencing tokens or logical clocks for this scenario — those address process-pause and clock-skew faults, not network availability."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "Our retry and circuit breaker setup is not preventing duplicate job processing. The same job is being processed twice even though we have Redis SETNX locks with a 30-second TTL.",
+      "expected_behavior": "Skill classifies this as a process-pause fault class, not a network-availability fault. The circuit breaker at the call layer is irrelevant: once the lock is acquired, the circuit breaker plays no role. The failure is a zombie process holding a stale lock after a GC pause or container suspension longer than the TTL. The fix is fencing tokens at the job queue or storage layer — the resource rejects writes from processes presenting tokens older than the most recently issued token.",
+      "expected_not": "Should not suggest tuning the circuit breaker threshold, increasing the retry backoff, or extending the TTL buffer as a sufficient fix."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "We use last-write-wins conflict resolution based on wall-clock timestamps and our clocks are synced with NTP. A senior engineer says LWW with NTP is not safe. Is that right?",
+      "expected_behavior": "Skill classifies this as a clock-skew fault class. NTP accuracy is tens of milliseconds over the internet; LWW with wall-clock timestamps silently discards causally later writes from machines with slow clocks. The fix is to replace wall-clock ordering with logical ordering: Lamport timestamps or vector clocks for causal ordering, or fencing tokens for lease/lock validity.",
+      "expected_not": "Should not say NTP is sufficient for distributed ordering or suggest using higher-precision clocks as a complete solution."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "The timeout was set correctly on our distributed lock, but a node thought it was still the leader and kept writing after the lease expired. How did this happen?",
+      "expected_behavior": "Skill classifies this as a process-pause fault: the node's lease check passed before a GC or VM migration pause, then the node resumed without knowing time had elapsed. TTL-based validity checks cannot protect against this. The fix is fencing tokens at the storage layer: a monotonically increasing token issued at lock grant; the resource rejects writes with tokens older than the most recently seen.",
+      "expected_not": "Should not suggest a smaller TTL or faster heartbeat as a complete solution — the process can pause for longer than any practical TTL."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We applied circuit breaker logic at each gRPC call site individually. The circuit never opens even though 80% of calls are failing. What is wrong?",
+      "expected_behavior": "Skill identifies per-call circuit breaker instances as the bug: each call creates an independent circuit breaker with its own failure counter. The failure rate is split across N independent instances, so no single instance reaches the trip threshold. The fix is one shared circuit breaker instance per downstream connection, registered as a client interceptor with grpc.WithUnaryInterceptor.",
+      "expected_not": "Should not suggest increasing the trip threshold percentage or adding more retries."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How do I configure service discovery for a Kubernetes-based gRPC microservices deployment?",
+      "expected_behavior": "This is a service discovery configuration question. Appropriate response covers DNS-based discovery, headless services, gRPC load balancing client-side or via Envoy, and Kubernetes service types. The distributed-fault-class-to-resilience-pattern-mapping skill addresses fault classification and mitigation patterns, not service discovery infrastructure.",
+      "expected_not": "Should not invoke distributed-fault-class-to-resilience-pattern-mapping skill."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "Should I use Kafka or NATS as the message broker for my event-driven microservices?",
+      "expected_behavior": "This is a message broker selection question. Appropriate response covers throughput, ordering guarantees, consumer group semantics, retention, and operational complexity. The distributed-fault-class-to-resilience-pattern-mapping skill covers fault classification and resilience patterns, not message broker selection.",
+      "expected_not": "Should not invoke distributed-fault-class-to-resilience-pattern-mapping skill."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "How do I set up mutual TLS between my gRPC microservices?",
+      "expected_behavior": "This is a network security configuration question. Appropriate response covers certificate generation, TLS configuration in gRPC Go, certificate rotation, and service mesh options. The distributed-fault-class-to-resilience-pattern-mapping skill covers fault classes and their mitigations, not transport security setup.",
+      "expected_not": "Should not invoke distributed-fault-class-to-resilience-pattern-mapping skill."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "A Kafka consumer in our pipeline is 'unavailable' for 30-60 seconds during partition rebalancing. We see timeouts from upstream services during this window. Should we classify this as a network-availability fault or a process-pause fault?",
+      "expected_behavior": "This is a process-pause fault class, not a network-availability fault. Partition rebalancing is a form of process pause: the consumer is suspended from the perspective of its partition assignment while the cluster coordinator performs rebalancing. The consumer resumes after the rebalance completes. The upstream timeout during rebalancing looks like a network-availability fault but the root mechanism is a controlled process suspension. The correct mitigation: upstream services should treat the consumer as temporarily unavailable (retry + circuit breaker for the network-availability symptom), but the consumer itself must not act on partition offsets or write to a protected resource while it does not have a valid assignment — this requires fencing at the consumer level (the partition assignment token serves as the fencing mechanism). Applying only the retry + circuit breaker stack addresses the upstream symptom but does not prevent the consumer from processing stale messages if it resumes with an invalid assignment.",
+      "decision_axis": "Fault class classification rule: the key is the mechanism — the consumer did not fail due to network conditions, it was suspended by the rebalance coordinator. The two-level response (upstream sees network-availability symptom; consumer must enforce its own fencing) falls out of the process-pause mitigation steps."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "Our system uses gRPC circuit breakers to protect calls to a lock service, and also uses distributed locks backed by that service. A junior engineer says: 'The circuit breaker means if the lock service goes down, we're protected.' What is actually protected and what is not?",
+      "expected_behavior": "The circuit breaker protects the network-availability failure path: if the lock service becomes unavailable, the circuit breaker opens and callers fail fast without retry storms. What is NOT protected: any process that has already acquired a lock and then pauses (GC, VM migration) for longer than the lock TTL. During that pause, the circuit breaker plays no role — no new call is being made. The paused process holds a stale token and may resume with stale authority. The circuit breaker is blind to this failure class. Complete protection requires both: circuit breaker for network-availability faults when acquiring locks, and fencing tokens at the protected resource for process-pause faults after lock acquisition.",
+      "decision_axis": "Synthesis-specific masking hazard from the B (Boundary) section: the circuit breaker at the call layer is blind to the process-pause fault class; an open circuit does not invalidate a lock already held by a paused process."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "We have a distributed lock with a 30-second TTL. We added a safety buffer by checking the TTL every 10 seconds, so we have a 20-second buffer before the lock expires. Isn't that sufficient to handle GC pauses?",
+      "expected_behavior": "No. The buffer argument is invalid for process-pause faults: a process pause can occur at any point, including between the TTL check and the protected write operation. A GC pause of longer than the buffer duration is possible in JVM or Go services under heavy load. The TTL check before the write is a time-of-check-time-of-use race regardless of the buffer size. The only correct mitigation is fencing tokens at the resource layer — a monotonically increasing token that the resource rejects if it is not the most recently issued, regardless of elapsed time.",
+      "decision_axis": "A2 trigger in the skill: 'We use Redis SETNX with a 30-second TTL. A worker checks the TTL every 10 seconds so we have 20 seconds of buffer.' The buffer argument is explicitly identified as invalid."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "We have a retry + circuit breaker stack protecting our order service's gRPC calls to the inventory service. We also use a Redis distributed lock to prevent concurrent inventory updates. A post-mortem shows duplicate inventory decrements despite correct circuit breaker configuration. What is the gap?",
+      "merged_advantage": "The merged skill identifies the gap at the fault-class boundary: the circuit breaker correctly handles network-availability faults when acquiring the lock, but once the lock is acquired, a worker process that pauses (GC, container scheduler) for longer than the lock TTL can resume and write concurrently with a new lock holder. The circuit breaker is blind to this second failure class. The merged skill prescribes fencing tokens at the inventory storage layer as the additional mitigation — and explicitly names this the 'masking hazard' in the Boundary section.",
+      "source1_gap": "Babal's source skill validates the circuit breaker stack for network-availability faults and confirms it is correctly configured. It has no mechanism to detect that the process-pause failure class is not covered.",
+      "source2_gap": "Kleppmann's source skill explains the process-pause fault and fencing tokens but does not provide the concrete gRPC circuit breaker configuration that covers the network-availability path. The merged skill explains that both mitigations are required and are not substitutes for each other."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our payments team wants to add resilience to their gRPC service chain. They are planning: (a) retry with exponential backoff, (b) circuit breaker per downstream service, and (c) distributed lock via Zookeeper to prevent concurrent payment processing. Is this stack complete?",
+      "merged_advantage": "The merged skill evaluates the stack across two fault classes simultaneously. (a) + (b) correctly address the network-availability fault class for the gRPC calls. (c) protects against concurrent writes — but only if fencing tokens are implemented at the payment storage layer. If the circuit breaker alone is used with the distributed lock, the process-pause gap is open: a paused payment service can resume after its lock has expired and process the same payment concurrently with another worker. The merged skill tells the team to add fencing token validation at the payment record storage layer as the missing component.",
+      "source1_gap": "Babal's source skill validates items (a) and (b) as correct for the network-availability class. It does not analyze item (c) — it has no process-pause fault class analysis.",
+      "source2_gap": "Kleppmann's source skill explains why item (c) needs fencing tokens but does not assess whether items (a) and (b) are correctly configured for the gRPC call layer."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "After a post-mortem, a team wants a decision framework for adding resilience: 'Given a failure symptom, what do we add?' Can you give them a table?",
+      "merged_advantage": "The merged skill provides a two-axis classification table: symptom → fault class → wrong mitigation (what not to add) → correct mitigation. Specifically, it distinguishes network-availability faults (retry + circuit breaker), process-pause faults (fencing tokens at resource layer — circuit breaker is wrong mitigation), and clock-skew faults (logical clocks — NTP is wrong mitigation). No single source provides this complete table.",
+      "source1_gap": "Babal's source skill provides the retry + circuit breaker stack for network-availability but has no fault classification table for process-pause or clock-skew scenarios.",
+      "source2_gap": "Kleppmann's source skill provides the process-pause and clock-skew taxonomy but does not provide the concrete gRPC retry + circuit breaker implementation details for the network-availability column."
+    }
+  ]
+}

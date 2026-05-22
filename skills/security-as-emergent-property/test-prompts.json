@@ -1,0 +1,62 @@
+{
+  "skill": "security-as-emergent-property",
+  "description": "Use this skill when a user is evaluating whether security (or reliability) can be added to an existing system, estimating the cost of retrofitting a security control, or deciding where in the development lifecycle security reviews should occur.",
+  "test_prompts": [
+    {
+      "id": "security-as-emergent-property-should-01",
+      "category": "should_invoke",
+      "prompt": "We launched our B2B SaaS product 14 months ago with no authentication on the inter-service API — it's a private VPC, so we assumed that was fine. A pen tester just told us any service that gets compromised can pivot to any other. Engineering estimated 3 weeks to add mTLS. Our security lead thinks that's a 3× underestimate. Who's right and how do we figure out the real scope?",
+      "expected": "invoke",
+      "rationale": "Classic emergent-property retrofit scenario: security not designed in, now being estimated as an add-on. The 3× underestimate disagreement is the exact predictive case in the skill — the engineering estimate accounts for the mTLS mechanism, not the integration surface (every caller, every deployment manifest, every test). Invoke to explain why the security lead is likely right and how to map the integration surface."
+    },
+    {
+      "id": "security-as-emergent-property-should-02",
+      "category": "should_invoke",
+      "prompt": "Our security team keeps getting pulled into pre-launch reviews where they find architectural issues we can't fix without slipping the launch date. The pattern repeats every quarter. How do we restructure the security review process so we stop discovering these problems too late?",
+      "expected": "invoke",
+      "rationale": "Pre-launch security review finding architectural problems too late is the canonical emergent-property failure mode the skill addresses. The fix — moving security review to design time before the integration surface is established — is the skill's core prescription."
+    },
+    {
+      "id": "security-as-emergent-property-should-03",
+      "category": "should_invoke",
+      "prompt": "Post-incident review: we had a data breach and the finding is 'add encryption at rest to the user data store.' We've estimated 2 sprints. Someone on the architecture team is pushing back hard, saying encryption at rest touches 'way more than just the database.' What are they seeing that the 2-sprint estimate is missing?",
+      "expected": "invoke",
+      "rationale": "The architect's pushback is the emergent-property intuition — encryption at rest is not localized to the database layer. The estimate misses the integration surface: key management provisioning, backup pipeline changes, log redaction, any service that reads data from the store now needs to handle decryption. The skill explains structurally why the estimate is likely wrong."
+    },
+    {
+      "id": "security-as-emergent-property-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We're designing a new payments microservice from scratch. What security controls do we need to build in — authentication, authorization, encryption in transit, audit logging? What should be in the design doc?",
+      "expected": "skip",
+      "rationale": "This is a greenfield system asking for design-time prescriptions, not a retrofit diagnosis. The skill's boundary explicitly says: 'Do NOT use when the user is designing a new system from scratch and asking what to design in — this skill is the diagnostic for why retrofit fails, not the design recipe.' The right skills are tcb-identification-minimization and specific design-time control skills."
+    },
+    {
+      "id": "security-as-emergent-property-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We need to add rate limiting to our public API — we're getting hammered by scrapers. What's the cleanest way to implement this at the edge without touching individual services?",
+      "expected": "skip",
+      "rationale": "Rate limiting at the edge is a specific tactical control with a localized implementation (an edge proxy). The skill's boundary excludes 'questions about a specific tactical security control.' Edge rate limiting is not an emergent property problem — it can be added at the edge without cascading changes to internal services. The right response is implementation guidance for edge rate limiting."
+    },
+    {
+      "id": "security-as-emergent-property-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "Our SLO dashboards show we're breaching our 99.9% availability target for the checkout service three months in a row. The RCA keeps pointing to the payment provider dependency. How do we improve reliability here?",
+      "expected": "skip",
+      "rationale": "Reliability-only question with no security component. The skill's boundary explicitly excludes 'question is about reliability only, with no security component.' The right approach is reliability-specific skills: circuit breakers, fallback paths, SLO error budget analysis — not the emergent-property retrofit diagnosis."
+    },
+    {
+      "id": "security-as-emergent-property-boundary-01",
+      "category": "boundary",
+      "prompt": "We're adding authorization to a system that was built 8 months ago. The good news is we have a very clean service mesh — all inter-service traffic goes through an Envoy sidecar. Can we enforce authorization at the sidecar layer without touching application code?",
+      "expected": "invoke",
+      "rationale": "Boundary case: the team has a clean enforcement point (Envoy sidecar) that could make this a localized addition rather than a full emergent-property retrofit. The skill's boundary acknowledges 'if the system was designed with explicit interface contracts and low coupling, adding a security control may be tractable even post-design.' Invoke to apply the integration surface diagnostic: if all traffic genuinely goes through the sidecar, the proxy-first approach (Step 4 in execution) may work — but credential provisioning for the sidecar and test changes are still integration surface items to scope."
+    },
+    {
+      "id": "security-as-emergent-property-boundary-02",
+      "category": "boundary",
+      "prompt": "We did a STRIDE threat model on our system after it was built and found we never designed for the 'repudiation' threat — we have no audit log. Our CTO thinks we can just add a logging middleware and be done. Is an audit log the kind of thing you can bolt on?",
+      "expected": "invoke",
+      "rationale": "Audit logging is interesting: it can sometimes be localized at a middleware layer, but complete non-repudiation coverage requires that every decision point (auth checks, data mutations) emits to the log. Whether this is localized or emergent depends on whether a single enforcement point captures all decisions. Invoke to apply the integration surface test: if the system routes all mutations through a single service, middleware may suffice; if mutations are distributed, the team underestimates the scope."
+    }
+  ]
+}

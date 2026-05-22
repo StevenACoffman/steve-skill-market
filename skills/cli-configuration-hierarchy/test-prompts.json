@@ -1,0 +1,87 @@
+{
+  "skill": "cli-configuration-hierarchy",
+  "version": "0.1.0",
+  "source_book": "Command Line Interface Guidelines — Prasad, Firshman, Tashian, Parish",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I'm building a CLI that talks to our internal API. Every invocation needs to know the base URL (e.g., https://api.example.com). Should I make users pass --base-url every time, or is there a better approach?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should apply the two-axis decision: base URL is session/machine-stable and per-user/per-machine, so it belongs in an environment variable (e.g., MYAPP_BASE_URL). Flags may also override it. The agent should NOT invoke cli-secret-handling since a URL is not a secret.",
+      "notes": "Classic configuration placement question: a URL that repeats on every invocation. Tests the 'retype the same flags every time' trigger."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "What's the right precedence order for my CLI? I have flags, a .env file, a ~/.myapp config file, and environment variables. Which one should win when the same key appears in multiple sources?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should enumerate the full precedence hierarchy: flags (highest) > shell env vars > project .env > user-level config > system-wide config (lowest), and explain that each higher level must shadow lower ones.",
+      "notes": "Direct precedence order question — a core skill trigger signal."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "My CLI tool is creating ~/.mytool in the user's home directory to store preferences. A user filed a bug saying this is cluttering their home dir. Where should my tool store its config instead?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should explain the XDG Base Directory Specification: user-level config belongs in ~/.config/mytool/ (XDG_CONFIG_HOME), not in ~/.<appname>. Should explain how to read XDG_CONFIG_HOME with a fallback to ~/.config.",
+      "notes": "Matches the 'My tool created ~/.appname — is that right?' language signal. Tests the XDG violation failure pattern."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I want some default settings committed to the repo so all team members get them automatically, but individual developers should be able to override them locally without editing the committed file. How do I structure this?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should recommend a committed version-controlled config file (YAML/TOML) for team-wide defaults, layered with a user-level config at ~/.config/<appname>/ for personal overrides. Explains that lower-level sources are shadowed by higher-priority ones.",
+      "notes": "Team config vs. personal config conflict scenario — directly listed in A2 trigger scenarios."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Should I use a .env file as my primary configuration file for a CLI tool? I'm thinking of putting the API endpoint, output format, and verbosity level all in .env.",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should warn against using .env as a primary config file: .env is not committed to source control, has no type system, and is poorly organized for complex settings. Recommend a real YAML/TOML config file for project-stable settings, with .env reserved for local env var overrides only.",
+      "notes": "Tests the '.env as substitute for real config file' failure pattern."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How should my CLI store the database password? Should I put it in an env var like DB_PASSWORD or in a config file?",
+      "expected_behavior": "Do NOT invoke cli-configuration-hierarchy. This question is specifically about a secret (a password). The skill's description explicitly defers secrets questions to cli-secret-handling. The agent should invoke cli-secret-handling instead.",
+      "notes": "Lure: sounds like a config placement question but the value is explicitly a password (a secret). cli-configuration-hierarchy defers secrets to cli-secret-handling."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "I want to rename my CLI's --verbose flag to --log-level so users can specify a level like debug or info instead of a boolean. Is it safe to just ship this in the next release?",
+      "expected_behavior": "Do NOT invoke cli-configuration-hierarchy. This is an interface stability / backward-compatibility question about renaming an existing stable flag. The skill explicitly defers 'how to change names and semantics of flags over time' to cli-interface-stability.",
+      "notes": "Lure from adjacent skill: mentions flags and CLI config but the concern is about renaming an existing stable interface, which is cli-interface-stability territory."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "My web server reads its TLS certificate path and listen port from a YAML config file on startup. Should I use a config file, environment variables, or command-line flags?",
+      "expected_behavior": "Do NOT invoke cli-configuration-hierarchy. The question is about a long-running server/daemon, not an interactive command-line tool. The skill's boundary explicitly states it applies to CLI tools, not server configuration.",
+      "notes": "Out-of-scope: the subject is a web server daemon, not a CLI tool. The skill boundary excludes server/library configuration."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "My CLI needs to accept an AWS region. Different developers on our team work with different regions, but for CI/CD all jobs always use us-east-1. Where should the region live?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should reason through both axes: region is session-stable and varies per-user (env var for developers), but is also project-constant in CI. Correct answer: MYAPP_REGION env var as the general mechanism, which CI can set explicitly; a user config file fallback for personal defaults. The agent should NOT classify this as a flag because it does not change per-invocation.",
+      "notes": "Edge case: the same setting is per-user for devs but universal in CI. Tests nuanced application of the two-axis framework."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "I have a --debug flag that my developers use occasionally during troubleshooting. A few of them have started exporting DEBUG=true in their shell profile so they don't have to pass the flag each time. Should I officially support DEBUG as an env var?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should apply the stability axis: debug mode changes run-to-run and is per-developer preference. The skill notes that leaving DEBUG=true in the environment produces noisy output unintentionally. The agent should recommend keeping --debug as a flag and warn against persisting it — or if an env var is supported, it should be clearly documented and the developer warned about the 'always-on' effect.",
+      "notes": "Edge case: a flag that some users are workarounding with an env var. Tests the 'why not env var for per-invocation values' reasoning from Case 3 (debug output level)."
+    },
+    {
+      "id": "edge-case-03",
+      "type": "edge_case",
+      "prompt": "My CLI tool needs to work on both macOS and Windows. I've set up ~/.config/mytool/ for config on Mac but I'm not sure what to do for Windows users. Should I use the same path on Windows?",
+      "expected_behavior": "Invoke cli-configuration-hierarchy. The agent should explain that XDG_CONFIG_HOME is a Unix/macOS convention and does not apply directly to Windows. On Windows, the equivalent is %APPDATA% or %LOCALAPPDATA%. The agent should acknowledge this as an author limitation in the skill and advise platform-conditional logic.",
+      "notes": "Edge case: cross-platform path resolution. The skill covers XDG but acknowledges Windows is a blind spot. Tests awareness of the author's scope limitation."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
+}

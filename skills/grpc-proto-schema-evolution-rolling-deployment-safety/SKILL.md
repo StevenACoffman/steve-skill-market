@@ -15,10 +15,10 @@ description: >
 type: merged-skill
 source_skills:
   - slug: kleppmann/schema-evolution-compatibility-planning
-    book: "Designing Data-Intensive Applications, 2nd Edition"
+    book: Designing Data-Intensive Applications, 2nd Edition
     author: Martin Kleppmann and Chris Riccomini
   - slug: grpc-up-and-running/grpc-proto-contract-design
-    book: "gRPC: Up and Running"
+    book: 'gRPC: Up and Running'
     author: Kasun Indrasiri and Danesh Kuruppu
 related_skills:
   - slug: kleppmann/schema-evolution-compatibility-planning
@@ -247,6 +247,7 @@ Instead of applying the compatibility planning framework (Kleppmann) or the prot
 
 2. **Classify each proposed schema change.**
    For every change in the diff:
+
    - Add optional field, new number → compatible; proceed
    - Add required field → STOP; change to optional with default
    - Remove field → STOP; add `reserved <number>; reserved "<name>";` first
@@ -279,25 +280,25 @@ Instead of applying the compatibility planning framework (Kleppmann) or the prot
 
    ```go
    func TestOldCodePreservesUnknownFieldsOnWriteBack(t *testing.T) {
-       // 1. Write a record using the NEW proto (with supplier_id = 7)
-       newMsg := &newpb.Product{Id: "p1", SupplierId: "s42"}
-       encoded, _ := proto.Marshal(newMsg)
+   	// 1. Write a record using the NEW proto (with supplier_id = 7)
+   	newMsg := &newpb.Product{Id: "p1", SupplierId: "s42"}
+   	encoded, _ := proto.Marshal(newMsg)
 
-       // 2. Decode using the OLD proto (no supplier_id field)
-       oldMsg := &oldpb.Product{}
-       proto.Unmarshal(encoded, oldMsg)
+   	// 2. Decode using the OLD proto (no supplier_id field)
+   	oldMsg := &oldpb.Product{}
+   	proto.Unmarshal(encoded, oldMsg)
 
-       // 3. Modify a known field and write back via old code's ORM path
-       oldMsg.Name = "Updated Name"
-       reencoded, _ := proto.Marshal(oldMsg)
+   	// 3. Modify a known field and write back via old code's ORM path
+   	oldMsg.Name = "Updated Name"
+   	reencoded, _ := proto.Marshal(oldMsg)
 
-       // 4. Decode the written-back record using NEW proto
-       roundTripped := &newpb.Product{}
-       proto.Unmarshal(reencoded, roundTripped)
+   	// 4. Decode the written-back record using NEW proto
+   	roundTripped := &newpb.Product{}
+   	proto.Unmarshal(reencoded, roundTripped)
 
-       // 5. Assert unknown field was preserved
-       assert.Equal(t, "s42", roundTripped.SupplierId,
-           "old code write-back must preserve unknown fields")
+   	// 5. Assert unknown field was preserved
+   	assert.Equal(t, "s42", roundTripped.SupplierId,
+   		"old code write-back must preserve unknown fields")
    }
    ```
 

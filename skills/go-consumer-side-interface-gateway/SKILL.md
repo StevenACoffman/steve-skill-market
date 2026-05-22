@@ -46,7 +46,7 @@ Gateway packages:
 
 **Convergence note:** Both sources independently state consumer-side interface placement as the idiomatic Go rule; GWTP uniquely adds that this is the only placement preventing import cycles in a layered architecture, while rednafi uniquely adds the gateway package (`external/<provider>/gateway.go`) as the named structural home for external-service implementations and the reciprocal rule that producers export concrete types, never interfaces.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -64,7 +64,7 @@ Consumer-side interface placement applies at two structural levels that answer d
 
 **Convergence note:** Both sources independently state consumer-side interface placement as the idiomatic Go rule; GWTP uniquely adds that this is the only placement preventing import cycles in a layered architecture, while rednafi uniquely adds the gateway package (`external/<provider>/gateway.go`) as the named structural home for external-service implementations and the reciprocal rule that producers export concrete types, never interfaces.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -77,7 +77,7 @@ When an application or domain package needs to talk to a database, cache, or int
 ```go
 // app/training_service.go — no import of adapters
 type trainingRepository interface {
-    CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
+	CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
 }
 ```
 
@@ -130,7 +130,7 @@ cmd/main.go             # wires StripeGateway into order.NewService
 
 Replacing Stripe with Adyen: write `external/adyen/gateway.go`, update `cmd/main.go`. The `order` package and its tests are unaffected.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -154,7 +154,7 @@ The fix: `paymentGateway interface { Charge(...) (string, error) }` in `order/se
 
 **Domain:** E-commerce payment processing, external payment provider. **Lesson:** The gateway package (`external/<provider>/`) is the named seam between business logic and SDK transport details; without naming this location, developers leave the real SDK call inside the business package "temporarily."
 
----
+______________________________________________________________________
 
 ## A2 — Trigger ★
 
@@ -168,7 +168,7 @@ The fix: `paymentGateway interface { Charge(...) (string, error) }` in `order/se
 
 **Not this skill when:** you are the library or SDK author (there is no consumer package to own the interface); the dependency is a stdlib interface already minimal by design (`io.Writer`, `http.Handler`); the two packages are in the same bounded context with no realistic need for swapping.
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -184,7 +184,7 @@ The fix: `paymentGateway interface { Charge(...) (string, error) }` in `order/se
 
 6. **Wire in `cmd/main.go`.** Construct the real gateway (or adapter), pass it to the business service's constructor. Only `main.go` imports the SDK or the adapter package. Completion: `go build` succeeds; business packages import neither the SDK nor the adapter.
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

@@ -17,8 +17,8 @@ description: |
   - The question is about which replication topology to choose (use replication-topology-selection instead)
 
   Key signals: "can we tolerate stale reads here," "does this need linearizability," "will eventual consistency work," "we relaxed consistency and now data is wrong"
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 13: The Future of Data Systems"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 13: The Future of Data Systems'
 tags: [distributed-systems, consistency, correctness, eventual-consistency, integrity, timeliness, stream-processing]
 related_skills: [consistency-model-selection, replication-lag-as-correctness, end-to-end-idempotence-request-ids, transaction-isolation-level-selection]
 ---
@@ -58,7 +58,7 @@ Stale-read tolerance annotations or comments:
 >
 > — Kleppmann & Riccomini, Chapter 13
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -79,7 +79,7 @@ The framework produces a decision procedure:
 
 This decomposition resolves what appears to be a binary trade-off (consistency or performance) into a composable design: different operations in the same system can safely have different timeliness requirements, as long as integrity is preserved for all.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -97,7 +97,7 @@ This decomposition resolves what appears to be a binary trade-off (consistency o
 - **Conclusion:** The correct design relaxes timeliness only for display (eventually consistent read replica serves the count for display). For purchase commitment, integrity must be maintained via a serializable or compare-and-swap operation on the actual inventory record.
 - **Result:** The system achieves both the performance goal (stale read for display) and the correctness goal (exact inventory enforcement for purchase decisions) by applying the timeliness/integrity distinction operation-by-operation.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -124,36 +124,41 @@ This decomposition resolves what appears to be a binary trade-off (consistency o
 - Difference from `replication-lag-as-correctness`: That skill focuses on the specific mechanism of replication lag and its impact on read-your-writes and monotonic reads; this skill is the broader analytical framework that determines whether a lag-induced inconsistency is a timeliness violation (self-healing) or an integrity violation (permanent).
 - Difference from `end-to-end-idempotence-request-ids`: That skill addresses integrity violations caused by duplicate operation application; this skill identifies whether a consistency relaxation will *cause* an integrity violation in the first place.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **List every read and write operation that is being considered for consistency relaxation**
+
    - Completion criteria: You have a concrete list of operations (e.g., "read inventory count for display," "read inventory count before committing a purchase," "read account balance for dashboard," "read account balance for overdraft check").
 
 2. **Classify each operation as "display read," "decision read," or "state mutation"**
+
    - Display read: the result is shown to a user for informational purposes; no downstream write or decision is gated on it.
    - Decision read: the result determines whether a state mutation is allowed or what value a mutation uses.
    - State mutation: the operation writes or changes durable state.
    - Completion criteria: Every operation on the list is labeled. Note that a single user action often includes both a decision read and a state mutation (e.g., "check balance then debit").
 
 3. **For each display read: timeliness relaxation is safe. Apply eventual consistency.**
+
    - No integrity risk: stale display data is self-healing.
    - Completion criteria: Display reads are routed to eventually consistent replicas, caches, or read-optimized views without integrity concern.
 
 4. **For each decision read or state mutation: apply the compensating transaction test**
+
    - Ask: if a timeliness violation causes the wrong decision (e.g., overselling by 1 unit), can the error be corrected after the fact at acceptable cost?
    - If yes (e.g., airline oversell → offer compensation, refund a duplicate charge): the constraint is "loosely interpreted." Proceed optimistically with eventual consistency; implement a compensating transaction / apology workflow.
    - If no (e.g., regulatory violation, unrecoverable security breach, medical record corruption): the integrity requirement is hard. This operation requires synchronous enforcement — linearizable storage, serializable isolation, or a consensus-based CAS operation.
    - Completion criteria: Every decision read and state mutation is classified as "loosely interpreted constraint (async + compensation OK)" or "hard integrity requirement (synchronous enforcement required)."
 
 5. **Implement different consistency mechanisms for different operation classes in the same system**
+
    - Display reads: eventual consistency (replicas, caches).
    - Loosely interpreted constraints: async pipeline + compensating transaction workflow.
    - Hard integrity requirements: linearizable storage or serializable transactions (scoped to the smallest possible operation, not applied globally).
    - Completion criteria: The system uses the minimum consistency strength required for each operation class; no operation has consistency stronger than it needs.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -178,7 +183,7 @@ This decomposition resolves what appears to be a binary trade-off (consistency o
 
 - **CAP theorem consistency vs. timeliness**: The CAP theorem's "C" refers specifically to linearizability (a strong timeliness guarantee). Engineers who equate "relaxing CAP C" with "accepting integrity violations" will under-engineer. CAP relaxation is a timeliness decision; integrity must be evaluated independently and is not governed by CAP.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -187,7 +192,7 @@ This decomposition resolves what appears to be a binary trade-off (consistency o
 - **composes_with**: end-to-end-idempotence-request-ids — TVI identifies that duplicate operation application is an integrity violation; idempotency keys are the mechanism that prevents that integrity violation from occurring.
 - **composes_with**: transaction-isolation-level-selection — TVI determines which concurrency anomalies are integrity-critical (write skew in a quota system = permanent violation) vs. tolerable; this classification drives the minimum isolation level required.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

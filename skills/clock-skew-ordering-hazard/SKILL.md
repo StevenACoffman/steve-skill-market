@@ -18,8 +18,8 @@ description: |
   - You need to measure elapsed time on a single machine using CLOCK_MONOTONIC (monotonic clocks are safe for duration measurement)
 
   Key signals: "we sort events by timestamp," "LWW is our conflict strategy," "our NTP sync is under 5ms," "we use wall-clock time for causality"
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 9: The Trouble with Distributed Systems"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 9: The Trouble with Distributed Systems'
 tags: [distributed-systems, clocks, ntp, ordering, causality, lww, consistency]
 related_skills: [distributed-fault-taxonomy, consistency-model-selection, fencing-tokens-distributed-locks]
 ---
@@ -56,7 +56,7 @@ Logical clocks or vector clocks:
 >
 > — Kleppmann & Riccomini, Chapter 9
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -77,7 +77,7 @@ The correct alternatives, in order of increasing strength:
 - **Hybrid Logical Clocks (HLC)**: combines a logical counter with the physical clock to provide causal ordering that is also loosely correlated with real time. Used in CockroachDB.
 - **Google Spanner TrueTime**: GPS + atomic clocks provide a confidence interval [earliest, latest]. Spanner waits out the interval (commit wait) before reporting a commit, ensuring no two transactions can have overlapping uncertainty windows. This is the only correct way to use wall-clock time for global ordering — and it requires specialized hardware.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -95,7 +95,7 @@ The correct alternatives, in order of increasing strength:
 - **Conclusion:** Quorum does not save you from clock-skew-driven data loss in LWW systems. The conflict resolution mechanism — not the quorum parameters — is the problem.
 - **Result:** Applications requiring causal consistency must either use a database that provides causal consistency natively (vector clocks, CRDTs) or use single-leader replication where ordering is enforced by the leader's write log.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -122,19 +122,22 @@ The correct alternatives, in order of increasing strength:
 - Difference from `fencing-tokens-distributed-locks`: Fencing tokens use a monotonic counter issued by a single lock service (not wall clocks) to prevent concurrent access — they are the correct solution to lock expiry, not to general event ordering across systems.
 - Difference from `replication-topology-selection`: That skill guides topology choice; this skill is invoked when you are implementing conflict resolution *within* a chosen topology and must not use wall clocks for ordering.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Identify every place in the system where events from multiple nodes are compared, sorted, or merged by timestamp**
+
    - Completion criteria: You have a list of: (a) conflict resolution points (LWW, merge logic), (b) sort-key fields used for event ordering, (c) audit/log systems that sort by event timestamp.
 
 2. **Classify each timestamp use as "display only" or "ordering / conflict resolution"**
+
    - Display only (showing "modified at 3pm" to a user): wall-clock timestamp is acceptable.
    - Ordering / conflict resolution: wall-clock timestamp is not safe if any two compared events can originate from different nodes.
    - Completion criteria: Every timestamp use is labeled; all ordering/conflict-resolution uses are flagged for replacement.
 
 3. **Select the appropriate logical clock for each flagged use**
+
    - Causal ordering only (no wall-clock correlation needed): use Lamport timestamps.
    - Concurrent write detection and merge: use vector clocks / version vectors.
    - Causal ordering + human-readable correlation with real time: use Hybrid Logical Clocks (HLC).
@@ -143,11 +146,12 @@ The correct alternatives, in order of increasing strength:
    - Completion criteria: Each flagged use has a named logical clock mechanism and a clear owner (database layer vs. application layer).
 
 4. **Preserve wall-clock timestamps as metadata, not sort keys**
+
    - Add a `recorded_at` wall-clock timestamp field for human display and debugging.
    - Add a separate `logical_timestamp` or `version_vector` field that is used for ordering and conflict resolution.
    - Completion criteria: No query, index, or conflict resolution logic uses `recorded_at` as an ordering comparator.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -171,7 +175,7 @@ The correct alternatives, in order of increasing strength:
 
 - **Monotonic clocks for single-node elapsed time**: `CLOCK_MONOTONIC` on Linux, `time.monotonic()` in Python, and `System.nanoTime()` in Java are safe for measuring duration on a single machine. They never jump backward. They are *not* safe for comparing timestamps across machines, because each machine's monotonic clock is an independent counter starting from an arbitrary epoch.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -179,7 +183,7 @@ The correct alternatives, in order of increasing strength:
 - **contrasts_with**: consistency-model-selection — logical clocks solve the ordering problem for conflict resolution within a topology; linearizability solves the read-recency problem across replicas; they are different solutions to different problems, though both are motivated by distributed correctness.
 - **composes_with**: fencing-tokens-distributed-locks — fencing tokens implement the correct alternative to clock-based lock ordering (monotonically increasing counter vs. wall-clock timestamp), making the two skills complementary mitigations for clock-related distributed hazards.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

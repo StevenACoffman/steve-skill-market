@@ -1,0 +1,62 @@
+{
+  "skill": "fail-safe-vs-fail-secure",
+  "description": "Use this skill when designing any component whose authorization, access-control, or configuration system can fail — and you need to decide what the component does when it cannot verify its own state.",
+  "test_prompts": [
+    {
+      "id": "fail-safe-vs-fail-secure-should-01",
+      "category": "should_invoke",
+      "prompt": "Our fraud scoring service is a dependency of our payment gateway. When the fraud scorer is down, should the gateway default to approving all transactions or rejecting them? My CTO says fail open so we don't lose revenue; our security lead says fail closed. How do we resolve this?",
+      "expected": "invoke",
+      "rationale": "Textbook fail-safe vs. fail-secure trigger: explicit 'fail open vs. fail closed' framing, financial system, unresolved tension between availability and security stakeholders. The framework requires deriving the answer from the threat model, not from organizational rank."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-should-02",
+      "category": "should_invoke",
+      "prompt": "We're designing an LDAP-backed door access control system for our server room. If the LDAP server becomes unreachable, the electronic locks need to decide whether to stay locked or unlock. What's the right default?",
+      "expected": "invoke",
+      "rationale": "Physical security failure mode decision — the canonical door lock example from the skill. Requires applying the threat model framework: identify whether the primary threat is unauthorized physical access vs. trapped personnel, then encode the decision at design time."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-should-03",
+      "category": "should_invoke",
+      "prompt": "During our post-incident review for last week's outage, we discovered that when our ACL service timed out, the API gateway was quietly allowing all requests through. Nobody had consciously designed this behavior — it was just the default when the ACL call failed. We need to decide what the intended behavior should be and encode it properly.",
+      "expected": "invoke",
+      "rationale": "Incident post-mortem revealing an implicit fail-open default that was never consciously decided. This is exactly the scenario the skill addresses: failure mode was not pre-decided at design time and an unsafe default emerged. The skill should be applied to make the decision explicit and encode it correctly."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "Our identity provider is unreachable during an incident and SREs can't log in to fix the problem. What's the emergency access procedure we should put in place so we don't get locked out of production when the auth system itself is down?",
+      "expected": "skip",
+      "rationale": "This is a breakglass design question: it's about deliberate human override of a functioning control when a dependency fails, specifically to restore operations. Fail-safe/fail-secure addresses automatic system behavior under dependency failure; breakglass addresses the human procedure for those situations."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our product has a recommendation service that's a dependency of the homepage. When the recommendation service is slow or down, should we show empty recommendation slots, show cached results from an hour ago, or fall back to a static list of popular items?",
+      "expected": "skip",
+      "rationale": "This is a graceful degradation question for a non-security component. There is no authorization state or confidentiality/integrity concern — the recommendation service has no access control layer. The right skill is availability/reliability design, not fail-safe/fail-secure."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We already decided our API gateway will fail closed when the auth service is unavailable — it rejects all requests with a 503. The team is now asking how long we should cache the last-known-good ACLs to reduce the blast radius of short auth service outages. What's the right TTL?",
+      "expected": "skip",
+      "rationale": "The failure mode has already been decided and implemented. This is now an availability engineering question about cache TTL to reduce exposure to brief dependency outages — a reliability/latency tradeoff question. The skill explicitly excludes cases where the failure mode is already decided."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-boundary-01",
+      "category": "boundary",
+      "prompt": "We're building a Kubernetes admission controller that validates pod security policies before allowing pods to schedule. If our admission controller itself crashes or becomes unavailable, Kubernetes will either block all pod scheduling or allow pods through without policy validation. Which default should we configure?",
+      "expected": "invoke",
+      "rationale": "Boundary case: this is a real infrastructure decision (Kubernetes failurePolicy: Fail vs. Ignore) with genuine security/availability tension. It maps cleanly to the fail-safe/fail-secure framework — the threat model question is whether unvalidated pod scheduling (potential security policy bypass) or blocked scheduling (availability) is the greater harm in this environment. The framework should be applied to derive the answer from the threat model, not from Kubernetes defaults."
+    },
+    {
+      "id": "fail-safe-vs-fail-secure-boundary-02",
+      "category": "boundary",
+      "prompt": "Our hospital's nurse call system integrates with the patient bed management software. When the bed management service is down, nurses can't see patient locations. Should the nurse call system default to broadcasting all calls system-wide (so no patient goes unanswered) or require manual location lookup (to preserve workflow integrity)?",
+      "expected": "invoke",
+      "rationale": "A life-safety system where the primary threat analysis is non-obvious. There is no confidentiality/integrity concern in the security sense, but the availability harm (missed nurse call) is patient safety. The skill's framework applies: the threat model determines the failure mode, and in a life-safety system the analysis will favor fail-safe (broadcast) — but the decision must be made explicitly at design time, not improvised at 3am during a system outage."
+    }
+  ]
+}

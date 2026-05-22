@@ -1,0 +1,62 @@
+{
+  "skill": "zero-trust-beyondcorp",
+  "description": "Use this skill when designing network access architecture, evaluating VPN-based access models, designing corporate network security after a perimeter breach, or implementing access controls for a remote-work or cloud-first organization where being on the internal network implicitly grants access that would not be granted from the internet.",
+  "test_prompts": [
+    {
+      "id": "zero-trust-beyondcorp-should-01",
+      "category": "should_invoke",
+      "prompt": "We had a breach where an attacker got onto our corporate VPN using stolen credentials from a phished employee. Once inside they moved laterally across our internal network for six weeks before we detected them. Our VPN gives everyone on it broad internal network access. How do we redesign our access model so that a compromised VPN credential doesn't hand over the whole internal network?",
+      "expected": "invoke",
+      "rationale": "Post-breach architectural redesign with explicit lateral movement problem from VPN-granted implicit trust — this is the canonical BeyondCorp trigger. The attacker succeeded because 'being inside the network' granted broad access. Zero Trust directly addresses this: network location confers zero privilege, every access is identity-verified at the boundary."
+    },
+    {
+      "id": "zero-trust-beyondcorp-should-02",
+      "category": "should_invoke",
+      "prompt": "We're going fully remote and want to eliminate our VPN. Currently all our internal tools and services are only accessible from within the VPN tunnel, which employees hate because it's slow and breaks video calls. We want employees to access internal tools from anywhere without a VPN. How do we do this without just putting everything on the public internet?",
+      "expected": "invoke",
+      "rationale": "VPN elimination with remote access requirement is a direct BeyondCorp use case. The user wants to replace VPN tunnel access with identity-based access (Access Proxy + device certificates) — this is exactly what BeyondCorp was designed for. The question maps to ZTN's core value: replace network-location trust with user+device identity trust."
+    },
+    {
+      "id": "zero-trust-beyondcorp-should-03",
+      "category": "should_invoke",
+      "prompt": "A physical security team found an unauthorized wireless device zip-tied to a rack in our data center. It had been there for at least two weeks. We don't know if it was connected to our internal network. Under our current model, if it was connected, it would have had full internal network access. How do we redesign our network so physical access to a network port doesn't grant internal access?",
+      "expected": "invoke",
+      "rationale": "This is the exact Red Team scenario from the BeyondCorp A1 case — rogue device on a datacenter rack gaining internal network access via physical port. BeyondCorp's 802.1x device certificate requirement directly addresses this: unauthorized devices get isolated to untrusted VLAN regardless of physical placement. The scenario calls for the BeyondCorp network access model."
+    },
+    {
+      "id": "zero-trust-beyondcorp-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We use Zero Trust / BeyondCorp and all users are identity-verified through our Access Proxy. But we're worried that a verified user with a legitimate account could still cause damage — for example an engineer who goes rogue and starts deleting databases. What controls limit what a verified user can do?",
+      "expected": "skip",
+      "rationale": "Zero Trust is already implemented; this is now a least-privilege and MPA question. Zero Trust removes implicit location-based trust but does not scope what verified identities can do. The right skills are least-privilege-tooling-enforced (minimum access for the task) and multi-party-authorization (require two verified actors for destructive operations). ZTN's work is done once identity is verified; blast radius from verified identities is a separate problem."
+    },
+    {
+      "id": "zero-trust-beyondcorp-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We have a Zero Trust network and we use hardware FIDO keys for 2FA. We're evaluating whether our authentication stack is strong enough to resist AI-assisted phishing attacks that can relay OTP codes in real-time. Is hardware key 2FA sufficient, and what else should we consider?",
+      "expected": "skip",
+      "rationale": "This is a specific authentication credential strength and phishing-resistance question, not a network access architecture question. The right framing is around phishing-resistant authentication standards (FIDO2/passkeys vs TOTP), not BeyondCorp architecture. Zero Trust assumes strong user credentials as a component; evaluating which credential type resists which attack is an authentication design question outside the ZTN architectural scope."
+    },
+    {
+      "id": "zero-trust-beyondcorp-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We're implementing network microsegmentation to limit lateral movement between services in our Kubernetes cluster. We want to use network policies to ensure that a compromised pod can only reach the services it legitimately needs. How should we design the segmentation rules?",
+      "expected": "skip",
+      "rationale": "Microsegmentation limits lateral movement by segmenting the network but retains implicit intra-segment trust — it is architecturally distinct from Zero Trust. The right approach here is Kubernetes NetworkPolicy design and service mesh (mTLS between services). Zero Trust would replace network-location trust with machine certificates, but the user is asking about network-layer segmentation rules, not identity-based access redesign. The two can coexist; this question is specifically about the segmentation design."
+    },
+    {
+      "id": "zero-trust-beyondcorp-boundary-01",
+      "category": "boundary",
+      "prompt": "We have several legacy internal applications that were built in the early 2000s and authenticate using IP address allowlists — they simply check that the source IP is in the internal network range. These apps can't easily be modified to support modern identity assertions. How do we move to Zero Trust with these systems in place?",
+      "expected": "invoke",
+      "rationale": "Boundary case resolved as invoke: legacy systems that cannot participate in identity-based authentication are a named limitation in the SKILL.md Boundary section, but the right answer is a hybrid migration approach, not abandoning Zero Trust. BeyondCorp can be applied to all other systems while legacy apps are isolated behind an access proxy that IP-restricts to the proxy's egress IPs. The skill provides the architectural guidance for the migration path even when the destination cannot be fully reached immediately."
+    },
+    {
+      "id": "zero-trust-beyondcorp-boundary-02",
+      "category": "boundary",
+      "prompt": "We operate in a classified government facility with strict physical access controls — badge readers, mantraps, no personal devices allowed inside. All workstations are government-issued and never leave the building. Our threat model is primarily external network intrusion, not insider lateral movement. Is Zero Trust worth the infrastructure investment for us?",
+      "expected": "skip",
+      "rationale": "Boundary case resolved as skip: the SKILL.md explicitly identifies this scenario — organizations where physical security controls are extremely strong and the insider threat model is low, where perimeter security may be sufficient and the operational cost of Zero Trust exceeds the risk reduction. A classified facility with mantrap entry, no personal devices, and government-managed workstations has a perimeter model that is plausibly sufficient. The ZTN infrastructure cost (device certificates, Access Proxy fleet, posture checking, panic rooms) likely does not justify the incremental risk reduction over a hardened physical perimeter."
+    }
+  ]
+}

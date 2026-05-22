@@ -7,8 +7,8 @@ description: |
   Do NOT invoke when: the question is about online request-response latency (OLTP performance); the issue is with a single-node computation's correctness; you are deciding the primary storage architecture (see `system-of-record-vs-derived-data`).
 
   Key signals: "we need to regenerate the index after the bug fix," "how much latency can we tolerate in the recommendations?", "the pipeline is too slow to run hourly," "we want to process events as they arrive," "our batch job failed halfway through — is the output safe?", "can we replay the pipeline?", "the results are already a day old when users see them."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 11: Batch Processing"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 11: Batch Processing'
 tags: [batch-processing, stream-processing, immutable-inputs, derived-data, human-fault-tolerance, kafka]
 related_skills: [system-of-record-vs-derived-data, end-to-end-idempotence-request-ids, schema-evolution-compatibility-planning]
 ---
@@ -34,7 +34,7 @@ Event log / Kafka / stream processing references:
 >
 > — Kleppmann & Riccomini, Chapter 11: Batch Processing
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -52,7 +52,7 @@ The primary selection criteria in order of priority:
 2. **Latency requirement**: How stale can the derived output be before it affects user outcomes? Hours/days → batch is simpler. Minutes/seconds → stream processing is required. Real-time is often speculative; measure whether users actually need it.
 3. **Input boundedness**: Is the input naturally finite (a monthly report, a one-time migration) or unbounded (continuous user events, sensor readings)? Bounded input fits batch naturally. Unbounded input requires either artificial time-windowing in batch or continuous stream processing.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -70,7 +70,7 @@ The primary selection criteria in order of priority:
 - **Conclusion:** The ability to recover from the bug depends entirely on whether the architecture preserved immutable inputs. The choice of architecture at design time determines whether a production bug is "run the job again" or "3 months of manual data reconstruction."
 - **Result:** Teams that adopt the immutable-input / derived-output pattern consistently cite this recovery scenario as its primary operational benefit. The extra storage cost of retaining the event log is the cost of human fault tolerance.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -95,34 +95,39 @@ The primary selection criteria in order of priority:
 - Difference from `system-of-record-vs-derived-data`: The system-of-record skill determines which system is the authoritative source of truth and which are derived views. Batch vs. stream selection determines *how* those derived views are computed (periodically in bulk vs. continuously). The two skills compose: once you know what is derived, you use this skill to decide how to compute it.
 - Difference from `storage-engine-workload-selection`: Storage engine selection is about the on-disk storage mechanism (LSM, B-tree, columnar). Batch vs. stream is about the computation and data-flow pattern. A batch job might use columnar storage; a stream processor might use an LSM-backed state store. They operate at different layers.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Determine whether the input data is immutable and replayable**
+
    - Ask: is there an append-only log (Kafka, Kinesis, S3 event files, database CDC stream) that contains the complete history of input events? Can the pipeline be rerun against that log from a specific point in time?
    - Completion criteria: A definitive answer to "can we replay from 30 days ago?" If no, document the gap (missing inputs) as a human-fault-tolerance risk before proceeding.
    - Stop condition: If the input is not replayable and human fault tolerance is required, the architecture must first be fixed (add a log-based input layer) before choosing batch vs. stream.
 
 2. **Quantify the latency requirement**
+
    - Determine the maximum acceptable age of derived output when a user interacts with it. Express in concrete terms: "fraud scores must be updated within 30 seconds of transaction," "product recommendations can be up to 24 hours stale," "billing aggregates need to be correct to the minute by end-of-month."
    - Completion criteria: Latency SLA is written down with user impact described. "Real-time" is rejected as a requirement unless accompanied by a specific maximum latency in seconds.
 
 3. **Select the processing model based on latency requirement**
+
    - If latency tolerance >= hours: batch processing (Spark, Flink batch mode, SQL warehouse). Simpler operationally, naturally handles bounded jobs.
    - If latency tolerance = minutes: micro-batch (Spark Streaming with short batch intervals, or Flink with checkpointing). Intermediate complexity.
    - If latency tolerance < 1 minute: continuous stream processing (Flink, Kafka Streams). Requires windowing, watermarks, exactly-once state management.
    - Completion criteria: A specific framework and latency configuration is chosen.
 
 4. **Design for event time, not processing time**
+
    - If stream processing is chosen: ensure all metrics, windowing, and anomaly detection use the event timestamp embedded in the event, not the wall-clock time when the processor handles the event. Backlog replay will otherwise produce false spikes in processing-time metrics.
    - Completion criteria: No pipeline metric uses processing time as a proxy for event rate.
 
 5. **Verify exactly-once or at-least-once semantics requirements**
+
    - Determine whether duplicated processing is acceptable. If the output operation is idempotent (e.g., overwriting a derived value), at-least-once with idempotent writes is sufficient and simpler. If it is not idempotent (e.g., incrementing a counter, charging a payment), exactly-once semantics must be implemented via transactional commits or idempotency keys.
    - Completion criteria: The output operation is classified as idempotent or non-idempotent. The processing semantic (at-least-once, exactly-once) is documented.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -148,7 +153,7 @@ The primary selection criteria in order of priority:
 - **Lambda architecture** (maintaining both a batch and a stream layer simultaneously) is an alternative to the kappa architecture. The book argues lambda architecture should be avoided because it doubles the code and operational surface area. Lambda is sometimes chosen when the team lacks confidence in stream processing's correctness, but it creates consistency problems between the two layers.
 - **ETL pipelines** (Extract-Transform-Load into a data warehouse) are a specific instance of batch processing but are often treated as a distinct category. The immutable-input / derived-output principle applies equally to ETL. The failure pattern of ETL pipelines that mutate source data is the same as any other pipeline that loses the replay property.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -156,7 +161,7 @@ The primary selection criteria in order of priority:
 - **composes_with**: end-to-end-idempotence-request-ids — stream processing with at-least-once delivery requires idempotent consumers; the idempotency key mechanism is the standard implementation of that requirement.
 - **composes_with**: schema-evolution-compatibility-planning — event log replay (the human-fault-tolerance recovery mechanism) requires that historical events remain decodable by current code; backward schema compatibility is a prerequisite for replay-based recovery.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

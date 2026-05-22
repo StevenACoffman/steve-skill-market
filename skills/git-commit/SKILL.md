@@ -1,12 +1,12 @@
 ---
 allowed-tools: Bash
-description: 'Execute git commit with conventional commit message analysis, intelligent staging, and message generation. Use when user asks to commit changes, create a git commit, or mentions "/commit". Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit messages from diff, (3) Interactive commit with optional type/scope/description overrides, (4) Intelligent file staging for logical grouping'
+description: Use when user asks to commit changes, create a git commit, or mentions "/commit". Covers conventional commit message generation, auto-detecting type and scope from changes, intelligent file staging, and optional type/scope/description overrides.
 license: MIT
 metadata:
-    github-path: skills/git-commit
-    github-ref: refs/heads/main
-    github-repo: https://github.com/github/awesome-copilot
-    github-tree-sha: 883a6a7466f55a9cd9f22cf1cce2d9333fc9b998
+  github-path: skills/git-commit
+  github-ref: refs/heads/main
+  github-repo: https://github.com/github/awesome-copilot
+  github-tree-sha: 883a6a7466f55a9cd9f22cf1cce2d9333fc9b998
 name: git-commit
 ---
 
@@ -93,7 +93,7 @@ Analyze the diff to determine:
 
 - **Type**: What kind of change is this?
 - **Scope**: What area/module is affected?
-- **Description**: One-line summary of what changed (present tense, imperative mood, <72 chars)
+- **Description**: One-line summary of what changed (present tense, imperative mood, \<72 chars)
 
 ### 4. Execute Commit
 
@@ -102,7 +102,8 @@ Analyze the diff to determine:
 git commit -m "<type>[scope]: <description>"
 
 # Multi-line with body/footer
-git commit -m "$(cat <<'EOF'
+git commit -m "$(
+	cat <<'EOF'
 <type>[scope]: <description>
 
 <optional body>

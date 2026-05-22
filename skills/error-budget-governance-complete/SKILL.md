@@ -6,10 +6,10 @@ description: Use this skill when implementing error budget governance end-to-end
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/error-budget-conflict-resolution
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: site-reliability-workbook/error-budget-policy-framework
-    book: "The Site Reliability Workbook"
+    book: The Site Reliability Workbook
     author: Betsy Beyer et al. (Google)
 related_skills:
   - slug: site-reliability-engineering/error-budget-conflict-resolution
@@ -45,7 +45,7 @@ SLO / error-budget docs:
 
 **Convergence note:** Both books establish that error budget governance requires pre-negotiated, shared, pre-written agreement — the SRE book at the conceptual level (the "self-policing" control loop mechanism), the Workbook at the operational level (the written policy, causal attribution rules, and ratification requirement). Both warn that budget without enforcement is paperwork. The SRE book contributes the mechanism and the overachievement warning (Chubby); the Workbook contributes the causal attribution distinction (team-caused vs. externally-caused exhaustion) and the tri-party ratification protocol, neither of which appears in the SRE book.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -77,7 +77,7 @@ Four mandatory policy components:
 
 **Quantitative thresholds:** A single incident consuming more than 20% of the four-week budget triggers a mandatory postmortem with at least one P0 action item. A class of outage recurring at 20%+ per quarter must appear in quarterly planning.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -95,7 +95,7 @@ Four mandatory policy components:
 
 **Convergence note:** Both books establish that error budget governance requires pre-negotiated, shared, pre-written agreement — the SRE book at the conceptual level (the "self-policing" control loop mechanism), the Workbook at the operational level (the written policy, causal attribution rules, and ratification requirement). Both warn that budget without enforcement is paperwork. The SRE book contributes the mechanism and the overachievement warning (Chubby); the Workbook contributes the causal attribution distinction (team-caused vs. externally-caused exhaustion) and the tri-party ratification protocol, neither of which appears in the SRE book.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -127,7 +127,7 @@ Four mandatory policy components:
 
 **Quantitative thresholds:** A single incident consuming more than 20% of the four-week budget triggers a mandatory postmortem with at least one P0 action item. A class of outage recurring at 20%+ per quarter must appear in quarterly planning.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -145,7 +145,7 @@ Four mandatory policy components:
 - **Conclusion:** The iterative policy maturation was only possible because the policy was pre-written and treated as a living governance document rather than a one-time negotiation.
 - **Result:** Data-driven conversations about outage impact replaced subjective debates. Both teams viewed reliability as a shared, measurable responsibility rather than an SRE opinion to be overridden.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -165,7 +165,7 @@ Four mandatory policy components:
 - "We've been reliable for months — why can't we launch?"
 - "The SRE team wrote an error budget policy and now wants us to sign it"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -183,7 +183,7 @@ Four mandatory policy components:
 
 7. **Address overachievement actively.** If the service consistently operates well above its SLO, schedule controlled degradation (planned outages or throttling) to prevent consumers from treating the service as infinitely reliable. This step is not optional — chronically unconsumed budget is a governance failure mode.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -210,7 +210,7 @@ Four mandatory policy components:
 - The organization lacks authority to enforce a release freeze. A policy without enforcement is theater; address organizational structure first.
 - An incident is in progress. This is a pre-incident governance tool, not an in-incident response tool.
 
----
+______________________________________________________________________
 
 ## Related Skills
 

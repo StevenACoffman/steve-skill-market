@@ -6,10 +6,10 @@ description: Use this skill when a service is chronically delivering significant
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/dont-overachieve-slo-chubby-principle
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: reliability-engineering-mindset/lagom-slo
-    book: "Reliability Engineering Mindset"
+    book: Reliability Engineering Mindset
     author: Alex Ewerlöf
 related_skills:
   - slug: site-reliability-engineering/dont-overachieve-slo-chubby-principle
@@ -49,7 +49,7 @@ SLO definition files:
 
 **Convergence note:** Both sources independently cite the Google Chubby planned outage as the canonical proof that over-delivery creates systemic consumer over-dependency — this is the strongest cross-book convergence in the SRE cluster, with the same concrete case confirming the same principle from different authorship traditions. The SRE book focuses entirely on the synthetic outage remedy. Ewerlöf adds the alternative remedy (raise the SLO if the lower SLO was incorrectly set), plus the too-low failure mode that the SRE book does not address.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -85,7 +85,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 
 **Shared principle underlying both remedies:** The goal is honesty — the observed availability should reflect what the service commits to, in both directions. An SLO too high is dishonest to consumers who depend on it. An SLO too low is dishonest to consumers who deserve to know what the service can actually deliver. Both the SRE book and Ewerlöf converge on this principle from different angles.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -107,7 +107,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 
 **Convergence note:** Both sources independently cite the Google Chubby planned outage as the canonical proof that over-delivery creates systemic consumer over-dependency — this is the strongest cross-book convergence in the SRE cluster, with the same concrete case confirming the same principle from different authorship traditions. The SRE book focuses entirely on the synthetic outage remedy. Ewerlöf adds the alternative remedy (raise the SLO if the lower SLO was incorrectly set), plus the too-low failure mode that the SRE book does not address.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -143,7 +143,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 
 **Shared principle underlying both remedies:** The goal is honesty — the observed availability should reflect what the service commits to, in both directions. An SLO too high is dishonest to consumers who depend on it. An SLO too low is dishonest to consumers who deserve to know what the service can actually deliver. Both the SRE book and Ewerlöf converge on this principle from different angles.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -161,7 +161,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 - **Conclusion:** The original 99.9% SLO was incorrectly set by aspiration rather than consumer tolerance. Raising it was the correct remedy; applying synthetic outages would have been unnecessary degradation of a service correctly delivering what consumers needed.
 - **Result:** The SLO aligned with consumer expectation and actual delivery, eliminating the overdelivery gap without any artificial degradation.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -181,7 +181,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 - "Should we raise our SLO or introduce planned downtime?"
 - "We're planning our first maintenance window and worried about cascading failures"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -190,6 +190,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 2. **Diagnose the SLO calibration.** Was the current SLO set by: (a) direct consumer tolerance research, or (b) historical data, aspiration, organizational convention, or copying another team's target? If the answer is (b), apply the lagom calibration process before proceeding: ask consumers "what is the worst reliability level you could live with?" and compare to actual delivery.
 
 3. **Choose the remedy based on calibration diagnosis.**
+
    - If the SLO was incorrectly set (answer b above) AND consumer tolerance matches or exceeds actual delivery: raise the SLO. Document the consumer research that supports the new target.
    - If the SLO is correctly calibrated to consumer tolerance AND actual delivery substantially exceeds it: proceed to Remedy B (synthetic outages).
    - If SLA commitments constrain raising the SLO: Remedy A is limited to the gap between SLO and SLA; apply Remedy B within that band.
@@ -200,7 +201,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 
 6. **Repeat on cadence.** Continue the planned outage policy on a regular schedule (quarterly, or as needed to maintain observed availability within the SLO band). This is an ongoing management practice, not a one-time fix.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -227,7 +228,7 @@ IF the SLO cannot be raised (contractual SLA already committed below the
 - The over-delivery is recent (less than one quarter). Hidden consumer dependencies require time to accumulate; a short period of exceptional reliability does not create the same structural risk.
 - The service has no downstream consumers who could accumulate hidden dependencies (e.g., pure internal tooling with a single, well-tested consumer).
 
----
+______________________________________________________________________
 
 ## Related Skills
 

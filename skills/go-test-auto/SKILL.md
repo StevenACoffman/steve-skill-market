@@ -1,6 +1,6 @@
 ---
 name: go-test-auto
-description: Use gta (Go Test Affected) to find and run only the packages affected by current changes. Use when the user asks about change-aware testing, affected tests, or wants to avoid running the full test suite.
+description: Use when the user asks about change-aware testing, affected tests, or wants to avoid running the full test suite. Covers gta (Go Test Affected) to find and run only the packages affected by current changes.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -61,10 +61,10 @@ When no packages are affected (for example, a docs-only change), gta outputs not
 ```bash
 AFFECTED=$(gta -base origin/main -include github.com/Khan/districts-jobs/)
 if [ -n "$AFFECTED" ]; then
-  # $AFFECTED is intentionally unquoted — word-splits into separate package arguments
-  gotestsum -- -count=1 -timeout 5m $AFFECTED
+	# $AFFECTED is intentionally unquoted — word-splits into separate package arguments
+	gotestsum -- -count=1 -timeout 5m $AFFECTED
 else
-  echo "No affected packages — skipping tests"
+	echo "No affected packages — skipping tests"
 fi
 ```
 
@@ -78,8 +78,12 @@ Example output:
 
 ```json
 {
-  "changes": ["github.com/Khan/districts-jobs/pkg/encryption"],
-  "dependencies": ["github.com/Khan/districts-jobs/roster/pkg/rostering/audit"],
+  "changes": [
+    "github.com/Khan/districts-jobs/pkg/encryption"
+  ],
+  "dependencies": [
+    "github.com/Khan/districts-jobs/roster/pkg/rostering/audit"
+  ],
   "all_changes": [
     "github.com/Khan/districts-jobs/pkg/encryption",
     "github.com/Khan/districts-jobs/roster/pkg/rostering/audit"
@@ -97,13 +101,13 @@ By default gta diffs against a branch (`-base`). To test changes not yet committ
 
 ```bash
 # Staged and unstaged changes
-git diff HEAD --name-only | \
-  sed "s|^|$(git rev-parse --show-toplevel)/|" > /tmp/changed.txt
+git diff HEAD --name-only |
+	sed "s|^|$(git rev-parse --show-toplevel)/|" >/tmp/changed.txt
 gta -changed-files /tmp/changed.txt -include github.com/Khan/districts-jobs/
 
 # Staged changes only
-git diff --staged --name-only | \
-  sed "s|^|$(git rev-parse --show-toplevel)/|" > /tmp/changed.txt
+git diff --staged --name-only |
+	sed "s|^|$(git rev-parse --show-toplevel)/|" >/tmp/changed.txt
 gta -changed-files /tmp/changed.txt -include github.com/Khan/districts-jobs/
 ```
 
@@ -114,24 +118,24 @@ gta -changed-files /tmp/changed.txt -include github.com/Khan/districts-jobs/
 The current `.github/workflows/test.yml` runs 8 hardcoded modules unconditionally via a matrix. A gta-based alternative detects affected packages first and skips the run entirely for unaffected changes:
 
 ```yaml
-- name: Install gta
-  run: go install github.com/digitalocean/gta@latest
+  - name: Install gta
+    run: go install github.com/digitalocean/gta@latest
 
-- name: Find affected packages
-  id: affected
-  run: |
-    AFFECTED=$(gta -base origin/main -include github.com/Khan/districts-jobs/)
-    echo "pkgs=$AFFECTED" >> $GITHUB_OUTPUT
+  - name: Find affected packages
+    id: affected
+    run: |
+      AFFECTED=$(gta -base origin/main -include github.com/Khan/districts-jobs/)
+      echo "pkgs=$AFFECTED" >> $GITHUB_OUTPUT
 
-- name: Run affected tests
-  if: steps.affected.outputs.pkgs != ''
-  run: |
-    gotestsum \
-      --jsonfile /tmp/go_test.json \
-      --junitfile /tmp/report.xml \
-      --format-icons=hivis \
-      --format=pkgname-and-test-fails \
-      -- -count=1 -timeout 10m ${{ steps.affected.outputs.pkgs }}
+  - name: Run affected tests
+    if: steps.affected.outputs.pkgs != ''
+    run: |
+      gotestsum \
+        --jsonfile /tmp/go_test.json \
+        --junitfile /tmp/report.xml \
+        --format-icons=hivis \
+        --format=pkgname-and-test-fails \
+        -- -count=1 -timeout 10m ${{ steps.affected.outputs.pkgs }}
 ```
 
 ## Workspace Behavior

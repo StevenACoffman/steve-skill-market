@@ -1,0 +1,48 @@
+{
+  "skill_id": "go-value-object-immutability",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "Should a `Money` type's `Add` method use a pointer receiver or a value receiver?",
+      "expected_behavior": "Apply the immutability pattern: Money is a value object; all methods must be side-effect-free and return new instances. `Add` should use a value receiver and return a new Money: `func (m Money) Add(other Money) Money`. Pointer receiver would signal and enable mutation, contradicting the value object contract."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "I have a `Color` struct with RGB values. Two Color instances with the same RGB are not equal when I compare them with `==`. What's wrong?",
+      "expected_behavior": "Diagnose pointer vs value semantics: if the constructor returns `*Color`, two instances with identical fields will not be equal under `==` (pointer address comparison). Fix: return `Color` (not `*Color`) from `NewColor`. Confirm all fields are comparable types. Validate that the fields are unexported to enforce immutability."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "I want to implement a `DateRange` value object in Go. What should the struct definition and constructor look like?",
+      "expected_behavior": "Provide the canonical pattern: unexported fields (`start time.Time`, `end time.Time`), `NewDateRange(start, end time.Time) (DateRange, error)` returning value type (no `&`), validation inside the constructor (start < end), value receiver methods that return new instances for any transformation, no exported fields."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_not_invoke",
+      "prompt": "How do I implement optimistic locking for a database row in Go?",
+      "expected_behavior": "No invocation of the value object immutability pattern. Optimistic locking is an infrastructure concern (version fields, database-level CAS), not a domain type design question."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "What's the difference between a Go interface and a struct?",
+      "expected_behavior": "No invocation of the immutability skill. This is a fundamental Go language question unrelated to DDD value object implementation patterns."
+    },
+    {
+      "id": "tp-06",
+      "category": "blurred_boundary",
+      "prompt": "I need to JSON-serialize my `Money` value object, but `json.Marshal` won't include unexported fields. Should I export the fields?",
+      "expected_behavior": "Do not export domain fields to satisfy infrastructure requirements. The correct pattern is a separate persistence/serialization model with exported fields and a `ToJSON() MoneyJSON` or `MarshalJSON()` method that translates from the domain type. The domain value object's immutability must not be compromised for marshaling convenience. Acknowledge this is a real engineering cost the pattern imposes."
+    },
+    {
+      "id": "tp-07",
+      "category": "blurred_boundary",
+      "prompt": "My `ProductCatalogEntry` value object has 20 fields. Is it okay to use a pointer receiver to avoid copying it on every method call?",
+      "expected_behavior": "Acknowledge the performance concern is legitimate for very large structs in hot paths. However, pointer receivers on value objects defeat immutability semantics and signal mutation intent to callers. Preferred approach: keep value receivers, benchmark the copy cost first (20 fields of primitive types is typically negligible). If copy cost is measured and significant, consider whether the type should be restructured or whether a pointer with a defensive copy on construction is acceptable — flag this as a trade-off, not a default."
+    }
+  ]
+}

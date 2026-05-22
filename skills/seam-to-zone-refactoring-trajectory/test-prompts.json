@@ -1,0 +1,111 @@
+{
+  "skill_id": "seam-to-zone-refactoring-trajectory",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "welc/welc-seam-model",
+    "fcis/fcis-two-zone-architecture"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I have a legacy Python class that calls stripe.Charge.create() directly inside its business logic. I can't test the charge calculation without hitting Stripe's API. How do I break this dependency and where should the code end up after I'm done?",
+      "expected_behavior": "Phase 1 seam analysis: the call to stripe.Charge.create() is a direct module-level call. Identify the seam type — in Python this is likely a link/module seam; the enabling point is the import or monkey-patch point. Introduce the minimum substitution (inject the stripe module or a gateway interface as a constructor argument, or use a function-type field). Phase 2 purity test: does stripe.Charge.create() return pure data or perform I/O? It performs I/O (network call, side effect). The fake is a permanent legitimate test tool — this is genuine shell behavior. The extracted computation (fee calculation, charge amount) is a core candidate: if the calculation logic can be separated from the API call, extract the pure computation to the functional core as a value object, and leave the stripe.Charge.create() call in a thin shell wrapper.",
+      "expected_not": "Should not stop at 'just mock Stripe' without asking what to do with the extracted behavior. Should not prescribe permanent test doubles over pure computation that could be inverted to value arguments."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "I've broken the dependency on our email-sending service in a legacy class by extracting an interface and injecting a fake. Tests pass. The fake EmailSender just records calls. Now what? Is this the final state?",
+      "expected_behavior": "Apply the Phase 1 → Phase 2 handoff. Tests pass — seam work is done. Now apply the purity test to the EmailSender fake: does it return data or perform I/O? Email sending is genuine I/O (network, external state change). The recording fake is the correct permanent test tool — this is shell behavior. The answer to 'is this the final state?' is yes for this dependency. However, also ask: what logic lives adjacent to the EmailSender call? If there is conditional logic computing *which* email to send, *what content* to include, or *which recipients* to target — that computation is a core candidate. Extract the pure routing/composition logic to a value object that takes data in and returns an email data structure; pass that to the shell's EmailSender. The fake stays; the logic moves.",
+      "expected_not": "Should not say 'yes, this is the final state' without checking whether adjacent conditional logic is also stuck in the shell. Should not prescribe eliminating the fake for genuine I/O behavior."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I'm designing a new Go service from scratch that will handle incoming webhook events, update a database, and send notifications. How should I structure it so I don't end up with the same mess I have in our legacy service?",
+      "expected_behavior": "Skip Phase 1 (no legacy code, no seam analysis needed). Apply two-zone design from the start. Classify every prospective class by the side-effect test before writing it: webhook payload parsing → pure computation, belongs in functional core (value in, event struct out); notification content generation → pure computation, belongs in core; database writes → I/O, belongs in imperative shell; HTTP client for outbound notifications → I/O, shell. Design the shell as a thin orchestrator: receive webhook, call core to parse and validate (pure), call core to compute notification content (pure), call shell to write DB, call shell to send notification. Each core function is testable with construct-input → call → assert-output, zero mocks. The shell is thin, no branching logic, untested or integration-tested.",
+      "expected_not": "Should not recommend starting with dependency injection frameworks or mock infrastructure as the primary design tool. Should not skip the two-zone classification step and jump straight to implementation."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "My business logic is tangled with database calls throughout. ORM calls are scattered in every method. I want to refactor toward something architecturally clean, not just get tests passing. Where do I start and what's the destination?",
+      "expected_behavior": "Frame the full trajectory. Phase 1: identify each ORM call as a dependency blocking tests. For each, determine the seam type (likely object seam via interface injection on the repository). Introduce the minimum substitution — a repository interface with a fake/in-memory implementation. Get tests passing. Phase 2 purity test per call: ORM calls are genuine I/O (database). The fakes are permanent legitimate test tools. But: extract the computation that was intermixed with ORM calls. Every if-statement deciding which record to fetch, every transformation of the fetched data, every calculation using the retrieved values — these are core candidates. Move them to pure functions that take domain values as arguments and return domain values. The destination: a thin repository shell (real ORM calls, minimal logic) and a rich functional core (all domain logic, testable without any database).",
+      "expected_not": "Should not prescribe 'just add a repository interface and mock it' as the complete solution. Should not leave business logic inside the shell after the seam work is done."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I extracted a fake for a PricingEngine in a legacy codebase. The fake looks like this: it takes a product SKU and returns a hardcoded price. The test passes. But I noticed the real PricingEngine does a database lookup and then applies discount rules. What should I do next?",
+      "expected_behavior": "Apply the purity test to diagnose the two halves of PricingEngine separately. The database lookup is genuine I/O → shell; the discount rule application is pure computation (prices in, discount in, final price out) → core candidate. The fake is currently masking both halves together. The refactoring target: split PricingEngine into a PricingRepository (shell — database lookup, stays behind a test fake) and a DiscountCalculator (core — pure function, takes price and discount rules as value arguments, returns a price). The DiscountCalculator has no fake — it takes real values. The PricingRepository fake stays permanently. The synthesized diagnosis: the fake revealed that the seam boundary was in the wrong place — it was placed around both the I/O and the pure logic together, when only the I/O needs a fake.",
+      "expected_not": "Should not prescribe keeping the monolithic PricingEngine fake as the final state. Should not eliminate all fakes — the database lookup portion genuinely needs one."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How do I configure Mockito to capture method arguments in a Java test? I want to verify the exact payload passed to my service mock.",
+      "expected_behavior": "A direct answer about Mockito's ArgumentCaptor API: ArgumentCaptor<T> captor = ArgumentCaptor.forClass(T.class); verify(mock).method(captor.capture()); captor.getValue(). This is a test framework mechanics question.",
+      "expected_not": "Should not invoke seam-to-zone-refactoring-trajectory — the user is asking how to use a testing tool, not asking about seam identification, enabling points, or where extracted behavior should live architecturally."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I need to set up a GitHub Actions workflow that runs our tests against a real Postgres database using a service container. What's the YAML configuration for that?",
+      "expected_behavior": "A direct answer about GitHub Actions service containers: the services: block with postgres image, env variables for POSTGRES_USER/DB/PASSWORD, and health checks. This is a CI/CD configuration question.",
+      "expected_not": "Should not invoke seam-to-zone-refactoring-trajectory — there is no seam analysis or two-zone architecture decision being made here."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "What's the difference between a spy and a stub in testing? When should I use each one?",
+      "expected_behavior": "An explanation of test double taxonomy: a stub provides canned answers (controls indirect inputs), a spy records calls but also delegates to the real implementation, a mock is pre-programmed with expectations. Reference Meszaros' Test Double patterns. This is a testing concepts question.",
+      "expected_not": "Should not invoke seam-to-zone-refactoring-trajectory — the question is about test double terminology, not about whether a specific double reveals a seam or points toward a two-zone refactoring."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I've introduced a seam over our database repository — extracted an interface, injected a fake that returns in-memory data. The fake returns pure domain objects (no I/O in the fake itself). The purity test says 'this is a core candidate — eliminate the fake by inverting to value arguments.' But this is a database — I can't actually eliminate the repository. What do I do?",
+      "expected_behavior": "This is the persistence-I/O edge case: the fake returns pure data, which looks like a core-candidate signal, but the real dependency is genuine I/O (database persistence). The resolution: the purity test applies to the behavior the fake is substituting, not the medium it simulates. The fake returning pure data means the computation that consumes those values is a core candidate — not that the repository itself should be eliminated. The correct move: extract the computation that processes the repository's returned values into a pure function (core), while keeping the repository interface and its fake as the permanent shell test tool. The seam over the repository stays; what moves to core is the logic that was mixed in with the repository calls.",
+      "decision_axis": "Phase 1 Step 4 conditional: 'If data: this is the two-zone signal — the behavior belongs in the functional core... If I/O: this is genuine shell behavior.' Persistence I/O is genuine shell behavior. The data returned by the repository fake signals that the computation using it is a core candidate — not that the repository is a core candidate. The seam stays; the logic moves."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I'm refactoring a Django view that handles a POST request, validates the input, applies business rules, and writes to the database. I want to apply two-zone architecture. But Django's views are fundamentally tied to the framework lifecycle. Where do I put the two-zone boundary?",
+      "expected_behavior": "Apply the Boundaries exception: 'Frameworks that impose their own structure (Rails, Django, Spring) conflict — FCIS can be applied within a framework, but don't fight the framework's prescribed structure directly.' The Django view is the shell by definition — it handles I/O (HTTP request/response, database write). The two-zone boundary goes inside the view: the view calls a pure function that takes deserialized Python values (not request objects), applies business rules, and returns a result value (not a response). The view then writes to the database and renders the response. The pure function is in the core; the view stays in the shell. Never pass request objects into core functions — they are I/O carriers.",
+      "decision_axis": "Boundaries section: 'Frameworks that impose their own structure conflict — FCIS can be applied within a framework, but don't fight the framework's prescribed structure directly.' The zone boundary is inside the view, not around it."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I'm designing a new service and want to apply two-zone architecture from the start. But my domain has a lot of error cases — invalid input, resource not found, downstream service unavailable. How do I handle errors in the functional core without using exceptions or I/O?",
+      "expected_behavior": "This triggers the error handling gap called out in Source B Failures: 'The functional core pattern works for the happy path; failure representation (Result/Either pattern) is not addressed by Bernhardt and requires additional discipline.' The two-zone prescription handles happy path cleanly; error propagation requires an additional pattern. Use a Result/Either type (or Go-style multiple return values) in the core: functions return (value, error) or a Result[T] — a pure value that carries either success or failure. The shell unwraps the result and decides what I/O to perform (log the error, return an HTTP 4xx, retry). The error value is pure — it crosses zone boundaries as data, not as an exception that sidesteps the return path. The seam model is not needed here (new code); the gap is in two-zone's coverage of failure paths.",
+      "decision_axis": "Source B failure: 'Error handling gap: the functional core pattern works for the happy path; failure representation is not addressed by Bernhardt and requires additional discipline.' The edge case tests whether the skill correctly surfaces this limitation and prescribes the Result/Either pattern bridge."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I just extracted a seam over a tax calculation service in our legacy billing code. The fake I wrote returns a TaxBreakdown struct with line items. Tests pass. My team lead is asking 'should we keep the fake or can we get rid of it?' I need to answer both whether the fake is permanent AND whether the seam extraction revealed anything else we should refactor.",
+      "merged_advantage": "The merged skill provides the complete post-seam decision: (1) apply the purity test to determine if the fake is permanent or a refactoring prompt (Bernhardt), and (2) use the seam's location as the boundary marker for the two-zone refactoring target (Feathers' framework as the access mechanism, Bernhardt's framework as the destination). If TaxBreakdown is pure data, the fake is a prompt: invert the dependency — the tax breakdown should be computed as a value and passed into the billing code, not fetched by it. If the tax service performs I/O (network call, external rate lookup), the fake is permanent. Neither source alone provides both the permanence test and the architectural destination.",
+      "source1_gap": "welc-seam-model stops at 'tests pass = success' — it does not provide the purity test to evaluate whether the fake should be permanent or eliminated, and does not prescribe the two-zone destination for the extracted behavior.",
+      "source2_gap": "fcis-two-zone-architecture prescribes the destination but does not provide the seam taxonomy for reaching it from legacy code — it assumes you can redesign the structure, not that you must work within existing entanglement."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "I have a legacy order processing class with three dependencies I've broken via seams: an InventoryChecker that queries a warehouse API, a PriceCalculator that applies discount rules from in-memory config, and an AuditLogger that writes to a file. Tests pass for all three. Now I need to decide the architectural future of each: which fakes are permanent, which should be eliminated, and what's the final shape of this code?",
+      "merged_advantage": "The merged skill applies the purity test individually to each of the three extracted fakes and produces a differentiated treatment for each, which neither source alone can do: InventoryChecker (warehouse API) → genuine I/O → permanent fake; PriceCalculator (in-memory config + pure discount logic) → pure data → invert to value arguments, eliminate the fake, extract to functional core; AuditLogger (file write) → genuine I/O → permanent fake OR leave shell untested if the shell has no branching logic. The merged skill's Phase 2 triage converts a three-fake test suite into a structured architectural map.",
+      "source1_gap": "welc-seam-model treats all three fakes as permanent fixtures once tests pass — it does not differentiate between pure-data collaborators (which should be inverted) and genuine-I/O collaborators (which should stay as fakes).",
+      "source2_gap": "fcis-two-zone-architecture prescribes the functional core destination but does not provide the seam-based entry mechanism for each dependency or the granular purity test that determines which of the three collaborators belongs in which zone."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "My team is starting a new microservice. Half the team wants to design it with functional core / imperative shell from day one. The other half says 'we don't know what the dependencies will be yet, let's just write it and refactor when we know more.' How do I resolve this debate and set a design approach?",
+      "merged_advantage": "The merged skill encodes the context conditional for when each framework applies: 'For new code: two-zone is the design prescription — design with core and shell explicitly separated from the start. The seam model becomes relevant only if the code later degrades.' This directly resolves the debate: the two-zone prescription applies to new code; seam analysis is retroactive. The 'write it and refactor' position is defensible only if refactoring is actually planned — but the merged skill's Source B Failures warn that 'rough code in the shell during exploration must be extracted; intermediate state left indefinitely defeats the architecture.' The merged skill also encodes the signal to watch for degradation: 'logic accumulating in the shell' and 'I/O creeping into the core' are the two degradation indicators that should trigger seam-first analysis.",
+      "source1_gap": "welc-seam-model is a retroactive diagnostic for existing tangled code — it provides no guidance on whether to apply two-zone upfront or wait, and does not prescribe a design approach for new code.",
+      "source2_gap": "fcis-two-zone-architecture prescribes the upfront design approach but does not explain what to do when the code inevitably degrades — it doesn't provide the seam taxonomy for recovering structure when the two-zone boundary erodes under feature pressure."
+    }
+  ]
+}

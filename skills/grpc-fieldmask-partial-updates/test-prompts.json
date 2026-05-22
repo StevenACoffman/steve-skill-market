@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-fieldmask-partial-updates",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "How do I add caller-controlled field selection to a gRPC list endpoint so clients can request only the fields they need?",
+      "rationale": "Direct match: FieldMask on read endpoints to prevent over-fetching."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "How do I implement server-side FieldMask filtering in Go using ProtoReflect? I need to clear fields not in the mask before sending the response.",
+      "rationale": "Direct match: the ProtoReflect().Range() implementation of server-side FieldMask filtering."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "My streaming RPC response has a computed 'overdue' boolean that depends on a 'due_date' field. If the client masks out 'due_date', should 'overdue' still be included in the response?",
+      "rationale": "Direct match: the derived-field ordering correctness requirement — apply mask before derived computation."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "Why is FieldMask especially valuable for server-streaming RPCs compared to unary RPCs?",
+      "rationale": "Direct match: the 'paid once, applied N times' amortization insight."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement a partial update (PATCH) endpoint in gRPC to update only the fields the client provides?",
+      "rationale": "Partial write/PATCH semantics using FieldMask on mutations — different use case from the read/over-fetching pattern covered here."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "How do I add validation to a gRPC request message using protoc-gen-validate?",
+      "rationale": "Proto annotation-based validation, unrelated to FieldMask field selection."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "What is the most efficient way to serialize a large Protobuf message to a file?",
+      "rationale": "Protobuf serialization to storage, not streaming RPC field selection."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I have a list endpoint that returns 50 fields per item. I want to reduce bandwidth. Should I use FieldMask or just define separate DTOs for different client needs?",
+      "rationale": "Blurred: FieldMask is this skill's answer; the alternative (multiple DTOs / separate endpoints) is a valid design choice this skill's Boundary section touches on."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "Should I also use FieldMask to limit which columns are fetched from the database, or just use it to filter the response?",
+      "rationale": "Blurred: the Boundary section notes that FieldMask does not automatically limit DB queries — but translating mask paths to SELECT columns is a related extension beyond this skill's scope."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "I'm trying to optimize payload size for a high-volume streaming endpoint. Should I start with FieldMask or with Protobuf field tag assignment?",
+      "rationale": "Blurred: this skill covers FieldMask specifically; the grpc-payload-optimization skill covers the full sequence where field tag assignment comes before FieldMask in the optimization priority order."
+    }
+  ]
+}

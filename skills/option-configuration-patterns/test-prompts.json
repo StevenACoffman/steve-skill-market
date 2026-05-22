@@ -1,0 +1,86 @@
+{
+  "skill": "option-configuration-patterns",
+  "version": "0.1.0",
+  "source_book": "Go Advice — Redowan Delowar (rednafi)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I'm designing a Go client library and the constructor has grown to 8 parameters — timeout, retry count, base URL, auth token, max connections, TLS config, logger, and user agent. How should I handle all these optional settings?",
+      "expected_behavior": "Skill explains the trade-offs between functional options (WithTimeout, WithRetries...) and a config struct, and gives guidance on when each is appropriate for constructor design.",
+      "notes": "Constructor with many optional params — canonical case for functional options or config struct."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "Should I use functional options or a config struct for my Go constructor? I can't decide which pattern is more idiomatic.",
+      "expected_behavior": "Skill directly compares the two patterns — functional options for libraries with stable defaults and backward compatibility needs, config structs for simpler/internal code — and gives concrete guidance.",
+      "notes": "Direct trade-off question between the two main patterns."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "How do I add optional parameters to a Go constructor? I don't want callers to have to specify everything, just the things they care about.",
+      "expected_behavior": "Skill explains both functional options and config struct with defaults, showing how either pattern lets callers omit settings they don't need.",
+      "notes": "Optionality in constructors — the motivating need for both patterns."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I have a struct with 5 optional fields. Right now callers have to set them manually after construction which is messy and unsafe. What's the idiomatic Go way for callers to configure this?",
+      "expected_behavior": "Skill recommends moving configuration into a constructor via functional options or a config struct, so construction and configuration happen atomically and the zero-value struct is never partially initialized by callers.",
+      "notes": "Post-construction field assignment anti-pattern — config pattern solves it."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Should I use WithX() option methods on my service type or just take a Config struct in New()? What does the Go community recommend?",
+      "expected_behavior": "Skill gives concrete guidance: functional options (WithX) are preferred for public APIs and library code needing extensibility; config structs are simpler for internal/application code.",
+      "notes": "WithX vs config struct question directly addressed by the skill."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I read configuration from environment variables and load it into my Go app at startup?",
+      "expected_behavior": "Environment variable configuration is about runtime config loading (envconfig, viper, os.Getenv), not about constructor option design patterns. Skill should not activate.",
+      "notes": "Env var config loading is a separate concern from API/constructor design."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I use the functional options that the AWS SDK for Go v2 exposes when creating a client?",
+      "expected_behavior": "The user is a consumer of an existing options API, not a designer of one. The skill covers how to design these patterns, not how to use them. Skill should not activate.",
+      "notes": "Using an existing library's options — consumer perspective, not designer."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "How do I implement feature flags in Go so I can enable or disable features at runtime?",
+      "expected_behavior": "Feature flags are a runtime behavioral toggle system, not a constructor configuration pattern. Skill should not activate.",
+      "notes": "Feature flags are a different runtime concern from constructor design."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "I have a Server type and I'm adding more options over time. I'm worried that if I use a config struct, adding new fields will break callers. Should I use functional options instead?",
+      "expected_behavior": "Yes — should trigger. Backward compatibility is one of the key reasons to prefer functional options over config structs in public APIs. Skill should activate and explain this trade-off.",
+      "notes": "API evolution concern drives the functional options choice."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "Should I use WithX() setter methods on my struct or just expose the fields directly?",
+      "expected_behavior": "Partial trigger. The question is about fluent builder-style setters vs public fields, which is adjacent to functional options but not the same. Skill may activate to address why functional options are preferable to public field mutation, but the question doesn't explicitly mention constructors.",
+      "notes": "Setter methods vs public fields is related but not the constructor options question specifically."
+    },
+    {
+      "id": "edge-case-03",
+      "type": "edge_case",
+      "prompt": "My constructor is getting unwieldy. Would it make sense to use the builder pattern in Go?",
+      "expected_behavior": "Partial trigger. The builder pattern in Go is often approximated by functional options or config structs. Skill should engage to redirect toward idiomatic Go patterns rather than Java-style builders.",
+      "notes": "Builder pattern mention is often a mislabeled functional options question in Go."
+    }
+  ],
+  "minimum_pass_rate": 0.8
+}

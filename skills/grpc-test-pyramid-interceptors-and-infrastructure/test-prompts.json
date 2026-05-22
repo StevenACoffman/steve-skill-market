@@ -1,0 +1,103 @@
+{
+  "skill_id": "grpc-test-pyramid-interceptors-and-infrastructure",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "grpc-go-for-professionals/grpc-testing-level-selection",
+    "grpc-microservices-in-go/grpc-testcontainers-pyramid"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "My gRPC service has unit tests that all pass, but our integration tests are intermittently failing — sometimes on auth errors, sometimes on database connectivity. I can't tell if the failures are TLS credential issues or MySQL not being ready. How do I structure the integration tests to make failures diagnosable?",
+      "expected_behavior": "Diagnose the root cause: the integration tests are mixing two distinct sub-concerns (interceptor/TLS setup and database infrastructure) in the same suite. Prescribe splitting them: (1) an interceptor integration suite that tests auth rejection and rate-limit behavior with real TLS credentials over bufconn — no containers, deterministic; (2) an infrastructure integration suite using testcontainers + wait.ForSQL('orders', 'mysql', dsn) that provisions a real MySQL container and tests the adapter in isolation — no gRPC server, no TLS. When a TLS issue occurs, only the interceptor suite fails. When MySQL has a startup race, only the infrastructure suite fails.",
+      "expected_not": "Should not suggest adding retry loops or increasing timeouts as the primary fix. Should not merge the suites into a single Docker Compose stack as the first-line solution."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "We shipped an auth interceptor bug to production: the interceptor was silently passing all requests without actually validating tokens. Our unit tests all passed. What test are we missing and how do we write it?",
+      "expected_behavior": "Prescribe an interceptor integration test: start the gRPC server exactly as main.go starts it (all interceptors registered, real TLS test credentials loaded from testdata/), use bufconn for transport, and assert that a call made without a valid authorization token returns codes.Unauthenticated. Explain tier ownership: this test belongs at the integration tier, not the unit tier — unit tests with grpc.NewServer() and zero server options deliberately exclude interceptors. The bug reached production because the interceptor tier had no test coverage. Show the test structure with //go:build integration tag.",
+      "expected_not": "Should not suggest testing the auth interceptor in isolation as a plain Go function without the full server chain — that misses the registration/wiring bug. Should not put this test in the unit tier with mocked interceptors."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I'm building a gRPC service with an Order handler, a MySQL adapter, and JWT auth + rate-limit interceptors. I want to know: which test tier owns the JWT auth interceptor, which owns the MySQL adapter, and which owns the end-to-end order creation flow?",
+      "expected_behavior": "Map each concern to its tier: (1) unit tests own the Order handler logic — bufconn, zero server options, no interceptors, mocked DB interface (handwritten fake or mockery-generated); (2) integration tier (interceptor sub-concern) owns JWT auth and rate-limit — full server from main.go with real TLS credentials, bufconn transport, assert codes.Unauthenticated and codes.ResourceExhausted; (3) integration tier (infrastructure sub-concern) owns the MySQL adapter — testcontainers GenericContainer with wait.ForSQL, real adapter, no gRPC server; (4) e2e tier owns the full order creation flow — LocalDockerCompose, real grpc.Dial, assert fields survive round-trip.",
+      "expected_not": "Should not collapse interceptor and database concerns into a single integration test. Should not put the MySQL adapter test inside a unit test with a mocked SQL driver."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "Our infrastructure integration tests keep failing with 'connection refused' because the MySQL container isn't ready when the test adapter connects. We're using testcontainers-go. How do we fix the startup race?",
+      "expected_behavior": "The fix is wait.ForSQL(tableName, driverName, dataSourceName) in the ContainerRequest's WaitingFor field — this blocks SetupSuite until MySQL actually accepts real connections to the specified table, not just until the port is open. Show the full SetupSuite implementation using testify/suite, testcontainers.GenericContainer, and the correct wait strategy. Explain why wait.ForLog is the fallback if the table doesn't exist at probe time (when migrations run at service startup). Contrast with time.Sleep or wait.ForListeningPort which are unreliable.",
+      "expected_not": "Should not suggest wrapping the test in retry loops or adding sleep delays. Should not suggest running the MySQL container in a separate pre-test script."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I want to run load tests against my gRPC service using ghz as part of CI. Currently they run in go test ./... alongside unit tests. The results are noisy — different runs give wildly different p99 latencies. Where do load tests belong in the test strategy?",
+      "expected_behavior": "Load tests using ghz belong in a dedicated pipeline stage against a deployment, not inside go test ./.... Running ghz in shared CI environments produces flaky latency results due to infrastructure contention with other CI jobs. Prescribe: (1) add //go:build e2e or similar tag to keep load tests out of go test ./..., (2) run ghz against a staging or canary deployment in a dedicated pipeline stage with reserved compute, (3) validate status-code distribution for unexpected error codes AND p50/p95/p99 latency against the service's SLOs. Load tests and e2e correctness tests are both needed above the integration tier but are different pipeline stages.",
+      "expected_not": "Should not suggest parallelizing the load test goroutines within go test ./... as a fix. Should not treat load testing as optional."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to test my gRPC service's load balancing behavior — specifically that client-side round-robin distributes requests evenly across three backend replicas. How do I write this test in Go?",
+      "expected_behavior": "Use multiple bufconn listeners simulating multiple server instances, configure the client with a custom resolver that returns all three addresses, and assert that request counts are approximately equal across instances. This is a load-balancing behavior test, not a test pyramid / tier-selection or testcontainers infrastructure concern.",
+      "expected_not": "Should not invoke grpc-test-pyramid-interceptors-and-infrastructure — the question is about load-balancing distribution verification, not about which test tier owns interceptors vs. database adapters."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I'm writing a proto file for a new gRPC service. Should I put all my messages in one file or split them across multiple files by domain? What are the conventions for organizing proto files in a large codebase?",
+      "expected_behavior": "Proto file organization follows conventions around domain grouping, one service per file, shared message types in separate files, and buf module structure. This is a proto schema organization and project layout question.",
+      "expected_not": "Should not invoke grpc-test-pyramid-interceptors-and-infrastructure — proto file organization has no connection to test tier selection, bufconn, testcontainers, or integration test ownership."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "My gRPC service uses mutual TLS (mTLS). I want to understand how to generate test certificates and configure both the server and client for mTLS in production. What's the certificate management approach?",
+      "expected_behavior": "Cover mTLS certificate generation (using cfssl, openssl, or cert-manager in Kubernetes), server configuration with credentials.NewTLS and tls.RequireAndVerifyClientCert, client configuration with credentials.NewTLS loading the CA. This is a TLS certificate management and mTLS configuration topic.",
+      "expected_not": "Should not invoke grpc-test-pyramid-interceptors-and-infrastructure — while TLS credentials appear in interceptor integration tests, the question is about certificate management and mTLS setup, not about test tier selection or testcontainers."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "My gRPC service has no auth interceptors at all — it's a pure internal microservice on a trusted network with no interceptors registered. Should I still separate interceptor and infrastructure integration tiers?",
+      "expected_behavior": "No. The interceptor integration sub-tier is only needed when the service has interceptors to test. For a service with no interceptors, the integration tier collapses to a single infrastructure sub-concern: testcontainers + wait.ForSQL for the real database adapter. The merged skill's boundary note explicitly covers this: 'If a service has no interceptors, collapsing unit and integration tests is acceptable — this pattern is overhead for simple internal microservices.' Unit tests own handler logic; infrastructure integration tests own the adapter. No interceptor tier needed.",
+      "decision_axis": "Whether the service has interceptors registered — if not, the interceptor integration sub-tier is unnecessary overhead and the standard two-tier (unit + infrastructure integration) is sufficient."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I'm using wait.ForSQL in my testcontainers SetupSuite, but the table I'm waiting for doesn't exist at MySQL startup — it's created by a GORM AutoMigrate call inside my db.NewAdapter() constructor. The suite hangs forever because the table never appears before NewAdapter is called. How do I fix this?",
+      "expected_behavior": "wait.ForSQL requires the target table to exist at probe time, which makes it a chicken-and-egg problem when migrations run inside the adapter constructor. The fix is to switch to wait.ForLog matching a MySQL startup completion message (e.g., 'ready for connections'), which fires when MySQL is accepting connections regardless of schema state. Then call db.NewAdapter() (which runs AutoMigrate) after the container is ready. Alternatively, run the migration in a separate setup step before the wait probe table exists. The boundary note covers this: 'If the service creates tables via migration at startup, use wait.ForLog matching a startup log message instead.'",
+      "decision_axis": "Whether the wait probe table exists at MySQL startup time — if created by migration inside the adapter, switch from wait.ForSQL to wait.ForLog."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I want a single integration test that validates both: (a) that an authenticated request reaches the handler correctly, AND (b) that the handler correctly saves data to MySQL. Can I combine the interceptor and infrastructure sub-tiers into one test to avoid duplicating the server setup?",
+      "expected_behavior": "Resist the temptation to combine. A combined test that requires both real TLS credentials and a running MySQL container has two unrelated failure modes: TLS credential issues and container startup races. When it fails, the failure message does not tell you which component is broken — you must debug both. The merged skill is explicit that the value of separation is diagnostic clarity: interceptor tests fail deterministically (no containers, no timing) and infrastructure tests fail with clear container startup signals. If boilerplate reduction is the concern, extract server-setup helpers shared across interceptor tests and adapter-setup helpers shared across infrastructure tests — but keep the test files separate.",
+      "decision_axis": "Whether diagnostic clarity or test-count minimization is the priority — the merged skill's synthesis insight is that mixed integration tests obscure root cause when they fail."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our gRPC service has a JWT auth interceptor and a PostgreSQL adapter. Unit tests pass. We're adding integration tests for the first time. A developer proposed a single integration test file that: spins up a PostgreSQL container, starts the full server with all interceptors including JWT auth, and runs both auth rejection tests and database persistence tests in the same suite. What's wrong with this approach and what should we do instead?",
+      "merged_advantage": "The merged skill provides the specific split prescription: (1) an interceptor integration suite with real TLS test credentials over bufconn — no containers — that tests JWT rejection returning codes.Unauthenticated; (2) a separate infrastructure integration suite using testcontainers + wait.ForSQL that tests the PostgreSQL adapter in isolation — no gRPC server, no JWT validation. The merged skill explains why: when the combined suite fails, you can't tell if it's a JWT configuration bug or a container startup race. Neither source alone provides both the tier-ownership principle AND the testcontainers tooling to implement the split.",
+      "source1_gap": "grpc-go-for-professionals/grpc-testing-level-selection establishes that auth interceptors belong in the integration tier, but does not provide testcontainers tooling or the wait.ForSQL startup probe — a team following it alone would know to separate interceptor tests but lack the infrastructure provisioning pattern for the database side.",
+      "source2_gap": "grpc-microservices-in-go/grpc-testcontainers-pyramid provides the testcontainers + wait.ForSQL pattern but does not establish the principle that interceptor tests should run without containers — a team following it alone might include the full interceptor chain in the containerized suite, re-introducing the mixed-concern diagnostic problem."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "I need to write an integration test that proves my rate-limit interceptor actually returns codes.ResourceExhausted after 100 requests per second. I also need a test that proves my MySQL adapter correctly persists an Order struct with all fields. I only have time to set up one test harness. How should I structure this?",
+      "merged_advantage": "The merged skill explains why one harness cannot serve both tests without trade-offs, and provides the two-harness approach: the rate-limit test needs the full server chain over bufconn with real interceptors but zero infrastructure — it runs in milliseconds; the MySQL adapter test needs a real container via testcontainers but no gRPC server. The merged skill provides concrete code for both SetupSuite implementations. Using one combined harness forces the faster rate-limit test to wait for MySQL container startup (10-30 seconds) every run — a disproportionate cost for a purely in-process test.",
+      "source1_gap": "grpc-go-for-professionals/grpc-testing-level-selection would cover the rate-limit interceptor test structure but provides no testcontainers tooling for the MySQL adapter test.",
+      "source2_gap": "grpc-microservices-in-go/grpc-testcontainers-pyramid would cover the MySQL adapter test with testcontainers but does not provide the rationale for keeping the rate-limit interceptor test container-free or the bufconn server setup for interceptor-only testing."
+    }
+  ]
+}

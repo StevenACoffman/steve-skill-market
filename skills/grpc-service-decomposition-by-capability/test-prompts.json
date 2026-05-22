@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-service-decomposition-by-capability",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "We're splitting our e-commerce monolith into microservices. Should we split by technical layer (controllers, services, repositories) or some other principle?",
+      "rationale": "Direct match: Y-axis decomposition by business capability, not technical layer."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "How do I decide where to draw service boundaries in a microservice architecture? What is the scale cube?",
+      "rationale": "Direct match: the scale cube framework and Y-axis business capability decomposition."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "Two of our teams are constantly blocked by each other's deployments even though they own different services. Could the service boundaries be wrong?",
+      "rationale": "Direct match: Conway's Law and team-ownership alignment — shared release cycles indicate wrong service boundaries."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "Is it safe to have two microservices share the same database schema if they're in the same team and always deployed together?",
+      "rationale": "Direct match: shared databases re-create monolithic coupling; each service must own its own data."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement service discovery for gRPC microservices in Kubernetes?",
+      "rationale": "Kubernetes DNS-based service discovery — implementation detail, not service boundary design."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "What is the best way to version a gRPC API across multiple microservices?",
+      "rationale": "Proto versioning and API evolution, not service decomposition principles."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure Kubernetes resource requests and limits for a high-traffic gRPC service?",
+      "rationale": "Kubernetes resource management, not service boundary design."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "We have an Order service and a Payment service. The Order service currently imports the Payment service's domain types directly. Is this a problem and how do we fix it?",
+      "rationale": "Blurred: the ce01 counter-example is about domain type sharing; this skill covers why service boundaries require API contracts via stubs, while grpc-hexagonal-architecture-ports covers the intra-service adapter pattern."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "Should we decompose our system now or start with a monolith and split later? We're a team of 5 building a new e-commerce platform.",
+      "rationale": "Blurred: the Boundary section addresses this directly — start with a monolith — but the timing of decomposition is a strategic decision that depends on team size, domain knowledge maturity, and deployment independence requirements."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "Our checkout service calls 4 other services in sequence. Each call can fail independently. Should we split checkout into smaller services or keep it as one?",
+      "rationale": "Blurred: touches both decomposition criteria (this skill) and saga/distributed transaction handling (grpc-saga-compensation-ordering) — the orchestration pattern may be needed regardless of whether checkout is split further."
+    }
+  ]
+}

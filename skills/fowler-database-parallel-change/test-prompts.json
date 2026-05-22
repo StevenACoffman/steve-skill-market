@@ -1,0 +1,249 @@
+{
+  "skill": "fowler-database-parallel-change",
+  "version": "1.0.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "segment": "A2",
+      "trigger": "column rename, zero-downtime, canonical scenario",
+      "difficulty": "basic",
+      "prompt": "I need to rename the 'user_name' column to 'username' in a table with 50 million rows in production. I can't take downtime. What's the migration strategy?",
+      "must_contain": [
+        "expand",
+        "dual-write",
+        "backfill",
+        "stabiliz",
+        "drop"
+      ],
+      "must_not_contain": [
+        "RENAME COLUMN",
+        "single migration",
+        "ALTER TABLE users RENAME"
+      ],
+      "notes": "This is the V2 novel question from verified.md. Response must describe the expand-contract lifecycle across multiple production releases: add new column, dual-write, backfill, migrate readers, stabilize, then drop the old column. Must explicitly reject an in-place RENAME as the approach."
+    },
+    {
+      "id": "tp-02",
+      "segment": "E",
+      "trigger": "full procedure request",
+      "difficulty": "intermediate",
+      "prompt": "Walk me through the step-by-step expand-contract procedure for renaming a database column in production without downtime. Include the SQL and what application code changes are needed at each step.",
+      "must_contain": [
+        "ADD COLUMN",
+        "dual-write",
+        "backfill",
+        "DROP COLUMN",
+        "stabiliz",
+        "separate"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must cover all 6 phases: expand (ADD COLUMN), dual-write (write to both), backfill (populate existing rows), migrate readers (switch SELECTs), stabilize (wait and monitor), contract (DROP COLUMN). Must emphasize these are separate production releases, not a single deployment."
+    },
+    {
+      "id": "tp-03",
+      "segment": "I",
+      "trigger": "why multiple releases, not just multiple commits",
+      "difficulty": "intermediate",
+      "prompt": "Why do database schema changes need to be spread across multiple production releases instead of just multiple commits in a feature branch?",
+      "must_contain": [
+        "running instances",
+        "irreversible",
+        "rollback"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must explain the asymmetric reversibility of data changes vs code changes, and the concurrent old/new code problem: during a deployment window, old and new versions of the application may coexist. A schema that removes old columns while old code is still running breaks those instances. Multiple commits deployed together do not solve this."
+    },
+    {
+      "id": "tp-04",
+      "segment": "I",
+      "trigger": "why keep the old column after migrating readers",
+      "difficulty": "intermediate",
+      "prompt": "After I've moved all my application code to read from the new column and the old column has no readers, why shouldn't I just drop it immediately in the same deployment?",
+      "must_contain": [
+        "stabiliz",
+        "async",
+        "rollback"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must explain the stabilization period: async consumers, batch jobs, reporting pipelines, and external integrations may still reference the old column. The old column present = rollback still possible. Drop the old column = irreversible. The stabilization period is how you discover missed consumers before closing the rollback window."
+    },
+    {
+      "id": "tp-05",
+      "segment": "R",
+      "trigger": "what does Fowler say about database refactoring",
+      "difficulty": "basic",
+      "prompt": "What does Martin Fowler say about how database changes differ from regular code refactoring?",
+      "must_contain": [
+        "multiple releases",
+        "reverse",
+        "parallel change",
+        "expand-contract"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must reference or paraphrase the key passage from Chapter 2: database changes are best separated over multiple releases to production to make it easy to reverse any change that causes a problem. The field rename example (add new field, dual-write, migrate readers, stabilize, remove old field) should be described. The terms parallel change and expand-contract should appear."
+    },
+    {
+      "id": "tp-06",
+      "segment": "A2",
+      "trigger": "dropping a deprecated column",
+      "difficulty": "basic",
+      "prompt": "We have a column 'legacy_notes' in our orders table that hasn't been used in years. I want to drop it to clean up the schema. What's the safe way to do this in production?",
+      "must_contain": [
+        "verify",
+        "stabiliz",
+        "readers",
+        "DROP COLUMN"
+      ],
+      "must_not_contain": [
+        "immediately",
+        "single migration"
+      ],
+      "notes": "Response must recommend verifying that nothing reads or writes the column (not just grepping the codebase — async consumers and external integrations may not appear in the source), a stabilization period after confirming no writes, and then dropping the column as a separate release. Dropping an unused column is still the contract phase of expand-contract."
+    },
+    {
+      "id": "tp-07",
+      "segment": "A2",
+      "trigger": "changing a column type",
+      "difficulty": "intermediate",
+      "prompt": "I need to change a column from VARCHAR(255) to TEXT in a production PostgreSQL table with 10 million rows. I can't afford a table lock. How should I approach this?",
+      "must_contain": [
+        "new column",
+        "backfill",
+        "dual-write"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must apply the expand-contract pattern to a type change: add new TEXT column, dual-write to both, backfill existing rows, migrate readers to new column, stabilize, drop old VARCHAR column. Should note the table lock risk of ALTER COLUMN TYPE in-place on large tables."
+    },
+    {
+      "id": "tp-08",
+      "segment": "A1",
+      "trigger": "table split scenario",
+      "difficulty": "intermediate",
+      "prompt": "I have a wide table with 80 columns. I want to extract 20 audit columns into a separate audit_log table. How do I do this without breaking the running application?",
+      "must_contain": [
+        "new table",
+        "dual-write",
+        "migrate",
+        "drop"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must apply expand-contract to a table split: create new table (expand), dual-write audit columns to both tables, migrate readers to new table, stabilize, remove audit columns from original table (contract). The same six-phase structure applies to table splits as to column renames."
+    },
+    {
+      "id": "tp-09",
+      "segment": "B",
+      "trigger": "boundary — internal database, no concurrency",
+      "difficulty": "intermediate",
+      "prompt": "I have a SQLite database used only by a single-user desktop application. When the app upgrades, it runs migrations at startup. Do I need to use expand-contract for schema changes?",
+      "must_contain": [
+        "single",
+        "no running instances"
+      ],
+      "must_not_contain": [
+        "expand-contract is required",
+        "you must use"
+      ],
+      "notes": "Response must recognize this as a boundary case where expand-contract is not required. The constraint that motivates multi-release schema changes is concurrent old and new code against the same schema. A single-user app with migrations run at startup before old code resumes has no concurrent consumers. A single migration is appropriate."
+    },
+    {
+      "id": "tp-10",
+      "segment": "B",
+      "trigger": "blind spot — ORM-generated migrations",
+      "difficulty": "intermediate",
+      "prompt": "My ORM automatically generates a migration that does ALTER TABLE users RENAME COLUMN user_name TO username. It's just one line. Can I run this in production?",
+      "must_contain": [
+        "running instances",
+        "break"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must warn against running an in-place rename in production if there are running instances of the application. An ORM-generated rename is a single irreversible operation that breaks any running code referencing the old column name. Review ORM-generated migrations before applying them to production — the ORM does not know about deployment concurrency."
+    },
+    {
+      "id": "tp-11",
+      "segment": "B",
+      "trigger": "blind spot — external consumers",
+      "difficulty": "advanced",
+      "prompt": "We've migrated all our application code to use the new column name. Our BI team says they have direct queries against the production database using the old column name. Can I still drop the old column?",
+      "must_contain": [
+        "external",
+        "consumers",
+        "migrate"
+      ],
+      "must_not_contain": [
+        "yes, you can drop"
+      ],
+      "notes": "Response must identify the external consumer problem: the BI team's direct queries are readers of the old column. They must be migrated before the contract phase. Dropping the column while external consumers reference it breaks those queries. The book's approach assumes the team owns all consumers — this is a blind spot when shared databases have external readers."
+    },
+    {
+      "id": "tp-12",
+      "segment": "E",
+      "trigger": "backfill safety on large tables",
+      "difficulty": "intermediate",
+      "prompt": "I'm in the backfill phase of an expand-contract migration. My table has 100 million rows. If I run UPDATE users SET username = user_name WHERE username IS NULL all at once, will it cause problems?",
+      "must_contain": [
+        "batch",
+        "lock",
+        "LIMIT"
+      ],
+      "must_not_contain": [],
+      "notes": "Response must warn about table lock risk from a single unbatched UPDATE on a large table and recommend batching: UPDATE ... WHERE username IS NULL LIMIT N in a loop, with a verification query at the end. Should mention monitoring row count to confirm completion before proceeding to the next phase."
+    },
+    {
+      "id": "tp-13",
+      "segment": "A2",
+      "trigger": "should_not_trigger — code refactoring, not database",
+      "difficulty": "basic",
+      "prompt": "I need to refactor this Go function to use a new interface instead of the concrete type it currently accepts. What's the best approach?",
+      "must_contain": [],
+      "must_not_contain": [
+        "expand-contract",
+        "dual-write",
+        "ADD COLUMN",
+        "DROP COLUMN",
+        "schema migration"
+      ],
+      "notes": "This is a code refactoring question, not a database schema question. The expand-contract / parallel change database skill should not be applied. The correct response involves Go interface refactoring techniques, not database migration patterns. This test verifies the skill does not over-trigger on general refactoring questions."
+    },
+    {
+      "id": "tp-14",
+      "segment": "A2",
+      "trigger": "should_not_trigger — data migration between services",
+      "difficulty": "intermediate",
+      "prompt": "I'm migrating customer data from our legacy monolith's database to a new microservice. The microservice has its own database. How should I plan the migration?",
+      "must_contain": [],
+      "must_not_contain": [
+        "ADD COLUMN",
+        "DROP COLUMN"
+      ],
+      "notes": "This is a data migration between two separate databases / services, not a schema refactoring within a single database. The expand-contract pattern addresses structural schema changes within a single live database. This question requires a different pattern (strangler fig, dual-read/write at the service level, etc.). The skill should not dominate the response."
+    },
+    {
+      "id": "tp-15",
+      "segment": "A2",
+      "trigger": "edge case — JSON schema / API response",
+      "difficulty": "advanced",
+      "prompt": "I need to change the JSON schema of my REST API response — rename the field 'user_name' to 'username' in the response body. I have clients that depend on the current field name. What's the migration strategy?",
+      "must_contain": [
+        "both fields",
+        "clients"
+      ],
+      "must_not_contain": [],
+      "notes": "This is an edge case: JSON API schema evolution follows similar expand-contract logic (add new field, support both, deprecate old, remove old) but operates on an API contract, not a database schema. The irreversibility concern is API client breakage, not data loss. Response may draw the parallel to expand-contract but should clarify this is API versioning / backwards-compatible field evolution, not database schema migration. The stabilization period corresponds to the deprecation window for API clients."
+    },
+    {
+      "id": "tp-16",
+      "segment": "A2",
+      "trigger": "trigger by keyword — zero-downtime migration",
+      "difficulty": "basic",
+      "prompt": "How do I perform a zero-downtime database schema migration?",
+      "must_contain": [
+        "expand",
+        "multiple releases",
+        "dual-write",
+        "backfill"
+      ],
+      "must_not_contain": [],
+      "notes": "Zero-downtime database schema migration is the canonical trigger phrase for expand-contract. Response must describe the multi-release structure: add new (expand), dual-write, backfill, migrate readers, stabilize, remove old (contract). Must not suggest a single-migration approach as sufficient for zero-downtime."
+    }
+  ]
+}

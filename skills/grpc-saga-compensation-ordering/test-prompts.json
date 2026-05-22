@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-saga-compensation-ordering",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "In a saga with three steps — create order, charge payment, start shipping — if shipping fails, in what order do the compensations run?",
+      "rationale": "Direct match: the bottom-up compensation ordering rule."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "Why do saga compensating transactions need to be idempotent? What happens if they're not?",
+      "rationale": "Direct match: compensation idempotency requirement and retry consequences."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "What are the trade-offs between choreography-based and orchestrator-based sagas for my e-commerce checkout flow?",
+      "rationale": "Direct match: choreography vs orchestration trade-off analysis."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "We're calling three microservices sequentially with no compensation logic. Payment succeeds but shipping fails and now we have a charged-but-never-shipped order. How do we prevent this?",
+      "rationale": "Direct match: the ce02 counter-example — sequential calls without saga and compensation design."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I use Kafka to publish and consume events in a Go microservice?",
+      "rationale": "Kafka implementation details, not saga design or compensation ordering."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "What is two-phase commit and when should I use it instead of eventual consistency?",
+      "rationale": "2PC vs eventual consistency — the Boundary section references this but it's not the core of this skill."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement a state machine in Go for order status transitions?",
+      "rationale": "State machine implementation — related to saga state but not the compensation ordering or choreography/orchestration choice."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "My saga orchestrator is in the Order service. After a crash, I need to resume compensation from where it left off. How do I persist saga state?",
+      "rationale": "Blurred: the Execution section mentions persisting saga state; the specific persistence mechanism (database, saga log) is a common extension that this skill identifies as needed but doesn't fully specify."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "I'm using choreography-based saga. If the payment_failed event is lost, the order will be stuck in PENDING state. How do I handle event loss?",
+      "rationale": "Blurred: event reliability and saga timeout/reconciliation are natural follow-ons to the choreography pattern described here but require messaging infrastructure knowledge beyond this skill's scope."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "I need to add a 4th step to my existing 3-step saga. Do I need to redesign the compensation sequence?",
+      "rationale": "Blurred: the bottom-up ordering rule applies — compensation for the new step must be defined before deployment — but this is also a proto/schema evolution and backward compatibility question."
+    }
+  ]
+}

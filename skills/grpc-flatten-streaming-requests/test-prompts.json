@@ -1,0 +1,59 @@
+{
+  "skill_id": "grpc-flatten-streaming-requests",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "My gRPC client-streaming request wraps a Task struct: UpdateTasksRequest { Task task = 1; }. Is there a more efficient approach?",
+      "rationale": "Direct match: the exact p05 scenario — nested sub-message in a client-streaming request."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "How much overhead does wrapping a sub-message add to each Protobuf serialized message in a streaming RPC?",
+      "rationale": "Direct match: the 2-byte overhead explanation (tag + length varint for length-delimited field)."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "I want to control exactly which fields of my domain type are exposed for updates through a specific streaming endpoint. How do I design the request message for that?",
+      "rationale": "Direct match: flattening enables explicit API surface control over which fields are mutable."
+    },
+    {
+      "id": "tp04",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement client-streaming RPC in Go — the client loop and SendAndClose pattern?",
+      "rationale": "Client-streaming implementation mechanics, not request message design or flattening optimization."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "What is the best way to add pagination to a gRPC list endpoint?",
+      "rationale": "Pagination design, unrelated to sub-message flattening in streaming requests."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "How does Protobuf handle optional fields in proto3?",
+      "rationale": "Proto3 optional field semantics, not the flattening optimization for client-streaming."
+    },
+    {
+      "id": "tp07",
+      "type": "blurred_boundary",
+      "prompt": "I have a batch upload endpoint that streams millions of records per day. The request wraps a domain object. Should I flatten, or just enable gzip?",
+      "rationale": "Blurred: involves both this skill (flattening) and grpc-payload-optimization (gzip benchmarking); the answer is to apply structural changes before considering compression."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I measured my UpdateTasksRequest at 56 bytes per message. If I flatten the nested Task fields directly into the request, how much will I save?",
+      "rationale": "Blurred: this is the exact book example with the same numbers — clear match, but also touches grpc-payload-optimization's measurement methodology."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "I'm redesigning a proto message that's already deployed. The current version wraps a sub-message. If I flatten it, is that a breaking change?",
+      "rationale": "Blurred: the Boundary section covers this — it is a breaking change if clients exist — but this also touches proto backward compatibility principles."
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "skill_id": "grpc-interceptor-chain-observability-ordering",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "grpc-go-for-professionals/grpc-interceptor-composition",
+    "grpc-up-and-running/grpc-observability-three-pillar"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "Our Prometheus error-rate alert is firing during what looks like an authentication attack — we're seeing a burst of requests with bad tokens. The alert threshold is '5xx or auth errors > 1% of traffic over 5 minutes.' The auth interceptor is correctly rejecting the bad tokens. Why is the alert firing and how do we fix it?",
+      "expected_behavior": "Diagnose that auth is registered after metrics in the interceptor chain. Every rejected request increments grpc_server_handled_total{grpc_code='UNAUTHENTICATED'} because the metrics interceptor sees the request before auth rejects it. The fix: swap the order in grpc.ChainUnaryInterceptor so auth appears before the metrics interceptor — canonical order is rate-limit → auth → metrics → logging. Unauthenticated requests then exit at auth before the metrics interceptor runs and do not increment Prometheus counters. Provide the corrected ChainUnaryInterceptor registration. Show the integration test that verifies a failed-auth request does NOT increment the Prometheus counter.",
+      "expected_not": "Should not suggest adjusting the alert threshold as the fix. Should not suggest filtering UNAUTHENTICATED codes out of the alert expression as the primary solution — that masks the ordering bug."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "I have a gRPC service with Prometheus metrics and zap logging interceptors already registered. I now need to add JWT auth and a token-bucket rate limiter. Where in the existing chain do these go, and how do I add them without breaking the existing registration?",
+      "expected_behavior": "Provide the canonical insertion points: rate-limit first (before auth), auth second (before metrics). The existing chain metrics → logging becomes rate-limit → auth → metrics → logging. Critically: warn that calling grpc.UnaryInterceptor a second time silently overwrites the first registration — the only safe mechanism is grpc.ChainUnaryInterceptor. Show the updated grpc.NewServer() call with ChainUnaryInterceptor containing all four interceptors in order, plus ChainStreamInterceptor with the parallel set. Explain the audit requirement: do not assume the existing order is canonical; inspect the current registration before inserting.",
+      "expected_not": "Should not suggest calling grpc.UnaryInterceptor(authInterceptor) as a separate server option alongside the existing interceptor. Should not place rate-limit after auth."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "A code review flagged this gRPC server setup in a PR: the server is built with two separate calls — grpc.UnaryInterceptor(authInterceptor) and then grpc.UnaryInterceptor(metricsInterceptor). The reviewer said 'one of these is silently ignored.' Is that correct and how do we fix it?",
+      "expected_behavior": "Confirm the reviewer is correct: gRPC-go enforces a limit of one registered unary interceptor per server. The second grpc.UnaryInterceptor call silently overwrites the first — no compile error, no runtime panic, no log warning. In practice, whichever interceptor is registered last is the only one active; the other disappears entirely. The fix is grpc.ChainUnaryInterceptor(authInterceptor, metricsInterceptor) as a single server option with the canonical ordering. Explain that the same constraint applies to stream interceptors: grpc.ChainStreamInterceptor is required for multiple stream interceptors.",
+      "expected_not": "Should not suggest using middleware chaining within the interceptor function bodies as an alternative to ChainUnaryInterceptor. Should not downplay the severity — one interceptor being silently dropped is a production correctness bug."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I'm building a production gRPC server from scratch with rate limiting, JWT auth, Prometheus metrics, and structured logging. I also want distributed tracing with OpenTelemetry. What's the complete server setup and what order do the interceptors go in?",
+      "expected_behavior": "Provide the full production chain: grpc.StatsHandler(otelgrpc.NewServerHandler()) as a server option outside the chain (OTel uses the stats handler API for transport-level events, not the interceptor API), then grpc.ChainUnaryInterceptor(rateLimitInterceptor, authInterceptor, grpcMetrics.UnaryServerInterceptor(), grpc_zap.UnaryServerInterceptor(zapLogger)) and the parallel grpc.ChainStreamInterceptor. Call grpcMetrics.InitializeMetrics(s) after service registration. Expose /metrics endpoint. Explain why OTel is a StatsHandler and not part of the ordered chain.",
+      "expected_not": "Should not place otelgrpc inside ChainUnaryInterceptor as if it were a chain interceptor. Should not omit ChainStreamInterceptor — streaming RPCs must also have auth, metrics, and logging coverage."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "Our gRPC server has unary interceptors for auth, metrics, and logging registered with ChainUnaryInterceptor. We just added a new streaming RPC to the service. In production we noticed the new streaming method has no auth enforcement — unauthenticated clients are reaching the handler. Why?",
+      "expected_behavior": "ChainUnaryInterceptor only applies to unary RPCs. Streaming RPCs require a separate ChainStreamInterceptor registration with the equivalent stream interceptor implementations (authStreamInterceptor, metricsStreamInterceptor, loggingStreamInterceptor). Omitting ChainStreamInterceptor leaves all streaming methods without any interceptor coverage — no auth, no metrics, no logging. Show the corrected grpc.NewServer() call with both ChainUnaryInterceptor and ChainStreamInterceptor. Note that for auth, go-grpc-middleware/v2 AuthFunc applies to both unary and stream, but it still requires registration via both chain functions.",
+      "expected_not": "Should not suggest that unary interceptors automatically apply to streaming RPCs. Should not recommend a workaround inside the streaming handler itself as the primary fix."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to add retry logic to my gRPC client — if a server returns codes.Unavailable, I want the client to automatically retry up to 3 times with exponential backoff. How do I implement this with client-side interceptors?",
+      "expected_behavior": "Implement a client-side unary interceptor using grpc.WithChainUnaryInterceptor that catches codes.Unavailable from the returned error and re-invokes the handler with backoff. Cover the client-side ordering principle: retry wraps auth (not the reverse) because the client may need to re-acquire credentials before retrying. This is a client-side interceptor composition question.",
+      "expected_not": "Should not invoke grpc-interceptor-chain-observability-ordering — this skill covers server-side interceptor ordering. Client-side interceptor ordering follows different principles and the skill boundary note explicitly scopes it to server-side."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I'm evaluating whether to use gRPC-Web or native gRPC for my browser clients. The browser clients need to call my Go backend services directly. What are the trade-offs?",
+      "expected_behavior": "Compare gRPC-Web (requires a proxy like Envoy to translate HTTP/1.1 to HTTP/2 gRPC, limited streaming support) vs. native gRPC (requires HTTP/2, not supported by browsers directly, full bidirectional streaming). Also consider Connect-go as an alternative that supports browser clients with native HTTP semantics. This is a protocol selection question.",
+      "expected_not": "Should not invoke grpc-interceptor-chain-observability-ordering — interceptor ordering has no relevance to gRPC-Web vs. native gRPC protocol selection."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I need to add distributed tracing to my gRPC service. I already have Prometheus metrics. How do I set up OpenTelemetry with Jaeger as the backend and propagate trace context to downstream services?",
+      "expected_behavior": "Cover OTel TracerProvider setup with the OTLP exporter (Jaeger exporter is deprecated — use OTLP pointing at an OTel Collector forwarding to Jaeger), register otelgrpc.NewServerHandler() as a StatsHandler, configure otelgrpc.NewClientHandler() on outbound Dial calls for context propagation, and set the TraceContext propagator. This is a distributed tracing setup question focused on OTel configuration and trace propagation.",
+      "expected_not": "Should not invoke grpc-interceptor-chain-observability-ordering — the question is specifically about adding tracing with OTel/Jaeger, not about chain ordering correctness or the auth-before-metrics constraint."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I have Prometheus metrics interceptors registered before auth in our chain (wrong order). I know I need to fix it. But before I make the change, a teammate says: 'If we move auth before metrics, won't we lose visibility into how many unauthenticated attempts are hitting our service? We need to know if we're under attack.' How do I respond?",
+      "expected_behavior": "The teammate's concern is valid but the solution is not to keep metrics before auth. When auth is before metrics, UNAUTHENTICATED requests do not increment Prometheus counters — but this does not mean auth attack traffic is invisible. The auth interceptor itself should increment a dedicated counter (e.g., auth_rejections_total{reason='invalid_token'}) before returning. This counter captures attack volume without polluting the service's error-rate SLO metrics with unauthenticated traffic. The canonical ordering (auth before metrics) is correct; the fix for attack visibility is an auth-interceptor-owned counter, not mixing auth failures into service error counters.",
+      "decision_axis": "Whether to measure attack traffic via the service's SLO error counters (wrong) or via a dedicated auth-interceptor counter (correct) — the ordering constraint is not negotiable for alert correctness."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "My gRPC service has no auth interceptor — it's an internal service on a private network. I have metrics and logging interceptors. A new requirement asks me to add request-level audit logging that captures the authenticated user's ID. Since there's no auth interceptor, where does the user context come from and how does logging see it?",
+      "expected_behavior": "Without an auth interceptor, user context must come from another source: either from a trusted header injected by a service mesh (e.g., x-forwarded-user from an Envoy sidecar), or the service adds a lightweight identity-extraction interceptor that reads from incoming metadata and attaches to the context — even if it doesn't validate. The logging interceptor (which runs last in the canonical chain) can then read the user ID from the context and add it as a structured field. If the chain has no auth interceptor, the ordering simplifies: rate-limit (if any) → context-enrichment → metrics → logging. The audit logging concern belongs in the logging interceptor or a dedicated audit interceptor positioned after context enrichment.",
+      "decision_axis": "Whether the service has an auth interceptor (determines whether user context is available in the logging interceptor's ctx) and whether user context is propagated via gRPC metadata or service mesh headers."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I want to write an integration test that verifies the auth-before-metrics ordering constraint is actually enforced in my production chain — not just declared in code comments. How do I write this test?",
+      "expected_behavior": "The test sends a request that fails auth (missing or invalid token) and asserts two things: (1) the response is codes.Unauthenticated, and (2) the Prometheus counter for that method has NOT incremented. For (2), create a dedicated test Prometheus registry (grpc_prometheus.NewServerMetrics() with the test registry), or use a real registry and read the counter value before and after the call, asserting delta == 0. The skill's execution step 6 prescribes this exact test as the only automated guard for the ordering constraint. Without this test, a code change that reorders the chain (e.g., accidentally placing metrics before auth) will not be caught until production alert behavior is observed.",
+      "decision_axis": "How to assert the counter has NOT incremented — requires access to a test Prometheus registry or the ability to query the counter value before/after the call."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our team is building a new gRPC service. We already have the observability interceptors wired from a previous project (Prometheus + zap + OTel, set up using the Up and Running three-pillar pattern). Now we're adding JWT auth and a rate limiter as interceptors. A developer added them at the end of the existing chain: metrics → logging → rate-limit → auth. What's wrong and what's the correct chain?",
+      "merged_advantage": "The merged skill provides the specific, operationally motivated ordering — rate-limit → auth → metrics → logging — and explains WHY metrics must follow auth (not precede it): auth attack traffic inflates Prometheus counters and triggers false SLO alerts if metrics is before auth. It gives the full corrected grpc.NewServer() call combining all five interceptors (rate-limit, auth, Prometheus, zap) plus the OTel StatsHandler, along with the integration test that verifies the ordering constraint. Neither source alone provides this combined picture.",
+      "source1_gap": "grpc-go-for-professionals/grpc-interceptor-composition establishes that auth must precede metrics and explains the false-alert consequence, but does not provide the full observability interceptor wiring (grpcMetrics.InitializeMetrics, grpc_zap, otelgrpc StatsHandler) — a team following it alone would know where to insert auth but not how to wire the complete observability sub-chain.",
+      "source2_gap": "grpc-up-and-running/grpc-observability-three-pillar shows the correct observability-only chain (Prometheus then zap, OTel as StatsHandler) but does not cover where auth and rate-limiting are inserted relative to these interceptors — a team following it alone correctly wires observability but has no guidance on the auth-before-metrics ordering constraint when security interceptors are later added."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm reviewing a gRPC service PR that has this server setup: grpc.UnaryInterceptor(authInterceptor) as one server option and grpc.UnaryInterceptor(grpcMetrics.UnaryServerInterceptor()) as a second server option. No ChainUnaryInterceptor. What are the problems and what is the correct fix?",
+      "merged_advantage": "The merged skill identifies two distinct problems with this PR: (1) the silent override bug — the second grpc.UnaryInterceptor call silently overwrites the first, so only the metrics interceptor is active and auth is gone entirely; (2) even if the override were not a problem, the ordering would be wrong (metrics before auth would cause false alert inflation). The merged skill provides the single corrected grpc.NewServer() call with ChainUnaryInterceptor in the canonical order, plus the ChainStreamInterceptor for streaming coverage. No single source alone covers both the override bug AND the ordering consequence.",
+      "source1_gap": "grpc-go-for-professionals/grpc-interceptor-composition covers the silent override bug and the auth-before-metrics ordering rule, but does not provide the full observability interceptor wiring (grpcMetrics initialization, grpc_zap setup, OTel StatsHandler) needed to write a correct complete chain.",
+      "source2_gap": "grpc-up-and-running/grpc-observability-three-pillar provides the Prometheus + zap + OTel wiring correctly but does not cover the silent override bug from multiple grpc.UnaryInterceptor calls or the ordering constraint when auth interceptors are added."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "A service with Prometheus metrics has been receiving false on-call pages — error-rate alerts fire during what turns out to be credential-scanning attacks (bots trying random JWT tokens). The on-call engineer wastes 20 minutes each time before determining the service is actually healthy. We need to fix both the immediate alert problem and the root-cause chain ordering. Walk me through the complete diagnosis and fix.",
+      "merged_advantage": "The merged skill provides the complete diagnosis-to-fix path: (1) diagnose that metrics is before auth in ChainUnaryInterceptor — the auth attack traffic is incrementing grpc_server_handled_total{grpc_code='UNAUTHENTICATED'} which the alert expression counts; (2) prescribe the reordering to rate-limit → auth → metrics → logging so unauthenticated requests never reach the metrics interceptor; (3) add a dedicated auth_rejections_total counter inside the auth interceptor for attack visibility without polluting SLO metrics; (4) write the integration test that asserts a failed-auth call does NOT increment the Prometheus counter — the test that prevents the bug from returning. This end-to-end prescription requires both the ordering knowledge from source 1 and the full observability wiring from source 2.",
+      "source1_gap": "grpc-go-for-professionals/grpc-interceptor-composition would diagnose the ordering problem and prescribe the fix, but a team following it alone might not have the full Prometheus interceptor initialization (grpcMetrics.InitializeMetrics) correct, leading to zero-value metrics gaps that complicate the 'after' state verification.",
+      "source2_gap": "grpc-up-and-running/grpc-observability-three-pillar provides correct Prometheus wiring but does not contain the auth-before-metrics ordering rule, the false-alert diagnosis pattern, or the integration test verification step — a team following it alone would see the alert problem but not know where in the chain to intervene."
+    }
+  ]
+}

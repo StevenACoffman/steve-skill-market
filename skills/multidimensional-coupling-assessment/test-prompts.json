@@ -1,0 +1,90 @@
+{
+  "skill": "multidimensional-coupling-assessment",
+  "description": "Use this skill when evaluating, diagnosing, or designing the coupling between two connected systems. Coupling is not binary — it has 8 independent dimensions (Technology, Location, Topology, Data Format, Semantic, Conversation, Order, Temporal). The appropriate level of coupling on each dimension depends on the degree of control you have over the connected endpoints. Invoke when someone claims a system is 'loosely coupled' without specifying dimensions, when an integration is failing due to cascading changes, or when choosing between integration styles where coupling trade-offs are the deciding factor.",
+  "test_prompts": [
+    {
+      "id": "tp01",
+      "category": "should_invoke",
+      "prompt": "Our team just added an SQS queue between our S3 event trigger and our Lambda function, expecting this would decouple them. Now the Lambda is broken because the message format changed. How is that possible — we thought queues decouple systems?",
+      "expected": "invoke",
+      "rationale": "This is the canonical hidden coupling scenario from the addendum (c08). The queue added temporal and topology decoupling but not data format decoupling. The S3 event is now wrapped in an SQS envelope, changing the schema. The 8-dimension assessment would have caught this."
+    },
+    {
+      "id": "tp02",
+      "category": "should_invoke",
+      "prompt": "Our architecture uses event-driven design with Kafka. We publish domain events whenever something important happens. The CTO says we're 'loosely coupled' because we use events. But every time we change an event schema, we have to update 6 different consumer services. Something is wrong — what is it?",
+      "expected": "invoke",
+      "rationale": "Classic binary fallacy: the system is temporally and topologically loosely coupled (Kafka pub-sub), but data format coupled to all consumers. The skill identifies data format coupling as the specific dimension that is tight, and explains why adding more consumers made it worse over time."
+    },
+    {
+      "id": "tp03",
+      "category": "should_invoke",
+      "prompt": "We're integrating with a third-party payment processor. They provide a REST API. Our team is debating whether to call it directly or wrap it behind a queue. How do we decide?",
+      "expected": "invoke",
+      "rationale": "The skill's theorem applies: the third-party endpoint is not under our control. This triggers a full dimension assessment. Temporal decoupling (queue) helps if the payment processor has availability issues; data format and semantic coupling remain either way; topology coupling matters if we might switch providers. All of this is the skill's domain."
+    },
+    {
+      "id": "tp04",
+      "category": "should_invoke",
+      "prompt": "We use AWS Lambda functions triggered by DynamoDB Streams. Someone proposed switching the data source from DynamoDB to an RDS PostgreSQL database for this workflow. The Lambda team says this will require 'minimal changes.' Is that accurate?",
+      "expected": "invoke",
+      "rationale": "This is the hidden coupling scenario: the Lambda is data-format coupled to DynamoDB Streams event schema. Switching to RDS PostgreSQL changes the event format entirely (RDS uses a different CDC event structure). The topology looks decoupled (logical trigger) but data format coupling makes this a significant change."
+    },
+    {
+      "id": "tp05",
+      "category": "should_invoke",
+      "prompt": "Our API uses Protocol Buffers and we mark all new fields as 'optional' to maintain backward compatibility. A review flagged this as potentially risky. Is it?",
+      "expected": "invoke",
+      "rationale": "Direct analogue of the Google Protocol Buffers case (c07) in the source material. Marking required fields 'optional' in the IDL shifts coupling from the schema to the endpoint implementation — the contract is still tight, just hidden. The skill's semantic and conversation coupling dimensions capture this."
+    },
+    {
+      "id": "tp06",
+      "category": "should_invoke",
+      "prompt": "We're building a microservice that will be consumed by both internal teams and external partners. The internal teams say they want a tight, efficient integration. The external partners need a more stable, versioned contract. Can we satisfy both?",
+      "expected": "invoke",
+      "rationale": "The skill's theorem is directly applicable: higher coupling is acceptable where control is high (internal teams, same org, can coordinate refactoring); lower coupling is required where control is low (external partners, cannot force upgrades). The answer is different coupling levels for different integration points."
+    },
+    {
+      "id": "tp07",
+      "category": "should_not_invoke",
+      "prompt": "Our Kafka consumer group is lagging behind the producer. Consumer lag is growing to millions of messages. How do we fix the throughput problem?",
+      "expected": "skip",
+      "rationale": "This is a throughput and scaling problem in an existing integration, not a coupling design question. The relevant skills are competing consumers, consumer group design, or queue flow control. Coupling dimensions are already set."
+    },
+    {
+      "id": "tp08",
+      "category": "should_not_invoke",
+      "prompt": "We need to design the retry logic for our message consumer. If a message fails to process, how many retries should we attempt before sending it to the dead letter queue?",
+      "expected": "skip",
+      "rationale": "This is an operational reliability design question about retry policy and dead letter channels, not a coupling dimension assessment. The integration style and coupling level are already decided."
+    },
+    {
+      "id": "tp09",
+      "category": "should_not_invoke",
+      "prompt": "Should we use REST or GraphQL for our new public API?",
+      "expected": "skip",
+      "rationale": "This is an API protocol selection question. While it has coupling implications (GraphQL clients couple to the schema more tightly than REST in some respects), the question as posed is about protocol choice, not about analyzing an integration's coupling profile across 8 dimensions."
+    },
+    {
+      "id": "tp10",
+      "category": "blurred_boundary",
+      "prompt": "We're adopting an event-driven architecture. The team says we should use event names like 'OrderPlaced' instead of 'ProcessOrder' to make the system more decoupled. Does renaming events to past-tense actually reduce coupling?",
+      "expected": "invoke",
+      "rationale": "Blurred boundary: the question is specifically about whether event naming style affects coupling. The skill addresses this (event semantics vs. channel topology). The answer is no — renaming from command to event style does not change any of the 8 coupling dimensions. This is the EDA coupling folklore the addendum corrects."
+    },
+    {
+      "id": "tp11",
+      "category": "blurred_boundary",
+      "prompt": "We have two microservices where Service A calls Service B synchronously. Service B is going to be replaced by a third-party vendor in 6 months. Should we add an abstraction layer now?",
+      "expected": "invoke",
+      "rationale": "Blurred boundary: this is partly a design question about abstraction layers, but the coupling dimensions are the deciding factor. The transition from internal (high control) to third-party (low control) changes the acceptable coupling level — specifically location, topology, and semantic coupling. The skill's theorem says: low control over the new endpoint means coupling on volatile dimensions becomes a risk."
+    },
+    {
+      "id": "tp12",
+      "category": "blurred_boundary",
+      "prompt": "We're evaluating whether to use AWS EventBridge or a direct SNS topic for our event distribution. Does the choice matter for coupling?",
+      "expected": "invoke",
+      "rationale": "Blurred boundary: this appears to be a cloud service selection question, but it is actually a coupling dimension question. EventBridge rules act as a Recipient List (bidirectional coupling — adding recipients requires central rule changes), whereas SNS topics behave more like true Pub-Sub (adding subscribers does not affect the publisher). The topology coupling dimension is different between the two options, and the skill provides the analytical framework to evaluate this."
+    }
+  ]
+}

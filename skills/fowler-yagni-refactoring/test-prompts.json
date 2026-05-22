@@ -1,0 +1,83 @@
+{
+  "skill": "fowler-yagni-refactoring",
+  "description": "Test prompts for YAGNI + Refactoring — Simple Design with Evolutionary Architecture",
+  "should_trigger": [
+    {
+      "id": "st-01",
+      "prompt": "My team wants to add a plugin architecture to our notification service 'for future flexibility' even though we have no current plugin users. Should we?",
+      "rationale": "Core V2 scenario: speculative plugin architecture with no concrete users — direct YAGNI trigger."
+    },
+    {
+      "id": "st-02",
+      "prompt": "We're building a simple CSV export feature. A teammate suggests we build a generic report engine that can handle any format — CSV, PDF, Excel — even though we only need CSV right now. Is that a good idea?",
+      "rationale": "Classic speculative generalization: 'generic engine for future formats' with no concrete requirement beyond the immediate one."
+    },
+    {
+      "id": "st-03",
+      "prompt": "Should I extract a PaymentProvider interface and make it injectable even though we only have one payment provider and have no plans to switch?",
+      "rationale": "Abstract interface introduced for anticipated variation that does not currently exist — a textbook YAGNI scenario."
+    },
+    {
+      "id": "st-04",
+      "prompt": "A developer wants to make our retry count configurable via a parameter, saying 'we might want different values someday.' Right now every single caller passes 3. Should we add the parameter?",
+      "rationale": "Speculative parameter addition — Fowler explicitly cites this exact case in the source text, making it a canonical YAGNI decision."
+    },
+    {
+      "id": "st-05",
+      "prompt": "We have a discount calculation that always applies one rule. My team thinks we should use the Strategy pattern now so we can add discount types later. Worth doing?",
+      "rationale": "Strategy pattern introduced before multiple strategies exist — speculative extensibility mechanism."
+    },
+    {
+      "id": "st-06",
+      "prompt": "Is it worth building a message bus abstraction layer in our new service 'just in case' we want to swap out RabbitMQ for Kafka someday, even though we have no plans to do so?",
+      "rationale": "Infrastructure-level speculative flexibility — 'just in case' language is a direct trigger signal."
+    },
+    {
+      "id": "st-07",
+      "prompt": "How do I decide whether to add a flexibility mechanism to code now versus waiting until we actually need it?",
+      "rationale": "Direct question about the YAGNI cost estimation decision framework Fowler describes."
+    },
+    {
+      "id": "st-08",
+      "prompt": "My team argues that adding the extensibility hooks now is cheaper than adding them later. How do I evaluate that claim?",
+      "rationale": "The 'cheaper now' argument is precisely what Fowler's estimate-cost-now vs. estimate-refactoring-cost-later framework addresses."
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "id": "snt-01",
+      "prompt": "We need to replace our legacy payment processor with a new one, but we can't do it all at once. How should we manage the transition?",
+      "rationale": "This is an existing-code replacement scenario — Branch by Abstraction, not YAGNI. The requirement is concrete and current."
+    },
+    {
+      "id": "snt-02",
+      "prompt": "I want to rename a variable to make the code clearer. What's the best way to do that safely?",
+      "rationale": "Mechanical refactoring question (Rename Variable) with no speculative design decision involved."
+    },
+    {
+      "id": "snt-03",
+      "prompt": "Our API is consumed by 12 external teams. We need to add a new field to the response — how do we do that without breaking clients?",
+      "rationale": "Cross-team API stability is a YAGNI exception — the constraint is real, not speculative. This requires careful API versioning, not YAGNI analysis."
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "ec-01",
+      "prompt": "Three teams have asked on our public roadmap for plugin support in the next quarter. Should we start designing the plugin architecture now?",
+      "rationale": "Edge case: 'speculative' language but with concrete, documented demand. This may not be YAGNI territory — the requirement is becoming real. The skill should recognize this distinction and apply the YAGNI threshold carefully, noting that 'three teams requesting' is not the same as 'no concrete users.'",
+      "expected_behavior": "Skill should note this is on the boundary: three concrete requesters shift this from speculation toward real requirement. Still apply the cost estimation, but the probability weight changes significantly. Likely not a pure YAGNI defer."
+    },
+    {
+      "id": "ec-02",
+      "prompt": "We have poor test coverage on a legacy service. Should I apply YAGNI and defer adding the abstraction layer?",
+      "rationale": "Edge case: YAGNI requires refactoring prerequisites (self-testing code). Without tests, deferring complexity is not YAGNI — it is accumulating debt. The skill should surface the prerequisite condition.",
+      "expected_behavior": "Skill should flag that YAGNI is only viable when refactoring is safe, which requires test coverage. The correct action is to add tests first, then apply YAGNI. Do not defer the abstraction via YAGNI when the 'refactor later' path is broken."
+    },
+    {
+      "id": "ec-03",
+      "prompt": "We're designing a database schema for a service that will be used by 5 teams across 3 different microservices. Should we keep it minimal now and evolve it later?",
+      "rationale": "Edge case: YAGNI applied to shared data schema across multiple teams. Fowler's refactoring-later assumption is weakest at shared data layers — schema migration across multiple consumers is expensive and coordination-heavy.",
+      "expected_behavior": "Skill should identify this as a YAGNI exception scenario: shared cross-team schemas have high evolution costs. The correct answer is to invest more design effort upfront for the shared schema, even while applying YAGNI to application code logic."
+    }
+  ]
+}

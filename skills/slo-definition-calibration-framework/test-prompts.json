@@ -1,0 +1,111 @@
+{
+  "skill_id": "slo-definition-calibration-framework",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "site-reliability-engineering/sli-slo-sla-tier-framework",
+    "reliability-engineering-mindset/lagom-slo"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "Our team is setting up SLOs for the first time and the platform lead is asking whether the 99.9% target should match what we promised in the SLA or be set independently. We copied the number from our historical uptime stats. What should we actually do?",
+      "expected_behavior": "Explain the three-tier distinction (SLI/SLO/SLA), clarify that the SLA must sit below the SLO with a buffer, diagnose that copying historical uptime is an anti-pattern, and prescribe consumer tolerance elicitation as the correct calibration method.",
+      "expected_not": "Should not treat the SLO and SLA numbers as interchangeable, and should not validate setting the SLO from historical performance without consumer input."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "A customer just demanded a service credit after our availability dropped to 99.8% this month. Our engineering docs say we target 99.9% uptime. We never signed a contract and we're confused whether we owe them anything. What went wrong?",
+      "expected_behavior": "Identify this as the SLO/SLA conflation failure: publishing the same number in engineering docs and customer-facing materials creates an implicit SLA. Explain that the SLA distinguishes itself by having explicit consequences for breach, and walk through how to create a proper SLA buffer below the SLO to avoid this.",
+      "expected_not": "Should not simply advise on whether the credit is legally owed without addressing the root structural confusion between SLO and SLA."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "We run an internal API used by 12 product teams. We want to commit to 99% availability. Several of those teams are already building redundant caching layers to compensate for our flakiness. We haven't asked them what failure rates they can actually tolerate. Our stakeholders want us to set 99.9% instead. Which is right?",
+      "expected_behavior": "Apply the lagom too-low failure mode: each consumer team independently building mitigation means total organizational cost may exceed the cost of improving the SLO. Prescribe direct consumer tolerance elicitation before settling on either number. Explain the N × mitigation cost argument.",
+      "expected_not": "Should not just pick 99.9% without first explaining why consumer research is necessary, and should not recommend the higher number aspirationally."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "Our CTO is demanding five-nines availability for our consumer streaming platform because competitors claim it. We haven't modeled what five-nines costs or asked users whether they can even tell the difference between 99.9% and 99.999%. How do we push back with data?",
+      "expected_behavior": "Apply the lagom calibration: reframe from 'how reliable can we be?' to 'what is the worst reliability consumers can live with?'. Explain the 10x/9 exponential cost scaling of reliability. Prescribe consumer tolerance research to establish whether any user actually requires the difference, and frame the cost argument for the CTO conversation.",
+      "expected_not": "Should not endorse five-nines without cost justification, and should not simply defer to what competitors claim."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We're building a new payment service. We need to set up monitoring thresholds, a reliability target for engineering, and an availability commitment in our merchant contracts. We're treating these as one thing. A teammate said they're different artifacts. Who's right and how do we set all three?",
+      "expected_behavior": "Confirm the teammate is right. Define SLI (monitoring measurement), SLO (internal engineering target, no consequences), SLA (contractual commitment with financial consequences). Walk through all three interdependent decisions in sequence: SLI selection, SLO calibration from consumer tolerance, SLA buffer below SLO. Apply the distinguishing test: if no explicit consequence for missing it, it's an SLO not an SLA.",
+      "expected_not": "Should not collapse the three artifacts into one, and should not set an SLA that equals the SLO."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "Our Prometheus alert for p99 latency is firing too often. We want to tune the threshold so we get fewer false positive pages. What should we adjust?",
+      "expected_behavior": "Alert tuning and noise reduction is an SLI monitoring design and on-call hygiene problem. Use the sli-monitoring-design-maturity skill to diagnose whether the alert is symptom-based and whether consumer-task grounding is needed, or use on-call sustainability tooling.",
+      "expected_not": "Should not invoke slo-definition-calibration-framework — this is an alert threshold problem, not an SLI/SLO/SLA definitional or calibration problem."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "We've already set SLOs and have an error budget. Last quarter we burned through 80% of the budget in week one from a bad deployment. How do we prevent this from happening again and should we freeze releases?",
+      "expected_behavior": "This is an error budget governance and policy problem. Use error-budget-governance-complete to apply the freeze trigger rules, causal attribution (team-caused vs. external), and the must-work-on-reliability conditions.",
+      "expected_not": "Should not invoke slo-definition-calibration-framework — the SLO is already defined and the problem is budget consumption governance, not initial SLO definition or calibration."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "We're planning our capacity for next year. We expect 3x traffic growth. How should we think about infrastructure provisioning to maintain our current reliability levels?",
+      "expected_behavior": "This is a capacity planning problem. Use capacity planning / load modeling approaches. The current SLO is already defined; the question is whether infrastructure can sustain it under growth.",
+      "expected_not": "Should not invoke slo-definition-calibration-framework — the SLO is already set and the question is infrastructure capacity, not SLO calibration or SLA buffer design."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "We're setting SLOs for an internal authentication service. It's technically internal infrastructure, but it's a hard dependency for every external-facing product — if auth is down for 30 seconds, users see login failures. Should we treat it as an internal service (lenient SLO) or external-facing (strict SLO)?",
+      "expected_behavior": "Apply the consumer tolerance question to the correct consumers: the on-call product teams whose external-facing services cascade on auth failures. The fact that auth is 'internal' is irrelevant — what matters is that external-facing product teams' SLOs propagate their tolerance requirements back to auth. Consumer elicitation should target the product teams, not end users directly. The SLO should reflect the strictest consumer tolerance among dependent teams.",
+      "decision_axis": "Step 3 (ask the consumer tolerance question) — the skill prescribes asking consumers regardless of whether the service is 'internal'; the decision axis is whether the consumer's requirements propagate through to this service."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "We've done consumer research and consumers say they can tolerate 99% availability. But we're already delivering 99.97% and the cost of dropping to 99% to match our SLO would require deliberately degrading the service. Our SLA is written for 98%. Should we raise the SLO, run synthetic outages, or leave the SLO at 99% since it matches consumer tolerance?",
+      "expected_behavior": "This is an overdelivery situation that should be handed off to slo-overdelivery-resolution. Within the calibration framework: the SLO at 99% is correctly calibrated (consumer research confirmed). But the SLA at 98% creates a valid buffer. The calibration framework's role ends here — the chronic overdelivery gap (99.97% actual vs 99% SLO) is a separate skill's territory (slo-overdelivery-resolution).",
+      "decision_axis": "Step 7 (establish an overachievement policy) — the calibration framework hands off to slo-overdelivery-resolution when the SLO is correctly set but delivery substantially exceeds it."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "We're setting SLOs for a life-critical medication dispensing system. Regulatory requirements mandate minimum 99.99% uptime. Consumer research with hospital staff says they'd prefer 99.999% but could 'live with' 99.9% in a pinch. The regulation floor is above consumer stated tolerance. Which governs?",
+      "expected_behavior": "The skill explicitly scopes out life-critical regulatory cases: 'consumer elicitation still applies but the calibration result may be constrained by regulation.' The regulatory floor (99.99%) overrides the lagom calibration result (99.9% stated tolerance). Consumer input still informs whether to target exactly the regulatory floor or exceed it, but the lagom point cannot be set below regulation. Document regulatory constraint as the binding factor.",
+      "decision_axis": "Boundary condition in the 'Do not use when' section — regulatory SLO floors constrain the calibration result; consumer tolerance still applies within the regulatory band."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "We're setting up SLOs for the first time. We know we need an SLI, SLO, and SLA. We've picked 99.9% as the SLO by looking at what we've historically achieved. Now we need to figure out what SLA to put in the customer contract and whether 99.9% is actually the right number. Walk us through the complete setup.",
+      "merged_advantage": "The merged skill integrates both the definitional structure (what the three artifacts are and their boundaries) AND the bidirectional calibration methodology (the lagom process: too-high and too-low failure modes, consumer tolerance elicitation as the required step, cost modeling). It then connects both to SLA buffer sizing. This produces a single sequential framework covering all three interdependent decisions.",
+      "source1_gap": "sli-slo-sla-tier-framework (SRE book) defines the three tiers and warns against copying historical performance, but does not provide the bidirectional calibration methodology. It would confirm that historical data is wrong as a starting point but offer no concrete process for finding the right number.",
+      "source2_gap": "lagom-slo (Ewerlöf) provides the bidirectional calibration methodology and the too-low consumer-cost argument, but does not provide the SLI/SLO/SLA structural framework or the SLA buffer design. It would correctly prescribe consumer elicitation but leave the team without guidance on how SLI, SLO, and SLA relate as distinct artifacts or how to size the buffer."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our VP wants us to commit to five-nines in the customer contract. Our engineering SLO is currently 99.9%. We've never asked customers what they actually need. The contract number and the engineering number are both coming from the VP, not from us. How do we proceed?",
+      "merged_advantage": "The merged skill catches the completed-one-decision trap: the team may correctly identify the SLO and SLA as separate artifacts (Decision 1) and may correctly size a buffer below five-nines for the SLA (Decision 3), but still set the wrong number because they skipped consumer tolerance elicitation (Decision 2). The merged skill makes all three decisions visible as interdependent — the VP's five-nines directive cannot be acted on until Decision 2 is completed, because the correct response to the VP depends on what consumer research reveals.",
+      "source1_gap": "sli-slo-sla-tier-framework would help distinguish SLO from SLA and size the buffer, but would not provide the lagom calibration process to challenge the five-nines directive with consumer research data.",
+      "source2_gap": "lagom-slo would correctly apply the consumer tolerance question and the cost argument to challenge five-nines, but would not structure the SLO/SLA distinction or guide the team on how the SLA buffer should be sized once a correct target is established."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "We set an SLO and SLA six months ago. We've since discovered that consumers are independently building retry loops and caching layers to cope with our reliability. They didn't raise a formal complaint — they just worked around us. Is our SLO set correctly? What do we do?",
+      "merged_advantage": "The merged skill identifies this as the too-low failure mode from Ewerlöf combined with the SLO-calibration diagnosis from the SRE book. The consumer mitigation behavior is a signal that the SLO was incorrectly set without consumer tolerance input. The merged skill prescribes rerunning the lagom calibration to find the correct target, then re-derives the SLA buffer below the new SLO — a complete reset of all three interdependent decisions. Neither source alone would connect the consumer behavior symptom to a complete revision of all three artifacts.",
+      "source1_gap": "sli-slo-sla-tier-framework would identify that the SLO may be wrong but would not provide the too-low failure mode analysis or the cost argument for why the organization is paying for N consumer mitigations instead of one provider improvement.",
+      "source2_gap": "lagom-slo would correctly diagnose the too-low SLO and prescribe consumer elicitation, but would not guide the team on how to revise the SLA in relation to the newly calibrated SLO, or explain the SLI/SLO/SLA structure that needs to be rebuilt."
+    }
+  ]
+}

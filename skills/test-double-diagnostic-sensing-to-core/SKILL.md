@@ -6,10 +6,10 @@ description: Use when introducing test doubles to break dependencies in legacy c
 type: merged-skill
 source_skills:
   - slug: welc/welc-sensing-vs-separation
-    book: "Working Effectively with Legacy Code"
+    book: Working Effectively with Legacy Code
     author: Michael C. Feathers
   - slug: fcis/fcis-mocks-as-architecture-signal
-    book: "Functional Core, Imperative Shell"
+    book: Functional Core, Imperative Shell
     author: Gary Bernhardt
 related_skills:
   - slug: welc/welc-sensing-vs-separation
@@ -47,7 +47,7 @@ Mock / fake usage in tests:
 
 > "There's no need to track down other classes because it's all data in, data out, and there's no need to reason about mocking or stubbing because there just isn't any. Searching the entire source for the word 'mock' yields zero results. Searching for 'stub' yields exactly one... Replacing that stub with a real Tweet would leave the entire system tested in isolation without a single test double. The functional core makes test doubles structurally unnecessary: pure values replace collaborators."
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -85,7 +85,7 @@ Test is blocked
 
 **Pure value objects are never mocked.** If the thing being mocked is a data structure with no external dependencies — a domain object, a configuration value, a pure data carrier — the mock is a self-created problem. Use the real object. Mocking a pure value object adds complexity without benefit and suppresses the architecture signal.
 
----
+______________________________________________________________________
 
 ### A1 — Applications
 
@@ -105,7 +105,7 @@ Test is blocked
 
 > "There's no need to track down other classes because it's all data in, data out, and there's no need to reason about mocking or stubbing because there just isn't any. Searching the entire source for the word 'mock' yields zero results. Searching for 'stub' yields exactly one... Replacing that stub with a real Tweet would leave the entire system tested in isolation without a single test double. The functional core makes test doubles structurally unnecessary: pure values replace collaborators."
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -143,7 +143,7 @@ Test is blocked
 
 **Pure value objects are never mocked.** If the thing being mocked is a data structure with no external dependencies — a domain object, a configuration value, a pure data carrier — the mock is a self-created problem. Use the real object. Mocking a pure value object adds complexity without benefit and suppresses the architecture signal.
 
----
+______________________________________________________________________
 
 ## A1 — Applications
 
@@ -159,7 +159,7 @@ Apply the purity test: do the `EndPoint` fakes return data or perform I/O? They 
 
 **Result:** Tests can verify routing behavior without hardware. The fakes are the correct long-term test infrastructure.
 
----
+______________________________________________________________________
 
 ### Case 2: Bernhardt — the Lone Stub — a Self-Diagnosed Mistake (Pure Value Domain)
 
@@ -173,7 +173,7 @@ The Feathers framing adds: what axis was this stub solving? Neither separation (
 
 **Result:** Zero test doubles in the codebase. Every test is direct data-in/data-out with real objects.
 
----
+______________________________________________________________________
 
 ## A2 — When to Use This Skill
 
@@ -196,7 +196,7 @@ Use this skill — not one of its source skills — when:
 - "Should I use a spy or a stub here?"
 - "I stubbed this — do I need to?"
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -232,22 +232,25 @@ A test that can never fail is a sensing failure you haven't noticed yet. If the 
 For each mock, stub, or fake you just created:
 
 - **Is the mocked collaborator returning pure data** (data in, data out, no I/O, no external mutation)? If yes:
+
   - Could the code under test receive this data as a value argument instead of calling the collaborator?
   - If yes: invert the dependency. Refactor the unit to accept data as arguments. Extract the pure computation into a separate function or class. The mock disappears. This code moves toward the functional core.
   - The recording fake you introduced was a refactoring prompt, not a permanent solution.
 
 - **Is the mocked collaborator performing I/O or mutating external state** (database, network, filesystem, shared mutable state)? If yes:
+
   - This is genuine shell behavior. The mock is the correct permanent test tool.
   - If the shell has no branching logic (just routes to core functions and assigns results), leaving it untested may be appropriate.
 
 - **Is the thing being mocked a pure value object** (data carrier, domain object, no external dependencies)? If yes:
+
   - Use the real object. There is no reason to mock a pure value. Replace the mock with the real thing.
 
 **Step 5 — Re-evaluate remaining mocks.**
 
 After extraction: every remaining mock should be either (a) in a thin shell with few conditionals testing genuine I/O paths, or (b) in an integration test that tests the actual I/O path end to end. If mocks remain in code that has no genuine I/O, the purity test missed a collaborator that should be inverted to a value argument.
 
----
+______________________________________________________________________
 
 ## B — Boundaries
 

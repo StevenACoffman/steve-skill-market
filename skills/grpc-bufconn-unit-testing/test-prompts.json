@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-bufconn-unit-testing",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "How do I write a unit test for a gRPC server in Go without starting a real TCP listener or dealing with port conflicts?",
+      "rationale": "Direct match: asking for the bufconn pattern explicitly."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "I need a fake database implementation for gRPC tests that can be put into an error state for specific test cases without using global variables. What's the idiomatic Go pattern?",
+      "rationale": "Direct match: FakeDb with functional options TestOption pattern."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "How do I connect a test gRPC client to an in-memory server using bufconn? What dial options do I need?",
+      "rationale": "Direct match: grpc.WithContextDialer(bufDialer) + insecure credentials."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "My gRPC unit tests are flaky because they bind to a port that's sometimes already in use. Is there a way to run gRPC tests without any network port?",
+      "rationale": "Direct match: the bufconn motivation is exactly this problem."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure TLS for a gRPC server in production?",
+      "rationale": "TLS configuration in production, not test harness setup."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "What is the best way to load test a gRPC service to find throughput limits?",
+      "rationale": "Load testing (ghz), not unit test harness setup."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "How do I use testify/mock to mock a database interface in Go tests?",
+      "rationale": "testify/mock is an alternative mocking approach, not the bufconn/FakeDb pattern from this book."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I want to test both my gRPC endpoint logic and my authentication interceptor. Should I use the same test harness for both?",
+      "rationale": "Blurred: this skill covers endpoint-only bufconn tests; the answer is no — interceptors belong in integration tests — which spans both this skill and the testing-level-selection skill."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "How do I structure my gRPC test package so that the server starts once and is shared across multiple test functions, but each test gets a clean database state?",
+      "rationale": "Blurred: involves the init() goroutine pattern and Reset() contract from this skill, but also touches test package organization."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "I'm using Testcontainers to spin up a MySQL container for my gRPC integration tests. Is there a simpler approach for unit tests?",
+      "rationale": "Blurred: comparing Testcontainers (Book B skill) with bufconn — the answer points to this skill as the unit test alternative."
+    }
+  ]
+}

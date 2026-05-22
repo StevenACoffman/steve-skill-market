@@ -1,33 +1,7 @@
 ---
 allowed-tools: Bash, Read, Edit
 name: testing-go-public-test-api
-description: |
-  When multiple packages or external consumers need to test against your package,
-  they must recreate your test setup from scratch — getting config structs right,
-  starting servers, writing mock implementations — because *_test.go files cannot
-  be imported. The solution is a regular Go file named testing.go that exports
-  test infrastructure as part of the package's public contract.
-
-  Three patterns compose the full approach. A factory function (TestConfig(t),
-  TestServer(t)) accepts *testing.T, never returns an error, and returns a ready-
-  to-use instance plus a cleanup closer. A compliance suite function
-  (TestDownloader(t, Downloader)) accepts both *testing.T and an implementation,
-  then runs all behavioral assertions that the type system cannot express — "List
-  must return results in lexicographic order," "Put must create intermediate
-  directories." A mock struct (DownloaderMock) implements the interface with
-  recording and replaying so any consumer can get a test double without writing
-  one.
-
-  The key insight is the file name: testing.go (not testing_test.go, not
-  _test.go). A regular .go file compiles into the package's binary and is
-  importable by other packages. Any package that imports yours can call
-  yourpkg.TestServer(t) or yourpkg.TestMyInterface(t, myImpl) in its own test
-  files. When your package evolves, only testing.go changes — all consumer
-  packages pick up the fix automatically.
-
-  Vault, Terraform, and HashiCorp's download libraries all use this pattern.
-  Vault exports TestServer(t) (net.Addr, io.Closer) as a publicly supported API
-  so any Go package that integrates with Vault gets a real in-memory server in
+description: Invoke when multiple packages or external consumers need to test against a Go package's interface, or when consumers duplicate setup code because *_test.go files cannot be imported. Covers the testing.go pattern: factory functions (TestServer, TestConfig), compliance suite functions (TestMyInterface), and mock structs — all exported from a regular .go file importable by other packages.
   one call. The downside: the helpers compile into the production binary, adding
   binary size. For size-sensitive packages, guard with //go:build !production.
 source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
@@ -45,7 +19,7 @@ related_skills:
 testing.go files (public test API exported for other packages):
 !`find . -name 'testing.go' -not -path '*/vendor/*' 2>/dev/null`
 
-Test helpers defined only in _test.go (not importable by other packages):
+Test helpers defined only in \_test.go (not importable by other packages):
 !`find . -name '*_test.go' -not -path '*/vendor/*' 2>/dev/null | xargs grep -l 'func Test\|func New.*testing\.T\|func Setup' 2>/dev/null | head -8`
 
 Packages that import test helpers from sibling packages:
@@ -69,7 +43,7 @@ Packages that import test helpers from sibling packages:
 > **Example: API server**
 >
 > ```go
-> TestServer(t) (net.Addr, io.Closer)
+> TestServer(t)(net.Addr, io.Closer)
 > // Returns a fully started in-memory server (address to connect to)
 > // and a closer to shut it down.
 > ```
@@ -96,7 +70,7 @@ directory existing we expect you to create that directory — we can't represent
 that in Go's type system so that's an implementation detail that's easy to miss
 when you're implementing a Downloader." (secondary transcript)
 
----
+______________________________________________________________________
 
 ## I — Interpretation
 
@@ -138,7 +112,7 @@ interface, with fields that record calls and allow scripted return values. Teams
 that need a test double without building the real thing import this instead of
 writing their own.
 
-### The *_Test.go Vs Testing.go Distinction
+### The \*\_Test.go Vs Testing.go Distinction
 
 This is the non-obvious architectural decision. Almost all Go developers put
 helpers in `*_test.go` because it feels right to keep test code isolated. But
@@ -147,7 +121,7 @@ regular `.go` file in the package is importable. The cost: the helpers compile
 into the production binary. Accept this cost explicitly for library and framework
 packages; mitigate it with build tags for size-sensitive applications.
 
----
+______________________________________________________________________
 
 ## A1 — Applied Cases
 
@@ -157,9 +131,9 @@ Vault's `testing.go` exports:
 
 ```go
 func TestServer(t *testing.T) (net.Addr, io.Closer) {
-    // starts a fully in-memory, non-durable Vault instance
-    // calls t.Fatalf if setup fails
-    // returns the listener address and a closer that shuts down the server
+	// starts a fully in-memory, non-durable Vault instance
+	// calls t.Fatalf if setup fails
+	// returns the listener address and a closer that shuts down the server
 }
 ```
 
@@ -171,11 +145,11 @@ import "github.com/hashicorp/vault/api"
 import vaulttest "github.com/hashicorp/vault/helper/testhelpers/vault"
 
 func TestMyRotator(t *testing.T) {
-    addr, closer := vaulttest.TestServer(t)
-    defer closer.Close()
+	addr, closer := vaulttest.TestServer(t)
+	defer closer.Close()
 
-    client, _ := api.NewClient(&api.Config{Address: "http://" + addr.String()})
-    // test against a real in-memory Vault with no separate process
+	client, _ := api.NewClient(&api.Config{Address: "http://" + addr.String()})
+	// test against a real in-memory Vault with no separate process
 }
 ```
 
@@ -184,7 +158,7 @@ internal startup, they update `TestServer` — all consumers are fixed
 automatically. This is a "publicly supported exported API," not a hidden
 implementation detail.
 
----
+______________________________________________________________________
 
 ### Case 2: TestConfig(t) / TestConfigInvalid(t) for Config Parsers
 
@@ -194,20 +168,20 @@ A config-parsing package exports:
 // testing.go
 
 func TestConfig(t *testing.T) *Config {
-    t.Helper()
-    return &Config{
-        ListenAddr: "127.0.0.1:0",
-        DataDir:    t.TempDir(),
-        LogLevel:   "warn",
-        // ... all required fields set to valid test-appropriate values
-    }
+	t.Helper()
+	return &Config{
+		ListenAddr: "127.0.0.1:0",
+		DataDir:    t.TempDir(),
+		LogLevel:   "warn",
+		// ... all required fields set to valid test-appropriate values
+	}
 }
 
 func TestConfigInvalid(t *testing.T) *Config {
-    t.Helper()
-    return &Config{
-        // deliberately omits required fields to exercise error paths
-    }
+	t.Helper()
+	return &Config{
+		// deliberately omits required fields to exercise error paths
+	}
 }
 ```
 
@@ -215,18 +189,18 @@ Downstream packages write:
 
 ```go
 func TestServer_rejectsInvalidConfig(t *testing.T) {
-    cfg := mypkg.TestConfigInvalid(t)
-    _, err := mypkg.NewServer(cfg)
-    if err == nil {
-        t.Fatal("expected error for invalid config, got nil")
-    }
+	cfg := mypkg.TestConfigInvalid(t)
+	_, err := mypkg.NewServer(cfg)
+	if err == nil {
+		t.Fatal("expected error for invalid config, got nil")
+	}
 }
 ```
 
 When `Config` gains a new required field, only `TestConfig` needs updating. All
 twenty packages that call it are fixed in one commit.
 
----
+______________________________________________________________________
 
 ### Case 3: TestDownloader(t, Downloader) + DownloaderMock — Behavioral Compliance Suite
 
@@ -238,43 +212,43 @@ A download library exports three artifacts in `testing.go`:
 // TestDownloader runs the full compliance suite against any Downloader implementation.
 // Call this from your package's _test.go file to verify your implementation.
 func TestDownloader(t *testing.T, impl Downloader) {
-    t.Helper()
+	t.Helper()
 
-    t.Run("creates destination directory if absent", func(t *testing.T) {
-        dir := filepath.Join(t.TempDir(), "does-not-exist-yet")
-        err := impl.Download("https://example.com/file.tar.gz", dir)
-        if err != nil {
-            t.Fatalf("Download returned error: %v", err)
-        }
-        if _, err := os.Stat(dir); os.IsNotExist(err) {
-            t.Fatal("expected destination directory to be created")
-        }
-    })
+	t.Run("creates destination directory if absent", func(t *testing.T) {
+		dir := filepath.Join(t.TempDir(), "does-not-exist-yet")
+		err := impl.Download("https://example.com/file.tar.gz", dir)
+		if err != nil {
+			t.Fatalf("Download returned error: %v", err)
+		}
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			t.Fatal("expected destination directory to be created")
+		}
+	})
 
-    t.Run("returns ErrNotFound for non-existent resource", func(t *testing.T) {
-        err := impl.Download("https://example.com/nonexistent", t.TempDir())
-        if !errors.Is(err, ErrNotFound) {
-            t.Fatalf("expected ErrNotFound, got %v", err)
-        }
-    })
+	t.Run("returns ErrNotFound for non-existent resource", func(t *testing.T) {
+		err := impl.Download("https://example.com/nonexistent", t.TempDir())
+		if !errors.Is(err, ErrNotFound) {
+			t.Fatalf("expected ErrNotFound, got %v", err)
+		}
+	})
 
-    // ... more behavioral assertions
+	// ... more behavioral assertions
 }
 
 // DownloaderMock records calls and returns scripted responses.
 type DownloaderMock struct {
-    DownloadFn func(url, dest string) error
-    Calls      []DownloadCall
+	DownloadFn func(url, dest string) error
+	Calls      []DownloadCall
 }
 
 type DownloadCall struct{ URL, Dest string }
 
 func (m *DownloaderMock) Download(url, dest string) error {
-    m.Calls = append(m.Calls, DownloadCall{URL: url, Dest: dest})
-    if m.DownloadFn != nil {
-        return m.DownloadFn(url, dest)
-    }
-    return nil
+	m.Calls = append(m.Calls, DownloadCall{URL: url, Dest: dest})
+	if m.DownloadFn != nil {
+		return m.DownloadFn(url, dest)
+	}
+	return nil
 }
 ```
 
@@ -284,7 +258,7 @@ An implementing team writes:
 // mydownloader_test.go
 
 func TestMyDownloader_compliance(t *testing.T) {
-    dlpkg.TestDownloader(t, &MyDownloader{})
+	dlpkg.TestDownloader(t, &MyDownloader{})
 }
 ```
 
@@ -292,14 +266,14 @@ A consuming team that needs a test double without the real implementation:
 
 ```go
 func TestProcessor(t *testing.T) {
-    mock := &dlpkg.DownloaderMock{
-        DownloadFn: func(url, dest string) error { return nil },
-    }
-    p := NewProcessor(mock)
-    p.Run()
-    if len(mock.Calls) != 1 {
-        t.Fatalf("expected 1 download call, got %d", len(mock.Calls))
-    }
+	mock := &dlpkg.DownloaderMock{
+		DownloadFn: func(url, dest string) error { return nil },
+	}
+	p := NewProcessor(mock)
+	p.Run()
+	if len(mock.Calls) != 1 {
+		t.Fatalf("expected 1 download call, got %d", len(mock.Calls))
+	}
 }
 ```
 
@@ -307,7 +281,7 @@ The behavioral contract "create the destination directory if absent" cannot be
 expressed in Go's type system. Without `TestDownloader`, every implementor misses
 it. With it, every implementor catches it on first run.
 
----
+______________________________________________________________________
 
 ## A2 — Triggers (When to Apply)
 
@@ -335,7 +309,7 @@ Apply this pattern when you encounter any of these:
   — The bugs are usually unwritten behavioral contracts. Codify them as assertions
   in a compliance suite and publish it.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -353,11 +327,11 @@ Apply this pattern when you encounter any of these:
 
    ```go
    func TestXxx(t *testing.T) ReturnType {
-       t.Helper()
-       // set up the thing; call t.Fatalf on any error
-       // return the configured instance
-       // if cleanup is needed, register it: t.Cleanup(func() { ... })
-       // or return an io.Closer / func() as a second return value
+   	t.Helper()
+   	// set up the thing; call t.Fatalf on any error
+   	// return the configured instance
+   	// if cleanup is needed, register it: t.Cleanup(func() { ... })
+   	// or return an io.Closer / func() as a second return value
    }
    ```
 
@@ -367,13 +341,13 @@ Apply this pattern when you encounter any of these:
 
    ```go
    func TestMyInterface(t *testing.T, impl MyInterface) {
-       t.Helper()
-       t.Run("contract: X must do Y", func(t *testing.T) {
-           // assertion
-       })
-       t.Run("contract: Z must return ErrFoo when ...", func(t *testing.T) {
-           // assertion
-       })
+   	t.Helper()
+   	t.Run("contract: X must do Y", func(t *testing.T) {
+   		// assertion
+   	})
+   	t.Run("contract: Z must return ErrFoo when ...", func(t *testing.T) {
+   		// assertion
+   	})
    }
    ```
 
@@ -398,26 +372,28 @@ Apply this pattern when you encounter any of these:
    import "github.com/yourorg/yourpkg"
 
    func TestSomething(t *testing.T) {
-       cfg := yourpkg.TestConfig(t)
-       addr, closer := yourpkg.TestServer(t)
-       defer closer.Close()
-       // test against real infrastructure
+   	cfg := yourpkg.TestConfig(t)
+   	addr, closer := yourpkg.TestServer(t)
+   	defer closer.Close()
+   	// test against real infrastructure
    }
 
    func TestMyImpl_compliance(t *testing.T) {
-       yourpkg.TestMyInterface(t, &MyImpl{})
+   	yourpkg.TestMyInterface(t, &MyImpl{})
    }
    ```
 
 7. **Optionally guard with a build tag for size-sensitive packages.**
 
    ```go
-   //go:build !production
+   !production
+
+   package p
    ```
 
    Place this at the top of `testing.go` if binary size is a constraint.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Confusions
 
@@ -465,7 +441,7 @@ skill is about the structure of the harness (step-by-step execution, pre/post
 hooks), while the `testing.go` skill is about the mechanism that makes it
 importable. The two frequently appear together.
 
-### Confusion: Testing.go Vs _Test.go Package-Level Test Helpers
+### Confusion: Testing.go Vs \_Test.go Package-Level Test Helpers
 
 Some developers write helpers in `package foo_test` (external test package). This
 is correct for tests within the same repository but still cannot be imported by a

@@ -17,8 +17,8 @@ description: |
   - The system is choosing between managed cloud services primarily based on cost or SLA (vendor selection, not engine selection).
 
   Key signals: "write-heavy," "compaction," "LSM," "B-tree," "columnar," "time-series," "analytical queries," "write stalls," "read amplification," "RocksDB vs. PostgreSQL."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 4: Storage and Retrieval"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 4: Storage and Retrieval'
 tags: [storage-engine, lsm-tree, b-tree, columnar, write-amplification, compaction, oltp, olap, workload-classification]
 related_skills: [sharding-strategy-selection, system-of-record-vs-derived-data]
 ---
@@ -48,7 +48,7 @@ Write-heavy vs read-heavy indicators:
 >
 > — Kleppmann & Riccomini, Chapter 4: Storage and Retrieval
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -67,7 +67,7 @@ The decision procedure:
 3. For LSM: plan compaction explicitly. Compaction must be tuned; the defaults are often wrong for sustained high write loads. Monitor SSTable count, compaction queue depth, and write stall events as operational health metrics.
 4. For mixed workloads (high-volume operational writes + analytical queries): use LSM for the hot write path and a separate batch export to columnar storage for analytical queries.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -85,7 +85,7 @@ The decision procedure:
 - **Conclusion:** LSM wins for the write path; columnar wins for the analytical query path; the correct architecture is a hybrid that keeps these two workloads on their appropriate engine archetypes.
 - **Result:** The framework prevents the common mistake of using a single general-purpose engine (PostgreSQL) for a workload that splits across both the write-optimization and analytical-optimization axes. Compaction interference is specifically called out as an operational risk that must be planned for, not discovered.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -108,28 +108,32 @@ The decision procedure:
 - Difference from `replication-topology-selection`: storage engine selection is about the single-node data structure that stores and retrieves data; replication topology is about how copies of that data are distributed across nodes. These are orthogonal decisions.
 - Difference from `schema-evolution-compatibility-planning`: schema evolution is about how data format changes are managed during rolling upgrades; storage engine selection is about which physical storage structure matches the workload's I/O characteristics.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Classify the workload as operational or analytical**
+
    - Operational: individual row reads/writes, user-facing latency requirements, OLTP access pattern. Analytical: bulk column scans, aggregations, GROUP BY, low write frequency. Mixed: both operational writes and analytical queries on the same data.
    - Completion criteria: A written statement: "This workload is [operational / analytical / mixed] because [access pattern description]."
    - Stop condition: If analytical, go directly to columnar storage evaluation. Do not evaluate LSM or B-tree for analytical workloads.
 
 2. **For operational workloads: quantify the write/read ratio**
+
    - Estimate writes per second vs. reads per second. Determine whether reads are point lookups (by key) or range scans. High write throughput (>10k/sec) with low read frequency → LSM. Mixed or read-heavy with random point lookups → B-tree.
    - Completion criteria: Write and read rates are measured or estimated with units (ops/sec). The dominant constraint (write throughput or read latency) is identified.
 
 3. **For LSM selection: plan compaction explicitly**
+
    - Identify the compaction strategy for the chosen LSM engine (LevelDB, Tiered, FIFO). Estimate the write rate vs. compaction throughput. Set monitoring for SSTable count, compaction queue depth, and write stall events. Tune compaction thread count and I/O priority before production load.
    - Completion criteria: Compaction monitoring is in place; write stall thresholds are defined; compaction throughput has been load-tested at peak write rate.
 
 4. **For mixed workloads: design a hybrid architecture**
+
    - Use LSM or B-tree for the hot operational write path. Use a separate batch export (CDC, scheduled export) to columnar storage for analytical queries. Define the staleness SLA for analytical queries (acceptable lag in the export pipeline).
    - Completion criteria: The two storage tiers have separate data paths, separate SLAs, and separate operational ownership. The analytical tier is explicitly derived data from the operational tier.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -153,14 +157,14 @@ The decision procedure:
 
 - **Write throughput vs. compaction throughput**: Engineers who choose LSM for write-heavy workloads sometimes assume write performance is "solved." It is solved at the moment of ingestion — but compaction is a delayed write amplification cost that becomes a throughput ceiling. The write performance of an LSM engine under sustained load is bounded by its compaction throughput, not its ingestion rate.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
 - **composes_with**: sharding-strategy-selection — once the engine archetype is chosen (LSM for writes, columnar for analytics), the sharding strategy is applied on top to distribute that engine's data across nodes.
 - **composes_with**: system-of-record-vs-derived-data — the storage engine decision often splits along the SoR/derived boundary: the operational write path (system of record) uses LSM or B-tree while derived analytical representations use columnar storage.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

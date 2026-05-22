@@ -6,10 +6,10 @@ description: Use when identifying structural problems in code and deciding wheth
 type: merged-skill
 source_skills:
   - slug: fowler-refactoring/fowler-code-smells
-    book: "Refactoring: Improving the Design of Existing Code, 2nd Ed."
+    book: 'Refactoring: Improving the Design of Existing Code, 2nd Ed.'
     author: Martin Fowler
   - slug: jousterhout/deep-module-classitis-diagnosis
-    book: "A Philosophy of Software Design"
+    book: A Philosophy of Software Design
     author: John Ousterhout
 related_skills:
   - slug: fowler-refactoring/fowler-code-smells
@@ -48,7 +48,7 @@ Functions over 60 lines:
 >
 > **Classitis** is the failure mode of over-splitting: developers treat "small class" as a virtue independent of whether those classes are deep. The single responsibility principle, applied mechanically, produces a proliferation of small classes each doing one obvious thing — but each with an interface nearly as wide as its body. The result is more total interface surface, more concepts for callers to hold in mind, and more files to navigate — with no reduction in overall system complexity.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -66,7 +66,7 @@ The two levels are complementary, not competing. Applied separately, each has a 
 
 **The shared meta-principle:** Neither framework is a compliance checklist. Both require the diagnostician to exercise judgment about context — the domain, the caller needs, the usage pattern. A class diagnosed with Feature Envy may intentionally put behavior apart from data to support the Strategy pattern. A class measured as shallow may be correctly shallow at a trust or security boundary. Named vocabulary enables judgment; it does not replace it.
 
----
+______________________________________________________________________
 
 ### A1 — Applications
 
@@ -84,7 +84,7 @@ The two levels are complementary, not competing. Applied separately, each has a 
 >
 > **Classitis** is the failure mode of over-splitting: developers treat "small class" as a virtue independent of whether those classes are deep. The single responsibility principle, applied mechanically, produces a proliferation of small classes each doing one obvious thing — but each with an interface nearly as wide as its body. The result is more total interface surface, more concepts for callers to hold in mind, and more files to navigate — with no reduction in overall system complexity.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -102,7 +102,7 @@ The two levels are complementary, not competing. Applied separately, each has a 
 
 **The shared meta-principle:** Neither framework is a compliance checklist. Both require the diagnostician to exercise judgment about context — the domain, the caller needs, the usage pattern. A class diagnosed with Feature Envy may intentionally put behavior apart from data to support the Strategy pattern. A class measured as shallow may be correctly shallow at a trust or security boundary. Named vocabulary enables judgment; it does not replace it.
 
----
+______________________________________________________________________
 
 ## A1 — Applications
 
@@ -116,7 +116,7 @@ The two levels are complementary, not competing. Applied separately, each has a 
 
 **Result:** `calculateFee()` is moved to `PaymentGateway`. The code review comment is concrete: "Feature Envy — six interactions with `PaymentGateway`'s internals, one with `Invoice`'s own fields — Move Function to `PaymentGateway` where the data lives."
 
----
+______________________________________________________________________
 
 ### Case 2: Java Three-Object File Open — Classitis Without a Smell (Ousterhout Domain: Library API Design)
 
@@ -128,7 +128,7 @@ The two levels are complementary, not competing. Applied separately, each has a 
 
 **Result:** Ousterhout prescribes a deeper default: buffering should be automatic, with opt-out only for rare cases. (Note: later JDK APIs such as `Files.newBufferedReader` partially address this.)
 
----
+______________________________________________________________________
 
 ## A2 — When to Use This Skill
 
@@ -150,7 +150,7 @@ Use this skill — not one of its source skills — when:
 - "We have too many small classes that always have to be used together" — classitis diagnostic
 - "This class is 800 lines but I can't figure out how to split it" — depth ratio may explain why: it may be deep
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -181,7 +181,7 @@ Before finalizing: does the split cross a trust, security, or privilege boundary
 **Step 6 — Communicate with smell name + depth evidence + treatment decision.**
 "[Smell name] — [structural evidence] — depth check: [proposed outcome is deeper / shallower] — treatment: [proceed with refactoring / override: alternative treatment]."
 
----
+______________________________________________________________________
 
 ## B — Boundaries
 

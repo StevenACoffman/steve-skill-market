@@ -1,0 +1,80 @@
+{
+  "skill": "go-beyond-packages-as-layers",
+  "version": "0.1.0",
+  "source_book": "Go Beyond — Ben B. Johnson",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "Why does Go prevent circular imports? Why can't package A import package B if B already imports A?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Explain the layers model: Go packages are directional layers, not grouping containers. The no-circular-dependency rule enforces that lower layers cannot depend on higher layers. Cite the io → net → net/http analogy. The error is the compiler enforcing layer direction, not an arbitrary limitation.",
+      "notes": "Direct WHY question about circular imports — the core trigger for this skill."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "I come from a Java background and I'm confused about how to organize Go packages. In Java I can have classes in different packages import each other freely. Why is Go different?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Explain the mental model shift: Java packages are grouping containers (arbitrary organization); Go packages are layers (directional dependency). The no-circular-import rule is the mechanical enforcement of this. Show the standard library as the example of correct layering.",
+      "notes": "Cross-language confusion — the layers model explains the difference."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "I created a 'common' package to break a circular dependency between two packages but now everything imports common and it's getting messy. What am I doing wrong?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Explain that creating a 'common' or 'shared' package is the wrong fix — it's still treating packages as groups. Apply the layers model: identify which type both packages need and move it to the lower layer (the domain/root package). The domain layer is where shared types belong because everything depends on it.",
+      "notes": "The 'shared/common' anti-pattern is a symptom of layers-as-groups confusion."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "My notifications package needs user email addresses from my users package. My users package needs unread notification counts from notifications. Circular dependency. How do I resolve this?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. These two packages are at the same layer trying to import each other — layers violation. Fix: extract the shared concept (Notifiable interface or UserNotificationSummary) into the domain/root layer. Both notifications and users depend on the root; neither depends on the other. The root layer owns what both need.",
+      "notes": "Classic real-world circular dependency scenario — concrete application of the layers model."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "How are Go packages different from Python modules or Ruby gems?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Python/Ruby modules are containers for grouping related code; direction doesn't matter. Go packages are layers: the no-circular-dependency rule makes them directional. Group-style thinking works in Python/Ruby but produces circular import errors in Go. This is the fundamental concept shift needed.",
+      "notes": "Cross-language comparison directly addressed by this mental model."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I structure a Go package layout? I want the four-tenet recipe.",
+      "expected_behavior": "Do not invoke go-beyond-packages-as-layers. The user is asking for the actionable recipe (four-tenet layout), not the conceptual WHY. Invoke go-beyond-four-tenet-layout instead.",
+      "notes": "Lure: package layout topic, but user wants the recipe not the mental model."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I import a third-party package in Go? How does go get work?",
+      "expected_behavior": "Do not invoke go-beyond-packages-as-layers. This is a Go tooling question (go get, go.mod, dependency management), not a package architecture question.",
+      "notes": "Lure: 'import' keyword, but about tooling not architecture."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "What is the performance impact of importing many packages in Go?",
+      "expected_behavior": "Do not invoke go-beyond-packages-as-layers. Performance question about compilation/linking, not about package architecture or import direction.",
+      "notes": "Performance question, not architectural."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I understand the layers model conceptually, but I'm not sure which layer my authentication middleware belongs in.",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Apply the diagnostic question: what does auth middleware depend on? If it needs domain types (User, permissions), it depends on the root layer — so it sits above the root. If it's an HTTP-specific concern, it belongs in the http/ subpackage (same layer as other infrastructure adapters). The layer is determined by its dependencies, not its function.",
+      "notes": "Applying the layers mental model to a specific placement decision."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I have a utility package with helper functions used everywhere. Where does it go in the layers model?",
+      "expected_behavior": "Invoke go-beyond-packages-as-layers. Warn that creating a 'utility', 'common', or 'shared' package is precisely the pattern the layers model warns against (ce03/ce04) — it treats packages as groups, not layers. The correct action: (a) if utilities are pure functions with no external dependencies, absorb them INTO the root package or the package that uses them; (b) if they wrap an external dependency (e.g., a hashing library), create a subpackage named after that dependency. Do not create a generic util/ or common/ package — that is treating packages as groups and will cause the same circular dependency problems the layers model solves.",
+      "notes": "Utility packages are a common edge case — the right answer is 'absorb into root or named adapter', never a generic util/ package."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "5 should_trigger + 3 should_not_trigger + 2 edge_case = 10 total. All should_not_triggers must pass."
+}

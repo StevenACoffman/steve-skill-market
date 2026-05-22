@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-payload-optimization",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "Should I care about which field numbers I assign to Protobuf fields? Does it affect performance?",
+      "rationale": "Direct match: varint encoding cost and the 1–15 threshold rule."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "I enabled gzip compression on our gRPC service and our payload sizes got larger. How is that possible?",
+      "rationale": "Direct match: the ce05 counter-example — gzip overhead on small non-repetitive Protobuf messages."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "What is the correct sequence of steps to optimize Protobuf payload sizes, and which ones should I apply first?",
+      "rationale": "Direct match: the five-step f04 payload optimization decision process."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "My proto message has an int32 field that sometimes holds negative values and is always 10 bytes. What's wrong?",
+      "rationale": "Direct match: int32 negative values cost 10 bytes; sint32 with ZigZag is the fix."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I add a new field to an existing Protobuf message without breaking existing clients?",
+      "rationale": "Proto backward compatibility and field evolution, not payload size optimization."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement HTTP/2 multiplexing for a Go gRPC service?",
+      "rationale": "HTTP/2 transport behavior, unrelated to Protobuf payload optimization."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "What is the best way to benchmark gRPC throughput under load?",
+      "rationale": "Load testing (ghz), not message-level payload size optimization."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I want to reduce the amount of data sent over a server-streaming RPC. The client only needs 3 of the 10 fields on each response. What's the best approach?",
+      "rationale": "Blurred: involves FieldMask (both this skill and grpc-fieldmask-partial-updates skill) — this skill covers it as step 4 of payload optimization; the other skill covers the full FieldMask implementation pattern."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "When should I use gzip.UseCompressor as a per-call option versus setting it globally on the gRPC client connection?",
+      "rationale": "Blurred: the per-call vs global gzip decision is within the boundary of this skill, but the question is more operational than the core optimization-decision process."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "I have a client-streaming RPC that sends millions of UpdateTaskRequest messages per day. The request currently wraps a Task sub-message. Should I flatten the fields?",
+      "rationale": "Blurred: the flattening decision is step 3 of this skill, but grpc-flatten-streaming-requests covers the full mechanics and trade-offs of flattening specifically."
+    }
+  ]
+}

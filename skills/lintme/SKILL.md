@@ -1,6 +1,6 @@
 ---
 name: lintme
-description: Run Go linters on this repository and fix errors. Use when the user asks to run lint, fix lint errors, or mentions "/lintme".
+description: Use when the user asks to run linters, fix lint errors, or mentions golangci-lint or /lintme. Covers running lint across all modules, interpreting output, and auto-fixing.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -16,7 +16,7 @@ Tool availability:
 Current branch:
 !`git branch --show-current 2>/dev/null`
 
----
+______________________________________________________________________
 
 ## Step 0 — Ensure Tools Are Installed
 
@@ -43,8 +43,8 @@ export GOBIN_STD="$HOME/go/bin"
 export PATH="$GOBIN_STD:$PATH"
 mkdir -p "$GOBIN_STD"
 
-builtin type -P golangci-lint &>/dev/null || \
-  curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOBIN_STD" latest
+builtin type -P golangci-lint &>/dev/null ||
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOBIN_STD" latest
 ```
 
 ## Step 1 — Run Formatters
@@ -99,9 +99,9 @@ Exit 0 = all modules passed. Exit 1 = one or more failed.
 
 ```bash
 for D in */; do
-  [ -f "${D}go.mod" ] || continue
-  echo "==> $D"
-  (cd "$D" && go run ../pkg/analyzers/repowrite/cmd/repowrite ./...)
+	[ -f "${D}go.mod" ] || continue
+	echo "==> $D"
+	(cd "$D" && go run ../pkg/analyzers/repowrite/cmd/repowrite ./...)
 done
 ```
 
@@ -146,11 +146,11 @@ After `--fix`, any remaining diagnostics require code changes. Common patterns f
 ## Step 5 — Verify Clean
 
 ```bash
-lintme run --no-fix && \
-for D in */; do
-  [ -f "${D}go.mod" ] || continue
-  (cd "$D" && go run ../pkg/analyzers/repowrite/cmd/repowrite ./...)
-done
+lintme run --no-fix &&
+	for D in */; do
+		[ -f "${D}go.mod" ] || continue
+		(cd "$D" && go run ../pkg/analyzers/repowrite/cmd/repowrite ./...)
+	done
 ```
 
 Both must exit 0.

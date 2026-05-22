@@ -1,0 +1,79 @@
+{
+  "skill": "repository-unit-of-work",
+  "version": "0.1.0",
+  "source_book": "Go Advice — Redowan Delowar (rednafi)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I need to create an order and update inventory in the same database transaction. Right now my service layer calls sql.DB directly and I can't figure out how to make both writes atomic.",
+      "expected_behavior": "Skill explains the repository + unit-of-work pattern: repositories accept a Tx, the service opens a transaction and passes it through, both writes commit or roll back together.",
+      "notes": "Multi-table atomic write with sql.DB called directly — core use case."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "How do I manage database transactions properly in Go? I keep ending up with either nested transactions or forgetting to roll back on error.",
+      "expected_behavior": "Skill explains a unit-of-work approach: a UoW opens a *sql.Tx, passes it to repositories, and defers a rollback that is a no-op after commit, ensuring cleanup.",
+      "notes": "Transaction lifecycle management — forgetting rollback is the exact pain the pattern solves."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "My service layer is scattered with sql.DB.QueryRow calls and sql.DB.Exec calls mixed in with business logic. How do I clean this up?",
+      "expected_behavior": "Skill recommends extracting data access into repository types that accept a database executor interface, separating persistence from business logic.",
+      "notes": "sql.DB called directly in service — motivating the repository abstraction."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "How do I make a sequence of writes to multiple tables transactional in Go without passing *sql.Tx all over the place?",
+      "expected_behavior": "Skill demonstrates the unit-of-work pattern: a UoW object holds the *sql.Tx and exposes repositories that operate on it, so callers interact with the UoW rather than raw Tx.",
+      "notes": "Avoidance of Tx threading through call chain — UoW collects that state."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "How do I make this transactional? I'm inserting a user record and then creating their default workspace, but if the workspace insert fails, the user should be rolled back too.",
+      "expected_behavior": "Skill shows wrapping both inserts inside a single *sql.Tx via the unit-of-work, with a deferred rollback guard so failure of either step reverts both.",
+      "notes": "Two-step insert that must be atomic — prototypical UoW scenario."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I query a list of users from Postgres and return it as JSON from my HTTP handler?",
+      "expected_behavior": "Read-only query with no transaction concern. The repository pattern may be loosely relevant but the unit-of-work aspect does not apply. Skill should not activate.",
+      "notes": "Read-only query — no atomicity or transaction management needed."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I set up a Redis client in Go for caching session tokens?",
+      "expected_behavior": "Redis is a different storage system with its own transaction model. The SQL-oriented repository/UoW pattern does not apply. Skill should not activate.",
+      "notes": "Redis/non-relational storage — pattern is specific to sql.Tx."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "What's the best way to configure a database connection pool in Go — max open connections, idle connections, that sort of thing?",
+      "expected_behavior": "Connection pool tuning is infrastructure configuration, not transaction or repository design. Skill should not activate.",
+      "notes": "Connection pool config — orthogonal to repository/UoW pattern."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "Should I use GORM or write raw SQL in Go? I'm building a new service and can't decide.",
+      "expected_behavior": "Skill should engage: rednafi's advice favors raw sql + the repository pattern over ORMs because ORMs obscure transaction boundaries and make the unit-of-work harder to control. The skill can explain the trade-off and recommend the raw sql + repository approach.",
+      "notes": "ORM debate is the entry point to explaining why raw sql + repo is preferred."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "How do I roll back a database transaction on error in Go?",
+      "expected_behavior": "Partial trigger. The question is narrow (rollback mechanics) but the Tx pattern with deferred rollback is exactly what the skill covers. Skill should activate and demonstrate the defer-rollback guard as part of the broader unit-of-work pattern.",
+      "notes": "Rollback question is a narrow entry into the full pattern."
+    }
+  ],
+  "minimum_pass_rate": 0.8
+}

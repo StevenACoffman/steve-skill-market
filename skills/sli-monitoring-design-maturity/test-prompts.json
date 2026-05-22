@@ -1,0 +1,111 @@
+{
+  "skill_id": "sli-monitoring-design-maturity",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "site-reliability-engineering/four-golden-signals-monitoring",
+    "reliability-engineering-mindset/sli-4-stage-evolution"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "We implemented the four golden signals from the SRE book six months ago. Dashboards look great. But on-call engineers say most pages are noise — the SLI fires when users are fine and doesn't fire when users call to complain about problems. What's wrong and how do we fix it?",
+      "expected_behavior": "Diagnose this as Stage 1 failure: golden signals applied without consumer research produce poor signal-to-noise. Classify each existing signal against the Stage 1/2/3 criteria. Identify that the signals are firing on internal system state rather than consumer task failures. Prescribe advancing to Stage 3: identify consumer tasks, map task-level failure modes (not just error codes), and construct SLI formulas as good_task_executions / valid_task_executions. Remove cause-based alerts from the paging layer.",
+      "expected_not": "Should not validate that four golden signals = complete monitoring coverage without diagnosing why consumer-visible failures are being missed. Should not recommend adding more golden signals instead of advancing to Stage 3."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "A product manager is asking: 'Why does our dashboard show 99.9% availability but users keep filing tickets saying their data is stale and inconsistent?' Our golden signals are all green. What are we missing?",
+      "expected_behavior": "Identify this as the correctness gap — the GitHub 2018 case. Data staleness and inconsistency are consumer task failures invisible to all four golden signals: latency, traffic, errors, and saturation can all show green while the service returns stale data. Prescribe Stage 3 SLI design for the correctness dimension: identify the consumer task (read consistent data), define the failure mode (staleness, inconsistency), construct a correctness SLI (e.g., percentage of reads consistent with writes completed >N seconds ago). This is not a corner case — correctness failures are structurally invisible to golden-signal monitoring.",
+      "expected_not": "Should not suggest tuning alert thresholds or adding more latency percentiles as the fix. Should not dismiss the PM's concern because dashboards show green."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "We're designing monitoring for a new e-commerce checkout service. Our tech lead says 'use the four golden signals.' A new hire who joined from a reliability-focused company says 'golden signals are just Stage 1 — you need task-aware SLIs.' We're debating this in design review. How do we resolve it?",
+      "expected_behavior": "Both are correct at different layers. Start with the four golden signals as Stage 1 baseline — this is the correct starting point and provides minimum coverage. Then immediately classify the service against Stage 2/3 criteria: checkout is a complex consumer task with correctness requirements (order placed correctly, payment charged once, inventory decremented) that golden signals cannot measure. Advance to Stage 3 before implementing on-call alerting. The tech lead and new hire are both right in sequence, not in opposition.",
+      "expected_not": "Should not pick a side without integrating both perspectives. Should not recommend Stage 3 only without acknowledging golden signals as the correct baseline."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "Our on-call engineers are getting paged when CPU spikes above 70%, when connection pools are at 80% capacity, and when job queues exceed 1000 items. Every page wakes someone up at 3am and the response is always 'keep watching to see if it affects users.' What should we change?",
+      "expected_behavior": "Identify these as cause-based alerts (CPU, connection pool, queue depth) that should be removed from the paging layer. Apply the symptom vs. cause distinction: none of these metrics directly measure user-visible failure. Move all three to debugging dashboards. Replace with symptom-based SLIs: user-visible error rate, latency percentiles at the service boundary, task failure rates. Apply the on-call worthiness test: 'If this fires at 3am, is it urgent, actionable, and definitely a user-visible failure that cannot wait until morning?' If the response is 'keep watching,' the answer is no.",
+      "expected_not": "Should not recommend lowering the CPU or queue depth thresholds as the fix. Should not suggest adding more cause-based metrics to 'triangulate' user impact."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We're a small team and setting up SLIs for the first time. We have a simple REST API with one client (an internal mobile app). Should we start with golden signals or go straight to task-aware Stage 3 SLIs?",
+      "expected_behavior": "Apply the conditional: for a simple request-response API with a single identifiable consumer class and no correctness requirements, golden signals correctly implemented may be sufficient. Start with Stage 1 (golden signals with percentile latency, separated error latency, saturation on most-constrained resource). Then evaluate whether the mobile app's usage reveals consumer tasks that golden signals miss — if the app makes complex user journeys (search, purchase, authentication flow) where partial task completion is a failure mode, advance to Stage 3. Don't skip Stage 1 — it provides historical data needed for Stage 3 calibration.",
+      "expected_not": "Should not recommend skipping Stage 1 for a simple API with a single consumer. Should not recommend going straight to Stage 4 business-aware SLIs without the baseline."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "We want to set a 99.9% availability SLO for our API. What should the SLI measurement be — should we measure at the load balancer, at the service boundary, or using synthetic probes from outside our network?",
+      "expected_behavior": "This is an SLI definition and measurement scope question that feeds into SLO calibration. Use slo-definition-calibration-framework to define the SLI as a user-experience-reflecting measurement (load balancer or external probe is usually closer to user experience than internal metrics). The monitoring maturity question (what stage of SLI sophistication) is separate from where to take the measurement.",
+      "expected_not": "Should not invoke sli-monitoring-design-maturity as the primary skill — the question is about measurement location for a defined SLI type, not about diagnosing monitoring maturity or advancing from Stage 1 to Stage 3."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "We need to write runbooks for our three most common on-call scenarios. How should we structure the runbooks to minimize time-to-resolution?",
+      "expected_behavior": "This is an operational runbook and incident response problem. Use incident management / IMAG skills to structure runbook format, escalation paths, and time-to-resolution optimization. SLI monitoring maturity addresses alert design, not runbook structure.",
+      "expected_not": "Should not invoke sli-monitoring-design-maturity — the question is about operational procedure documentation, not about signal design or monitoring stage advancement."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "We had an incident last week where our database ran out of disk space. Our monitoring didn't catch it until users started seeing errors. How do we make sure we catch disk saturation before it becomes an outage?",
+      "expected_behavior": "This is a saturation monitoring implementation problem — one of the four golden signals (saturation of the most-constrained resource). Implement saturation alerting with a threshold below 100% at the point where performance visibly degrades. This is a Stage 1 golden signal gap, not a Stage 1-to-Stage 3 advancement problem. The fix is straightforward: add disk saturation as a leading-indicator alert with an appropriate threshold.",
+      "expected_not": "Should not invoke the full sli-monitoring-design-maturity maturity ladder for what is a missing saturation signal implementation — this is a Stage 1 gap, not a Stage 1-to-Stage 3 problem requiring consumer task research."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "We have a data pipeline service that processes user-uploaded files. Latency, error rate, and saturation are all green. But users complain that files are processed in the wrong order when multiple files are submitted simultaneously. Is this a Stage 1 gap or is it something else?",
+      "expected_behavior": "Apply the correctness gap analysis: ordering correctness is a consumer task dimension invisible to all four golden signals. The service is technically available and responding correctly by error-rate measures, but the consumer task (process files in submission order) is failing. This is a Stage 3 SLI design problem: identify the consumer task (ordered file processing), define the failure mode (out-of-order execution), and construct a correctness SLI. This is structurally identical to the GitHub 2018 data inconsistency case — correctness failure while availability metrics show green.",
+      "decision_axis": "Step 4 (evaluate Stage 3 advancement): 'For services with data correctness requirements... Stage 3 advancement is required.' Ordering correctness is a data correctness requirement invisible to golden signals."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "Our service has three distinct consumer classes: real-time traders (require <50ms latency), batch report generators (tolerant of 5s latency, need correctness), and audit log readers (rarely used, very tolerant). Our current SLI is a single p99 latency metric for all traffic. It's Stage 1 — we know we need to advance. But do we need Stage 3 SLIs for all three consumer classes or can we prioritize?",
+      "expected_behavior": "Apply Stage 4 business-aware SLI reasoning: each consumer class has a different Symptom, Consequence, and Business Impact. For prioritization: the real-time trader class has the highest business impact (revenue-sensitive, tightest latency requirement) — advance to Stage 3 first for this class. The batch reporter class has correctness requirements (Stage 3 for correctness dimension). The audit log reader class may be adequately served by Stage 1 or 2. A single p99 across all three masks the real-time trader tail experience and conflates incompatible requirements. Build separate SLIs per consumer class, prioritized by business impact.",
+      "decision_axis": "Step 5 (advance to Stage 3) combined with Stage 4 rationale: multiple consumer classes with different requirements must be segmented; SLI investment should be prioritized by business importance."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "A senior engineer insists we already have SLIs — we've had latency and availability dashboards for three years. She says redefining them as 'Stage 1' is just renaming existing work and is a waste of time. How do we evaluate her claim and respond?",
+      "expected_behavior": "Apply the Stage 1 classification criteria: does the existing latency metric use percentiles (p50/p95/p99) or mean? Does it separate error latency from success latency? Is the availability metric based on consumer-visible failures or internal health checks? Have consumer tasks been mapped? If the existing dashboards use mean latency, do not separate error/success latency, or are based on internal health checks without consumer research — they are Stage 1 regardless of their age. The value of the maturity model is not renaming but diagnosing whether the metrics reflect consumer task failures. If they do (Stage 3), the senior engineer is right. If they don't (Stage 1), there is a gap.",
+      "decision_axis": "Step 3 (classify current SLI stage): the classification criteria are objective — the question is whether existing metrics meet them, not whether the metrics are old or named 'SLI'."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "We followed the SRE book exactly: four golden signals, percentile latency (p50/p95/p99), error latency separated from success latency, saturation on most-constrained resource, no mean-based thresholds. On-call is still noisy. The SRE book says this should give us 'at least decent coverage.' What are we missing?",
+      "merged_advantage": "The merged skill resolves the tension between the SRE book's claim ('at least decently covered') and the on-call reality. The maturity ladder explains why correctly implemented Stage 1 signals can still produce noise: they are applied without consumer task grounding. The merged skill provides both the validation that the implementation is correct (golden signals implemented per SRE book spec) and the diagnosis of the remaining gap (Stage 1 without consumer research produces false positives and false negatives). The prescription is Stage 3 advancement — which requires Ewerlöf's maturity model, absent from the SRE book.",
+      "source1_gap": "four-golden-signals-monitoring (SRE book) would validate the implementation as correct and might suggest tuning thresholds or adding more signals. It would not diagnose Stage 1 limitations or prescribe consumer task research, because it does not contain the maturity model concept.",
+      "source2_gap": "sli-4-stage-evolution (Ewerlöf) would correctly diagnose Stage 1 and prescribe Stage 3 advancement, but assumes the practitioner knows what the four golden signals are and how to implement them correctly. It does not provide the canonical signal definitions or the specific implementation details (percentile vs mean, error/success separation, saturation threshold positioning) that validate the current implementation."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our monitoring showed all-green for 24 hours while users experienced data inconsistency across our distributed storage service. Every golden signal was within normal range. This is exactly the GitHub 2018 scenario. Walk us through what SLI we should have had and how to build it.",
+      "merged_advantage": "The merged skill connects the SRE book's four golden signals (which explains what they measure and their structural roles) to Ewerlöf's Stage 3 prescription (which provides the consumer task failure formula) to produce the specific correctness SLI design. The merged answer: golden signals cannot detect data correctness failures by design (structural gap, not implementation error); the Stage 3 SLI formula for this service is 'percentage of reads returning data consistent with writes completed more than N seconds ago'; this requires identifying the consumer task (read consistent data) and the failure mode (staleness threshold exceeded).",
+      "source1_gap": "four-golden-signals-monitoring (SRE book) would correctly identify that data correctness is outside the golden signal domain, but provides no alternative framework. It documents the limitation without providing a prescription for what to build instead.",
+      "source2_gap": "sli-4-stage-evolution (Ewerlöf) would provide the Stage 3 task-aware SLI framework and the GitHub case, but does not clearly specify that the golden signals are the correct Stage 1 baseline to start from — it might prompt building a Stage 3 SLI from scratch without first establishing the golden signal baseline."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our Gmail Workqueue is generating one alert per de-scheduled task. With 10,000 tasks, we're getting 10,000 pages for a single scheduler bug. Engineers have a tool that restarts tasks — the response is always the same script. How do we redesign monitoring so this doesn't happen?",
+      "merged_advantage": "The merged skill identifies this as both a Stage 1 failure (cause-based alerting on de-scheduled tasks = internal system state, not consumer symptom) and applies the SRE book's rote response diagnostic (if the response is always 'run this script,' either automate it or fix the root cause). The prescription: move task de-scheduling alerts to a debugging dashboard; build a Stage 3 consumer-task SLI ('users can access their Gmail inbox within X seconds'); automate the restart script so it no longer pages humans. The merged answer integrates the symptom/cause distinction with the maturity advancement.",
+      "source1_gap": "four-golden-signals-monitoring (SRE book) documents the Gmail case as a cause-based alerting failure and prescribes the rote-response diagnostic. But it does not provide the Stage 3 framework — it suggests 'alert on symptoms, not causes' without providing the consumer task methodology to define what the symptom SLI should be.",
+      "source2_gap": "sli-4-stage-evolution (Ewerlöf) would classify the current monitoring as Stage 1 and prescribe Stage 3 advancement. But it does not contain the specific symptom-vs-cause distinction or the rote-response diagnostic that makes the Gmail case actionable at the implementation level."
+    }
+  ]
+}

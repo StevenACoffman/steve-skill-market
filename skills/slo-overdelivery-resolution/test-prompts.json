@@ -1,0 +1,103 @@
+{
+  "skill_id": "slo-overdelivery-resolution",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "site-reliability-engineering/dont-overachieve-slo-chubby-principle",
+    "reliability-engineering-mindset/lagom-slo"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "Our infrastructure service has been at 99.99% availability for 18 months against a 99.9% SLO. We're planning our first maintenance window next quarter and we're worried it will cause cascading failures in downstream services. We set the 99.9% SLO because it seemed conservative when we launched. What should we do?",
+      "expected_behavior": "Apply the decision criterion: the SLO was set aspirationally ('seemed conservative'), not from consumer tolerance research — this is Remedy A territory. Prescribe the lagom calibration process first: ask consumer teams what the worst tolerable failure rate is. If consumer tolerance matches actual delivery (~99.99%), raise the SLO rather than introducing synthetic outages. Warn about the cascading failure risk from accumulated over-dependency regardless of which remedy is chosen.",
+      "expected_not": "Should not jump directly to prescribing synthetic outages without first diagnosing whether the 99.9% SLO was correctly calibrated."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "We correctly calibrated our SLO at 99.9% through direct consumer tolerance research six months ago. Our actual availability is now 99.995%. Consumer teams have stopped implementing circuit breakers. Should we raise the SLO or introduce planned downtime?",
+      "expected_behavior": "Apply the decision criterion: the SLO is correctly calibrated from consumer research (Remedy B applies directly). Prescribe the synthetic outage policy: in any period where organic failures have not consumed sufficient budget, schedule controlled maintenance windows (5–30 minutes, communicated weeks in advance, require consumers to validate graceful degradation in staging). Prescribe requiring consumer remediation after each window.",
+      "expected_not": "Should not prescribe raising the SLO — the SLO is correctly calibrated and raising it would create an SLO consumers did not say they require."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "A platform team is operating at 99.95% against a 99.5% SLO. The original 99.5% was set because the service was new and the team was uncertain about its stability. Consumer teams have adapted to the 99.95% level and are building integrations that assume it. How should the team resolve this?",
+      "expected_behavior": "Apply the decision criterion: 99.5% was set from organizational uncertainty (new service), not consumer tolerance research. Prescribe lagom calibration: ask consumer teams what failure rate they can actually tolerate. Given consumers are building to 99.95% levels, consumer tolerance likely matches actual delivery. Remedy A (raise SLO to match actual capability and consumer expectation) is likely correct. Synthetic outages would be unnecessary degradation of a service delivering what consumers need.",
+      "expected_not": "Should not recommend synthetic outages without first running the calibration diagnostic to check whether the lower SLO was correctly set."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "We've discovered that none of our downstream services have fallback logic for when our API is unavailable. They're all making synchronous calls with no timeouts. We haven't had a real outage in two years. Our SLO is 99.9% and we've been delivering 99.999%. Should we run a planned outage?",
+      "expected_behavior": "Apply the measurement threshold: actual availability is more than 10x better than the SLO allows (99.999% actual vs 99.9% SLO = ~5x fewer failures allowed). Prescribe the calibration diagnostic first (was 99.9% set from consumer research?). Given the downstream services have no timeouts or fallbacks, an unplanned real outage will cause cascading failures. Whether Remedy A or B is correct depends on the calibration diagnosis — but both remedies require addressing consumer over-dependency, and the planned outage must be preceded by a consumer notification requiring fallback implementation.",
+      "expected_not": "Should not ignore the consumer dependency crisis or suggest the situation is fine because the service has been reliable."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We want to raise our SLO from 99.9% to 99.99% to match our actual delivery. Our existing SLA is written at 99.5%. Can we raise the SLO and what happens to the SLA?",
+      "expected_behavior": "Apply Remedy A mechanics: raising the SLO to 99.99% is valid if consumer research supports it. The SLA at 99.5% is now very far below the SLO, creating an extremely wide buffer (50x the allowed error rate). This buffer is larger than needed; consider whether the SLA should also be raised — but the SLA must remain below the SLO. If contractual commitments constrain raising the SLA, document that constraint. The SLA below SLO relationship is non-negotiable.",
+      "expected_not": "Should not recommend raising the SLO to 99.99% and setting the SLA to 99.99% — the SLA must remain below the SLO with a buffer for detection and remediation."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "Our service is breaching its 99.9% SLO this month — we're at 99.5%. We need to figure out what's causing the errors and how to fix them before we exhaust the error budget.",
+      "expected_behavior": "This is a reliability improvement and error budget governance problem, not an overdelivery problem. Use error-budget-governance-complete for the governance response and debugging/postmortem skills for the root cause investigation. The slo-overdelivery-resolution skill applies only when a service is chronically above its SLO, not below it.",
+      "expected_not": "Should not invoke slo-overdelivery-resolution — the service is underperforming against its SLO, not overdelivering."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "We've never set SLOs before. We're starting from scratch and need to figure out what availability target to commit to for our search service. Where do we start?",
+      "expected_behavior": "This is an SLO definition and initial calibration problem. Use slo-definition-calibration-framework to: define SLI/SLO/SLA as distinct artifacts, run the lagom calibration (consumer tolerance elicitation), and set the SLA buffer. The overdelivery resolution skill requires an existing SLO and a measured gap — it is not the starting point for initial SLO creation.",
+      "expected_not": "Should not invoke slo-overdelivery-resolution — there is no existing SLO and no measured delivery gap. This is an initial setup problem."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "Our error budget policy needs updating. We want to add a clause that specifies what happens when we hit 50% budget consumption — should we send an alert, hold a review, or start slowing down deployments?",
+      "expected_behavior": "This is an error budget governance and policy design problem. Use error-budget-governance-complete to structure the freeze trigger conditions, causal attribution rules, and quantitative thresholds. The overdelivery resolution skill addresses chronic over-achievement of the SLO, not policy design for consumption thresholds.",
+      "expected_not": "Should not invoke slo-overdelivery-resolution — the question is about policy design for normal budget consumption, not about a service chronically above its SLO."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "Our service has been delivering 99.99% against a 99.9% SLO. Our SLA is written at 99.7%. We want to raise the SLO to 99.99%, but doing so would mean our SLA at 99.7% is now only a 0.29% buffer below the SLO — which gives us only about 1.25 minutes of response window per month. Is Remedy A still viable?",
+      "expected_behavior": "Apply the SLA constraint branch of the decision criterion: Remedy A (raising the SLO) is constrained by the existing SLA commitment. Raising the SLO to 99.99% with an SLA at 99.7% creates a buffer insufficient for realistic detection-and-response. Options: (1) raise both SLO and SLA proportionally (99.99% SLO, 99.9% SLA), subject to renegotiating the SLA; (2) raise the SLO only to a level that keeps the buffer adequate (e.g., 99.95% SLO with existing 99.7% SLA = 25x error rate buffer); (3) apply Remedy B within the existing SLO-to-SLA band. Contractual SLA constraints must be resolved before Remedy A is complete.",
+      "decision_axis": "Decision criterion third branch: 'If SLA commitments constrain raising the SLO: Remedy A is constrained; apply Remedy B within the SLO-to-SLA buffer; synthetic outages must stay above the SLA commitment level.'"
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "We've been over-delivering for only 6 weeks (not the usual 3–6 month measurement window). A dependent team just told us they've already removed their circuit breakers in response to our recent reliability. Should we act now or wait until the 3-month measurement window?",
+      "expected_behavior": "Apply the boundary condition: the skill recommends the 3–6 month window as a general guideline, and the 'Do not use when' section notes 'over-delivery is recent (less than one quarter).' However, if a specific consumer has already demonstrably removed defensive engineering, the risk is real regardless of time elapsed. The conservative response: notify the consumer team now that their defensive removal is premature; do not yet introduce synthetic outages (too soon for the pattern to be structural); run consumer tolerance research to determine whether Remedy A or B is appropriate when the pattern matures. Treat this as early detection requiring communication, not yet requiring the full remedy.",
+      "decision_axis": "Boundary condition: 'The over-delivery is recent (less than one quarter). Hidden consumer dependencies require time to accumulate' — but specific known consumer behavior triggers early communication even before the full remedy applies."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "Our service has a single consumer: an internal batch processing pipeline with no external users. The pipeline's operator says they don't care about the over-delivery gap — 'higher availability is fine by us.' We've been at 99.99% against a 99.9% SLO for a year. Is overdelivery still a problem?",
+      "expected_behavior": "Apply the boundary condition for single well-tested consumers: 'The service has no downstream consumers who could accumulate hidden dependencies (e.g., pure internal tooling with a single, well-tested consumer).' With a single named consumer who explicitly acknowledges the gap, the risk of hidden dependency accumulation is low. However, the team should still document that consumer tolerance was verified and consider whether to formally raise the SLO (Remedy A) to align the commitment with reality. The synthetic outage remedy (Remedy B) is not required when the single consumer has been validated. Recommend raising the SLO to match actual delivery rather than treating the gap as an unresolved risk.",
+      "decision_axis": "'Do not use when: the service has no downstream consumers who could accumulate hidden dependencies' — a single named and consulted consumer who acknowledges the gap reduces the systemic risk that makes overdelivery harmful."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our Chubby-equivalent lock service has been at 99.999% for 12 months against a 99.9% SLO. We're about to introduce the first planned outage window following the SRE book advice. A reliability engineer on the team says we should first check whether the 99.9% SLO was ever calibrated from consumer research, because if it wasn't, we might be degrading a service consumers actually need at 99.999%. Who's right?",
+      "merged_advantage": "The merged skill resolves this directly: the calibration diagnostic is the mandatory first step before choosing between Remedy A and Remedy B. The reliability engineer is correct — the SRE book's dont-overachieve principle correctly prescribes synthetic outages when the SLO is correctly set, but does not ask whether the SLO was correctly set. The merged skill's decision tree makes this the first branch: diagnose calibration before prescribing remedy.",
+      "source1_gap": "dont-overachieve-slo-chubby-principle (SRE book) would validate the planned outage as the correct remedy for a service over-delivering against its SLO. It does not include a calibration check step — it assumes the SLO is correctly set. The reliability engineer's concern would be dismissed.",
+      "source2_gap": "lagom-slo (Ewerlöf) would support the reliability engineer's concern about calibration and prescribe consumer tolerance research. But it does not provide the operational mechanics for synthetic outages if the calibration confirms the 99.9% SLO is correct — it would prescribe research without a clear path to the Remedy B execution if Remedy A doesn't apply."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "We run a streaming service with a 99.9% SLO set from consumer research showing users tolerate occasional buffering. Actual delivery has been 99.997% for nine months. We've decided synthetic outages are required (Remedy B). Walk us through how to actually implement the synthetic outage policy — notification timelines, window sizing, consumer requirements, and cadence.",
+      "merged_advantage": "The merged skill provides the complete operational execution of Remedy B: 5–30 minute windows, communicated weeks in advance, consumer validation of graceful degradation in staging required before each window, assessment of cascading failures after first window, quarterly cadence as an ongoing management practice. This operational specificity is drawn from the SRE book source (dont-overachieve). The lagom calibration has already been resolved (calibration confirmed 99.9% is correct). The merged skill integrates both the decision to apply Remedy B and the mechanics of executing it.",
+      "source1_gap": "dont-overachieve-slo-chubby-principle (SRE book) provides the principle and the Chubby case but is sparse on operational execution mechanics — it prescribes 'deliberately taking the system offline occasionally' without specifying window size, advance notice requirements, consumer staging validation, or cadence as a management practice.",
+      "source2_gap": "lagom-slo (Ewerlöf) would have confirmed through calibration that the 99.9% SLO is correct, but does not address the operational mechanics of synthetic outages at all. It would leave the team without a concrete execution plan after the calibration diagnostic."
+    }
+  ]
+}

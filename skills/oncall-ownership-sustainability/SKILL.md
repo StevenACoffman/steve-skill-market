@@ -6,10 +6,10 @@ description: Use this skill when an on-call rotation is overwhelmed and the corr
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/on-call-sustainability-model
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: reliability-engineering-mindset/broken-ownership-archetypes
-    book: "Reliability Engineering Mindset"
+    book: Reliability Engineering Mindset
     author: Alex Ewerlöf
 related_skills:
   - slug: site-reliability-engineering/on-call-sustainability-model
@@ -53,7 +53,7 @@ On-call / PagerDuty docs:
 
 **Convergence note:** Both sources independently identify the same root failure: paging engineers who cannot fix what they're paged for is the primary cause of on-call unsustainability. The SRE book addresses this through the safety valve mechanism (redirect excess operational work to the development team that built the system). Ewerlöf addresses the same symptom through the Baby Parent archetype diagnosis (ops teams responsible for systems they cannot understand or change). The convergence is on the cause; the divergence is on the mechanism and the preconditions for the remedy to work.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -117,7 +117,7 @@ IF any element missing:
 
 **The symmetric failure:** Too few incidents is also a failure state. Engineers on-call less than once or twice per quarter lose current mental models of production system behavior. Knowledge gaps are discovered only during incidents, at the worst possible time. Mitigate with deliberate production exposure: Wheel of Misfortune exercises, DiRT drills, joint game days. This underload failure mode exists only when the structural layer is healthy — Baby Parent teams rarely experience underload.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -143,7 +143,7 @@ IF any element missing:
 
 **Convergence note:** Both sources independently identify the same root failure: paging engineers who cannot fix what they're paged for is the primary cause of on-call unsustainability. The SRE book addresses this through the safety valve mechanism (redirect excess operational work to the development team that built the system). Ewerlöf addresses the same symptom through the Baby Parent archetype diagnosis (ops teams responsible for systems they cannot understand or change). The convergence is on the cause; the divergence is on the mechanism and the preconditions for the remedy to work.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -207,7 +207,7 @@ IF any element missing:
 
 **The symmetric failure:** Too few incidents is also a failure state. Engineers on-call less than once or twice per quarter lose current mental models of production system behavior. Knowledge gaps are discovered only during incidents, at the worst possible time. Mitigate with deliberate production exposure: Wheel of Misfortune exercises, DiRT drills, joint game days. This underload failure mode exists only when the structural layer is healthy — Baby Parent teams rarely experience underload.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -225,7 +225,7 @@ IF any element missing:
 - **Conclusion:** The fix is not to improve the operations team's skills or processes. The fix is to change who gets paged.
 - **Result:** Teams that moved toward full ownership developed operational knowledge through direct incident exposure, used their mandate to prevent the incidents that had been burning them out, and reduced the overall incident volume — which then allowed the quantitative model to be applied to a healthy baseline.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -246,27 +246,30 @@ IF any element missing:
 - "The architects design systems but they're never on-call for them"
 - "On-call is never a problem for us — it's very quiet" (possible underload)
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Diagnose the Ownership Trio before measuring anything quantitative.** For the on-call team, assess:
+
    - Knowledge: Can the on-call engineer investigate incidents in the systems they're paged for without escalating to another team?
    - Mandate: Can the on-call engineer make changes (commits, configuration, architecture) without approval chains?
    - Responsibility: Does the on-call engineer bear the operational consequence of failures — are they paged when their decisions produce incidents?
-   Completion criterion: {Knowledge: Y/N, Mandate: Y/N, Responsibility: Y/N} explicitly assessed.
+     Completion criterion: {Knowledge: Y/N, Mandate: Y/N, Responsibility: Y/N} explicitly assessed.
 
 2. **If any element is missing, prescribe the structural fix before proceeding.** Match the missing element combination to the archetype table. Name the archetype and its distinctive symptom. The fix is structural:
+
    - Missing Knowledge → add the mandate-holder to on-call; bring decision-makers into incident reviews
    - Missing Mandate → give the knowledgeable/responsible party commit rights and architectural authority
    - Missing Responsibility → add decision-makers to the on-call rotation or tie their metrics to reliability outcomes
-   Do not proceed to quantitative measurement until structural fix is implemented. Hiring engineers before fixing the structural problem perpetuates the archetype at larger scale.
+     Do not proceed to quantitative measurement until structural fix is implemented. Hiring engineers before fixing the structural problem perpetuates the archetype at larger scale.
 
 3. **Apply the quantitative sustainability model once full ownership is present.** Measure:
+
    - Average incidents per 12-hour shift over the last quarter (target: ≤2)
    - Engineers in the active rotation (target: ≥8 single-site, ≥6 per site dual-site)
    - Night shift exposure (diagnostic for insufficient rotation size)
-   Completion criterion: both constraints quantified with trend direction known.
+     Completion criterion: both constraints quantified with trend direction known.
 
 4. **Address rotation size if below minimum.** A rotation below minimum cannot sustain the 25% on-call sub-cap regardless of incident volume. Grow to minimum or move to dual-site. Night shift exposure is the immediate indicator of insufficient rotation size.
 
@@ -274,7 +277,7 @@ IF any element missing:
 
 6. **Address underload if below one incident per quarter per engineer.** Deploy deliberate production exposure: Wheel of Misfortune exercises, DiRT drills, joint game days. Engineers who are rarely on-call are a hidden reliability risk — their production mental models drift, and their first real incident will be harder, not easier, for the team's large size.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -301,7 +304,7 @@ IF any element missing:
 - The situation is about SLI/SLO design or metric scoping — those are separate skills.
 - The incident volume is below the threshold but incidents are genuinely complex, multi-hour, multi-system events. The 6-hour estimate is an average — adjust to measured actual incident cost before applying the threshold.
 
----
+______________________________________________________________________
 
 ## Related Skills
 

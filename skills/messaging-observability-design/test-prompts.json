@@ -1,0 +1,95 @@
+{
+  "skill": "messaging-observability-design",
+  "prompts": [
+    {
+      "id": "t01",
+      "type": "should_invoke",
+      "prompt": "We're designing a new async messaging integration. What observability should we build in from the start?",
+      "why": "Direct design-time observability question — the skill's core purpose"
+    },
+    {
+      "id": "t02",
+      "type": "should_invoke",
+      "prompt": "A message enters our system and we have no idea where it goes after that. We can see it was published but we can't trace its path through the processing pipeline. How do we fix this?",
+      "why": "Missing Message History — the skill's pattern selection algorithm points directly to Message History"
+    },
+    {
+      "id": "t03",
+      "type": "should_invoke",
+      "prompt": "We need to measure the latency of our order fulfillment service. It uses a callback pattern where the caller specifies a reply queue dynamically. How do we instrument this without modifying the service?",
+      "why": "Smart Proxy scenario — dynamic Return Address with a packaged service that cannot be modified"
+    },
+    {
+      "id": "t04",
+      "type": "should_invoke",
+      "prompt": "We need to audit all messages on our payment channel for compliance purposes. The messages must be preserved without interrupting the primary flow. What's the right pattern?",
+      "why": "Wire Tap feeding a Message Store — compliance audit requirement without disrupting primary channel"
+    },
+    {
+      "id": "t05",
+      "type": "should_invoke",
+      "prompt": "We want to report on message throughput, error rates, and processing latency over the last 30 days across our integration platform. What do we need to build?",
+      "why": "Cross-message, cross-time reporting — Message Store is the pattern; the skill covers its design"
+    },
+    {
+      "id": "t06",
+      "type": "should_invoke",
+      "prompt": "Our Pub-Sub system keeps delivering messages back to the same service that published them, creating processing loops. How do we detect and prevent this?",
+      "why": "Message History for loop detection — explicitly called out in p14 and the skill"
+    },
+    {
+      "id": "t07",
+      "type": "should_invoke",
+      "prompt": "A third-party packaged application is in our integration path. We can't modify it. We need to log every message it receives and sends. How?",
+      "why": "Wire Tap for packaged application observation — the pattern is designed for this scenario"
+    },
+    {
+      "id": "t08",
+      "type": "should_invoke",
+      "prompt": "Our async system is failing silently. Everything looks green — queues are drained, workers are running — but business outcomes are wrong. We suspect messages are being lost or misrouted. How do we diagnose this?",
+      "why": "Classic 'all lights green, system is down' — requires the full observability toolkit to diagnose"
+    },
+    {
+      "id": "t09",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure AWS CloudWatch alarms for an SQS queue?",
+      "why": "Infrastructure monitoring configuration — operational CloudWatch question, not integration observability design"
+    },
+    {
+      "id": "t10",
+      "type": "should_not_invoke",
+      "prompt": "Should I use Kafka or RabbitMQ for our new messaging system?",
+      "why": "Messaging technology selection — not an observability design question"
+    },
+    {
+      "id": "t11",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement idempotent message processing to handle duplicate deliveries?",
+      "why": "Idempotent Receiver pattern — a message processing correctness concern, not observability design"
+    },
+    {
+      "id": "t12",
+      "type": "should_not_invoke",
+      "prompt": "What's the best way to add distributed tracing to our Node.js microservices using OpenTelemetry?",
+      "why": "OpenTelemetry instrumentation in application code — standard APM, not integration pattern observability design (though related conceptually)"
+    },
+    {
+      "id": "t13",
+      "type": "should_not_invoke",
+      "prompt": "How do I scale my message consumers to handle 10x traffic?",
+      "why": "Competing Consumers / throughput scaling — not observability design"
+    },
+    {
+      "id": "t14",
+      "type": "blurred_boundary",
+      "prompt": "We're adopting asynchronous messaging to decouple our services. What should we design upfront to make sure we can debug problems in production?",
+      "why": "Blurred: could invoke integration style selection (messaging adoption) OR observability design (what to build upfront). The observability skill is the right answer to the second half of the question."
+    },
+    {
+      "id": "t15",
+      "type": "blurred_boundary",
+      "prompt": "We have a message that enters the system but never triggers the expected downstream business action. How do we figure out what happened to it?",
+      "why": "Blurred: if observability is already in place, this is a debugging question (use the instruments). If not, it's an observability design question (build the instruments first). The skill covers both the design and the selection algorithm for diagnosis."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: pgxpool
-description: Create and configure PostgreSQL connection pools in this repo using pgxpool. Use when setting up database connections, tuning pool settings, or using the DBTX interface.
+description: Use when setting up database connections, tuning pool settings, or using the DBTX interface. Covers creating and configuring PostgreSQL connection pools in this repo using pgxpool.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -43,10 +43,10 @@ Override any of these via the `configCustomizer` parameter:
 
 ```go
 pool, cleanup, err := sqldb.ConfigureConnectionPool(
-    ctx, logger, dbInfo, false,
-    func(cfg *pgxpool.Config) {
-        cfg.MaxConns = 5   // reduced for test environment
-    },
+	ctx, logger, dbInfo, false,
+	func(cfg *pgxpool.Config) {
+		cfg.MaxConns = 5 // reduced for test environment
+	},
 )
 ```
 
@@ -56,11 +56,11 @@ pool, cleanup, err := sqldb.ConfigureConnectionPool(
 
 ```go
 dbInfo := sqldb.MakeDBInfo(
-    "myuser",
-    "mypassword",
-    "mydbname",
-    "myschema",
-    readOnly, // true for read-only replica
+	"myuser",
+	"mypassword",
+	"mydbname",
+	"myschema",
+	readOnly, // true for read-only replica
 )
 ```
 
@@ -68,12 +68,12 @@ For tests against a local PostgreSQL instance (not AlloyDB), set `DBHost` direct
 
 ```go
 dbInfo := &sqldb.DBInfo{
-    DBUser:   "postgres",
-    DBPass:   "",
-    DBPort:   "5432",
-    DBName:   "testdb",
-    DBHost:   "localhost",
-    DBSchema: []string{"testschema"},
+	DBUser:   "postgres",
+	DBPass:   "",
+	DBPort:   "5432",
+	DBName:   "testdb",
+	DBHost:   "localhost",
+	DBSchema: []string{"testschema"},
 }
 ```
 
@@ -89,8 +89,8 @@ dbInfo := &sqldb.DBInfo{
 
 ```go
 type DBTX interface {
-    districtsql.DBTX                               // Exec, Query, QueryRow
-    Begin(ctx context.Context) (pgx.Tx, error)
+	districtsql.DBTX // Exec, Query, QueryRow
+	Begin(ctx context.Context) (pgx.Tx, error)
 }
 ```
 
@@ -117,13 +117,13 @@ result, err := q.GetDistrict(ctx, sqldb.ToUUID(districtID))
 ```go
 tx, err := pool.Begin(ctx)
 if err != nil {
-    return err
+	return err
 }
 defer tx.Rollback(ctx)
 
 q := districtsql.New(tx)
 if err := q.ActivateClassroom(ctx, params); err != nil {
-    return err
+	return err
 }
 return tx.Commit(ctx)
 ```

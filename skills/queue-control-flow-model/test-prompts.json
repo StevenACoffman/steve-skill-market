@@ -1,0 +1,83 @@
+{
+  "skill": "queue-control-flow-model",
+  "prompts": [
+    {
+      "id": "qcf-01",
+      "category": "should_invoke",
+      "prompt": "I'm designing a pipeline where AWS SNS publishes events and I want to feed them into EventBridge Pipes for filtering and enrichment before hitting a Lambda. When I try to set it up, it doesn't seem to support SNS as a source for Pipes. What am I missing?",
+      "rationale": "Classic Sender+Sender incompatibility (two noses). Requires control-flow vocabulary to diagnose."
+    },
+    {
+      "id": "qcf-02",
+      "category": "should_invoke",
+      "prompt": "We have a Kinesis stream feeding 12 Lambda workers via a queue. The downstream database requires records to be written in the exact order they were produced. Will this setup preserve order?",
+      "rationale": "Directly triggers the order-preservation consequence: Queue + Competing Consumers destroys order."
+    },
+    {
+      "id": "qcf-03",
+      "category": "should_invoke",
+      "prompt": "Our team is debating whether to use push or pull delivery for our new SQS consumer. The latency requirement is tight — under 200ms end-to-end. Someone said push is always lower latency than polling. Is that true?",
+      "rationale": "Push vs. pull latency tradeoff; Azure Event Grid benchmark shows pull can win on P90."
+    },
+    {
+      "id": "qcf-04",
+      "category": "should_invoke",
+      "prompt": "I need to rate-limit delivery to a third-party API that accepts at most 100 requests/second. My upstream is an SNS topic. How do I put a speed governor on the pipeline?",
+      "rationale": "SNS is a Sender (cannot self-throttle). Requires Queue + Driver/Fetcher to control cadence."
+    },
+    {
+      "id": "qcf-05",
+      "category": "should_invoke",
+      "prompt": "We switched from a direct Lambda trigger to EventBridge and our P99 latency jumped from 30ms to over 300ms. Nothing else changed. What happened?",
+      "rationale": "Hidden internal queues inside EventBridge (serverless event router with internal buffers) explains the latency jump."
+    },
+    {
+      "id": "qcf-06",
+      "category": "should_invoke",
+      "prompt": "Can you explain the difference between a Sender, a Source, a Fetcher, and a Sink in messaging architecture? I keep seeing these terms used differently.",
+      "rationale": "Direct vocabulary explanation request — the core of this skill."
+    },
+    {
+      "id": "qcf-07",
+      "category": "should_invoke",
+      "prompt": "I'm drawing an integration architecture diagram for a review. My tech lead keeps asking me to distinguish 'data flow' arrows from 'control flow' arrows but I don't understand the difference in practice.",
+      "rationale": "Directly asks for the data-flow vs. control-flow notation distinction — p19 and p27."
+    },
+    {
+      "id": "qcf-08",
+      "category": "should_not_invoke",
+      "prompt": "We have six microservices that all need to share customer profile data. Should we use a shared database or a messaging approach?",
+      "rationale": "Integration style selection decision (f01) — not a control-flow question."
+    },
+    {
+      "id": "qcf-09",
+      "category": "should_not_invoke",
+      "prompt": "Our SQS queue has been growing for three days and processing is falling behind. We need to decide whether to drop old messages or reject new ones. What are our options?",
+      "rationale": "Queue flow control decision (f10 / S07) — TTL vs. tail drop, not the control-flow model."
+    },
+    {
+      "id": "qcf-10",
+      "category": "should_not_invoke",
+      "prompt": "How do I add observability to a message pipeline without modifying the sender or receiver?",
+      "rationale": "Observability design skill (Wire Tap, Message History) — not a control-flow modeling question."
+    },
+    {
+      "id": "qcf-11",
+      "category": "should_not_invoke",
+      "prompt": "We're building a new service and debating between REST API calls and asynchronous messaging for inter-service communication. What are the coupling implications of each choice?",
+      "rationale": "Integration style selection + coupling assessment — not specifically the push/pull control-flow model."
+    },
+    {
+      "id": "qcf-12",
+      "category": "blurred_boundary",
+      "prompt": "I need to connect a DynamoDB Streams source to a downstream HTTP API, and I want to preserve the exact order of changes. I'm considering EventBridge Pipes vs. a Lambda that reads DynamoDB Streams and calls the API. Which preserves order and why?",
+      "rationale": "Involves both control-flow model (Driver = EventBridge Pipes preserves order) and competing consumers (Lambda with concurrency would break order). Blurs S06 and S08."
+    },
+    {
+      "id": "qcf-13",
+      "category": "blurred_boundary",
+      "prompt": "Our pipeline uses EventBridge Pipes feeding a Lambda. The Lambda calls a payment API that sometimes slows down. How can I prevent the Pipes driver from overwhelming the payment API when it's struggling?",
+      "rationale": "Touches control-flow model (Driver can slow fetch rate) and flow control / backpressure (S07). Blurs S06 and S07."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "skill_id": "strategic-before-tactical-ddd",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "type": "should_invoke",
+      "prompt": "Our team has implemented DDD for the past six months — private fields, behavioral methods, repositories, CQRS command handlers. But features still take as long as before. What are we missing?",
+      "rationale": "Describes a team with tactical DDD in place but no strategic improvement — the 30% framing and strategic DDD are the answer."
+    },
+    {
+      "id": "tp-02",
+      "type": "should_invoke",
+      "prompt": "We're planning to split our Go monolith into microservices. How do we decide where to draw the service boundaries?",
+      "rationale": "Service boundary decisions require Strategic DDD (Event Storming, Bounded Context identification) — the core answer this skill provides."
+    },
+    {
+      "id": "tp-03",
+      "type": "should_invoke",
+      "prompt": "A colleague says 'we're doing DDD' and points to their Aggregates and Value Objects. What questions would reveal whether they're really doing DDD?",
+      "rationale": "Diagnostic question — the answer is whether Strategic DDD (Event Storming, Bounded Contexts) has been done, not just tactical patterns."
+    },
+    {
+      "id": "tp-04",
+      "type": "should_invoke",
+      "prompt": "We've read Evans' DDD book. Should we start by implementing Value Objects and private fields, or by running Event Storming sessions first?",
+      "rationale": "Directly asks the priority question the skill answers: strategic before tactical."
+    },
+    {
+      "id": "tp-05",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement a Value Object in Go with private fields and equality comparison?",
+      "rationale": "Tactical DDD implementation question — no strategic DDD concern."
+    },
+    {
+      "id": "tp-06",
+      "type": "should_not_invoke",
+      "prompt": "What is the difference between an Aggregate and an Entity in Domain-Driven Design?",
+      "rationale": "Tactical DDD terminology question — no strategic DDD or boundary-setting concern."
+    },
+    {
+      "id": "tp-07",
+      "type": "blurred_boundary",
+      "prompt": "How do I know if two domain concepts belong in the same bounded context or different ones?",
+      "rationale": "Bounded Context discovery question — strategic DDD, but specific to the Event Storming technique that the book covers in Chapter 16 alongside the strategic/tactical distinction."
+    },
+    {
+      "id": "tp-08",
+      "type": "blurred_boundary",
+      "prompt": "We have 15 microservices but every new feature requires deploying 4-5 of them together. Is this a DDD problem or a deployment problem?",
+      "rationale": "Distributed monolith symptoms — overlaps with microservices-dont-fix-coupling skill, but the root cause is strategic DDD failure (wrong bounded contexts). Both skills apply."
+    },
+    {
+      "id": "tp-09",
+      "type": "blurred_boundary",
+      "prompt": "Our developers avoid talking to business stakeholders and prefer to infer domain rules from existing database schemas. What risks does this create?",
+      "rationale": "Describes the 'developer closed in a basement' failure mode the book identifies — strategic DDD requires stakeholder collaboration; inferring from schemas is database-first, not domain-first."
+    }
+  ]
+}

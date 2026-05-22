@@ -1,0 +1,87 @@
+{
+  "skill": "cli-destructive-confirmation-tiers",
+  "version": "0.1.0",
+  "source_book": "Command Line Interface Guidelines — Prasad, Firshman, Tashian, Parish",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I'm adding a `db wipe` command to my CLI that drops all tables in the connected database. Should I add a confirmation prompt before it runs, and what kind?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should classify this as Tier 3 (Severe) — wiping an entire database has no recovery path — and recommend requiring the user to type a non-trivial string (e.g., the database name), plus a --confirm=\"db-name\" flag for scriptability and --dry-run support.",
+      "notes": "Classic severe-tier case. Clear destructive verb, large blast radius, explicit confirmation design question."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "Is --force enough protection for my `app destroy` command, or do I need something stronger? It tears down the entire cloud environment.",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should explain that --force is a single binary gate and is insufficient for Tier 3 (Severe) operations. Should recommend the resource-name type-to-confirm pattern and --confirm=\"app-name\" for scripting.",
+      "notes": "Directly matches the KEY TRIGGER SIGNAL 'is --force enough'. Explicitly asks about the adequacy of a single gate for an entire-environment teardown."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Users keep accidentally running `myctl reset --hard` in production. How do I make this hard to trigger by mistake while still keeping it scriptable in CI pipelines?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should classify the severity, recommend type-to-confirm for interactive use, and provide --confirm=\"resource-name\" as the CI/scripting escape hatch.",
+      "notes": "Matches language signal 'users keep running this command by mistake' and 'hard to run accidentally but still scriptable'."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "My CLI reconciles declared state against running containers. When a user reduces the replica count from 10 to 1 in their config file, should I just apply the change silently or ask for confirmation?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should identify this as an implicit-destruction case (the implicit-destruction principle), classify it as Tier 3 (Severe) due to large-N resource deletion despite innocuous-looking syntax, and recommend type-to-confirm or --confirm= protection.",
+      "notes": "Tests the implicit-destruction principle — a numeric config change that silently deletes 9 resources. The syntax looks mild but the outcome is severe."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "I'm building a `user delete` command that removes a single user account from a local SQLite database. Does this need a y/n prompt?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should classify this as Tier 1 (Mild) or borderline Tier 2, explain that a y/n prompt is optional for a single local resource, and note that experienced users may find it noise for mild operations.",
+      "notes": "Tests the mild-tier path — a single local deletion. The agent should not over-engineer this as Severe."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How should I word the confirmation message when my CLI asks users if they want to delete a file? I want the phrasing to feel clear and not alarming.",
+      "expected_behavior": "Do NOT invoke cli-destructive-confirmation-tiers. This is a presentation/copy concern about the wording of the prompt message, not about which confirmation tier to use or whether a confirmation is needed at all.",
+      "notes": "Lure: sounds related (confirmation + delete) but the question is about message wording, which the skill explicitly excludes as a presentation concern."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "My CLI does a `git log --oneline` equivalent — it reads commit history and prints a summary. Should it ask the user before running?",
+      "expected_behavior": "Do NOT invoke cli-destructive-confirmation-tiers. This is a read-only operation. The skill explicitly excludes read-only commands from the confirmation tier framework.",
+      "notes": "Clear out-of-scope: purely read-only operation. No data or state is modified."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "How should my CLI accept an API key for authentication? Should I use a --api-key flag or an environment variable?",
+      "expected_behavior": "Do NOT invoke cli-destructive-confirmation-tiers. This is a secrets/credentials handling question. The skill explicitly defers to cli-secret-handling for authentication and secrets concerns.",
+      "notes": "Lure from adjacent skill: mentions a CLI and a flag, but the topic is credential input, not destructive operation confirmation."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "My `deploy` command updates a remote server's configuration. If the update fails mid-way, some services may be left in a degraded state, but recovery is possible by re-running the command. Should I add a confirmation gate?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should reason about severity: recovery is possible but mid-deploy failure is a real risk affecting remote state (Tier 2 moderate), so a y/n prompt with --dry-run is appropriate. The agent should clarify that partial-failure recoverability keeps this from being Tier 3.",
+      "notes": "Edge case: remote state change (pushes toward Tier 2/3) but recovery is possible (lowers tier). Tests the Moderate/Severe boundary."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "My CLI has a `clean` command that deletes build artifacts from a local `./dist` folder. The folder can always be regenerated by running `build` again. Does it need any confirmation UX?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should classify this as Tier 1 (Mild) — local, easily re-created artifacts — and note that a prompt is optional; many mature CLIs omit it for regenerable artifacts. Should avoid over-engineering this as Moderate.",
+      "notes": "Edge case: destructive command (deletes files) but the outcome is trivially reversible. Tests the mild-tier lower boundary and the over-confirmation anti-pattern (ce02)."
+    },
+    {
+      "id": "edge-case-03",
+      "type": "edge_case",
+      "prompt": "I have a `prune` command that deletes unused Docker images. The user doesn't pass resource names — it scans and removes everything not referenced by a running container. There's no undo. How should I protect it?",
+      "expected_behavior": "Invoke cli-destructive-confirmation-tiers. The agent should grapple with the unnamed-resource limitation: the --confirm=\"resource-name\" pattern breaks down when resources are dynamically discovered. The agent should still classify as Tier 2/3, recommend y/n plus --dry-run at minimum, and note that a summary of what will be deleted should be shown before the prompt. The --confirm approach may use a count or a typed confirmation word as a proxy.",
+      "notes": "Edge case: Tier 3 protections (type the resource name) are hard to apply when the resource set is dynamically computed. Tests the author's noted limitation about unnamed/dynamic resources."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
+}

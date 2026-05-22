@@ -1,0 +1,111 @@
+{
+  "skill_id": "go-constructor-option-pattern-selection",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "effective-go-recipes/skills/go-functional-options-vs-config-struct",
+    "rednafi/option-configuration-patterns"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm writing a public Go library for an HTTP server. It has 7 optional configuration fields: port, host, timeout, TLS cert, TLS key, max connections, and read buffer size. I've seen Rob Pike's functional options pattern — should I use it here?",
+      "expected_behavior": "Apply the decision tree: external/public API with many optional fields. Ask the decision conditional: do callers need to build []Option slices programmatically OR do individual options need per-option error return? Port validation (range 1-65535) is a strong indicator for functional options. But if neither condition applies, dysfunctional options (method chaining on *config) are ~76x faster and IDE-discoverable. Present both options with the conditional clearly stated.",
+      "expected_not": "Should not reflexively recommend functional options as the Rob Pike pattern without evaluating the two specific trigger conditions"
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My team is building a CLI tool in Go where the command factory function has 4 optional fields. These are all internal to the module. What's the simplest constructor pattern?",
+      "expected_behavior": "Apply Pattern 1: internal/same-module API with stable options → exposed Config struct. Callers set optional fields directly with named field syntax. Zero closures, zero method chains, zero indirection. Reference bufio.NewReader as stdlib precedent. Do not suggest functional options or dysfunctional options for an internal API.",
+      "expected_not": "Should not recommend functional options for an internal API"
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I'm designing a public API for a rate limiter library. Users need to be able to collect rate limiter options in a slice, conditionally apply them, and pass option sets across packages as first-class values. Which constructor pattern should I use?",
+      "expected_behavior": "This is the specific trigger for functional options over dysfunctional options: callers need to build []Option slices programmatically, pass option sets across package boundaries, and let third-party callers define new options externally. Apply Pattern 3. Dysfunctional options cannot be stored in slices and third parties cannot add methods to the private *config type.",
+      "expected_not": "Should not recommend dysfunctional options (method chaining) for a pattern where options must be composable slices"
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "My Go IDE shows 'func(*Config)' when I hover over my NewServer() factory — I can't see what options are available without reading the source code. How do I fix the discoverability problem without breaking my external API?",
+      "expected_behavior": "Identify this as rednafi's IDE failure for functional options (ce16). Migrate to dysfunctional options: change the private config type to expose With* methods. IDE now shows all WithPort, WithHost, WithTimeout completions when hovering over the NewServer() return type. Show the migration from opts ...func(*Config) to method chaining on *config.",
+      "expected_not": "Should not suggest adding godoc comments as the fix for IDE discoverability"
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "Each configuration option for my Go server constructor has its own validation logic — port must be in range 1-65535, host must be non-empty, TLS cert and key must both be present if either is set. How do I surface specific validation errors per option?",
+      "expected_behavior": "Per-option error validation is functional options' decisive advantage. Implement type Option func(*Server) error. Each WithPort, WithHost, WithTLS function returns an error with specific context. NewServer applies options in order and returns on first validation error — the error message names the failing option. Dysfunctional options cannot return an error per call without a separate Validate() step.",
+      "expected_not": "Should not recommend a single Validate() method on the config struct as equivalent to per-option error returns"
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How do I inject a logger and a database connection into my Go HTTP handler without using global variables?",
+      "expected_behavior": "Answer using the application struct pattern (handler as struct method, dependencies as fields). This is manual dependency injection for service wiring, not constructor option pattern selection.",
+      "expected_not": "Should not invoke go-constructor-option-pattern-selection"
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I need to define a Go interface that any caching backend can implement — Redis, Memcached, or in-memory. Where should the interface live and how many methods should it have?",
+      "expected_behavior": "Answer using consumer-side interface placement — the interface belongs in the consuming package, with only the methods the consumer calls. This is interface design, not constructor option pattern selection.",
+      "expected_not": "Should not invoke go-constructor-option-pattern-selection"
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "My Go service receives configuration from a YAML file and environment variables at startup. How should I merge these two sources with environment variables taking precedence?",
+      "expected_behavior": "Answer using a configuration loading strategy — viper, envconfig, or manual os.Getenv with struct tags. This is configuration loading/merging at startup, not constructor option pattern selection for a type's optional fields.",
+      "expected_not": "Should not invoke go-constructor-option-pattern-selection"
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I used dysfunctional options for my public API's config. Now a user reports that they stored the *config returned by NewConfig() and called .WithTimeout() on it after passing it to the constructor. The live server's timeout changed silently. How do I prevent this?",
+      "expected_behavior": "Identify the B section (rednafi) mutable shared *config problem: methods on *config mutate the pointed-to struct, so callers who retain the pointer can silently change live configuration. Solutions: deep-copy the config at construction time inside the factory that accepts it; or document clearly that *config must not be retained after passing to the consuming constructor. Note that functional options avoid this because each closure captures a value at construction time — if immutability is critical, functional options win on this axis despite their other costs.",
+      "decision_axis": "The B section (rednafi) dysfunctional options mutability hazard: *config is a pointer; functional options create a snapshot. The decision is whether mutation-after-construction is a realistic risk for the API's callers."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I have a public API currently using functional options. A performance benchmark shows the constructor is called in a hot path (per-request object construction) and allocations are a bottleneck. The options don't need error validation and callers don't compose []Option slices. Should I switch to dysfunctional options?",
+      "expected_behavior": "Apply the decision tree: neither functional-options-specific trigger applies (no per-option error validation, no []Option slice composition). Dysfunctional options are ~76x faster in benchmarks due to no closure allocation. For a hot-path constructor this is meaningful. Switching is justified. Show the migration: remove type Option func(*T) error, add WithX methods on private *config, update call sites from NewT(WithPort(8080)) to NewT().WithPort(8080).",
+      "decision_axis": "The ~76x benchmark and the two specific functional-options triggers in the decision tree. When neither trigger applies and the constructor is on a hot path, dysfunctional options are strictly better."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I'm writing a Go SDK that third-party plugins will use. Plugins need to define their own configuration options and pass them to my SDK's constructor. Which pattern supports third-party extension of the option set?",
+      "expected_behavior": "This is the extensibility trigger for functional options: third-party callers need to define new options externally. Dysfunctional options are methods on a private *config type — third parties cannot add methods to a type defined in another package. Functional options are first-class functions of type func(*T) error — any package can define its own WithX function and pass it. Functional options are required for third-party extensible option sets.",
+      "decision_axis": "The B section (rednafi) third-party extensibility limitation of dysfunctional options: 'Dysfunctional options are not extensible by third parties. Methods on a private type cannot be added by external packages.' This is the tiebreaker for SDK/plugin architectures."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm designing a constructor for a public Go SDK client with 8 optional fields. Some fields have validation requirements (API key must be non-empty, timeout must be positive), and I also want IDE completion to work well for my users. Which pattern gives me both?",
+      "merged_advantage": "The merged skill's decision tree applies both lenses simultaneously: Tebeka's per-option error validation requirement triggers functional options; rednafi's IDE discoverability concern is a point against functional options. The merged skill resolves this tension directly: per-option error validation is functional options' decisive advantage that outweighs IDE discoverability for this case. The skill names both factors and gives a reasoned answer — neither source alone weighs both concerns against each other.",
+      "source1_gap": "Tebeka (Effective Go Recipes) recommends functional options for public APIs with validation and does not address IDE discoverability as a failure mode — he does not mention that opts ...func(*Config) breaks IDE completions.",
+      "source2_gap": "rednafi recommends dysfunctional options for most external APIs and treats IDE discoverability as the primary argument, but does not address per-option error validation as a functional-options-specific advantage that can override the discoverability concern."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "My team is reviewing a PR that uses functional options for an internal Go package with 3 optional fields and no validation requirements. Should we approve it or request changes?",
+      "merged_advantage": "The merged skill's decision tree clearly identifies this as misapplied pattern: internal API (Pattern 1 — exposed Config struct), 3 optional fields (at the '≤3 stable' threshold for direct constructor params or small struct), and no functional-options-specific triggers (no per-option error validation, no []Option slice composition). The merged skill's synthesis-specific failure mode ('applying functional options as the default because it is the famous Go pattern') directly addresses this PR scenario. Request changes to either a Config struct or dysfunctional options.",
+      "source1_gap": "Tebeka (Effective Go Recipes) recommends functional options for growing public option sets as the primary use case — his framing could be read as supporting the PR for any non-trivial option set, internal or external.",
+      "source2_gap": "rednafi recommends dysfunctional options over functional options for most external APIs but does not address the internal API case specifically — his argument for method chaining is framed as an external API improvement, leaving the internal API question incompletely answered."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "I need to choose between functional options and dysfunctional options for a public API. I know functional options are 'slower' but I've never seen a concrete number. Can you give me a concrete reason to prefer dysfunctional options when neither trigger applies?",
+      "merged_advantage": "The merged skill provides rednafi's concrete ~76x benchmark figure on Go 1.22 as a quantified reason — no closure allocation vs. heap allocation per With* call. It also adds the IDE argument (func(*Config) vs. visible With* method completions). Neither reason appears in Tebeka's source. Tebeka's source provides the per-option validation advantage argument that makes functional options worth the overhead in the specific case — the merged skill gives the caller the full cost/benefit picture with a concrete number.",
+      "source1_gap": "Tebeka (Effective Go Recipes) does not mention performance cost, benchmark numbers, or IDE discoverability as considerations when choosing between patterns.",
+      "source2_gap": "rednafi provides the ~76x benchmark and IDE argument but does not provide Tebeka's per-option error validation advantage — without this, a user following rednafi alone would have no principled reason to ever choose functional options."
+    }
+  ]
+}

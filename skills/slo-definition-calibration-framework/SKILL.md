@@ -6,10 +6,10 @@ description: Use this skill when setting up SLOs for the first time and the team
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/sli-slo-sla-tier-framework
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: reliability-engineering-mindset/lagom-slo
-    book: "Reliability Engineering Mindset"
+    book: Reliability Engineering Mindset
     author: Alex Ewerlöf
 related_skills:
   - slug: site-reliability-engineering/sli-slo-sla-tier-framework
@@ -49,7 +49,7 @@ SLO definition files:
 
 **Convergence note:** Both sources independently warn that SLOs set without grounding in what consumers actually need produce identical symptoms — the SRE book through the Chubby over-dependency case (wrong in the upward direction), Ewerlöf through the too-low case (wrong in the downward direction). The SRE book contributes the definitional structure (SLI/SLO/SLA tiers and the SLA buffer requirement); Ewerlöf contributes the bidirectional calibration methodology and the too-low failure mode that the SRE book does not address.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -73,7 +73,7 @@ Setting up SLOs for the first time requires three simultaneous decisions. They a
 
 **Convergence note:** Both sources independently warn that SLOs set without grounding in what consumers actually need produce identical symptoms — the SRE book through the Chubby over-dependency case (wrong in the upward direction), Ewerlöf through the too-low case (wrong in the downward direction). The SRE book contributes the definitional structure (SLI/SLO/SLA tiers and the SLA buffer requirement); Ewerlöf contributes the bidirectional calibration methodology and the too-low failure mode that the SRE book does not address.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -123,7 +123,7 @@ After the SLO is set, monitor the actual-vs-committed gap. If a service consiste
 
 Choosing between these depends on whether the SLO target was correctly calibrated in the first place — which is why calibration (Decision 2) precedes the overachievement question.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -141,7 +141,7 @@ Choosing between these depends on whether the SLO target was correctly calibrate
 - **Conclusion:** The SLO was aspirational prestige, not consumer-grounded calibration. The cost of five-nines was unjustifiable because no consumer required it.
 - **Result:** A more appropriate target was negotiated, reducing engineering investment to a level the organization could sustain without the SLO being a development tax.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -161,7 +161,7 @@ Choosing between these depends on whether the SLO target was correctly calibrate
 - "Our consumers want five-nines" (without consumer research)
 - "Why does our team have to build all this retry logic just because their API is flaky?"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -172,6 +172,7 @@ Choosing between these depends on whether the SLO target was correctly calibrate
 3. **Ask the consumer tolerance question before proposing a target number.** Directly ask consumers: "What is the worst reliability level you could live with for this service?" Do not substitute historical data, engineering judgment, or aspirational targets for this answer. If consumers cannot articulate tolerance without experiencing a breach, run a workshop with hypothetical outage scenarios.
 
 4. **Check both calibration failure modes:**
+
    - *Too-high check:* Is the proposed SLO above consumer tolerance? Will the error budget be exhausted by normal feature development? Are consumers building tight dependencies that assume this service never goes down?
    - *Too-low check:* Are N consumer teams independently building fallback, caching, or retry logic to compensate? Is N × (consumer mitigation cost) greater than the cost of raising the provider SLO?
    - If either failure mode is active, adjust the proposed target before proceeding.
@@ -182,7 +183,7 @@ Choosing between these depends on whether the SLO target was correctly calibrate
 
 7. **Establish an overachievement policy.** If the service consistently delivers significantly above the SLO, document whether the response is to (a) raise the SLO if the current target was aspirational or historical, or (b) introduce synthetic outages if the target is correctly calibrated but actual delivery drifts above it. The choice depends on whether Step 3–5 produced a well-grounded calibration.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -209,7 +210,7 @@ Choosing between these depends on whether the SLO target was correctly calibrate
 - The SLO is already set and the problem is meeting it — use the error budget framework, composite SLO design, or reliability architecture patterns.
 - The system is life-critical and regulatory SLO floors override consumer tolerance — consumer elicitation still applies but the calibration result may be constrained by regulation.
 
----
+______________________________________________________________________
 
 ## Related Skills
 

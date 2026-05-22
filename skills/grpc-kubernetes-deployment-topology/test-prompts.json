@@ -1,0 +1,65 @@
+{
+  "skill_id": "grpc-kubernetes-deployment-topology",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "I'm deploying a gRPC service to Kubernetes with NGINX Ingress and getting 'received HTTP/1.1 response to an HTTP/2 request' errors. What's the correct Ingress annotation?",
+      "rationale": "Direct match: the missing nginx.ingress.kubernetes.io/backend-protocol: GRPC annotation."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "Should I create a LoadBalancer Service for each gRPC microservice or use a single Ingress controller? What are the trade-offs?",
+      "rationale": "Direct match: one LoadBalancer per service is expensive; single NGINX Ingress is the recommended pattern."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "How do I automate TLS certificate issuance and renewal for gRPC services in Kubernetes without running openssl manually?",
+      "rationale": "Direct match: cert-manager with ClusterIssuer and Ingress annotation."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "How should my gRPC services call each other inside a Kubernetes cluster? Should I use IPs, environment variables, or DNS names?",
+      "rationale": "Direct match: Kubernetes DNS names via ClusterIP Services for inter-service communication."
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure Kubernetes horizontal pod autoscaling based on custom gRPC metrics?",
+      "rationale": "HPA configuration — operational scaling, not initial deployment topology."
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "What is the difference between Kubernetes Deployment, StatefulSet, and DaemonSet?",
+      "rationale": "Kubernetes workload type comparison — general K8s concepts, not gRPC deployment pattern."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "How do I deploy a gRPC service to AWS ECS instead of Kubernetes?",
+      "rationale": "ECS deployment, not the Kubernetes-specific topology pattern covered here."
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "For per-RPC load balancing of gRPC in Kubernetes, should I use NGINX Ingress with backend-protocol: GRPC or a headless service with Envoy?",
+      "rationale": "Blurred: both are valid answers depending on context — this skill covers the NGINX Ingress approach for external access; the headless + Envoy approach (Book A grpc-dual-server-observability territory) is for internal L7 load balancing."
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "I need mTLS between gRPC services inside the Kubernetes cluster, not just at the Ingress. How do I configure cert-manager for this?",
+      "rationale": "Blurred: the Boundary section mentions mTLS for zero-trust environments; this extends beyond the deployment topology skill into service-to-service security configuration."
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "My gRPC service uses scratch as the base image. How do I debug a running container when there's no shell available?",
+      "rationale": "Blurred: the Boundary section mentions this limitation and suggests distroless as an alternative — relevant debugging operational concern but not the core deployment topology pattern."
+    }
+  ]
+}

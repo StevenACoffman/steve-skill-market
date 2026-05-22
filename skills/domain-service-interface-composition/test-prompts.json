@@ -1,0 +1,48 @@
+{
+  "skill_id": "domain-service-interface-composition",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "I'm writing a `PricingService` domain service that needs to call an external exchange rate API to compute prices. How do I structure this so the domain service is unit-testable without mocking HTTP?",
+      "expected_behavior": "Apply the pattern: define `ExchangeRateProvider` interface in the `pricing` domain package with a domain-language method (`GetRate(ctx, from, to string) (float64, error)`). `PricingService` accepts it via constructor. Tests inject a stub implementation. The HTTP client adapter is written separately and injected only in main.go. The domain service has no knowledge of HTTP."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "A code review shows a domain service struct with an `httpClient *http.Client` field. Is this a problem?",
+      "expected_behavior": "Yes — the domain service is directly importing and using infrastructure. Extract an interface in domain language that abstracts what the service needs (e.g. `PartnerDataFetcher`), define it in the domain package, and inject the HTTP client behind an adapter that satisfies the interface. The domain package must not import `net/http`."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "Where should I put code that sequences three domain service calls, checks their results, and handles partial failures?",
+      "expected_behavior": "That is application service (coordination) logic, not domain service logic. Place it in an application service or the transport handler layer. Domain services perform atomic domain operations; multi-step orchestration belongs in the layer above. The domain services themselves remain pure and independently testable."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_not_invoke",
+      "prompt": "How do I set up gomock for a Go project?",
+      "expected_behavior": "No invocation of the domain service interface composition pattern. This is a tooling setup question about gomock installation and code generation, not an architectural question about service design."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "What is the difference between an interface and a struct in Go?",
+      "expected_behavior": "No invocation of the domain service pattern. This is a fundamental Go language concepts question; answer with Go interface/struct semantics without narrowing to DDD service design unless the user follows up."
+    },
+    {
+      "id": "tp-06",
+      "category": "blurred_boundary",
+      "prompt": "My domain service needs to paginate results from an external API — the interface would need `GetPage(pageToken string) ([]Result, string, error)`. Is that too much infrastructure leakage in the interface?",
+      "expected_behavior": "Acknowledge the tension: pagination is a protocol detail but the domain may legitimately need to iterate results. Options: (1) hide pagination in the adapter and present a domain method that returns all results (simplest if data volume allows); (2) define a cursor-based domain interface that uses domain terminology (`NextBatch(ctx, after Cursor) ([]Option, Cursor, error)`) where `Cursor` is a domain type, not an infrastructure token. The goal is that the domain service expresses what it needs, not how the external system pages data. Flag this as a real complexity that the simple examples in the book do not address."
+    },
+    {
+      "id": "tp-07",
+      "category": "blurred_boundary",
+      "prompt": "I have 15 interfaces to inject into my composition root and main.go is getting unwieldy. Should I use a DI container?",
+      "expected_behavior": "Acknowledge the real pain point: constructor injection does not scale automatically, and Boyle's examples are small enough that main.go stays manageable. Options: (1) use google/wire for compile-time DI code generation; (2) use samber/do for runtime DI with type-safe containers; (3) group related dependencies into factory functions that build subsystems. The pattern (domain service receives interfaces, application layer composes) is correct regardless of which wiring mechanism is used; the wiring mechanism is an implementation choice the framework does not prescribe."
+    }
+  ]
+}

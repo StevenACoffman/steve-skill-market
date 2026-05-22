@@ -1,0 +1,108 @@
+{
+  "skill": "fowler-two-hats",
+  "version": "0.1.0",
+  "source_book": "Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I started fixing a null-pointer bug in our payment processor, but the method was really messy so I started extracting helpers and renaming variables. Two hours later the tests are still failing and I'm not sure if it's because of my refactoring or the bug fix. What went wrong and how do I get back on track?",
+      "expected_behavior": "Identify this as a Two Hats violation. Explain that the developer was wearing both hats simultaneously — fixing a bug (functionality hat) and restructuring (refactoring hat) — which means failing tests cannot be attributed to either activity. Recommend reverting to last known-green state, then deliberately: (1) put on the refactoring hat first, improve the structure, get all tests green, commit; (2) then put on the bug-fix hat, fix the bug with the tests as guide.",
+      "notes": "Core V2 scenario from verified.md. Should identify the hat-mixing failure and give concrete recovery steps."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "My PR has 800 lines of diff. About half is renaming variables and extracting methods for clarity, and the other half is the new feature I was asked to add. My reviewer says they can't tell what's structural cleanup and what's new behavior. How should I have done this?",
+      "expected_behavior": "Identify this as a Two Hats violation at the commit/PR level. The structural cleanup (refactoring hat) and the new feature (functionality hat) should have been committed separately. Recommend splitting into two PRs or two commit sequences: one containing only the structural changes (verifiable by 'all pre-existing tests still pass, no new tests'), one containing only the feature (verifiable by 'new tests pass'). This makes code review of each change independently tractable.",
+      "notes": "Tests the hat-separation discipline applied to PR/commit organization, not just in-session behavior."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "While adding a new discount type to our pricing engine, I noticed the existing switch statement for discount calculation is poorly organized. Should I reorganize it now, or finish the new discount type first?",
+      "expected_behavior": "Apply the Two Hats discipline: do not reorganize the switch statement while adding the new discount type. Two options: (1) switch to refactoring hat first — reorganize the switch, get all tests passing, commit, then switch to functionality hat and add the discount; or (2) add the discount in the existing structure, get it working with passing tests, commit, then switch to refactoring hat to reorganize. Never do both simultaneously. Option 1 (preparatory refactoring) is usually preferable if the reorganization would make the new discount easier to add.",
+      "notes": "Tests the moment-of-decision scenario: 'I noticed something needs cleaning while I'm in feature mode — what do I do?'"
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I'm refactoring a large service class by extracting responsibilities into smaller classes. Halfway through, I realize I could add a caching layer that would improve performance while I'm at it. It's only a few lines. Should I just add it now?",
+      "expected_behavior": "No — this is a hat violation. Adding the caching layer is a functionality change (new behavior: caching) that should not happen during a refactoring session. Adding it mid-refactoring means if a test fails, it could be caused by the structural extraction OR the new caching behavior. Complete the extraction refactoring, run all tests to verify behavior is preserved, commit, then switch to the functionality hat to add the caching layer as a separate change.",
+      "notes": "Tests the 'just a few lines' rationalization that breaks the discipline."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "What is the Two Hats metaphor from Martin Fowler's Refactoring book and why does it matter in practice?",
+      "expected_behavior": "Explain the Two Hats discipline: two distinct, non-overlapping modes — functionality hat (success = new tests passing, no restructuring) and refactoring hat (success = no new tests, all existing tests still pass, structure improved). The key practical consequence: mixing the modes makes failing tests unlocatable because the failure could be from either activity. Mention that hat-swaps should be deliberate and frequent, that ten minutes of work might involve multiple swaps, and that awareness of which hat you're wearing changes how you program.",
+      "notes": "Tests direct knowledge of the concept as described in Chapter 2."
+    },
+    {
+      "id": "should-trigger-06",
+      "type": "should_trigger",
+      "prompt": "I'm doing a refactoring session and I think I should add a test for a case I just discovered that wasn't covered before. Is that allowed during refactoring?",
+      "expected_behavior": "Yes — Fowler explicitly allows adding a test for a newly discovered untested case during the refactoring hat. The rule is 'no new tests UNLESS I find a case I missed earlier.' The test for a previously undiscovered case is not adding functionality — it's discovering an existing behavior that wasn't verified. However, if the new test is for a new behavior that doesn't exist yet, that's functionality hat work and should not happen during refactoring.",
+      "notes": "Tests the nuanced exception in the refactoring hat rule. The answer should correctly cite the exception."
+    },
+    {
+      "id": "should-trigger-07",
+      "type": "should_trigger",
+      "prompt": "My team keeps saying 'we'll clean this up later' after shipping features, but the cleanup never happens. We end up shipping more features on top of messy code. How does the Two Hats discipline help with this pattern?",
+      "expected_behavior": "Two Hats addresses the structural underpinning of 'clean up later' culture: if the discipline is followed, small refactorings happen continuously as hat-swaps during feature work — before, during breaks in, and after feature additions. 'Clean up later' becomes unnecessary because the structure is kept workable continuously. The key insight is that hat-swaps take minutes, not sprints, when done frequently. Planned cleanup sessions are a symptom of insufficient in-session hat-swapping. Recommend making the refactoring hat a regular part of the feature development flow rather than a scheduled separate activity.",
+      "notes": "Tests the connection between Two Hats and the 'continuous vs. planned refactoring' argument."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "We need to replace our HTTP client library across 200 call sites in a live production service. We can't take a feature freeze. What's the migration strategy?",
+      "expected_behavior": "This is a Branch By Abstraction problem (fowler-branch-by-abstraction), not a Two Hats problem. The skill should not focus on hat-swapping. The answer should describe the multi-phase abstraction-introduction strategy: introduce a thin interface wrapping the current library, migrate call sites incrementally, implement the new library behind the abstraction, then retire the old one — across multiple production releases.",
+      "notes": "Large-scale library migration is Branch By Abstraction territory. Two Hats applies within a session, not across release cycles."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "My manager is asking me to stop spending time on refactoring and focus only on new features. How do I justify refactoring time to a business stakeholder?",
+      "expected_behavior": "This is a Design Stamina Hypothesis problem (fowler-design-stamina), not a Two Hats problem. The answer should explain the economic argument: internal quality is a speed multiplier, not an aesthetic. Refactoring is justified because it makes adding the features the manager wants faster and cheaper over time. Never argue for refactoring as 'clean code' or 'good practice' — argue that it's the fastest path to the features being requested.",
+      "notes": "Stakeholder justification for refactoring is Design Stamina territory. Two Hats is an in-session technical discipline, not an organizational argument."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "I need to add pagination to a service that currently returns all results. The existing code mixes data fetching and formatting. Before writing any new code, what should I do?",
+      "expected_behavior": "This is primarily a preparatory refactoring decision (fowler-opportunistic-refactoring): before adding pagination, separate the data-fetching from the formatting code so that adding a limit/offset parameter affects only the fetching layer. The Two Hats discipline applies in execution (do the separation with the refactoring hat on first, then switch to the functionality hat to add pagination), but the primary skill being applied is the decision to do preparatory refactoring, which belongs to fowler-opportunistic-refactoring.",
+      "notes": "When the question is 'should I refactor before adding this feature' rather than 'am I mixing modes', the primary skill is opportunistic refactoring. Two Hats governs the execution of the separation, not the decision."
+    },
+    {
+      "id": "should-not-trigger-04",
+      "type": "should_not_trigger",
+      "prompt": "I'm reviewing code and I feel something is wrong with a class but I can't articulate what. How do I communicate the problem to the author?",
+      "expected_behavior": "This is a Code Smells vocabulary problem (fowler-code-smells). The answer should help the reviewer identify which named smell applies — Large Class, Divergent Change, Feature Envy, etc. — and explain how naming the smell communicates a specific structural problem with actionable treatment guidance. Two Hats is not relevant here.",
+      "notes": "Code review vocabulary questions belong to fowler-code-smells."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I've been doing test-driven development: I wrote a failing test (red), I made it pass (green), and now I'm in the refactor step. During the refactor step I realize the interface I just designed is wrong — not just messy, but conceptually wrong. If I fix the interface now, I'll need to write new tests. Is that still the refactoring hat?",
+      "expected_behavior": "No — if fixing the interface requires new tests to describe new behavior, that's functionality hat work. The refactor step in TDD is strictly behavior-preserving: you can clean up the implementation of what you just built without adding or changing behavior. If you discover the interface is conceptually wrong, that's a new design decision. Stop the refactor step, switch to functionality hat: write tests for the corrected interface, make them pass, then refactor again. The TDD cycle may need to run again from red.",
+      "notes": "Edge case: TDD refactor phase and Two Hats are compatible but the refactor phase has the same constraint as the refactoring hat — no new behavior."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I found a bug during a refactoring session. The existing tests don't cover this behavior. If I fix the bug now, I need to add a test and change behavior. What should I do?",
+      "expected_behavior": "The refactoring hat allows adding a test for a newly discovered untested case, but NOT changing behavior. A bug is a behavioral change. The options are: (1) add a test that documents the buggy behavior, note the bug, complete the refactoring with the test pointing at the bug, then switch to the functionality hat to fix the bug with the new test as your guide; or (2) if the bug is critical, abandon the refactoring session (commit what's done so far or stash), fix the bug in a clean functionality-hat session, then return to refactoring. Never fix a bug mid-refactoring — it makes both the bug fix and the refactoring unverifiable independently.",
+      "notes": "Edge case: discovering a bug mid-refactoring. Tests understanding of the boundary between 'newly discovered untested case' (allowed) and 'changing behavior' (not allowed during refactoring hat)."
+    },
+    {
+      "id": "edge-03",
+      "type": "edge_case",
+      "prompt": "My IDE can rename a variable across the entire codebase with one keystroke and the tests all pass. That's a refactoring step, right? Do I still need to do a formal 'hat swap'? It took three seconds.",
+      "expected_behavior": "Yes, this is a refactoring step (behavior-preserving structural change). The hat-swap discipline is about awareness of mode, not about the duration or complexity of the step. A three-second IDE rename is still the refactoring hat. The discipline matters because: (1) if you chain several three-second refactorings followed by a quick 'and I'll also add this new behavior,' you lose the ability to say which change caused a test failure. The hat discipline scales down to very small steps — the key is maintaining the invariant that at any moment you know which mode you're in and which category of change you just made.",
+      "notes": "Edge case: tests whether the student thinks the discipline only applies to 'big' refactoring sessions. The answer should affirm it applies even to tiny automated refactorings."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "The Two Hats skill is about moment-to-moment discipline of separating refactoring mode from functionality mode during development. Key discrimination: it is not about WHEN to refactor (that is fowler-opportunistic-refactoring), not about JUSTIFYING refactoring (fowler-design-stamina), not about large-scale migrations (fowler-branch-by-abstraction). Should_trigger cases focus on mixed-mode confusion, failing test attribution problems, and direct knowledge questions. Should_not_trigger cases test correct routing to adjacent skills."
+}

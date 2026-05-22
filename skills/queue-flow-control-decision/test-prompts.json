@@ -1,0 +1,83 @@
+{
+  "skill": "queue-flow-control-decision",
+  "prompts": [
+    {
+      "id": "qfc-01",
+      "category": "should_invoke",
+      "prompt": "Our SQS queue depth is growing during peak hours and we're worried about what happens if it keeps growing. We currently have no policy for what to do when the queue gets too large. What are our options?",
+      "rationale": "Canonical overloaded queue scenario — triggers the three-mechanism decision directly."
+    },
+    {
+      "id": "qfc-02",
+      "category": "should_invoke",
+      "prompt": "We process real-time stock price alerts from a market data feed. During volatile markets the queue can back up for 20-30 minutes. By the time workers process the alerts, the prices are stale. How should we handle this?",
+      "rationale": "Message value decays over time → TTL is the right mechanism."
+    },
+    {
+      "id": "qfc-03",
+      "category": "should_invoke",
+      "prompt": "We run an e-commerce site. During flash sales our order processing queue fills up but we don't want to drop in-progress orders. However, we also don't want new customers to wait an hour before seeing an error. What's the right approach?",
+      "rationale": "In-flight orders (tail drop preferred) vs. new customers (reject quickly) — classic tail drop scenario."
+    },
+    {
+      "id": "qfc-04",
+      "category": "should_invoke",
+      "prompt": "I want to call a third-party payment API that has a hard rate limit of 50 requests/second. My upstream queue can receive bursts of 500 requests/second. How do I prevent overwhelming the payment API?",
+      "rationale": "Rate-limiting backpressure scenario — proactive variant of flow control."
+    },
+    {
+      "id": "qfc-05",
+      "category": "should_invoke",
+      "prompt": "Our monitoring shows all green — queue depth is 'high but stable', workers are healthy, no errors. But customers are complaining the system is 'down' and their actions aren't completing. What could be happening?",
+      "rationale": "Classic Little's Result / 'all lights green, system is down' scenario from unbounded queue growth."
+    },
+    {
+      "id": "qfc-06",
+      "category": "should_invoke",
+      "prompt": "RabbitMQ is throttling our producer connections with flow control. Our team wants to disable this because it's slowing down our publisher. Should we?",
+      "rationale": "Backpressure in RabbitMQ — disabling it would lead to unbounded queue growth; the skill provides the framework to explain why."
+    },
+    {
+      "id": "qfc-07",
+      "category": "should_invoke",
+      "prompt": "The Serverlesspresso architecture blog post mentions using backpressure instead of TTL to handle queue overload for a coffee ordering app. Why would you choose backpressure over TTL there?",
+      "rationale": "Direct reference to the Serverlesspresso case study — comparing TTL vs. backpressure using the coffee shop analogy."
+    },
+    {
+      "id": "qfc-08",
+      "category": "should_not_invoke",
+      "prompt": "Should I use EventBridge Pipes or SNS+Lambda to route events from DynamoDB Streams to a downstream service?",
+      "rationale": "Control-flow model question (S06) — Sender vs. Driver compatibility, not flow control mechanisms."
+    },
+    {
+      "id": "qfc-09",
+      "category": "should_not_invoke",
+      "prompt": "We're designing a new microservices integration. Should we use point-to-point messaging or publish-subscribe channels between services?",
+      "rationale": "Integration style / routing decision — not a queue flow control question."
+    },
+    {
+      "id": "qfc-10",
+      "category": "should_not_invoke",
+      "prompt": "How do I track which components a message passed through in my distributed messaging system?",
+      "rationale": "Observability design skill (Message History) — not flow control."
+    },
+    {
+      "id": "qfc-11",
+      "category": "should_not_invoke",
+      "prompt": "We want to scale our message processing to handle 10x more messages per second. Should we use competing consumers or a message dispatcher?",
+      "rationale": "Competing Consumers vs. Message Dispatcher (S08) — parallelism decision, not flow control."
+    },
+    {
+      "id": "qfc-12",
+      "category": "blurred_boundary",
+      "prompt": "Our IoT pipeline ingests sensor readings via SNS pushing to SQS. During network storms we can get 50x normal volume. We want to preserve order for each device but also not overwhelm the downstream database. What architectural changes do we need?",
+      "rationale": "Blurs S06 (control flow, SNS=Sender, ordering concerns with competing consumers) and S07 (flow control for the spike). Both skills are relevant."
+    },
+    {
+      "id": "qfc-13",
+      "category": "blurred_boundary",
+      "prompt": "We have a queue feeding 20 competing consumer Lambdas. During overload we want to slow down rather than drop messages. Can we implement backpressure when using competing consumers?",
+      "rationale": "Blurs S07 (backpressure mechanism) and S08 (competing consumers architecture). Backpressure with competing consumers is architecturally complex; the answer involves both skills."
+    }
+  ]
+}

@@ -43,7 +43,7 @@ Interface declarations:
 
 **Convergence note:** Both sources independently assert that the consuming package — not the providing package — owns the interface definition, arriving at this from different angles: Three Dots Labs frames it as architectural necessity (the only placement that prevents import cycles in a layered codebase), while Johnson frames it as caller-minimal design (the caller shrinks the interface to exactly what it calls). Together they add a placement decision tree that neither source alone provides.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -63,7 +63,7 @@ Consumer-side interface placement has three valid forms, with different triggers
 
 **Convergence note:** Both sources independently assert that the consuming package — not the providing package — owns the interface definition, arriving at this from different angles: Three Dots Labs frames it as architectural necessity (the only placement that prevents import cycles in a layered codebase), while Johnson frames it as caller-minimal design (the caller shrinks the interface to exactly what it calls). Together they add a placement decision tree that neither source alone provides.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -77,9 +77,9 @@ When a struct wraps a single external dependency it calls with one or a few meth
 
 ```go
 type MyApplication struct {
-    YoClient interface {
-        Send(string) error
-    }
+	YoClient interface {
+		Send(string) error
+	}
 }
 ```
 
@@ -92,7 +92,7 @@ When a domain or application package depends on an infrastructure adapter (DB, g
 ```go
 // app/training_service.go  (no import of adapters)
 type trainingRepository interface {
-    CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
+	CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
 }
 ```
 
@@ -122,7 +122,7 @@ Use this when: the interface is a domain concept that multiple infrastructure ad
 
 In all three cases: the *producer* never exports the interface. The implementing package exports concrete types (structs, pointers). New methods can be added to the concrete type at any time; no consumer breaks unless those consumers already declare that method in their interface. This is the reciprocal discipline: producers return concrete types, consumers define minimal interfaces.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -142,7 +142,7 @@ The compiler pointed exactly at the wrong dependency direction. The fix moved th
 ```go
 // app/training_service.go
 type trainingRepository interface {
-    CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
+	CancelTraining(ctx context.Context, user auth.User, trainingUUID string) error
 }
 ```
 
@@ -156,9 +156,9 @@ Johnson's application needed to send Yo notifications without making real HTTP c
 
 ```go
 type MyApplication struct {
-    YoClient interface {
-        Send(string) error
-    }
+	YoClient interface {
+		Send(string) error
+	}
 }
 ```
 
@@ -166,7 +166,7 @@ In the test file, a three-line struct with a `Send` function field satisfied the
 
 **Domain:** Third-party HTTP notification client. **Outcome:** Zero-dependency test doubles; provider swap isolated to main.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger ★
 
@@ -182,7 +182,7 @@ Instead of the generic "put the interface in the consumer package," use this ski
 
 **Not this skill when:** the interface IS a standard library interface (io.Reader, http.Handler) — those are defined at the provider by design and are already minimal.
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -200,7 +200,7 @@ Instead of the generic "put the interface in the consumer package," use this ski
 
 7. **In tests, satisfy the interface with a minimal stub** defined in the test file. No imports from the provider package. No mock generation.
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

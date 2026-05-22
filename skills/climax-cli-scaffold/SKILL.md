@@ -80,7 +80,7 @@ Climax reads these comments when running `climax add` to locate insertion points
 // register new commands here   ← New() calls go here
 ```
 
----
+______________________________________________________________________
 
 ## I — Interpretation
 
@@ -105,10 +105,10 @@ A child command does not take `*root.Config` directly — it takes `*parent.Conf
 ```go
 // cmd/create/create.go — nested under "config"
 type Config struct {
-    *config.Config           // not *root.Config
-    outputPath string
-    Flags   *ff.FlagSet
-    Command *ff.Command
+	*config.Config // not *root.Config
+	outputPath     string
+	Flags          *ff.FlagSet
+	Command        *ff.Command
 }
 ```
 
@@ -128,13 +128,14 @@ The generated code avoids package-level mutable state. The five permitted except
 
 No `init()` functions — registration and flag setup belong in `New()`.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
 ### Case 1: Initializing a CLI from Scratch
 
 - **Situation**: New Go module, need a flags-first CLI with version and two subcommands.
+
 - **Steps used**:
 
   ```bash
@@ -143,8 +144,8 @@ No `init()` functions — registration and flag setup belong in `New()`.
   climax init --name "myapp" --short "manage org resources"
   climax add serve --short "start the HTTP server"
   climax add migrate --short "run database migrations"
-  go run . --help      # verify dispatch works immediately
-  climax lint          # confirm no drift
+  go run . --help # verify dispatch works immediately
+  climax lint     # confirm no drift
   ```
 
 - **Result**: Runnable CLI with `myapp serve`, `myapp migrate`, `myapp version` all wired and flag-documented.
@@ -152,6 +153,7 @@ No `init()` functions — registration and flag setup belong in `New()`.
 ### Case 2: Adding a Nested Subcommand
 
 - **Situation**: Existing climax app needs `myapp config set` nested under `myapp config`.
+
 - **Steps used**:
 
   ```bash
@@ -160,6 +162,7 @@ No `init()` functions — registration and flag setup belong in `New()`.
   ```
 
 - **Key detail**: `cmd/set/set.go` embeds `*config.Config`, not `*root.Config`. The `set` command's `New()` receives a `*config.Config` argument, making config-level flags visible to `set`.
+
 - **Result**: `myapp config set --key foo --value bar` works; `myapp config set -h` shows both config-level and set-level flags.
 
 ### Case 3: Correcting Structural Drift
@@ -170,7 +173,7 @@ No `init()` functions — registration and flag setup belong in `New()`.
   2. Move flag binding from `exec()` into `New()`, before `cfg.Command` is created.
 - **Result**: `climax lint` exits 0; the command is now testable by injecting a `bytes.Buffer` as stdout.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -191,7 +194,7 @@ No `init()` functions — registration and flag setup belong in `New()`.
 - "os.Exit inside a command", "direct os.Stdout", "flag binding in exec"
 - "climax lint drift"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -222,20 +225,20 @@ climax version
 
 ```go
 func main() {
-    ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
-    defer cancel()
-    if err := run(ctx, os.Args[1:], os.Stdin, os.Stdout, os.Stderr); err != nil {
-        var exitErr root.ExitError
-        if errors.As(err, &exitErr) {
-            os.Exit(int(exitErr))
-        }
-        fmt.Fprintln(os.Stderr, err)
-        os.Exit(1)
-    }
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+	if err := run(ctx, os.Args[1:], os.Stdin, os.Stdout, os.Stderr); err != nil {
+		var exitErr root.ExitError
+		if errors.As(err, &exitErr) {
+			os.Exit(int(exitErr))
+		}
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
 
 func run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-    return cmd.Run(ctx, args, stdin, stdout, stderr)
+	return cmd.Run(ctx, args, stdin, stdout, stderr)
 }
 ```
 
@@ -243,28 +246,28 @@ func run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.
 
 ```go
 func Run(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-    rootCfg := root.New(stdin, stdout, stderr)
+	rootCfg := root.New(stdin, stdout, stderr)
 
-    // climax:imports
-    versionCfg := version.New(rootCfg)
-    // register new commands here
+	// climax:imports
+	versionCfg := version.New(rootCfg)
+	// register new commands here
 
-    _ = versionCfg
+	_ = versionCfg
 
-    if err := rootCfg.Command.ParseFlags(ctx, args, ff.WithEnvVarPrefix("MYAPP")); err != nil {
-        fmt.Fprintln(stderr, rootCfg.Command.Help())  // parse error → full root help
-        return err
-    }
+	if err := rootCfg.Command.ParseFlags(ctx, args, ff.WithEnvVarPrefix("MYAPP")); err != nil {
+		fmt.Fprintln(stderr, rootCfg.Command.Help()) // parse error → full root help
+		return err
+	}
 
-    // post-parse initialization goes here (e.g. set up logger from verbosity flag)
+	// post-parse initialization goes here (e.g. set up logger from verbosity flag)
 
-    if err := rootCfg.Command.Run(ctx, args); err != nil {
-        if !errors.Is(err, ff.ErrNoExec) {
-            fmt.Fprintln(stderr, rootCfg.Command.SelectedCommand().Help())  // run error → selected cmd help
-        }
-        return err
-    }
-    return nil
+	if err := rootCfg.Command.Run(ctx, args); err != nil {
+		if !errors.Is(err, ff.ErrNoExec) {
+			fmt.Fprintln(stderr, rootCfg.Command.SelectedCommand().Help()) // run error → selected cmd help
+		}
+		return err
+	}
+	return nil
 }
 ```
 
@@ -279,37 +282,37 @@ Key `cmd.go` rules:
 
 ```go
 type Config struct {
-    *root.Config           // or *parent.Config for nested commands
-    outputPath string
-    Flags   *ff.FlagSet
-    Command *ff.Command
+	*root.Config // or *parent.Config for nested commands
+	outputPath   string
+	Flags        *ff.FlagSet
+	Command      *ff.Command
 }
 
 func New(parent *root.Config) *Config {
-    cfg := &Config{
-        Config: parent,
-    }
+	cfg := &Config{
+		Config: parent,
+	}
 
-    cfg.Flags = ff.NewFlagSet("mycommand").SetParent(parent.Flags)  // chained at creation
-    cfg.Flags.StringVar(&cfg.outputPath, 'o', "output", ".", "output directory")
+	cfg.Flags = ff.NewFlagSet("mycommand").SetParent(parent.Flags) // chained at creation
+	cfg.Flags.StringVar(&cfg.outputPath, 'o', "output", ".", "output directory")
 
-    cfg.Command = &ff.Command{
-        Name:      "mycommand",
-        ShortHelp: "one-line description",
-        Flags:     cfg.Flags,
-        Exec:      cfg.exec,
-    }
+	cfg.Command = &ff.Command{
+		Name:      "mycommand",
+		ShortHelp: "one-line description",
+		Flags:     cfg.Flags,
+		Exec:      cfg.exec,
+	}
 
-    parent.Command.Subcommands = append(parent.Command.Subcommands, cfg.Command)
-    return cfg
+	parent.Command.Subcommands = append(parent.Command.Subcommands, cfg.Command)
+	return cfg
 }
 
 func (cfg *Config) exec(ctx context.Context, args []string) error {
-    // Use cfg.Stdout / cfg.Stderr — never os.Stdout
-    // Return errors: fmt.Errorf("mycommand: %w", err) — lowercase, no period
-    // Non-zero exit without message: return root.ExitError(1)
-    // Graceful shutdown: check ctx.Done()
-    return nil
+	// Use cfg.Stdout / cfg.Stderr — never os.Stdout
+	// Return errors: fmt.Errorf("mycommand: %w", err) — lowercase, no period
+	// Non-zero exit without message: return root.ExitError(1)
+	// Graceful shutdown: check ctx.Done()
+	return nil
 }
 ```
 
@@ -328,8 +331,8 @@ Root `Config` starts with `cfg.Flags = nil`. To add a shared flag visible across
 cfg.Flags = ff.NewFlagSet("myapp")
 cfg.Flags.BoolVar(&cfg.Verbose, 'v', "verbose", false, "enable verbose logging")
 cfg.Command = &ff.Command{
-    Name:  "myapp",
-    Flags: cfg.Flags,
+	Name:  "myapp",
+	Flags: cfg.Flags,
 }
 ```
 
@@ -348,19 +351,19 @@ cfg.Command = &ff.Command{
 
 ```go
 func TestMyCommand(t *testing.T) {
-    var stdout, stderr bytes.Buffer
-    rootCfg := root.New(strings.NewReader(""), &stdout, &stderr)
-    _ = mycommand.New(rootCfg)
+	var stdout, stderr bytes.Buffer
+	rootCfg := root.New(strings.NewReader(""), &stdout, &stderr)
+	_ = mycommand.New(rootCfg)
 
-    err := cmd.Run(
-        context.Background(),
-        []string{"mycommand", "--output", "/tmp"},
-        strings.NewReader(""),
-        &stdout,
-        &stderr,
-    )
-    require.NoError(t, err)
-    assert.Contains(t, stdout.String(), "expected output")
+	err := cmd.Run(
+		context.Background(),
+		[]string{"mycommand", "--output", "/tmp"},
+		strings.NewReader(""),
+		&stdout,
+		&stderr,
+	)
+	require.NoError(t, err)
+	assert.Contains(t, stdout.String(), "expected output")
 }
 ```
 
@@ -382,7 +385,7 @@ go build -ldflags "-X <module>/cmd/version.Version=$(git describe --tags --alway
 ```bash
 climax mango [--authors "Your Name"] [--copyright "2025"]
 go get github.com/StevenACoffman/mango-ff github.com/muesli/roff
-go run . man | man -l -   # preview
+go run . man | man -l - # preview
 ```
 
 ### Running Climax Lint in CI
@@ -392,7 +395,7 @@ climax lint .
 # exits 0 = clean; exits 1 = structural drift detected, output is unified diff
 ```
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

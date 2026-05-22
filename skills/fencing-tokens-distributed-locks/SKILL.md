@@ -16,8 +16,8 @@ description: |
   - The coordination problem only involves nodes you control, and you can guarantee no GC pauses or network delays exceed the lease TTL (this is never safe to assume)
 
   Key signals: "we use Redis/ZooKeeper/etcd for distributed locking," "only one instance should run at a time," "we saw duplicate processing," "our lease expired and we're not sure what happened"
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 9: The Trouble with Distributed Systems"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 9: The Trouble with Distributed Systems'
 tags: [distributed-systems, locking, leases, fencing, process-pauses, correctness]
 related_skills: [distributed-fault-taxonomy, consistency-model-selection, clock-skew-ordering-hazard, end-to-end-idempotence-request-ids]
 ---
@@ -52,7 +52,7 @@ Leader election or singleton job guards:
 >
 > — Kleppmann & Riccomini, Chapter 9
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -70,7 +70,7 @@ This means a zombie leaseholder's delayed or resumed writes arrive with a stale 
 
 For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `FencedLock` API all produce usable fencing tokens. For storage targets: S3 conditional writes, Azure conditional headers, and GCS request preconditions implement compatible semantics.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -88,7 +88,7 @@ For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `
 - **Conclusion:** The fencing invariant does not require the lock service and storage service to be the same system — the token is the portable proof of lock generation, and the storage target enforces it independently.
 - **Result:** The pattern generalizes: any system that issues monotonically increasing tokens (Kafka epoch numbers, Paxos ballot numbers, Raft term numbers) implements the same fencing guarantee.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -113,19 +113,22 @@ For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `
 - Difference from `distributed-fault-taxonomy`: That skill classifies fault types (network delay, GC pause, Byzantine) at a conceptual level; this skill prescribes a specific mitigation (fencing tokens) for one class of fault (process pause causing stale leaseholder).
 - Difference from `consistency-model-selection`: That skill is about choosing between linearizability and eventual consistency for a system's reads and writes; this skill assumes you have already decided to use a lock and focuses on making it safe against TTL expiry.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Identify the lock service and the protected resource**
+
    - Completion criteria: You can name: (a) what service grants the lock, (b) what storage or API the lock protects, and (c) whether the protected resource supports conditional writes or a token-based rejection mechanism.
 
 2. **Verify whether the lock service issues monotonically increasing tokens**
+
    - Check: ZooKeeper (`zxid`/`cversion`), etcd (revision number), Hazelcast (`FencedLock`), or custom (increment counter on each grant).
    - If using Redis SETNX: Redis does not natively issue fencing tokens. Either replace the lock service, or implement a Lua script that atomically increments a counter and returns it with the lock grant.
    - Completion criteria: Lock grants are paired with a monotonically increasing integer that the holder must pass to the protected resource.
 
 3. **Modify the protected resource to enforce token ordering**
+
    - For SQL databases: add a `lock_token BIGINT` column to the protected record; use a `WHERE lock_token < :new_token` condition on all writes; update the stored token atomically with the write.
    - For object stores: use S3 conditional writes (If-None-Match / If-Match), Azure conditional headers, or GCS request preconditions.
    - For custom services: maintain a `max_seen_token` value in durable storage; reject writes where `incoming_token < max_seen_token`.
@@ -133,10 +136,11 @@ For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `
    - Stop condition: If the protected resource cannot be modified to enforce token ordering and does not support conditional writes, the system cannot be made safe with TTL-based distributed locks alone. Consider using single-leader replication with the lock enforcement built into the leader's protocol.
 
 4. **Test the fencing invariant under simulated GC pause**
+
    - Simulate: acquire lock, get token T, pause the process for longer than TTL, let another process acquire the lock and get token T+1, resume the first process, attempt a write with token T.
    - Completion criteria: The storage target rejects the write with token T with an explicit error; the write with token T+1 succeeds.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -159,7 +163,7 @@ For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `
 
 - **STONITH (Shoot The Other Node In The Head)**: A different approach to zombie fencing — forcibly terminate the zombie process. The book notes this is less reliable because it does not protect against network delays (a delayed write from a terminated process can still arrive after the termination), and can cause cascading failures. Fencing tokens are more reliable because they enforce the invariant at the write target rather than trying to prevent the zombie from acting.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -168,7 +172,7 @@ For lock services: ZooKeeper's `zxid`, etcd's revision number, and Hazelcast's `
 - **composes_with**: clock-skew-ordering-hazard — fencing tokens use a monotonically increasing integer (not wall-clock time) as the ordering mechanism, which is exactly the correct alternative to clock-based ordering that clock-skew-ordering-hazard prescribes.
 - **composes_with**: end-to-end-idempotence-request-ids — fencing tokens prevent concurrent zombie writes (multiple processes competing for the same lock); idempotency keys prevent duplicate retries from the same client; together they cover both concurrent-access and retry correctness.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

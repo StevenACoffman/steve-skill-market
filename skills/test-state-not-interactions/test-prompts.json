@@ -1,0 +1,86 @@
+{
+  "skill": "test-state-not-interactions",
+  "version": "0.1.0",
+  "source_book": "Go Advice — Redowan Delowar (rednafi)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "My tests keep breaking every time I rename a method, even when the behavior doesn't change. I'm using mockery and every mock expectation has to be rewritten. Is there a better approach to testing in Go?",
+      "expected_behavior": "Explain why mock-based (interaction) tests are brittle on refactors, introduce handwritten fakes that assert on observable state instead of call records, and show the state-assertion pattern.",
+      "notes": "Classic brittle-mock complaint — core trigger for the skill."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "How do I mock a database layer in Go? I have a service that calls `InsertUser` and I want to test it without hitting a real database.",
+      "expected_behavior": "Redirect from mocking to handwritten fake: define a minimal interface in the consumer package, write a FakeDB with in-memory state (map + slice), and assert on the store contents after the call rather than on method invocation.",
+      "notes": "Direct 'how do I mock X' trigger — redirect to fake pattern."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "The LLM generated a bunch of tests for me using gomock. They all pass but I swear the feature is broken — I can reproduce the bug manually. What's going on?",
+      "expected_behavior": "Explain that gomock verifies call interactions, not outcome state. Show how a swallowed error passes mock expectations but would fail a fake-based assertion on the returned error or the store state. Recommend rewriting with handwritten fakes.",
+      "notes": "AI-generated mock tests that stay green through real bugs — directly in the SKILL.md failure pattern ce11."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "Should I use testify/mock or gomock for testing my Go service? Which mocking library is better?",
+      "expected_behavior": "Challenge the premise: neither generated mock library is ideal. Explain why both produce interaction tests, then demonstrate the handwritten fake approach with in-memory state and state-based assertions.",
+      "notes": "Explicit 'which mock library' question — textbook redirect to the fake pattern."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "My test setup code is longer than the actual test logic. I'm spending more time configuring mocks than writing assertions. Is there something wrong with my approach?",
+      "expected_behavior": "Diagnose as an interaction-test symptom — mock setup bloat. Show that a handwritten fake eliminates the ceremony: create a fake, call the service, assert on the fake's state. The test body shrinks to 3–5 lines.",
+      "notes": "Setup-longer-than-test signal listed explicitly in SKILL.md trigger phrases."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "I have a function `func Add(a, b int) int` and want to write a unit test for it. How do I structure the test?",
+      "expected_behavior": "Provide a straightforward table-driven test with input/expected pairs. No fakes, no interfaces, no mocking discussion needed for a pure function with no dependencies.",
+      "notes": "Pure function with no dependencies — SKILL.md explicitly excludes this case."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I run my integration tests against a real Postgres database using testcontainers in Go?",
+      "expected_behavior": "Explain testcontainers setup for Go integration tests: container lifecycle, connection string, test cleanup. This is state testing at higher fidelity — complementary to, not a replacement for, fakes.",
+      "notes": "Testcontainers integration question — SKILL.md says this is complementary, not competing."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "How do I run `go test` with the race detector enabled in my CI pipeline?",
+      "expected_behavior": "Explain the -race flag, how to add it to CI, and what kinds of bugs it catches. This is a CI/CD operational question, not a testing strategy or mock/fake design question.",
+      "notes": "How-to-run-tests question — operational, not about test design or mock vs fake strategy."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "Should I use testcontainers or write an in-memory fake for my repository tests? I'm trying to decide which gives me more confidence.",
+      "expected_behavior": "This is on the boundary. Explain when each is appropriate: fakes for fast unit-scope state tests (duplicate detection, business rules); testcontainers when the fake would need to emulate complex behavior (SQL transactions, constraint propagation). Both are state testing — fakes are faster, containers are higher fidelity.",
+      "notes": "Explicitly mentioned in SKILL.md as an edge case (testcontainers are state testing, just at higher fidelity). Should trigger at least a nuanced discussion of when to use each."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "I have a complex mock with 8 setup calls and it's getting hard to maintain. Should I just write my own fake instead?",
+      "expected_behavior": "Yes — this is the right instinct and the skill should activate. Walk through extracting the interface, writing the handwritten fake with in-memory state, and switching assertions to check state rather than call records.",
+      "notes": "User is already pointing toward the solution. Skill should confirm and guide the transition from mock to fake."
+    },
+    {
+      "id": "edge-case-03",
+      "type": "edge_case",
+      "prompt": "How do I organize my test files in Go? Should everything be in the same package or a separate test package?",
+      "expected_behavior": "This partially triggers the skill — the lifecycle/isolation section (in-package vs _test package, t.Cleanup vs TestMain) is directly covered. Explain the three-level structure: in-package for white-box, _test for black-box contract, integration/ for real infrastructure. Include the isolation scope guidance.",
+      "notes": "Test organization is explicitly covered in the SKILL.md lifecycle section. Partial but valid trigger."
+    }
+  ],
+  "minimum_pass_rate": 0.8
+}

@@ -144,22 +144,22 @@ This is a pre-training checklist. Run both phases before writing any model code 
 
 **Phase 2 — Feature temporal correctness (Reis). Complete before the first training run.**
 
-5. List every feature join in the training pipeline. For each join, record: (a) the feature table name, (b) the join condition used, (c) whether the join condition includes a temporal constraint anchored to the label date.
+05. List every feature join in the training pipeline. For each join, record: (a) the feature table name, (b) the join condition used, (c) whether the join condition includes a temporal constraint anchored to the label date.
 
-6. For each feature table, verify it supports temporal history: does it have `valid_from` and `valid_to` (or equivalent)? If not, AS OF joins are structurally impossible — the fix requires a data model change to the feature table before the training pipeline can be corrected.
+06. For each feature table, verify it supports temporal history: does it have `valid_from` and `valid_to` (or equivalent)? If not, AS OF joins are structurally impossible — the fix requires a data model change to the feature table before the training pipeline can be corrected.
 
-7. For every join without a temporal constraint, add the AS OF pattern:
+07. For every join without a temporal constraint, add the AS OF pattern:
 
-   ```sql
-   AND feat.valid_from <= label.label_date
-   AND (feat.valid_to > label.label_date OR feat.valid_to IS NULL)
-   ```
+    ```sql
+    AND feat.valid_from <= label.label_date
+    AND (feat.valid_to > label.label_date OR feat.valid_to IS NULL)
+    ```
 
-   For bitemporal tables (features subject to retroactive correction), additionally constrain on transaction time.
+    For bitemporal tables (features subject to retroactive correction), additionally constrain on transaction time.
 
-8. Verify with a spot check: for a sample of training rows, compare feature values from the AS OF join against current feature values. If they differ, the AS OF join is working and history is preserved. If they are always identical, the feature table may not be preserving history.
+08. Verify with a spot check: for a sample of training rows, compare feature values from the AS OF join against current feature values. If they differ, the AS OF join is working and history is preserved. If they are always identical, the feature table may not be preserving history.
 
-9. Document the AS OF constraint as a requirement in the feature store schema — not only as a comment in a training notebook. The constraint must survive schema migrations and pipeline refactors.
+09. Document the AS OF constraint as a requirement in the feature store schema — not only as a comment in a training notebook. The constraint must survive schema migrations and pipeline refactors.
 
 10. **Gate:** Every feature join in the training pipeline has an explicit temporal constraint. The feature tables preserve history. Only now is it valid to run the training loop.
 

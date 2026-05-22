@@ -1,0 +1,48 @@
+{
+  "skill_id": "ddd-fitness-scorecard",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "We're a 6-person startup building an insurance underwriting engine. We have 18 user stories now but the domain is completely novel — no one we can find has fully modelled underwriting in software before. Should we use full DDD?",
+      "expected_behavior": "Apply the scorecard: CRUD? No. <30 stories? Currently yes (0 points). Likely to grow? Yes. Long-lived with non-trivial changes? Yes. Novel domain? Yes — this criterion is decisive. Score likely clears threshold based on novelty and complexity growth even with low current story count. Recommend full DDD with stakeholder commitment."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "My team is debating whether our e-commerce platform (120 user stories, multi-tenant pricing, loyalty scheme, inventory management, subscription billing) justifies the overhead of DDD. How do we make this decision defensibly?",
+      "expected_behavior": "Run through scorecard criteria collectively with stakeholders. Score: 40+ stories (yes), likely to grow (yes), long-lived with non-trivial changes (yes), novel domain elements (loyalty + subscription cross-domain). Score clearly exceeds threshold. Recommend full DDD with explicit stakeholder commitment; document the score."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "An engineering manager wants to push back against using DDD for our new admin dashboard. They say 'it's only 25 stories and it's just CRUD.' How do I evaluate this objectively?",
+      "expected_behavior": "Use the scorecard as a facilitation tool, not an engineering veto. Score the system together: if it truly is simple CRUD with <30 stories and no predicted complexity growth, the score likely falls below 7 and the objection is correct. If the 25 stories include approval workflows, multi-tenant rules, or compliance requirements, re-score those dimensions honestly. Present results as shared output."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_not_invoke",
+      "prompt": "What is the difference between an entity and a value object in DDD?",
+      "expected_behavior": "No invocation of the fitness scorecard. This is a question about tactical DDD patterns, not about whether to adopt DDD in the first place. Answer using entity/value object classification guidance."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "How do I structure Go packages in a microservice?",
+      "expected_behavior": "No invocation of the scorecard. This is a Go project layout question, not a DDD adoption decision. Answer with Go package organisation guidance."
+    },
+    {
+      "id": "tp-06",
+      "category": "blurred_boundary",
+      "prompt": "We have a complex domain (crypto exchange, 80+ stories) but our Go team has no DDD experience and we have a 6-week deadline. Does the scorecard say we should use DDD?",
+      "expected_behavior": "Acknowledge the scorecard limitation: it scores domain complexity but not team maturity or timeline pressure. The score likely exceeds 7 (complex domain, 80+ stories, novel), but the recommendation should be qualified: DDD strategic patterns (ubiquitous language, bounded contexts) are high-value with low ramp-up cost; defer full tactical pattern adoption (aggregates, factories) until the team has experience. The scorecard is a necessary but not sufficient input."
+    },
+    {
+      "id": "tp-07",
+      "category": "blurred_boundary",
+      "prompt": "Our system scored 6 on the scorecard but we have a hard compliance requirement to use event sourcing. Should we still avoid DDD?",
+      "expected_behavior": "Flag the scorecard's blind spot: it measures current domain complexity but not the cost of irreversible architectural commitments. Event sourcing is a DDD-adjacent pattern that introduces aggregate versioning and domain event contracts; adopting it without DDD tactical patterns (aggregates with clear boundaries) is high-risk. Recommend revisiting the score with the event sourcing requirement as a complexity multiplier, and supplement with a 'cost of being wrong' analysis."
+    }
+  ]
+}

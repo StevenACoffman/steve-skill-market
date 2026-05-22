@@ -1,6 +1,6 @@
 ---
 name: vale
-description: Run vale linter on markdown files and fix errors. Use when the user asks to run vale, lint markdown, or check prose style.
+description: Use when the user asks to run vale, lint markdown, or check prose style. Covers running vale, fixing genuine errors, and suppressing false positives by adding terms to the project vocabulary.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -33,11 +33,11 @@ vale --config=.vale/.vale.ini --no-global ls-config | jq '{Paths, ConfigFiles}'
 ### 1. Check Vale Is Installed
 
 ```bash
-if builtin type -P "vale" &> /dev/null; then
-    echo "vale found"
+if builtin type -P "vale" &>/dev/null; then
+	echo "vale found"
 else
-    echo "vale not found — install with: brew install vale"
-    exit 1
+	echo "vale not found — install with: brew install vale"
+	exit 1
 fi
 ```
 
@@ -94,8 +94,8 @@ Format:
 
 ```bash
 # Add a term
-echo "ProductName" >> .vale/styles/config/vocabularies/ThirdPartyProducts/accept.txt
-echo "(?i)fieldname" >> .vale/styles/config/vocabularies/TechJargon/accept.txt
+echo "ProductName" >>.vale/styles/config/vocabularies/ThirdPartyProducts/accept.txt
+echo "(?i)fieldname" >>.vale/styles/config/vocabularies/TechJargon/accept.txt
 ```
 
 ### 6. Suppress Individual Alerts Inline
@@ -155,8 +155,8 @@ The request was processed by the server.
 vale --config=.vale/.vale.ini --no-global README.md
 
 # JSON — useful for programmatic post-processing
-vale --config=.vale/.vale.ini --no-global --output=JSON README.md \
-  | jq '.[].Alerts[] | {line: .Line, check: .Check, msg: .Message}'
+vale --config=.vale/.vale.ini --no-global --output=JSON README.md |
+	jq '.[].Alerts[] | {line: .Line, check: .Check, msg: .Message}'
 
 # Line format — one alert per line, easy to grep
 vale --config=.vale/.vale.ini --no-global --output=line README.md
@@ -173,7 +173,7 @@ Place rule YAML files in `.vale/styles/MyStyle/` and add `MyStyle` to `BasedOnSt
 
 ```yaml
 extends: existence
-message: "Avoid vague word '%s'"
+message: Avoid vague word '%s'
 level: warning
 tokens:
   - very
@@ -186,7 +186,7 @@ tokens:
 
 ```yaml
 extends: substitution
-message: "Use '%s' instead of '%s'"
+message: Use '%s' instead of '%s'
 level: warning
 swap:
   utilize: use
@@ -198,7 +198,7 @@ swap:
 
 ```yaml
 extends: capitalization
-message: "Headings should be sentence-cased"
+message: Headings should be sentence-cased
 level: warning
 scope: heading
 match: $sentence

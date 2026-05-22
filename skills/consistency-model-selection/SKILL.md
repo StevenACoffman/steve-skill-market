@@ -7,8 +7,8 @@ description: |
   Do NOT invoke when: there is only one replica (single-node database, no replication); the question is about transaction isolation levels within a single database (see `transaction-isolation-level-selection`); the question is about which replication topology to use (see `replication-topology-selection`).
 
   Key signals: "can we use the replica for this read?", "two users checked at the same time and both got approved," "rate limiter is letting through more requests than the quota," "we need to enforce uniqueness across the cluster," "does quorum = strong consistency?", "is eventual consistency acceptable here?"
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 10: Consistency and Consensus"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 10: Consistency and Consensus'
 tags: [consistency, linearizability, eventual-consistency, distributed-systems, CAP-theorem, replication]
 related_skills: [replication-topology-selection, transaction-isolation-level-selection, distributed-fault-taxonomy, timeliness-vs-integrity-distinction]
 ---
@@ -34,7 +34,7 @@ Replica or read-replica references:
 >
 > — Kleppmann & Riccomini, Chapter 10: Consistency and Consensus
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -53,7 +53,7 @@ The mistake engineers make is one of two: demanding linearizability everywhere (
 
 The CAP theorem footnote: CAP's "C" means linearizability specifically. Partition tolerance is not a design choice — partitions happen. The choice is: during a partition, do you sacrifice linearizability or availability? This is a narrow impossibility result, not a general design framework; most system-level decisions require more nuanced reasoning than "pick two."
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -71,7 +71,7 @@ The CAP theorem footnote: CAP's "C" means linearizability specifically. Partitio
 - **Conclusion:** Cassandra with LWW is explicitly nonlinearizable, even with QUORUM settings. Applications requiring linearizability cannot safely use LWW-based leaderless replication.
 - **Result:** The team must switch to a single-leader system, use Cassandra's lightweight transactions (LWT, which add consensus overhead), or redesign to avoid the linearizability requirement. The configuration (QUORUM) is a necessary but not sufficient condition for linearizability in a system with network-delay variability.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -97,32 +97,37 @@ The CAP theorem footnote: CAP's "C" means linearizability specifically. Partitio
 - Difference from `replication-topology-selection`: Topology selection (single-leader vs. multi-leader vs. leaderless) determines which topology you use. Consistency model selection determines what guarantee you need from that topology. Topology selection is a prerequisite; this skill determines whether the selected topology is sufficient for each operation.
 - Difference from `distributed-fault-taxonomy`: Fault taxonomy helps you design for partial failures (network delay, process pause). Consistency model selection is about the read-visibility guarantee under normal operation and during partitions. They interact — process pauses break distributed locks that rely on linearizability — but the questions are different.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Enumerate the operations that involve a "check then act" pattern**
+
    - List all operations where the application reads a value from a replicated store and then makes a decision based on that value (approve/reject, increment/decrement, grant/deny).
    - Completion criteria: A list of read-then-decide operations exists. Each is tagged as "enforce a constraint" or "display information."
 
 2. **Classify each operation: does a stale read cause a permanent correctness violation?**
+
    - For each operation: if the read returns a stale value and the action proceeds based on it, can the resulting state be corrected automatically (timeliness violation)? Or does it permanently violate an invariant (integrity violation)?
    - Completion criteria: Operations are classified as "linearizability required" (integrity violation possible from stale read) or "eventual consistency acceptable" (at most a timeliness violation, self-healing).
    - Rule of thumb: uniqueness constraints, quota enforcement, distributed locks, and leader election always require linearizability. Display operations (feeds, dashboards, non-critical reads) are almost always fine with eventual consistency.
 
 3. **For operations requiring linearizability: verify the storage layer provides it**
+
    - Check whether the storage system in use actually provides linearizability for the operations in question. Do not assume "quorum = linearizable" in leaderless systems. Do not assume "serializable" means linearizable (these are orthogonal properties).
    - Completion criteria: The storage system documentation or test evidence explicitly confirms linearizability for the operation type (e.g., CAS, distributed lock, leader election). Leaderless systems with LWW are eliminated for these operations.
 
 4. **For operations where linearizability is required but the current system cannot provide it: design alternatives**
+
    - Options: (a) route linearizability-required reads to the leader/primary; (b) use a consensus-based CAS operation; (c) use a separate linearizable service (etcd, ZooKeeper) for the constraint-enforcing operations while keeping eventual consistency for the rest.
    - Completion criteria: The linearizability-required operations are routed through a confirmed-linearizable path. The non-linearizability-required operations remain on the eventual consistency path.
 
 5. **Document the consistency model per operation, not per system**
+
    - The system as a whole does not have one consistency model. Different operations in the same system can use different consistency levels. Document which operations require linearizability and why.
    - Completion criteria: An architectural decision record lists the operations requiring linearizability, the mechanism providing it, and the operations for which eventual consistency is acceptable and why.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -149,7 +154,7 @@ The CAP theorem footnote: CAP's "C" means linearizability specifically. Partitio
 - **CAP theorem**: CAP is commonly cited as a design framework ("we chose availability over consistency"). The book argues CAP is a narrow impossibility result about linearizability under partitions, not a general trade-off framework. Using CAP as a design guide causes engineers to make binary choices (linearizable or available) when real systems exist on a spectrum.
 - **ACID consistency**: ACID "consistency" refers to application-level invariants (e.g., "account balances must sum to zero"). Linearizability is a distributed systems property about read recency across replicas. These are unrelated. Engineers who conflate them misapply both.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -158,7 +163,7 @@ The CAP theorem footnote: CAP's "C" means linearizability specifically. Partitio
 - **composes_with**: distributed-fault-taxonomy — understanding which fault classes are possible (process pause, network delay) informs which consistency guarantees are achievable and why leaderless systems cannot provide linearizability.
 - **composes_with**: timeliness-vs-integrity-distinction — TVI provides the decision rule for when linearizability is actually required (integrity-critical operations) vs. when eventual consistency is acceptable (display reads).
 
----
+______________________________________________________________________
 
 ## Audit Information
 

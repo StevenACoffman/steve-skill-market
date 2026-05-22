@@ -1,8 +1,6 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: never-mock-net-conn-use-loopback
-description: |
-  net.Conn is a Go interface, which makes it look like a textbook mocking candidate. Don't mock it. A real loopback TCP pair requires ~10 lines: net.Listen("tcp", "127.0.0.1:0") in a goroutine to accept, then net.Dial from the test side, returning both ends. This tests actual TCP semantics — partial reads, connection close, blocking reads, flow control — that a bytes.Buffer mock cannot reproduce. Port 0 lets the OS assign an unused port, eliminating hardcoded ports and port conflicts entirely. The pattern generalises: SSH server in-process, any custom binary protocol, any connection-oriented test. For HTTP, use net/http/httptest.NewServer() instead (the standard library's equivalent for HTTP). There is no reason to ever mock net.Conn.
+description: Invoke when production code tests networked Go code by mocking net.Conn, net.Listener, or net.Dial. Invoke when choosing between loopback TCP, net.Pipe, and bufconn for testing connection-oriented protocols. Covers the testConn helper pattern, real SSH server in-process testing, and when to use net/http/httptest instead.
 source_book: "Advanced Testing with Go" by Mitchell Hashimoto
 source_chapter: Part 2 — Writing Testable Code / Networking
 tags: [go, testing, networking, tcp, mocking, testable-code]
@@ -11,20 +9,9 @@ related_skills:
   - test-helper-process-subprocess-mock  # contrasts-with: both reject shallow mocks; different problem domain
 ---
 
-# Never Mock net.Conn — Use a Real Loopback TCP Pair
+# Never Mock net.Conn — Use Loopback or Pipe
 
 ## R — Rule
-
-## Current State
-
-net.Conn mock types (anti-pattern):
-!`grep -rn 'MockConn\|FakeConn\|mockConn\|fakeConn\|net\.Conn' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -8`
-
-Real loopback TCP pairs in tests (desired pattern):
-!`grep -rn 'net\.Pipe\|net\.Listen\|127\.0\.0\.1\|localhost' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -8`
-
-gRPC test servers (bufconn pattern):
-!`grep -rn 'bufconn\|grpc\.Dial\|grpc\.NewServer' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -5`
 
 **Testing networking? Make a real network connection. Don't mock `net.Conn`.**
 
@@ -35,14 +22,14 @@ The canonical helper from the book:
 ```go
 // Error checking omitted for brevity
 func testConn(t *testing.T) (client, server net.Conn) {
-    ln, err := net.Listen("tcp", "127.0.0.1:0")
-    var server net.Conn
-    go func() {
-        defer ln.Close()
-        server, err = ln.Accept()
-    }()
-    client, err := net.Dial("tcp", ln.Addr().String())
-    return client, server
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	var server net.Conn
+	go func() {
+		defer ln.Close()
+		server, err = ln.Accept()
+	}()
+	client, err := net.Dial("tcp", ln.Addr().String())
+	return client, server
 }
 ```
 
@@ -54,7 +41,7 @@ Key observations from the book:
 - Easy to test IPv6 if needed
 - There is no reason to ever mock `net.Conn`
 
----
+______________________________________________________________________
 
 ## I — Insight
 
@@ -73,7 +60,7 @@ Port 0 is the key that makes the loopback pattern cheap: `net.Listen("tcp", "127
 
 The goroutine structure is also significant: `ln.Accept()` blocks until a client connects, so it runs in a goroutine. `net.Dial` then connects from the main test goroutine. After the goroutine returns the accepted connection, both ends are live and the test can proceed with a real bidirectional TCP channel.
 
----
+______________________________________________________________________
 
 ## A1 — Applications
 
@@ -96,7 +83,7 @@ This tests actual SSH protocol behavior: key exchange, authentication, channel n
 
 The Packer case shows the pattern scales to complex application-layer protocols, not just raw byte streams.
 
----
+______________________________________________________________________
 
 ## A2 — Activation
 
@@ -112,7 +99,7 @@ Apply this skill whenever you see any of the following:
 
 In all these cases: stop the mock, write `testConn`.
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -120,32 +107,32 @@ In all these cases: stop the mock, write `testConn`.
 
 ```go
 func testConn(t *testing.T) (net.Conn, net.Conn) {
-    t.Helper()
-    ln, err := net.Listen("tcp", "127.0.0.1:0")
-    if err != nil {
-        t.Fatalf("testConn: listen failed: %v", err)
-    }
+	t.Helper()
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("testConn: listen failed: %v", err)
+	}
 
-    // Accept one connection in a goroutine (Accept blocks).
-    var server net.Conn
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        var err error
-        server, err = ln.Accept()
-        if err != nil {
-            t.Errorf("testConn: accept failed: %v", err)
-        }
-        ln.Close()
-    }()
+	// Accept one connection in a goroutine (Accept blocks).
+	var server net.Conn
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var err error
+		server, err = ln.Accept()
+		if err != nil {
+			t.Errorf("testConn: accept failed: %v", err)
+		}
+		ln.Close()
+	}()
 
-    client, err := net.Dial("tcp", ln.Addr().String())
-    if err != nil {
-        t.Fatalf("testConn: dial failed: %v", err)
-    }
-    wg.Wait()
-    return client, server
+	client, err := net.Dial("tcp", ln.Addr().String())
+	if err != nil {
+		t.Fatalf("testConn: dial failed: %v", err)
+	}
+	wg.Wait()
+	return client, server
 }
 ```
 
@@ -160,25 +147,25 @@ Key points:
 
 ```go
 func TestMyProtocol_Read(t *testing.T) {
-    client, server := testConn(t)
-    defer client.Close()
-    defer server.Close()
+	client, server := testConn(t)
+	defer client.Close()
+	defer server.Close()
 
-    // Write from the client side.
-    msg := []byte("hello\n")
-    if _, err := client.Write(msg); err != nil {
-        t.Fatalf("write: %v", err)
-    }
+	// Write from the client side.
+	msg := []byte("hello\n")
+	if _, err := client.Write(msg); err != nil {
+		t.Fatalf("write: %v", err)
+	}
 
-    // Read on the server side.
-    buf := make([]byte, len(msg))
-    if _, err := io.ReadFull(server, buf); err != nil {
-        t.Fatalf("read: %v", err)
-    }
+	// Read on the server side.
+	buf := make([]byte, len(msg))
+	if _, err := io.ReadFull(server, buf); err != nil {
+		t.Fatalf("read: %v", err)
+	}
 
-    if string(buf) != string(msg) {
-        t.Errorf("got %q, want %q", buf, msg)
-    }
+	if string(buf) != string(msg) {
+		t.Errorf("got %q, want %q", buf, msg)
+	}
 }
 ```
 
@@ -188,32 +175,32 @@ Inject the loopback connection into the code under test exactly as production wo
 
 ```go
 func TestFrameDecoder(t *testing.T) {
-    client, server := testConn(t)
-    defer client.Close()
-    defer server.Close()
+	client, server := testConn(t)
+	defer client.Close()
+	defer server.Close()
 
-    // Run the frame encoder on one side.
-    enc := NewFrameEncoder(client)
-    dec := NewFrameDecoder(server)
+	// Run the frame encoder on one side.
+	enc := NewFrameEncoder(client)
+	dec := NewFrameDecoder(server)
 
-    want := []byte("payload data")
-    if err := enc.WriteFrame(want); err != nil {
-        t.Fatalf("encode: %v", err)
-    }
+	want := []byte("payload data")
+	if err := enc.WriteFrame(want); err != nil {
+		t.Fatalf("encode: %v", err)
+	}
 
-    got, err := dec.ReadFrame()
-    if err != nil {
-        t.Fatalf("decode: %v", err)
-    }
-    if !bytes.Equal(got, want) {
-        t.Errorf("got %q, want %q", got, want)
-    }
+	got, err := dec.ReadFrame()
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if !bytes.Equal(got, want) {
+		t.Errorf("got %q, want %q", got, want)
+	}
 }
 ```
 
 The `FrameDecoder` and `FrameEncoder` under test see a real `net.Conn`. Partial read behavior, blocking, and connection-close handling are all exercised.
 
----
+______________________________________________________________________
 
 ## B — Boundaries
 

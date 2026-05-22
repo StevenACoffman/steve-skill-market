@@ -1,0 +1,94 @@
+{
+  "skill": "fowler-performance-sequencing",
+  "version": "0.1.0",
+  "source_book": "Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "My team wants to optimize the JSON marshaling in every API endpoint because 'JSON serialization is always slow.' Should we do this while we're adding new endpoints?",
+      "expected_behavior": "Skill should be activated. Identify this as constant-attention optimization (approach 2), which Fowler rejects. Recommend: write the endpoints well-factored first, then profile in production to find actual hot spots. JSON marshaling may not be the bottleneck.",
+      "notes": "Classic constant-attention optimization trigger"
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "Our Go service is running slow in production. Where should we start optimizing?",
+      "expected_behavior": "Skill should be activated. Step 1: profile first (pprof) before writing any optimization. Do not speculate about hot spots. Find the actual bottleneck, then optimize only that measured hot spot in small steps, verifying improvement after each change.",
+      "notes": "Explicit 'system is slow, where to start' trigger — core use case"
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "A colleague says I shouldn't extract this function because 'extra function calls hurt performance.' How do I respond?",
+      "expected_behavior": "Skill should be activated. Explain that speculative performance concerns without profiler data are a constant-attention fallacy. Well-factored code actually enables better profiling and tuning later. Extract the function; optimize only what profiler data identifies as a hot spot.",
+      "notes": "Common objection to refactoring framed as performance concern"
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We know our system well — we're pretty sure the database query in the user lookup is the bottleneck. Should we optimize it before launching?",
+      "expected_behavior": "Skill should be activated. Reference the C3 story: even experts with deep system knowledge guess wrong about hot spots nine times out of ten. Profile first to confirm the database query is actually the bottleneck before optimizing it. If confirmed, then optimize that specific hot spot.",
+      "notes": "Confident expert speculation without measurement — C3 war story applies"
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "My manager wants us to do a 'performance sprint' to speed up the whole application. How should we approach this?",
+      "expected_behavior": "Skill should be activated. Frame the approach: (1) profile first to find actual hot spots; (2) optimize only the measured hot spots in small steps; (3) verify each change improves performance before keeping it. Spreading optimization effort uniformly ignores the 90/10 distribution and wastes most of the sprint.",
+      "notes": "'Performance sprint' framing — applies the three-approach taxonomy"
+    },
+    {
+      "id": "should-trigger-06",
+      "type": "should_trigger",
+      "prompt": "I'm choosing between a simple O(n) solution and a more complex O(log n) solution for a dataset that currently has about 50 items. The complex one would be harder to understand and maintain. Which should I choose?",
+      "expected_behavior": "Skill should be activated. For 50 items, the performance difference between O(n) and O(log n) is negligible. Write the simpler, clearer solution. If profiling later shows this function to be a hot spot when the dataset grows, optimize then. Don't pay the complexity cost now for speculative future gains.",
+      "notes": "Micro-optimization during development — YAGNI for performance"
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "I need to design the data model for a new feature. Should I use a relational schema or a document store?",
+      "expected_behavior": "This skill should not be activated. This is an architecture and data model design decision, not a performance optimization sequencing question. The fowler-yagni-refactoring or general architecture skills are more relevant.",
+      "notes": "Decoy: data model choice is not performance tuning"
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "I'm building a pacemaker firmware component. How should I think about performance requirements?",
+      "expected_behavior": "This skill should not be activated in its standard form. Hard real-time embedded systems require the time-budget approach (approach 1), not profile-then-tune. This skill explicitly notes time-budget is appropriate for contexts where late data is always bad data.",
+      "notes": "Hard real-time system — time-budget approach applies, not profile-then-tune"
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Should I split this 300-line function into smaller functions?",
+      "expected_behavior": "This skill should not be activated. This is a refactoring/code quality question (Long Function smell), not a performance optimization question. fowler-two-hats or fowler-code-smells are more relevant.",
+      "notes": "Decoy: refactoring decision looks like it might involve performance, but it's a code quality question"
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I can see there's a nested loop in this function — O(n²) over the user list. The list currently has 20 items but will grow to 100,000 in production. Should I fix it now or wait for profiling?",
+      "expected_behavior": "Edge case where constant-attention heuristic is defensible. The algorithmic complexity is identifiable by inspection and the growth pattern is known. This is the 'O(n²) by inspection' exception noted in the skill boundary — the cost is predictable and will be the hot spot when n reaches 100k. Fowler's profile-first advice still applies (confirm the growth model), but unlike micro-optimization, this is a design-time decision where the profiler will only confirm what analysis already predicts.",
+      "notes": "Boundary: algorithmic complexity identified by inspection with known growth — exception to profile-first applies"
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "We ran pprof on our Go service and found that 60% of CPU time is spent in our database connection pool. What should we do?",
+      "expected_behavior": "The profiling step is already done — skip to optimization. Skill still applies (the profile-then-tune framework), but Step 2 is complete. Focus the response on Step 3: optimize the identified hot spot in small steps, measuring after each change. The connection pool configuration, query batching, or caching strategy are candidate optimizations to try one at a time.",
+      "notes": "Profiler data already in hand — Step 2 complete, proceed to Step 3"
+    },
+    {
+      "id": "edge-03",
+      "type": "edge_case",
+      "prompt": "My team is debating whether to use Redis for caching to speed up our API. We haven't deployed to production yet.",
+      "expected_behavior": "Boundary case. Pre-production, no profiler data — the constant-attention caution applies (don't optimize speculatively). However, adding a caching layer is an architectural decision with significant ongoing maintenance cost, not a micro-optimization. Recommend: launch without Redis cache, measure in production, add caching only if profiler/metrics confirm the specific endpoint as a hot spot. The answer is: defer until measured evidence, same principle, but the scale of the decision increases the recommendation strength.",
+      "notes": "Architectural performance decision pre-production — profile-first still applies but higher stakes than code-level optimization"
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_trigger + 2 should_not_trigger + 1 edge_case. should_not_trigger cases must all pass (decoy tolerance is 0). Key boundary: O(n^2) by inspection exception vs. speculative micro-optimization."
+}

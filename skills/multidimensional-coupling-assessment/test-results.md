@@ -1,0 +1,22 @@
+# Multidimensional Coupling Assessment — Phase 4 Test Results
+
+**Overall**: PASS
+
+| Prompt ID | Category          | Expected | Result | Notes                                                                                                                                                                                                                                            |
+| --------- | ----------------- | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| tp01      | should_invoke     | invoke   | PASS   | SQS queue broke Lambda after inserting it: canonical hidden coupling (topology appeared loose, data-format is tight). Trigger "adding a message queue between two components" / "auditing a decoupled architecture" fires.                       |
+| tp02      | should_invoke     | invoke   | PASS   | Kafka EDA, 6 consumer updates on schema change: binary fallacy trigger fires explicitly ("someone says we use messaging so we're loosely coupled").                                                                                              |
+| tp03      | should_invoke     | invoke   | PASS   | Third-party payment processor, REST vs. queue: trigger "designing an integration with a system you do not control" fires.                                                                                                                        |
+| tp04      | should_invoke     | invoke   | PASS   | DynamoDB → RDS swap: hidden coupling via data format (event schema is source-specific). Trigger "auditing a decoupled architecture that keeps causing cascading failures" fires.                                                                 |
+| tp05      | should_invoke     | invoke   | PASS   | Protobuf optional-but-required fields: direct analogue of Google c07 case. Trigger "assessing the risk of changing an integration interface" fires (semantic + conversation coupling).                                                           |
+| tp06      | should_invoke     | invoke   | PASS   | Internal vs. external consumer coupling levels: trigger "designing for a system where some endpoints are owned by other teams or organizations" fires directly.                                                                                  |
+| tp07      | should_not_invoke | skip     | PASS   | Kafka consumer lag: throughput/scaling problem, not a coupling dimension question. No trigger fires.                                                                                                                                             |
+| tp08      | should_not_invoke | skip     | PASS   | Retry logic design: operational reliability, not coupling assessment. No trigger fires.                                                                                                                                                          |
+| tp09      | should_not_invoke | skip     | PASS   | REST vs. GraphQL API choice: protocol selection, not 8-dimension coupling analysis. No trigger fires.                                                                                                                                            |
+| tp10      | blurred_boundary  | invoke   | PASS   | Event naming (past-tense vs. command-style) and coupling: the skill explicitly addresses this — naming does not change any of the 8 dimensions. Trigger "reviewing an event-driven architecture proposal that claims decoupling benefits" fires. |
+| tp11      | blurred_boundary  | invoke   | PASS   | Service B being replaced by third-party: trigger "designing for a system where some endpoints are owned by other teams" fires — acceptable coupling changes as control changes from internal to external.                                        |
+| tp12      | blurred_boundary  | invoke   | PASS   | EventBridge vs. SNS topology coupling: trigger "deciding whether to add a message queue between two components" fires — topology coupling dimension differs between the two options.                                                             |
+
+## Rework Notes
+
+None. All 12 prompts produce the correct result. The 8-dimension trigger vocabulary is precise enough that none of the should_not_invoke cases accidentally match.

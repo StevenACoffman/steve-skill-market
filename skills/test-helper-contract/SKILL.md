@@ -1,30 +1,7 @@
 ---
 allowed-tools: Bash, Read, Edit
 name: test-helper-contract
-description: |
-  Test helpers in Go must never return errors. The conventional Go error-return
-  idiom is correct for production code, but test helpers have access to
-  *testing.T and must use it: call t.Fatalf internally when setup fails, so
-  every call site in the test body is free of error-handling boilerplate.
-
-  The second half of the contract is the cleanup func(): instead of returning
-  a resource and leaving teardown to the caller, return a closure that captures
-  *testing.T and can itself call t.Fatalf if teardown fails. The test body
-  becomes: resource, cleanup := testHelper(t); defer cleanup(). When the helper
-  returns only a cleanup function, the one-liner defer testHelper(t, arg)() is
-  idiomatic: the helper is called immediately and the returned func() is deferred.
-
-  Sign every test helper as func testXxx(t *testing.T, [args]) (Resource, func()).
-  Never end the signature with error. If setup fails, call t.Fatalf and let Go's
-  test runtime handle termination. The test body should contain zero error-handling
-  lines for setup infrastructure — only the logic under test.
-
-  Two language features extend this pattern: t.Helper() (Go 1.9+) should be
-  called at the start of the helper so failure line numbers point to the call
-  site rather than inside the helper body. t.Cleanup(func(){...}) (Go 1.14+)
-  allows helpers to register cleanup directly on t, eliminating the need to
-  return a func() in most cases — callers no longer need to write defer cleanup()
-  at all.
+description: Invoke when writing or reviewing Go test helpers that return errors, or when a test body has repeated setup error-checking boilerplate. Covers the no-error-return contract (call t.Fatalf internally), the cleanup func() pattern, t.Helper() for correct failure line numbers, and t.Cleanup() as the Go 1.14+ alternative to returning func().
 source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
 source_chapter: Part 1 — Test Methodology / Test Helpers
 tags: [go, testing, test-helpers, cleanup, test-methodology]
@@ -59,17 +36,17 @@ From "Advanced Testing with Go" (Mitchell Hashimoto, GopherCon):
 
 ```go
 func testTempFile(t *testing.T) (string, func()) {
-    tf, err := ioutil.TempFile("", "test")
-    if err != nil {
-        t.Fatalf("err: %s", err)
-    }
-    tf.Close()
-    return tf.Name(), func() { os.Remove(tf.Name()) }
+	tf, err := ioutil.TempFile("", "test")
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	tf.Close()
+	return tf.Name(), func() { os.Remove(tf.Name()) }
 }
 
 func TestThing(t *testing.T) {
-    tf, tfclose := testTempFile(t)
-    defer tfclose()
+	tf, tfclose := testTempFile(t)
+	defer tfclose()
 }
 ```
 
@@ -81,26 +58,26 @@ func TestThing(t *testing.T) {
 
 ```go
 func testChdir(t *testing.T, dir string) func() {
-    old, err := os.Getwd()
-    if err != nil {
-        t.Fatalf("err: %s", err)
-    }
-    if err := os.Chdir(dir); err != nil {
-        t.Fatalf("err: %s", err)
-    }
-    return func() { os.Chdir(old) }
+	old, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	return func() { os.Chdir(old) }
 }
 
 func TestThing(t *testing.T) {
-    defer testChdir(t, "/other")()
-    // …
+	defer testChdir(t, "/other")()
+	// …
 }
 ```
 
 > Proper setup and teardown for `testChdir` without the helper would be at least
 > 10 lines in every test. The helper eliminates that across all tests.
 
----
+______________________________________________________________________
 
 ## I — Interpretation
 
@@ -115,7 +92,7 @@ every call site. A helper that returns an error forces the test body to contain:
 ```go
 tf, err := testTempFile(t)
 if err != nil {
-    t.Fatalf("setup failed: %s", err)
+	t.Fatalf("setup failed: %s", err)
 }
 ```
 
@@ -148,7 +125,7 @@ by returning errors; test helpers must protect their callers from irrelevant err
 handling. Accepting this inversion requires acknowledging that `*testing.T` access
 changes the contract entirely.
 
----
+______________________________________________________________________
 
 ## A1 — Worked Cases
 
@@ -159,27 +136,27 @@ internally if creation fails, and returns the path alongside a cleanup closure.
 
 ```go
 func testTempFile(t *testing.T) (string, func()) {
-    t.Helper() // failure line numbers point to caller, not here
-    tf, err := ioutil.TempFile("", "test")
-    if err != nil {
-        t.Fatalf("testTempFile: %s", err)
-    }
-    tf.Close()
-    return tf.Name(), func() {
-        if err := os.Remove(tf.Name()); err != nil {
-            t.Fatalf("testTempFile cleanup: %s", err)
-        }
-    }
+	t.Helper() // failure line numbers point to caller, not here
+	tf, err := ioutil.TempFile("", "test")
+	if err != nil {
+		t.Fatalf("testTempFile: %s", err)
+	}
+	tf.Close()
+	return tf.Name(), func() {
+		if err := os.Remove(tf.Name()); err != nil {
+			t.Fatalf("testTempFile cleanup: %s", err)
+		}
+	}
 }
 
 func TestWriteConfig(t *testing.T) {
-    path, cleanup := testTempFile(t)
-    defer cleanup()
+	path, cleanup := testTempFile(t)
+	defer cleanup()
 
-    if err := WriteConfig(path, cfg); err != nil {
-        t.Fatalf("WriteConfig: %s", err)
-    }
-    // assertions…
+	if err := WriteConfig(path, cfg); err != nil {
+		t.Fatalf("WriteConfig: %s", err)
+	}
+	// assertions…
 }
 ```
 
@@ -192,20 +169,20 @@ When the helper returns only `func()`, skip the intermediate variable:
 
 ```go
 func testChdir(t *testing.T, dir string) func() {
-    t.Helper()
-    old, err := os.Getwd()
-    if err != nil {
-        t.Fatalf("testChdir: Getwd: %s", err)
-    }
-    if err := os.Chdir(dir); err != nil {
-        t.Fatalf("testChdir: Chdir(%s): %s", dir, err)
-    }
-    return func() { os.Chdir(old) }
+	t.Helper()
+	old, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("testChdir: Getwd: %s", err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("testChdir: Chdir(%s): %s", dir, err)
+	}
+	return func() { os.Chdir(old) }
 }
 
 func TestCLIFromProjectRoot(t *testing.T) {
-    defer testChdir(t, "/project/root")()
-    // entire test body runs in /project/root; restored on exit
+	defer testChdir(t, "/project/root")()
+	// entire test body runs in /project/root; restored on exit
 }
 ```
 
@@ -218,37 +195,37 @@ Applying the same contract to a network domain (from the verified entry V1 evide
 
 ```go
 func testConn(t *testing.T) (client, server net.Conn) {
-    t.Helper()
-    ln, err := net.Listen("tcp", "127.0.0.1:0")
-    if err != nil {
-        t.Fatalf("testConn: Listen: %s", err)
-    }
+	t.Helper()
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("testConn: Listen: %s", err)
+	}
 
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        var err error
-        server, err = ln.Accept()
-        if err != nil {
-            t.Errorf("testConn: Accept: %s", err)
-        }
-    }()
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var err error
+		server, err = ln.Accept()
+		if err != nil {
+			t.Errorf("testConn: Accept: %s", err)
+		}
+	}()
 
-    client, err = net.Dial("tcp", ln.Addr().String())
-    if err != nil {
-        t.Fatalf("testConn: Dial: %s", err)
-    }
-    wg.Wait()
-    ln.Close()
-    return client, server
+	client, err = net.Dial("tcp", ln.Addr().String())
+	if err != nil {
+		t.Fatalf("testConn: Dial: %s", err)
+	}
+	wg.Wait()
+	ln.Close()
+	return client, server
 }
 
 func TestProtocol(t *testing.T) {
-    client, server := testConn(t)
-    defer client.Close()
-    defer server.Close()
-    // test protocol framing between the two ends
+	client, server := testConn(t)
+	defer client.Close()
+	defer server.Close()
+	// test protocol framing between the two ends
 }
 ```
 
@@ -256,7 +233,7 @@ No error return. Three potential failure points (`Listen`, `Accept`, `Dial`) are
 all handled internally via `t.Fatalf`/`t.Errorf`. The test body receives two live
 connections with no setup noise.
 
----
+______________________________________________________________________
 
 ## A2 — Activation
 
@@ -274,7 +251,7 @@ This skill applies when:
 - Code review finding `t.Fatal` inside a test *after* calling a helper, for errors
   the helper itself returned.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -308,7 +285,7 @@ This skill applies when:
    `t.Cleanup(func() { os.Remove(tf.Name()) })`
    Callers no longer need to manage the cleanup variable at all.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Blind Spots
 
@@ -323,14 +300,14 @@ directly on `t` rather than returning a `func()`:
 
 ```go
 func testTempFile(t *testing.T) string {
-    t.Helper()
-    tf, err := ioutil.TempFile("", "test")
-    if err != nil {
-        t.Fatalf("testTempFile: %s", err)
-    }
-    tf.Close()
-    t.Cleanup(func() { os.Remove(tf.Name()) })
-    return tf.Name()
+	t.Helper()
+	tf, err := ioutil.TempFile("", "test")
+	if err != nil {
+		t.Fatalf("testTempFile: %s", err)
+	}
+	tf.Close()
+	t.Cleanup(func() { os.Remove(tf.Name()) })
+	return tf.Name()
 }
 ```
 

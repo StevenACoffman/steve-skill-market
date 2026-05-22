@@ -52,7 +52,7 @@ Package-level vars (global state risk):
 
 **Convergence note:** Both sources share the same meta-principle — all dependencies must be explicit, constructor-available, and global-state-free — and both name testability as the primary motivation; Edwards focuses on the handler layer (struct fields, mock injection via newTestApplication), while Ryer focuses on the entrypoint layer (run() parameters, getenv injection, parallel-safe startup tests), and a third source (rednafi's manual-dependency-injection) independently confirms that "the call order is the dependency graph" and that the Go compiler enforces it without a framework.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -70,7 +70,7 @@ Go HTTP service dependency injection operates at two architectural layers that *
 
 **Convergence note:** Both sources share the same meta-principle — all dependencies must be explicit, constructor-available, and global-state-free — and both name testability as the primary motivation; Edwards focuses on the handler layer (struct fields, mock injection via newTestApplication), while Ryer focuses on the entrypoint layer (run() parameters, getenv injection, parallel-safe startup tests), and a third source (rednafi's manual-dependency-injection) independently confirms that "the call order is the dependency graph" and that the Go compiler enforces it without a framework.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -82,24 +82,24 @@ Go HTTP service dependency injection operates at two architectural layers that *
 
 ```go
 func run(
-    ctx    context.Context,
-    args   []string,
-    getenv func(string) string,
-    stdin  io.Reader,
-    stdout, stderr io.Writer,
+	ctx context.Context,
+	args []string,
+	getenv func(string) string,
+	stdin io.Reader,
+	stdout, stderr io.Writer,
 ) error {
-    ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
-    defer cancel()
-    // construct dependencies, build application struct, start server
-    return nil
+	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	defer cancel()
+	// construct dependencies, build application struct, start server
+	return nil
 }
 
 func main() {
-    ctx := context.Background()
-    if err := run(ctx, os.Args, os.Getenv, os.Stdin, os.Stdout, os.Stderr); err != nil {
-        fmt.Fprintf(os.Stderr, "%s\n", err)
-        os.Exit(1)
-    }
+	ctx := context.Background()
+	if err := run(ctx, os.Args, os.Getenv, os.Stdin, os.Stdout, os.Stderr); err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
 }
 ```
 
@@ -126,12 +126,12 @@ Inside `run()`, all shared dependencies are constructed and assembled into an `a
 ```go
 // inside run():
 app := &application{
-    logger:         slog.New(slog.NewTextHandler(os.Stdout, nil)),
-    snippets:       &models.SnippetModel{DB: db},
-    users:          &models.UserModel{DB: db},
-    templateCache:  templateCache,
-    formDecoder:    formDecoder,
-    sessionManager: sessionManager,
+	logger:         slog.New(slog.NewTextHandler(os.Stdout, nil)),
+	snippets:       &models.SnippetModel{DB: db},
+	users:          &models.UserModel{DB: db},
+	templateCache:  templateCache,
+	formDecoder:    formDecoder,
+	sessionManager: sessionManager,
 }
 srv := &http.Server{Handler: app.routes()}
 ```
@@ -140,8 +140,8 @@ Every handler is then a method:
 
 ```go
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-    snippets, err := app.snippets.Latest()
-    // ...
+	snippets, err := app.snippets.Latest()
+	// ...
 }
 ```
 
@@ -151,14 +151,14 @@ The struct grows as the application grows — each new dependency is one field a
 
 ```go
 func newTestApplication(t *testing.T) *application {
-    return &application{
-        logger:        slog.New(slog.NewTextHandler(io.Discard, nil)),
-        snippets:      &mocks.SnippetModel{},
-        users:         &mocks.UserModel{},
-        templateCache: tc,
-        formDecoder:   formDecoder,
-        sessionManager: sessionManager,
-    }
+	return &application{
+		logger:         slog.New(slog.NewTextHandler(io.Discard, nil)),
+		snippets:       &mocks.SnippetModel{},
+		users:          &mocks.UserModel{},
+		templateCache:  tc,
+		formDecoder:    formDecoder,
+		sessionManager: sessionManager,
+	}
 }
 ```
 
@@ -175,7 +175,7 @@ Tests using `go run(ctx, ...)` exercise the full program (startup logic, flag pa
 
 **rednafi's confirming principle:** "The call order is the dependency graph. Errors are handled right where they happen. If a constructor changes, the compiler points straight at every broken call. No reflection, no generated code, no global state." — rednafi, *Go Advice*. `run()` and the `application` struct assembly are both manifestations of this: explicit, ordered, compiler-checked.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -191,20 +191,25 @@ Problem: tests calling `os.Getenv("DATABASE_URL")` cannot run in parallel becaus
 
 ```go
 func TestRun(t *testing.T) {
-    t.Parallel()
-    ctx, cancel := context.WithCancel(context.Background())
-    t.Cleanup(cancel)
-    getenv := func(key string) string {
-        switch key { case "MYAPP_FORMAT": return "json"; default: return "" }
-    }
-    go run(ctx, []string{"myapp", "--addr", "localhost:0"}, getenv, nil, &bytes.Buffer{}, &bytes.Buffer{})
-    // wait for readiness, assert
+	t.Parallel()
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	getenv := func(key string) string {
+		switch key {
+		case "MYAPP_FORMAT":
+			return "json"
+		default:
+			return ""
+		}
+	}
+	go run(ctx, []string{"myapp", "--addr", "localhost:0"}, getenv, nil, &bytes.Buffer{}, &bytes.Buffer{})
+	// wait for readiness, assert
 }
 ```
 
 **What this demonstrates:** `run()` as a testable entrypoint gives `t.Parallel()` everywhere without flakiness. Inside `run()`, the `application` struct is constructed with the same dependency values the test controls via `getenv`.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger ★
 
@@ -223,7 +228,7 @@ func TestRun(t *testing.T) {
 2. End-to-end tests: `go run(ctx, args, getenv, ...)` in a goroutine with context cancellation per test (Ryer)
 3. Flag/env-variable isolation: `getenv` closure per test, no process environment mutation (Ryer)
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -235,11 +240,11 @@ Move all startup logic into `run(ctx context.Context, args []string, getenv func
 
 ```go
 func main() {
-    ctx := context.Background()
-    if err := run(ctx, os.Args, os.Getenv, os.Stdin, os.Stdout, os.Stderr); err != nil {
-        fmt.Fprintf(os.Stderr, "%s\n", err)
-        os.Exit(1)
-    }
+	ctx := context.Background()
+	if err := run(ctx, os.Args, os.Getenv, os.Stdin, os.Stdout, os.Stderr); err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(1)
+	}
 }
 ```
 
@@ -277,12 +282,12 @@ Choose one pattern. Do not mix struct-receiver handlers and maker-func handlers 
 
 ```go
 func newTestApplication(t *testing.T) *application {
-    return &application{
-        logger:   slog.New(slog.NewTextHandler(io.Discard, nil)),
-        snippets: &mocks.SnippetModel{},
-        users:    &mocks.UserModel{},
-        // ... other fields
-    }
+	return &application{
+		logger:   slog.New(slog.NewTextHandler(io.Discard, nil)),
+		snippets: &mocks.SnippetModel{},
+		users:    &mocks.UserModel{},
+		// ... other fields
+	}
 }
 ```
 
@@ -290,11 +295,11 @@ func newTestApplication(t *testing.T) *application {
 
 ```go
 func TestRun(t *testing.T) {
-    t.Parallel()
-    ctx, cancel := context.WithCancel(context.Background())
-    t.Cleanup(cancel)
-    go run(ctx, []string{"app", "--addr", "localhost:0"}, func(k string) string { return "" }, nil, &bytes.Buffer{}, &bytes.Buffer{})
-    // waitForReady, then make assertions
+	t.Parallel()
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	go run(ctx, []string{"app", "--addr", "localhost:0"}, func(k string) string { return "" }, nil, &bytes.Buffer{}, &bytes.Buffer{})
+	// waitForReady, then make assertions
 }
 ```
 
@@ -302,7 +307,7 @@ func TestRun(t *testing.T) {
 
 Audit for `os.Getenv`, `flag.Parse`, `flag.CommandLine`, `os.Args`, or package-level variables written during startup. Each is a parallel-safety hazard.
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

@@ -1,0 +1,95 @@
+{
+  "skill": "eda-coupling-diagnosis",
+  "prompts": [
+    {
+      "id": "t01",
+      "type": "should_invoke",
+      "prompt": "We're migrating to an event-driven architecture. Our architect says this will make our services loosely coupled. How should I evaluate that claim?",
+      "why": "Direct invocation: evaluating an EDA loose-coupling claim requires the coupling diagnosis framework"
+    },
+    {
+      "id": "t02",
+      "type": "should_invoke",
+      "prompt": "We publish an OrderPlaced event on SNS and fan out to 14 downstream services. We renamed a field last week and had to update 11 of those services. Why is our 'loosely coupled' event bus causing so much coordination?",
+      "why": "Classic growth trap: topology-decoupled but data-format coupled; the diagnosis framework explains why"
+    },
+    {
+      "id": "t03",
+      "type": "should_invoke",
+      "prompt": "We use AWS EventBridge as our event bus. When I add a new consumer, I have to add a rule target. Is this real Pub-Sub or something else?",
+      "why": "Direct Recipient List trap question about EventBridge — the core asymmetric coupling diagnosis"
+    },
+    {
+      "id": "t04",
+      "type": "should_invoke",
+      "prompt": "Our team is debating whether to name our messages as events (OrderPlaced, UserRegistered) versus commands (ProcessOrder, CreateUser). Does the naming choice affect how decoupled the system is?",
+      "why": "Event semantics vs. channel topology confusion — the framework clarifies that naming changes nothing about coupling dimensions"
+    },
+    {
+      "id": "t05",
+      "type": "should_invoke",
+      "prompt": "We receive events from an AWS service (S3 bucket notifications). Should we use Pub-Sub or point-to-point for our internal consumers? We don't control the S3 event format.",
+      "why": "Uncontrolled source scenario — the framework's key decision: use Pub-Sub when you don't control the source"
+    },
+    {
+      "id": "t06",
+      "type": "should_invoke",
+      "prompt": "How does switching from REST APIs to an event bus change the coupling between our microservices? We want to understand concretely what gets better and what stays the same.",
+      "why": "RPC-to-async-messaging comparison — requires running the coupling comparison table across dimensions"
+    },
+    {
+      "id": "t07",
+      "type": "should_invoke",
+      "prompt": "We have 40 microservices all subscribing to a shared CustomerUpdated event. We need to add a new field to it. What are we dealing with here?",
+      "why": "Growth trap diagnosis: 40 subscribers are data-format coupled despite topology decoupling; requires the framework"
+    },
+    {
+      "id": "t08",
+      "type": "should_invoke",
+      "prompt": "A vendor is pitching us their event mesh solution, claiming it will decouple all our services. What questions should I ask to evaluate that claim?",
+      "why": "Evaluating a vendor loose-coupling claim requires the dimensional diagnosis framework"
+    },
+    {
+      "id": "t09",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure dead letter queues on AWS SQS for messages that fail processing?",
+      "why": "Dead Letter Channel configuration question — operational, not a coupling diagnosis task"
+    },
+    {
+      "id": "t10",
+      "type": "should_not_invoke",
+      "prompt": "What is the difference between a topic and a queue in Apache Kafka?",
+      "why": "Kafka terminology question — basic concepts, not an EDA coupling diagnosis"
+    },
+    {
+      "id": "t11",
+      "type": "should_not_invoke",
+      "prompt": "We need to process 10,000 messages per second from SQS. How many consumers should we run?",
+      "why": "Throughput and scaling question — Competing Consumers decision, not coupling diagnosis"
+    },
+    {
+      "id": "t12",
+      "type": "should_not_invoke",
+      "prompt": "Should I use REST or gRPC for communication between two services in the same Kubernetes cluster?",
+      "why": "RPC technology selection question — integration style choice but not an EDA coupling analysis"
+    },
+    {
+      "id": "t13",
+      "type": "should_not_invoke",
+      "prompt": "How do I implement idempotency in my message consumer to handle duplicate deliveries?",
+      "why": "Idempotent Receiver implementation question — not an EDA coupling diagnosis"
+    },
+    {
+      "id": "t14",
+      "type": "blurred_boundary",
+      "prompt": "We have microservices A and B. A publishes an event; B subscribes. Someone says we're 'decoupled.' What does that actually mean and is it true?",
+      "why": "Blurred: could be a basic Pub-Sub explanation OR the full coupling diagnosis (which coupling dimensions, is it true Pub-Sub, do A and B share a schema). The diagnosis framework gives a richer answer than a simple explanation."
+    },
+    {
+      "id": "t15",
+      "type": "blurred_boundary",
+      "prompt": "We're choosing between calling our downstream services synchronously via REST versus publishing an event and letting them subscribe. Which approach gives us better decoupling?",
+      "why": "Blurred: this is an integration style selection question (f01) AND an EDA coupling diagnosis question (f03). The coupling comparison table is the right tool but integration style selection is the framing."
+    }
+  ]
+}

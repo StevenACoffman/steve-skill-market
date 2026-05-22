@@ -1,6 +1,6 @@
 ---
 name: go-test-tools
-description: Run and write Go tests in this 19-module workspace. Use when the user asks to run tests, write tests, check coverage, debug test failures, or use gotestsum.
+description: Use when the user asks to run tests, write tests, check coverage, debug test failures, or use gotestsum. Covers running and writing Go tests in this 19-module workspace.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -32,9 +32,9 @@ cd <module> && gotestsum -- -count=1 -timeout 5m ./...
 
 ```bash
 for D in */; do
-  [ -f "${D}go.mod" ] || continue
-  echo "==> $D"
-  (cd "$D" && go test -count=1 -timeout 5m ./...)
+	[ -f "${D}go.mod" ] || continue
+	echo "==> $D"
+	(cd "$D" && go test -count=1 -timeout 5m ./...)
 done
 ```
 
@@ -42,9 +42,9 @@ With gotestsum:
 
 ```bash
 for D in */; do
-  [ -f "${D}go.mod" ] || continue
-  echo "==> $D"
-  (cd "$D" && gotestsum -- -count=1 -timeout 5m ./...)
+	[ -f "${D}go.mod" ] || continue
+	echo "==> $D"
+	(cd "$D" && gotestsum -- -count=1 -timeout 5m ./...)
 done
 ```
 
@@ -100,12 +100,12 @@ import "github.com/Khan/districts-jobs/pkg/khantest"
 type myThingSuite struct{ khantest.Suite }
 
 func (suite *myThingSuite) TestDoesTheThing() {
-    result := DoTheThing("input")
-    suite.Require().Equal("expected", result)
+	result := DoTheThing("input")
+	suite.Require().Equal("expected", result)
 }
 
 func TestMyThing(t *testing.T) {
-    khantest.Run(t, new(myThingSuite))
+	khantest.Run(t, new(myThingSuite))
 }
 ```
 
@@ -119,15 +119,15 @@ import "github.com/Khan/districts-jobs/pkg/servicetest"
 type myRepoSuite struct{ servicetest.BaseSuite }
 
 func (suite *myRepoSuite) TestCreateSomething() {
-    ctx := context.Background()
-    dc := suite.Datastore() // acquires an emulator client, reset between tests
+	ctx := context.Background()
+	dc := suite.Datastore() // acquires an emulator client, reset between tests
 
-    err := repo.CreateSomething(ctx, dc, actorKaid, thing)
-    suite.Require().NoError(err)
+	err := repo.CreateSomething(ctx, dc, actorKaid, thing)
+	suite.Require().NoError(err)
 }
 
 func TestMyRepo(t *testing.T) {
-    servicetest.Run(t, new(myRepoSuite))
+	servicetest.Run(t, new(myRepoSuite))
 }
 ```
 
@@ -147,27 +147,27 @@ The datastore emulator is acquired once per suite and reset before each test in 
 
 ```go
 func (suite *myThingSuite) TestProcess() {
-    tests := []struct {
-        name    string
-        input   string
-        want    string
-        wantErr bool
-    }{
-        {name: "valid", input: "hello", want: "HELLO"},
-        {name: "empty", input: "", wantErr: true},
-    }
+	tests := []struct {
+		name    string
+		input   string
+		want    string
+		wantErr bool
+	}{
+		{name: "valid", input: "hello", want: "HELLO"},
+		{name: "empty", input: "", wantErr: true},
+	}
 
-    for _, tt := range tests {
-        suite.Run(tt.name, func() {
-            got, err := Process(tt.input)
-            if tt.wantErr {
-                suite.Require().Error(err)
-                return
-            }
-            suite.Require().NoError(err)
-            suite.Require().Equal(tt.want, got)
-        })
-    }
+	for _, tt := range tests {
+		suite.Run(tt.name, func() {
+			got, err := Process(tt.input)
+			if tt.wantErr {
+				suite.Require().Error(err)
+				return
+			}
+			suite.Require().NoError(err)
+			suite.Require().Equal(tt.want, got)
+		})
+	}
 }
 ```
 
@@ -193,10 +193,10 @@ The `.golangci.yml` enables several test-focused linters. Violations block CI.
 ```go
 // ✅ correct — failure lines point to the caller, not inside assertThing
 func assertThing(t *testing.T, got string) {
-    t.Helper()
-    if got != "expected" {
-        t.Errorf("got %q, want %q", got, "expected")
-    }
+	t.Helper()
+	if got != "expected" {
+		t.Errorf("got %q, want %q", got, "expected")
+	}
 }
 ```
 
@@ -230,14 +230,14 @@ If a test calls `t.Parallel()`, all its subtests must also call `t.Parallel()`:
 
 ```go
 func TestFoo(t *testing.T) {
-    t.Parallel()
+	t.Parallel()
 
-    for _, tt := range cases {
-        t.Run(tt.name, func(t *testing.T) {
-            t.Parallel()
-            // ...
-        })
-    }
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			// ...
+		})
+	}
 }
 ```
 

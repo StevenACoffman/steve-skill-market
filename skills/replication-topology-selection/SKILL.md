@@ -17,8 +17,8 @@ description: |
   - The question is about whether linearizability is needed for a specific operation (use `consistency-model-selection`).
 
   Key signals: "multi-region writes," "high availability," "conflict resolution," "quorum," "Cassandra," "Dynamo-style," "split-brain," "failover," "replication topology."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 6: Replication"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 6: Replication'
 tags: [replication, single-leader, multi-leader, leaderless, conflict-resolution, consistency, availability]
 related_skills: [replication-lag-as-correctness, sharding-strategy-selection, consistency-model-selection, fencing-tokens-distributed-locks]
 ---
@@ -46,7 +46,7 @@ Cloud Datastore usage (managed replication):
 >
 > — Kleppmann & Riccomini, Chapter 6: Replication
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -62,7 +62,7 @@ The key non-obvious insight: leaderless replication with quorum does not provide
 
 Decision sequence: start with single-leader; switch to multi-leader only if cross-region write latency is a demonstrated, measured problem; choose leaderless only if availability during partition (shopping cart model) is the explicit requirement and conflict resolution complexity is accepted.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -80,7 +80,7 @@ Decision sequence: start with single-leader; switch to multi-leader only if cros
 - **Conclusion:** The topology choice (single-leader with fully asynchronous replication and no fencing) created the durability window. Semi-synchronous replication or requiring follower catch-up before promotion would have prevented the primary key collision.
 - **Result:** Cross-system data corruption at GitHub (2012). The methodology prescribes: when external systems reference primary keys, asynchronous replication failover without fencing is unsafe.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -103,30 +103,34 @@ Decision sequence: start with single-leader; switch to multi-leader only if cros
 - Difference from `replication-lag-as-correctness`: topology selection determines the fundamental consistency model (which conflicts are possible, how they are resolved); lag-as-correctness addresses the specific user-visible problem of stale reads from followers in an already-chosen single-leader topology.
 - Difference from `consistency-model-selection`: topology selection is the implementation mechanism; consistency model selection is the requirements analysis that precedes it — you determine whether you need linearizability, then select a topology that can provide it (single-leader or consensus, not leaderless).
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Define the write availability requirement**
+
    - Must writes succeed during a network partition between regions/nodes? If yes, multi-leader or leaderless are in scope. If no (writes can wait for leader recovery), single-leader is sufficient.
    - Completion criteria: A written statement: "We can/cannot tolerate write unavailability during partition for [duration] for [data types]."
 
 2. **Identify the consistency requirement for reads**
+
    - Must reads be linearizable (always see the most recent write)? If yes, only single-leader with synchronous replication or consensus-based replication qualifies. If eventual consistency is acceptable for reads, leaderless becomes viable.
    - Completion criteria: A written statement: "Reads of [data type] must be [linearizable / monotonically consistent / eventually consistent]."
    - Stop condition: If linearizability is required AND multi-region write availability is required, this is the CAP impossibility — no topology solves both. Document the explicit trade-off and choose which constraint is primary.
 
 3. **Evaluate conflict resolution requirements for multi-leader or leaderless**
+
    - If multi-leader or leaderless is in scope: enumerate what happens when two concurrent writes modify the same record. Is LWW acceptable (data loss is tolerable)? Is application-level merge possible? Are the data types CRDT-friendly (sets, counters)?
    - Completion criteria: Every writable data type has an explicit conflict resolution policy. LWW chosen only where silent data loss is documented as acceptable.
 
 4. **Select topology and configure failover safety**
+
    - Single-leader: configure semi-synchronous replication or require follower catch-up before promotion; implement fencing tokens to prevent split-brain.
    - Multi-leader: implement conflict detection and resolution at the application layer before deployment.
    - Leaderless: document that quorum does not provide linearizability; identify which operations cannot use leaderless (uniqueness checks, financial totals).
    - Completion criteria: Configuration is documented with explicit rationale. Fencing mechanism (STONITH, epoch tokens, or Raft leadership term) is configured for single-leader.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -152,7 +156,7 @@ Decision sequence: start with single-leader; switch to multi-leader only if cros
 
 - **Quorum = strong consistency**: Engineers frequently believe that Dynamo-style quorum (w + r > n) provides linearizability. It does not. Cassandra LWW with clock skew can produce non-linearizable results even when quorum conditions are mathematically satisfied. The correct tool for linearizability is single-leader replication or a consensus protocol (Raft, Paxos), not tuned quorum parameters.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -161,7 +165,7 @@ Decision sequence: start with single-leader; switch to multi-leader only if cros
 - **composes_with**: consistency-model-selection — topology is the implementation mechanism; consistency model selection is the requirements analysis that determines whether the chosen topology is sufficient.
 - **composes_with**: fencing-tokens-distributed-locks — single-leader topologies require fencing tokens (epoch tokens, STONITH) to prevent a demoted leader from continuing to accept writes after failover.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

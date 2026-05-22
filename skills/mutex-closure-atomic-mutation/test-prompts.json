@@ -1,0 +1,79 @@
+{
+  "skill": "mutex-closure-atomic-mutation",
+  "version": "0.1.0",
+  "source_book": "Go Advice — Redowan Delowar (rednafi)",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I have a counter struct with `Get()` and `Set()` methods, each protected by a mutex. I'm incrementing it from 10 goroutines and the final value should be 10000 but I keep getting around 1800-2000. But `go test -race` shows no race conditions. What's happening?",
+      "expected_behavior": "Identify the lost-update bug: Get/Set individually lock but the Get → increment → Set sequence is not atomic. Explain why the race detector is silent (each lock is valid in isolation; this is a logical race, not a data race). Show the closure inversion fix: Set(func(v *int) { *v++ }) holds the lock for the entire mutation.",
+      "notes": "The exact counter scenario from Case 1 / ce18 in SKILL.md — canonical trigger."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "My mutex-protected struct has separate Read() and Write() methods. I do `v := state.Read(); v.Count++; state.Write(v)` in multiple goroutines. `go test -race` passes but my data is wrong. How is this possible?",
+      "expected_behavior": "Explain the logical race: the Read → mutate → Write sequence has a gap between Read's lock release and Write's lock acquisition. Another goroutine can interleave in that gap. Race detector is silent because every lock acquisition is individually valid. Fix: expose Update(func(*State)) that holds the lock for the entire mutation body.",
+      "notes": "Read/Write variant of the Get/Set pattern — same root cause, different method names. Tests race detector silent claim."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "How do I make a read-modify-write operation atomic in Go without using channels?",
+      "expected_behavior": "Present the closure inversion pattern. The struct exposes Set(fn func(*T)) / Update(fn func(*State)) that acquires the lock once and calls the closure with a pointer to the value. The caller's read-check-write logic executes entirely inside the closure with no gap. Contrast with sync/atomic which only works for primitive integers.",
+      "notes": "'How do I make read-modify-write atomic' — explicit trigger signal from SKILL.md."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I have a rate limiter that checks a counter before incrementing it. Under concurrent load, it's allowing more requests than the limit. My mutex is there but something is wrong.",
+      "expected_behavior": "Identify the check-then-act race: if GetCount() < limit is a separate lock from IncrementCount(), multiple goroutines can pass the check simultaneously before any of them increments. The fix is to put both the check and the increment inside a single Update(func(*State)) closure so they execute under one lock acquisition.",
+      "notes": "Rate limiter check-then-increment — Case 2 from SKILL.md (V2 evidence)."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Is it safe to call `Get()` on a mutex-wrapped struct and then immediately call `Set()` based on that value? Both methods lock the mutex.",
+      "expected_behavior": "No — not safe for compound mutations. Each call individually locks, but the sequence is not atomic. Between the Get's lock release and the Set's lock acquisition, another goroutine can modify the value. Safe only if Set is a pure replacement that doesn't depend on the value returned by Get.",
+      "notes": "'Get then Set — is this safe?' — explicit trigger signal in SKILL.md language signals section."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "I'm spawning 100 goroutines in a loop and none of them complete before my function returns. How do I wait for all goroutines to finish?",
+      "expected_behavior": "Activate structured-goroutine-lifetime: use sync.WaitGroup (wg.Add(1) before each goroutine, defer wg.Done() inside, wg.Wait() at the end) or errgroup. This is a goroutine lifetime management question, not a shared-state mutation question.",
+      "notes": "Goroutine lifetime — structured-goroutine-lifetime skill owns this, not mutex-closure."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "I have a simple page view counter — just an integer that gets incremented on every request. What's the right way to handle this concurrently?",
+      "expected_behavior": "For a simple integer counter in a hot path, atomic.AddInt64 is simpler, faster, and sufficient. The closure pattern is for struct types, multi-field mutations, or conditional logic. SKILL.md explicitly says: 'use sync/atomic for simple integer counters in hot paths'.",
+      "notes": "Simple atomic integer — SKILL.md explicitly recommends sync/atomic over the closure pattern for this case."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "I have two separate structs — inventory and order — that need to be updated atomically together. How do I do this with a mutex?",
+      "expected_behavior": "The closure pattern cannot span two separate mutexes safely (requires lock ordering to avoid deadlock). For cross-struct coordination, the right pattern is a database transaction or a channel-based unit-of-work. SKILL.md explicitly names this as a boundary case where the pattern does not apply.",
+      "notes": "Cross-struct atomicity — SKILL.md's 'Do not use when' explicitly covers this: 'The closure cannot span multiple mutexes safely'."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "`go test -race` passes but my test is flaky — sometimes it produces the right answer, sometimes it doesn't. Could this be a race condition even if the detector doesn't catch it?",
+      "expected_behavior": "Triggers the skill. Explain that the race detector only catches data races (unsynchronized memory access). A flaky test with individually-locked operations is a classic symptom of a logical race (lost update). Recommend writing a concurrent expected-value assertion test: run N goroutines × M operations and assert the final value equals N*M. This catches logical races the detector misses.",
+      "notes": "Flaky test passing race detector — core symptom of the logical race pattern. The 'race detector silent, test still wrong' fingerprint belongs to this skill."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "Should I use `sync.Map` for a concurrent map, or should I use a regular map with a mutex?",
+      "expected_behavior": "Edge case — sync.Map has specific use cases (read-heavy, mostly-stable key sets). For a concurrent map where you need to read a value and conditionally update it, a mutex with the closure pattern (Update(func(*map[string]T))) is safer because it makes the read-modify-write atomic. sync.Map's Load+Store is not atomic as a pair. Explain both options with their tradeoffs.",
+      "notes": "sync.Map vs mutex question — touches the closure pattern for conditional map updates but is a broader design question. The skill is partially relevant for the read-modify-write case."
+    }
+  ],
+  "minimum_pass_rate": 0.8
+}

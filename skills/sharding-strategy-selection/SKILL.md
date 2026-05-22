@@ -7,8 +7,8 @@ description: |
   Do NOT invoke when: the problem is read throughput only (use read replicas instead of sharding); the data fits comfortably on one node with replication (single-node first); you are choosing a replication topology (see `replication-topology-selection`); the question is about within-machine PostgreSQL table partitioning rather than cross-machine distribution.
 
   Key signals: "all writes are going to one node," "we're hitting write throughput limits," "do we use the timestamp or the user ID as the partition key," "consistent hashing vs. range sharding," "celebrity/hot key problem," "we need range queries but also even write distribution."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 7: Sharding"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 7: Sharding'
 tags: [sharding, partitioning, hot-spot, distributed-systems, scalability, partition-key]
 related_skills: [storage-engine-workload-selection, replication-topology-selection, consistency-model-selection]
 ---
@@ -34,7 +34,7 @@ Hot-key or load distribution concerns:
 >
 > — Kleppmann & Riccomini, Chapter 7: Sharding
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -50,7 +50,7 @@ Additional risks: automatic shard splitting under high load triggers an expensiv
 
 The guiding principle: identify the dominant query pattern first, then choose the partition key that makes that pattern cheap — explicitly accepting the cost to secondary patterns.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -68,7 +68,7 @@ The guiding principle: identify the dominant query pattern first, then choose th
 - **Conclusion:** Celebrity posts are handled separately: excluded from write-time materialization and merged at read time from a separate store, while non-celebrity posts use write-time fan-out.
 - **Result:** Write load distributes normally for non-celebrity users. Celebrity read-time merge adds latency to reads but eliminates the write-time hot key. The monitoring signal that triggers special-case handling is observing which keys have load an order of magnitude above average.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -94,39 +94,46 @@ The guiding principle: identify the dominant query pattern first, then choose th
 - Difference from `storage-engine-workload-selection`: Storage engine selection is about the on-disk data structure within a single shard (LSM vs B-tree vs columnar); sharding is about which machine holds which shard.
 - Difference from `consistency-model-selection`: Consistency is about what reads return relative to recent writes; sharding is about data placement. A sharded system still needs a consistency strategy, but the two decisions are separable.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Confirm that sharding is the right solution**
+
    - Completion criteria: Write throughput or data volume is confirmed to exceed single-node capacity after ruling out vertical scaling and read-replica scaling. If reads are the bottleneck, stop — use read replicas.
    - Stop condition: If a single node can handle the load with headroom, sharding adds complexity without benefit.
 
 2. **Enumerate the dominant query patterns**
+
    - List all access patterns the application requires. For each, note: does it require range queries on the candidate key? Point lookups only? Cross-entity aggregations?
    - Completion criteria: At least 2–3 query patterns are listed with relative frequency estimates. The dominant pattern (highest frequency or most latency-sensitive) is identified.
 
 3. **Evaluate key-range sharding against those query patterns**
+
    - Ask: Is the candidate partition key monotonically increasing (timestamp, auto-increment)? If yes, key-range sharding will create a hot spot on current data. Is range-scan capability on the key required? If yes, key-range preserves it.
    - Completion criteria: Hot-spot risk is assessed. If the key is monotonically increasing, key-range sharding is eliminated or a compound key prefix is designed.
 
 4. **Evaluate hash sharding and compound keys**
+
    - Hash the entity dimension (user ID, sensor ID, account ID) to distribute writes evenly. If range queries on a secondary dimension (time, sequence) are required within an entity, design a compound key: `(hash(entity_id), secondary_sort_key)`.
    - Completion criteria: The compound key design is written out. The queries that become scatter-gather under this scheme are identified explicitly.
 
 5. **Identify and handle hot keys separately**
+
    - Check whether any individual key (user, item, event) will have load orders of magnitude above average. If yes, design a per-key routing exception (separate store, read-time merge, key splitting with random suffix).
    - Completion criteria: The system has a monitoring hook to detect hot keys at runtime and a documented response (per-key routing, traffic shaping, or offline processing).
 
 6. **Choose a rebalancing strategy**
+
    - Do not use `hash(key) % N`. Use fixed number of shards (many more shards than nodes) with shard-to-node mapping, or consistent hashing. Pre-split shards at setup if key distribution is predictable.
    - Completion criteria: The rebalancing algorithm is named and the expected data movement on node add/remove is quantified (should be O(K/N), not O(K)).
 
 7. **Document the accepted trade-offs**
+
    - Write down which query patterns are efficient under the chosen scheme and which are scatter-gather. This is a design constraint, not a bug.
    - Completion criteria: The trade-off statement is reviewed by the team and included in the architecture decision record.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -153,7 +160,7 @@ The guiding principle: identify the dominant query pattern first, then choose th
 - **Consistent hashing** is a rebalancing algorithm (minimizes data movement on topology change), not a sharding strategy. It answers "how do I assign keys to shards when the cluster changes size?" not "should I use range or hash sharding?"
 - **Database table partitioning** (PostgreSQL PARTITION BY) is within-machine data management for query pruning and storage efficiency. It does not distribute data across machines. Engineers sometimes assume PostgreSQL partitioning solves their distributed scaling problem — it does not.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -161,7 +168,7 @@ The guiding principle: identify the dominant query pattern first, then choose th
 - **contrasts_with**: replication-topology-selection — sharding splits different data across nodes to scale write throughput and volume; replication copies the same data to multiple nodes for fault tolerance and read scaling; they are orthogonal decisions often applied together.
 - **composes_with**: consistency-model-selection — a sharded system distributes the consistency problem across shards; which operations require cross-shard linearizability (uniqueness checks, global quotas) must be determined using the consistency model selection framework.
 
----
+______________________________________________________________________
 
 ## Audit Information
 

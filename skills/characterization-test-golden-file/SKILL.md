@@ -6,10 +6,10 @@ description: Use when you need to establish a behavioral safety net around code 
 type: merged-skill
 source_skills:
   - slug: welc/welc-characterization-test
-    book: "Working Effectively with Legacy Code"
+    book: Working Effectively with Legacy Code
     author: Michael C. Feathers
   - slug: hashimoto/golden-files-update-flag
-    book: "Advanced Testing with Go"
+    book: Advanced Testing with Go
     author: Mitchell Hashimoto
 related_skills:
   - slug: welc/welc-characterization-test
@@ -58,18 +58,18 @@ Test-fixtures dirs:
 var update = flag.Bool("update", false, "update golden files")
 
 func TestAdd(t *testing.T) {
-    // … table (probably!)
-    for _, tc := range cases {
-        actual := doSomething(tc)
-        golden := filepath.Join("test-fixtures", tc.Name+".golden")
-        if *update {
-            ioutil.WriteFile(golden, actual, 0644)
-        }
-        expected, _ := ioutil.ReadFile(golden)
-        if !bytes.Equal(actual, expected) {
-            // FAIL
-        }
-    }
+	// … table (probably!)
+	for _, tc := range cases {
+		actual := doSomething(tc)
+		golden := filepath.Join("test-fixtures", tc.Name+".golden")
+		if *update {
+			ioutil.WriteFile(golden, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(golden)
+		if !bytes.Equal(actual, expected) {
+			// FAIL
+		}
+	}
 }
 ```
 
@@ -83,7 +83,7 @@ func TestAdd(t *testing.T) {
 
 **Convergence note:** Both authors independently discovered the same mechanism — let the code supply the expected value, inspect once at commit time, pin permanently — but from different starting problems. Feathers arrived at it from the change-safety problem in legacy OO code (2005); Hashimoto arrived at it from the assertion-maintainability problem in Go formatter testing (~2017). Feathers' manual fail-observe-pin builds comprehension of unknown behavior case-by-case; Hashimoto's `-update` flag automates expected-value capture and scales to hundreds of cases simultaneously.
 
----
+______________________________________________________________________
 
 ### I — Methodological Framework (Interpretation)
 
@@ -107,7 +107,7 @@ This inversion matters when you have no accessible specification — when intent
 | Output is a string/bytes blob                                           | Either — golden file is the natural container  | Yes                                         |
 | Output is a complex struct                                              | Either — add String() method first             | Yes                                         |
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -135,18 +135,18 @@ This inversion matters when you have no accessible specification — when intent
 var update = flag.Bool("update", false, "update golden files")
 
 func TestAdd(t *testing.T) {
-    // … table (probably!)
-    for _, tc := range cases {
-        actual := doSomething(tc)
-        golden := filepath.Join("test-fixtures", tc.Name+".golden")
-        if *update {
-            ioutil.WriteFile(golden, actual, 0644)
-        }
-        expected, _ := ioutil.ReadFile(golden)
-        if !bytes.Equal(actual, expected) {
-            // FAIL
-        }
-    }
+	// … table (probably!)
+	for _, tc := range cases {
+		actual := doSomething(tc)
+		golden := filepath.Join("test-fixtures", tc.Name+".golden")
+		if *update {
+			ioutil.WriteFile(golden, actual, 0644)
+		}
+		expected, _ := ioutil.ReadFile(golden)
+		if !bytes.Equal(actual, expected) {
+			// FAIL
+		}
+	}
 }
 ```
 
@@ -160,7 +160,7 @@ func TestAdd(t *testing.T) {
 
 **Convergence note:** Both authors independently discovered the same mechanism — let the code supply the expected value, inspect once at commit time, pin permanently — but from different starting problems. Feathers arrived at it from the change-safety problem in legacy OO code (2005); Hashimoto arrived at it from the assertion-maintainability problem in Go formatter testing (~2017). Feathers' manual fail-observe-pin builds comprehension of unknown behavior case-by-case; Hashimoto's `-update` flag automates expected-value capture and scales to hundreds of cases simultaneously.
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -184,7 +184,7 @@ This inversion matters when you have no accessible specification — when intent
 | Output is a string/bytes blob                                           | Either — golden file is the natural container  | Yes                                         |
 | Output is a complex struct                                              | Either — add String() method first             | Yes                                         |
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -198,7 +198,7 @@ This inversion matters when you have no accessible specification — when intent
 
 **Result:** Tests document that PageGenerator produces `""` on fresh creation and a specific XML string with a given row mapping. No bugs are intentionally fixed; the tests are a future regression detector and change-confidence mechanism.
 
----
+______________________________________________________________________
 
 ### Case 2: Terraform Graph — Golden Files for 2,000-Node DAG Output (Hashimoto)
 
@@ -210,7 +210,7 @@ This inversion matters when you have no accessible specification — when intent
 
 **Result:** HashiCorp adopted this as standard across Terraform, Consul, Vault, and Nomad. The pattern is now directly traceable to the Go standard library's `gofmt` test suite, where it originated.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -232,7 +232,7 @@ Instead of asking "how do I write tests for code I don't understand?" (Feathers 
 - The code has never been run in production and has no established behavior to characterize.
 - The expected output is small and stable enough to inline (a single string, a number, two lines of text).
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -254,8 +254,8 @@ Place this at the top of a `_test.go` file, outside any function. Create `test-f
 
 ```go
 func (g *Graph) String() string {
-    // canonical, deterministic human-readable representation
-    // sort any maps before iteration — output must be deterministic
+	// canonical, deterministic human-readable representation
+	// sort any maps before iteration — output must be deterministic
 }
 ```
 
@@ -272,10 +272,10 @@ golden := filepath.Join("test-fixtures", t.Name()+".golden")
 // That is the point.
 expected, err := os.ReadFile(golden)
 if err != nil {
-    t.Fatalf("missing golden file %s — run go test -update to create", golden)
+	t.Fatalf("missing golden file %s — run go test -update to create", golden)
 }
 if !bytes.Equal(actual, expected) {
-    t.Errorf("output mismatch:\ngot:\n%s\nwant:\n%s", actual, expected)
+	t.Errorf("output mismatch:\ngot:\n%s\nwant:\n%s", actual, expected)
 }
 ```
 
@@ -313,34 +313,34 @@ For multiple inputs or code paths, organize cases as a `map[string]struct{}` tab
 
 ```go
 func TestPageGenerator_Characterize(t *testing.T) {
-    cases := map[string]struct {
-        setup func(*PageGenerator)
-    }{
-        "fresh creation produces empty":     {setup: func(g *PageGenerator) {}},
-        "with row mapping produces xml":     {setup: func(g *PageGenerator) { g.AddRow("1.1", "vectrai") }},
-    }
+	cases := map[string]struct {
+		setup func(*PageGenerator)
+	}{
+		"fresh creation produces empty": {setup: func(g *PageGenerator) {}},
+		"with row mapping produces xml": {setup: func(g *PageGenerator) { g.AddRow("1.1", "vectrai") }},
+	}
 
-    for name, tc := range cases {
-        t.Run(name, func(t *testing.T) {
-            g := NewPageGenerator()
-            tc.setup(g)
-            actual := []byte(g.Generate())
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			g := NewPageGenerator()
+			tc.setup(g)
+			actual := []byte(g.Generate())
 
-            golden := filepath.Join("test-fixtures", name+".golden")
-            if *update {
-                if err := os.WriteFile(golden, actual, 0o644); err != nil {
-                    t.Fatalf("writing golden file: %s", err)
-                }
-            }
-            expected, err := os.ReadFile(golden)
-            if err != nil {
-                t.Fatalf("missing golden file %s — run go test -update to create", golden)
-            }
-            if !bytes.Equal(actual, expected) {
-                t.Errorf("%s: output mismatch\ngot:\n%s\nwant:\n%s", name, actual, expected)
-            }
-        })
-    }
+			golden := filepath.Join("test-fixtures", name+".golden")
+			if *update {
+				if err := os.WriteFile(golden, actual, 0o644); err != nil {
+					t.Fatalf("writing golden file: %s", err)
+				}
+			}
+			expected, err := os.ReadFile(golden)
+			if err != nil {
+				t.Fatalf("missing golden file %s — run go test -update to create", golden)
+			}
+			if !bytes.Equal(actual, expected) {
+				t.Errorf("%s: output mismatch\ngot:\n%s\nwant:\n%s", name, actual, expected)
+			}
+		})
+	}
 }
 ```
 
@@ -352,7 +352,7 @@ Run `go test ./...` (without `-update`) continuously during the refactor or rewr
 
 **Rewrite variant:** When using this technique to enable a full rewrite rather than an in-place refactor, ensure all tests exercise inputs and assert outputs at the public API boundary. Tests at internal state or private methods will not survive the rewrite. Tests at `result = component.Process(input)` boundaries will.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Failure Modes
 
@@ -378,7 +378,7 @@ Run `go test ./...` (without `-update`) continuously during the refactor or rewr
 
 Feathers says characterization tests are scaffolding for code you are about to change and warns against using them for code you are not about to touch. Hashimoto's golden-file pattern has no such constraint — it applies to any complex-output function, including stable production code, as a permanent fixture. These are not reconcilable by synthesis: they represent different views of when pinning is appropriate. Resolution via conditional: if the goal is change safety on unknown code (Feathers context), target the tests at the change boundary and plan to promote or delete them after the change. If the goal is assertion maintainability on stable complex output (Hashimoto context), the tests are permanent fixtures with no lifecycle constraint.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -388,7 +388,7 @@ Feathers says characterization tests are scaffolding for code you are about to c
 - **hashimoto/table-driven-named-cases** — composes-with: each map key in a table-driven characterization test maps to a distinct `.golden` filename; naming is what makes failing golden file comparisons immediately identifiable
 - **welc/welc-legacy-code-change-algorithm** — composes-with: characterization tests with golden files are the execution of Step 4 of the change algorithm
 
----
+______________________________________________________________________
 
 ## Audit Information
 

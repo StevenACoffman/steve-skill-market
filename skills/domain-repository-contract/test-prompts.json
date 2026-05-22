@@ -1,0 +1,111 @@
+{
+  "skill_id": "domain-repository-contract",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "ddd-golang/repository-interface-in-domain-package",
+    "go-with-the-domain/update-function-closure-repository"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm writing a Go service with DDD. The OrderRepository interface — should it go in the orders package or in a shared infrastructure package?",
+      "expected_behavior": "Skill explains that the interface must be declared inside the orders domain package (Boyle's placement rule): infrastructure imports domain, never vice versa. Method signatures use only domain types. The concrete adapter lives in the infrastructure package and imports orders.",
+      "expected_not": "Should not advise placing the interface in infrastructure/, storage/, or a shared ports/ package."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My repository interface has an UpdateHour method. Right now my handler calls repo.GetHour(ctx, id) and then repo.SaveHour(ctx, updatedHour) as two separate calls. Is this pattern okay?",
+      "expected_behavior": "Skill identifies the two-call fetch+save pattern as a concurrency hazard with no atomicity guarantee. It prescribes replacing the pattern with a closure-shaped mutation method: UpdateHour(ctx, id, func(*Hour) (*Hour, error)) error, with the concrete implementation owning the full transaction lifecycle.",
+      "expected_not": "Should not say the two-call pattern is acceptable or suggest wrapping it in a middleware transaction."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "A new engineer on my team asked where BeginTx should go in our repository design. Our interface needs to work with both PostgreSQL and an in-memory test double.",
+      "expected_behavior": "Skill explains that BeginTx belongs inside the concrete implementation, hidden behind the closure interface. The interface accepts updateFn closures; the application layer never holds or calls BeginTx. The in-memory adapter uses a mutex instead of a transaction but satisfies the same interface.",
+      "expected_not": "Should not suggest passing *sql.Tx as an interface parameter or managing transactions in HTTP/gRPC middleware."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I'm reviewing a PR where the domain service file has import 'myapp/infrastructure/postgres'. What is wrong and how do I fix it?",
+      "expected_behavior": "Skill identifies this as a reversed dependency direction: the domain is importing infrastructure. The fix is to locate the interface that caused this import, move it to the domain package, and update the concrete implementation in infrastructure/ to import domain instead.",
+      "expected_not": "Should not say the import direction is acceptable for convenience or suggest using build tags to hide it."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I need to write tests for my BookingRepository that prove transaction isolation works across a MySQL adapter and an in-memory adapter. What is the recommended approach?",
+      "expected_behavior": "Skill prescribes a shared parallel test function that accepts the Repository interface, runs 20+ concurrent goroutines attempting to mutate the same entity, and asserts exactly one succeeds. This function is run against both the in-memory adapter (unit) and the MySQL adapter (integration).",
+      "expected_not": "Should not suggest writing separate test suites per implementation or omitting concurrency from the test scenario."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "Should I use GORM or sqlx for my repository implementation in a Go DDD project?",
+      "expected_behavior": "This is an ORM/library selection question. Appropriate response is practical advice on ORM vs. query builder tradeoffs. The domain-repository-contract skill covers interface placement and mutation shape, not which persistence library to use in the implementation.",
+      "expected_not": "Should not invoke domain-repository-contract skill."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "How should I design my event sourcing setup? Should the aggregate emit events directly or go through a separate event store?",
+      "expected_behavior": "This is a CQRS/Event Sourcing architecture question. Appropriate response covers event store design, aggregate event emission patterns, and projection rebuilding. The domain-repository-contract skill covers state-based repository interfaces, not event-sourced aggregate design.",
+      "expected_not": "Should not invoke domain-repository-contract skill."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I'm planning a database migration from PostgreSQL to CockroachDB. What schema changes do I need to consider?",
+      "expected_behavior": "This is a database migration strategy question. Appropriate response covers schema compatibility, data type differences, and migration tooling. The domain-repository-contract skill covers interface design, not migration planning.",
+      "expected_not": "Should not invoke domain-repository-contract skill."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I'm building a CQRS system. The write side has a BookingRepository that returns full Booking aggregates. The read side returns BookingSummaryProjection objects — not domain entities. Should the closure-shaped mutation contract apply to the read-side repository too?",
+      "expected_behavior": "The mutation closure contract applies to read-modify-write operations on domain entities. Projections are read-only query artifacts — there is no mutation lifecycle to protect. The read-side query interface should use straightforward FindBy* methods returning projection types. A separate query-repository interface defined in the same domain package for the read model is acceptable and does not require closure-shaped methods. Boyle's placement rule still applies: the query interface belongs in the domain or application package, not in infrastructure.",
+      "decision_axis": "Scope-of-closure-pattern rule from Boundary section: the closure form applies to read-modify-write operations only; plain queries and inserts use straightforward methods."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "My aggregate spans three database tables (Order, OrderLine, ShippingAddress). Should I have three repository interfaces, one per table, so each adapter is simpler?",
+      "expected_behavior": "The skill prescribes one interface per aggregate root, not one per table. A single OrderRepository that internally joins all three tables is correct; three table-specific interfaces that callers must coordinate violate the aggregate boundary rule. The complexity of multi-table reconstitution belongs in the infrastructure adapter, not exposed as coordination responsibility to callers. The skill acknowledges it does not provide specific guidance for complex relational reconstitution, but the design principle is clear.",
+      "decision_axis": "One-interface-per-aggregate rule from the I (Interpretation) section; scope limitation note in the B (Boundary) section."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I want to define my UserRepository interface inside an internal/domain/user package to enforce compiler-level import restrictions. Is this compatible with the placement rule?",
+      "expected_behavior": "Yes, and it is the stronger enforcement. Placing the interface under internal/ means the Go compiler itself prevents cross-context imports, removing reliance on code review for the placement rule. The skill explicitly recommends internal/ enforcement when bounded context isolation is needed. The domain package under internal/domain/user is still the domain package — infrastructure packages outside the module cannot import it without a compiler error.",
+      "decision_axis": "internal/ enforcement note at the end of the E (Execution) section and the Boundary note that without internal/ enforcement the placement rule is advisory only."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm building a gym scheduling service in Go with DDD. I need to design the HourRepository interface — where does it go, and how do I handle concurrent updates to the same hour slot safely?",
+      "merged_advantage": "The merged skill answers both questions in a single coherent contract: the interface belongs in the hour domain package (Boyle), AND mutation methods must use the closure pattern to prevent concurrent write races (Three Dots Labs). It also connects them: the interface must be in the domain package precisely because the closure pattern must hide backend-specific transaction types behind an interface that works for MySQL, Firestore, and in-memory test doubles simultaneously.",
+      "source1_gap": "Boyle's placement rule alone tells the developer where the interface goes but leaves the mutation shape undefined. The developer may write a correct import graph but still implement a two-call fetch+save pattern with a concurrency gap.",
+      "source2_gap": "Three Dots Labs' closure pattern alone gives the developer the correct mutation shape but does not say which package the interface belongs in. The developer might place the interface near the implementation in infrastructure/, reversing the import direction."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our team's code review found that the PurchaseService calls purchaseRepo.Get(ctx, id), then modifies the Purchase struct, then calls purchaseRepo.Save(ctx, modified). The interface is correctly defined in the purchase domain package. Is this safe to ship?",
+      "merged_advantage": "The merged skill catches the incomplete application: the placement is correct (Boyle check passes) but the mutation shape is unsafe (Three Dots Labs check fails). The two-call fetch+save pattern has no atomicity guarantee; concurrent updates between the Get and Save calls produce lost writes. The merged skill's synthesis section explicitly identifies this as the 'correctly located interface with an unsafe mutation contract' failure mode and prescribes the fix.",
+      "source1_gap": "Boyle's source skill alone would confirm the interface is in the right package and not raise further concerns — the placement issue is resolved.",
+      "source2_gap": "Three Dots Labs' source skill alone prescribes the closure pattern but might be applied to a case where the placement issue is already fixed, missing the opportunity to identify which axis remains broken."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "During DI wiring in main.go, a developer asks: 'Should the UserRepository interface go in the user package, and does it matter what types the method signatures use?'",
+      "merged_advantage": "The merged skill affirms both: the interface goes in the user domain package (Boyle), and method signatures must use only domain types — not infrastructure types like *pgx.Conn or *mongo.Collection, and not CRUD verbs (Three Dots Labs reinforces domain language naming). It also covers the DI wiring pattern: the concrete implementation is assigned to the interface type in main.go.",
+      "source1_gap": "Boyle's placement rule specifies the package but does not detail the type vocabulary rules for method signatures beyond 'use domain types.'",
+      "source2_gap": "Three Dots Labs' closure pattern focuses on the mutation method shape and does not address the general question of where the interface belongs during DI wiring."
+    }
+  ]
+}

@@ -6,10 +6,10 @@ description: Use this skill when a team has implemented the four golden signals 
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/four-golden-signals-monitoring
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: reliability-engineering-mindset/sli-4-stage-evolution
-    book: "Reliability Engineering Mindset"
+    book: Reliability Engineering Mindset
     author: Alex Ewerlöf
 related_skills:
   - slug: site-reliability-engineering/four-golden-signals-monitoring
@@ -49,7 +49,7 @@ Alert / SLO config files:
 
 **Convergence note:** Both sources independently identify the symptom-vs-cause distinction as the central principle: alert on user-visible failures, not internal system state. The SRE book presents this as the rationale for the four golden signals (symptom-level metrics vs. CPU/memory debugging metrics). Ewerlöf presents the same principle as the Stage 1-to-Stage 3 advancement: golden signals without consumer task mapping are Stage 1 SLIs with poor signal-to-noise that should not drive on-call alerting. The productive tension is that the SRE book says golden signals = "at least decently covered"; Ewerlöf says golden signals = Stage 1 baseline that is "likely inadequate for on-call." The SRE book's own cases (Bigtable, Gmail) are Stage 1 failure modes that Ewerlöf's model explicitly predicts.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -87,7 +87,7 @@ The SRE book's Bigtable case (mean latency producing noise) and Gmail case (caus
 
 The GitHub 2018 case (no analog in the SRE book) demonstrates the most important Stage 1 limitation: data correctness failures are invisible to all four golden signals. Availability showed green throughout a 24-hour data inconsistency incident. No golden signal — latency, traffic, errors, saturation — would have detected this failure because the service was technically "responding correctly" while consumers received stale and inconsistent data. This gap is not a corner case; it is structural to golden-signal monitoring.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -109,7 +109,7 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 
 **Convergence note:** Both sources independently identify the symptom-vs-cause distinction as the central principle: alert on user-visible failures, not internal system state. The SRE book presents this as the rationale for the four golden signals (symptom-level metrics vs. CPU/memory debugging metrics). Ewerlöf presents the same principle as the Stage 1-to-Stage 3 advancement: golden signals without consumer task mapping are Stage 1 SLIs with poor signal-to-noise that should not drive on-call alerting. The productive tension is that the SRE book says golden signals = "at least decently covered"; Ewerlöf says golden signals = Stage 1 baseline that is "likely inadequate for on-call." The SRE book's own cases (Bigtable, Gmail) are Stage 1 failure modes that Ewerlöf's model explicitly predicts.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -147,7 +147,7 @@ The SRE book's Bigtable case (mean latency producing noise) and Gmail case (caus
 
 The GitHub 2018 case (no analog in the SRE book) demonstrates the most important Stage 1 limitation: data correctness failures are invisible to all four golden signals. Availability showed green throughout a 24-hour data inconsistency incident. No golden signal — latency, traffic, errors, saturation — would have detected this failure because the service was technically "responding correctly" while consumers received stale and inconsistent data. This gap is not a corner case; it is structural to golden-signal monitoring.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -165,7 +165,7 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 - **Conclusion:** Data correctness is a consumer task dimension that golden signals cannot measure. Availability, latency, and error rate all show normal values while consumers experience incorrect data.
 - **Result:** The prescription is Stage 3 SLI design for services with correctness requirements: identify the consumer task (read consistent data), define the failure mode (data staleness or inconsistency), and build the SLI formula around the task failure, not the system response code.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -186,7 +186,7 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 - "The service looks fine but something is clearly wrong"
 - "CPU is spiking — should we page on that?" (cause-based alerting instinct)
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -195,15 +195,17 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 2. **Audit existing alerts against the symptom vs. cause distinction.** For each alert rule: is this a symptom (user-visible failure) or a cause (internal system state)? All cause-oriented alerts (CPU, memory, queue depth, connection pool size) are removed from the paging layer and placed in debugging dashboards. Completion criterion: no alert pages on a cause metric.
 
 3. **Classify the current SLI stage.** For each SLI:
+
    - Stage 1: metric is a golden signal applied without consumer input.
    - Stage 2: consumer has been identified and named; metric is scoped to their usage; no task-level failure analysis.
    - Stage 3: consumer tasks enumerated; failure modes at the usage-task interface identified; metric fires when consumer task fails.
    - Stage 4: each failure has explicit Business Impact; SLI investment prioritized by bottom-line cost.
-   If Stage 1 or 2: do not use for on-call alerting. Document as monitoring metric only.
+     If Stage 1 or 2: do not use for on-call alerting. Document as monitoring metric only.
 
 4. **Evaluate whether Stage 3 advancement is required.** For simple request-response APIs with a single identifiable consumer class and no correctness requirements: Stage 1 golden signals may be sufficient. For services with: complex consumer tasks, data correctness requirements, multiple consumer classes, batch/streaming workloads, or any service where users regularly report problems not visible on the dashboard — Stage 3 advancement is required before on-call alerting is worthwhile.
 
 5. **Advance to Stage 3 for on-call-worthy SLIs.** For each consumer class:
+
    - Identify who actually uses the service and what tasks they use it to accomplish.
    - For each task, identify how the service can fail the consumer: not just response codes, but data correctness, staleness, partial availability, and task-level failures.
    - Construct the SLI formula as `good_task_executions / valid_task_executions`.
@@ -211,7 +213,7 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 
 6. **Validate on-call worthiness.** For each alert rule, the team must answer: "If this fires at 3am, is it urgent, actionable, and definitely a user-visible failure that cannot wait until morning?" If any alert has a rote algorithmic response, either automate the response or fix the root cause — the page should not exist.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -239,7 +241,7 @@ The GitHub 2018 case (no analog in the SRE book) demonstrates the most important
 - The monitoring goal is debugging a known problem. Cause-oriented metrics (CPU, queue depth) are the right tools for debugging — they belong in dashboards, not in the paging layer.
 - The team has no SLIs at all. Start with Stage 1 golden signals to establish a baseline; then advance. Do not skip Stage 1 — it provides the historical data needed for Stage 3 calibration.
 
----
+______________________________________________________________________
 
 ## Related Skills
 

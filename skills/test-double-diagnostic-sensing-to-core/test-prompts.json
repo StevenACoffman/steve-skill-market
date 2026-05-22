@@ -1,0 +1,111 @@
+{
+  "skill_id": "test-double-diagnostic-sensing-to-core",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "welc/welc-sensing-vs-separation",
+    "fcis/fcis-mocks-as-architecture-signal"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I have a class that calculates shipping costs, but I can't even run it in a test — the constructor immediately opens a live connection to our rate-provider API. How do I approach getting this under test?",
+      "expected_behavior": "Diagnose the blocking axis: this is a separation problem — the class cannot be constructed in a test without live infrastructure. Fix separation first (sensing is irrelevant until the class can be instantiated). Apply the minimum fix: parameterize the constructor — make the API client a constructor argument instead of a hard-coded internal creation. Inject a null or minimal fake implementation for tests. Then apply the purity test: does the rate-provider API return data (rate values) or perform I/O? It returns data used in pure calculation. Signal: the calculation that applies those rates is a core candidate — consider inverting the dependency by passing the rate values directly as arguments, eliminating the collaborator entirely from the shipping cost class.",
+      "expected_not": "Should not immediately reach for Extract Interface without diagnosing the separation axis first. Should not treat the constructor-parameterization as the final architectural state without applying the purity test to determine whether the API collaborator should be inverted."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My class instantiates fine in tests, but when I call its process() method I can't tell what it did — it calls auditLog.record() and I have no way to assert whether the right audit entry was written. How do I fix this?",
+      "expected_behavior": "Diagnose the blocking axis: the class constructs fine (no separation problem). The effect is invisible to test assertions — this is a sensing problem. Apply the dominant sensing technique: introduce a recording fake for auditLog that stores every call and argument. Assert against the recorded calls. Then apply the purity test: does auditLog.record() return data or perform I/O? Audit logging is genuine I/O (writing to an audit store, potentially a file or database). The recording fake is the correct permanent test tool — this is shell behavior. The fake is the final shape for the audit log dependency.",
+      "expected_not": "Should not diagnose this as a separation problem. Should not prescribe eliminating the recording fake after confirming audit logging is genuine I/O. Should not conflate sensing with separation before diagnosing."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I have a test suite with 40 mock setups in the beforeEach block. Every test requires configuring mocks for a UserRepository, an EmailService, a FeatureFlags service, and a MetricsCollector before I can test a single behavior. The tests are brittle and break on every refactor. What's going on architecturally?",
+      "expected_behavior": "Apply Bernhardt's architecture signal reading: mock count is a readout of how many collaborators the production code reaches out to. 40 mock setups indicates the production code has many collaborators, all of which are tangled into the unit under test. Apply the purity test to each: UserRepository (data fetch) — the data returned is a core candidate; invert to value argument. EmailService — genuine I/O; recording fake is permanent but logic deciding which email to send should be in core. FeatureFlags (returns boolean values) — pure data; invert to value arguments (pass the flag values directly). MetricsCollector — genuine I/O; permanent shell behavior. After inversions, mock count collapses: only genuine-I/O collaborators need doubles. Brittle tests caused by implementation-coupled mocks is a symptom of production code reaching out for data rather than receiving data as arguments.",
+      "expected_not": "Should not recommend improving mock tooling or switching to a different mocking library as the solution. Should not leave all 40 mocks in place after the purity test has identified which should be inverted."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I introduced a recording fake for a TaxCalculator collaborator. The fake returns a pre-configured TaxResult struct. Tests pass. A colleague says 'this fake should stay — it documents the boundary.' I'm not sure. How do I decide?",
+      "expected_behavior": "Apply the purity test: is TaxCalculator returning pure data (TaxResult struct with no side effects) or performing I/O? If TaxCalculator is a pure calculation — takes prices and jurisdiction values, returns a TaxResult — then it returns pure data. Apply the core-candidate signal: could the code under test receive a TaxResult as a value argument instead of calling TaxCalculator directly? If yes, invert the dependency. The code under test becomes a pure function that accepts TaxResult as input. TaxCalculator moves to where it is called from — the shell or the caller. The recording fake disappears — there is nothing left to fake. The colleague's 'documents the boundary' argument is correct for genuine-I/O collaborators; for pure-data collaborators, the boundary documentation should be the function signature, not the fake.",
+      "expected_not": "Should not accept 'it documents the boundary' as a sufficient reason to keep a fake over a pure-data collaborator. Should not eliminate fakes over genuine-I/O collaborators."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I'm writing tests for a class that both can't construct without a database connection AND can't have its effects observed (it writes results to the database). How do I approach both problems?",
+      "expected_behavior": "Diagnose both axes explicitly before choosing any technique. Both separation and sensing are blocked. Fix order is mandatory: separation first (cannot sense effects from a class that won't construct). Separation fix: parameterize the database dependency as a constructor argument; inject an in-memory fake repository that doesn't require a live database. Sensing fix (after separation is resolved): the fake repository should be a recording fake that stores every write call so tests can assert on what was written. Apply the purity test to the repository fake: database writes are genuine I/O. The recording fake is the correct permanent test tool. Adjacent computation (deciding what to write) may be a core candidate — extract if mixed in.",
+      "expected_not": "Should not attempt sensing before separation — the class can't even run in the test environment yet. Should not treat the two axes as interchangeable or solve them simultaneously."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to verify that my Go HTTP handler returns a 404 status code when the requested resource doesn't exist. Should I use httptest.NewRecorder() or httptest.NewServer()?",
+      "expected_behavior": "A direct answer about Go's net/http/httptest package: httptest.NewRecorder() is for unit-testing handlers directly without a real HTTP server (captures response without network); httptest.NewServer() spins up a real local HTTP server for integration tests. For verifying a single handler's status code in isolation, httptest.NewRecorder() is the right choice. This is a standard library selection question.",
+      "expected_not": "Should not invoke test-double-diagnostic-sensing-to-core — the question is about which httptest API to use, not about diagnosing which testing axis is blocking access or whether a collaborator is pure-data or genuine-I/O."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "What's the correct way to configure testcontainers-go to spin up a Postgres container for integration tests and clean it up after the test suite finishes?",
+      "expected_behavior": "A direct answer about testcontainers-go: use testcontainers.GenericContainer with a postgres image, defer container.Terminate() in TestMain, and use the container's mapped port for the DSN. This is a test infrastructure configuration question for integration tests.",
+      "expected_not": "Should not invoke test-double-diagnostic-sensing-to-core — the user explicitly wants real Postgres for integration tests, which is the boundary where this skill explicitly does not apply ('Integration tests by design: some tests are supposed to run against real infrastructure')."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "Which is better for mocking in Go: testify/mock or gomock? Our team is debating which library to standardize on.",
+      "expected_behavior": "A comparison of testify/mock vs. gomock: testify/mock uses stretchr/testify conventions and is more idiomatic for teams already using testify; gomock uses code generation (mockgen) and provides stricter call ordering verification. This is a test tooling selection question. The choice depends on whether the team wants generated mocks or hand-written ones and whether call-ordering verification is needed.",
+      "expected_not": "Should not invoke test-double-diagnostic-sensing-to-core — this is a tooling selection question, not a question about which testing axis is blocking a test or whether a collaborator's mock should be permanent or eliminated."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I introduced a recording fake for a StructuredLogger that writes to a log file. I need to sense its output — I need to assert that specific log messages were recorded with the right fields. But logging is also genuine I/O. Is the fake permanent or is it a refactoring prompt?",
+      "expected_behavior": "This is the logger-as-both-sensing-and-I/O edge case. The purity test conditional appears to fire in both directions. Resolve it correctly: the recording fake is introduced to solve a sensing problem (the log output is not visible to test assertions). Apply the purity test: StructuredLogger.Info() performs I/O (file write, potentially structured output). It does NOT return pure data. The fake is the correct permanent test tool for the sensing axis. The fact that the fake also captures output for assertions is the correct design — the recording fake solves the sensing problem over genuine shell I/O. This is NOT a refactoring prompt toward the functional core. The distinction: pure-data collaborators return values the code under test computes WITH; genuine-I/O collaborators (even if sensed) are things the code communicates TO. Logger falls in the second category.",
+      "decision_axis": "Phase 1 Step 4 conditional: 'If data: this is the two-zone signal... If I/O: this is genuine shell behavior. The fake is the correct permanent test tool.' Logger writes are I/O despite being sensed via a recording fake. The sensing need does not change the I/O classification of the collaborator."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I'm trying to test a class that calls a pure value object — a Money class with no external dependencies. I wrote a stub that returns Money(100, 'USD'). The test passes. Is this fine?",
+      "expected_behavior": "Apply the purity test: is Money a pure value object? Yes — a data carrier with no external dependencies. Apply the Boundaries explicit rule: 'If the thing being mocked is a pure value object (data carrier, domain object, no external dependencies) — use the real object. There is no reason to mock a pure value. Replace the mock with the real thing.' The stub exists because the test was written hastily, not because a stub was needed. Neither separation nor sensing is actually blocked by Money — it constructs trivially and returns visible values. The stub is solving neither problem and suppresses the architecture signal. Replace with real Money(100, 'USD') and remove the stub.",
+      "decision_axis": "Purity test third branch: 'Is the thing being mocked a pure value object? If yes: use the real object.' This is Bernhardt's lone-stub case — the stub is unnecessary indirection, not a legitimate test double."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I have a class with five independent sensing problems — it calls a logger, an event bus, a cache write, an analytics tracker, and a notification sender. All five are genuine I/O. I can break all five seams, but now my test setup is enormous. Is there a better approach?",
+      "expected_behavior": "This triggers the Source A Failure: 'Multiple simultaneous sensing problems: a class may have N independent sensing points; the framework correctly names the axis but doesn't address prioritization when multiple sensing points exist.' The skill should surface this limitation honestly. The correct response has two parts: (1) the five recording fakes are each individually legitimate for genuine I/O — the purity test does not eliminate them; (2) but five simultaneous sensing points on one class is itself an architectural signal — the class has too many responsibilities. Apply the Fowler smell: this may be a Divergent Change candidate or a class with too many reasons to change. The correct treatment is not to improve the mock setup — it is to ask whether the class should be smaller. Some of the responsibilities may be extractable to sub-units that are each independently testable with one or two sensing points.",
+      "decision_axis": "Source A failure: 'Multiple simultaneous sensing problems: a class may have N independent sensing points — the framework correctly names the axis but doesn't address prioritization.' The skill must both apply the diagnosis correctly (all five fakes are legitimate) AND flag the architectural signal that five sensing points implies (the class may need restructuring)."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I have a test double over a database ORM's query method. The ORM returns User domain objects. My tests pass with the fake. My architect says 'keep the seam, it's working.' My tech lead says 'this mock is a code smell, we should eliminate it.' Who's right, and what's the correct architectural move?",
+      "merged_advantage": "The merged skill resolves this disagreement with the purity test conditional that neither source alone provides. The ORM query is genuine I/O (database read), which means the fake is a permanent legitimate test tool — the architect is correct that the seam should stay. But the tech lead is also partially correct: if the code that processes the returned User objects contains pure computation (business rules, calculations, transformations), that computation should be extracted to the functional core as a value function that takes User as an argument. The mock stays; the logic around it moves. Neither source alone encodes this differentiated resolution.",
+      "source1_gap": "welc-sensing-vs-separation says 'tests pass = success' and supports keeping the seam permanently without asking whether adjacent pure computation should be extracted to the core. It does not provide the purity test that distinguishes data-returning from I/O-performing collaborators.",
+      "source2_gap": "fcis-mocks-as-architecture-signal treats mocks as temporary symptoms to be resolved by architectural refactoring — it would push toward eliminating the ORM mock entirely, which is incorrect for genuine database I/O. It does not encode the conditional that permanent mocks over genuine I/O are the correct final state."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm classifying 30 test doubles in our existing test suite as part of a test health audit. I want to determine which are in the right place architecturally and which represent refactoring opportunities. How do I systematically classify them?",
+      "merged_advantage": "The merged skill provides the only complete classification framework for this audit. For each double: Step 1 — identify which axis it was introduced for (Feathers: separation or sensing). Step 2 — apply the purity test (Bernhardt): pure data → invert and eliminate; genuine I/O → permanent; pure value object → replace with real object. This produces a four-category classification for all 30 doubles: (a) legitimate permanent sensing fakes over genuine I/O, (b) refactoring prompts over pure-data collaborators, (c) unnecessary mocks over pure value objects, (d) separation stubs that remain correct. Neither source alone produces this four-category output.",
+      "source1_gap": "welc-sensing-vs-separation classifies each double by which axis it addresses (sensing vs. separation) but does not provide a mechanism for evaluating whether a double in the right testing position is in the right architectural position — it treats all passing-test doubles as equivalently valid.",
+      "source2_gap": "fcis-mocks-as-architecture-signal treats all mocks as architectural signals toward elimination, which is too aggressive — it does not distinguish between mocks over genuine I/O (which should stay) and mocks over pure-data collaborators (which are refactoring prompts). Applied alone, it would prescribe eliminating legitimate sensing fakes over real I/O."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "I've just introduced a recording fake for a NotificationRouter that takes a user ID and a notification type and returns the list of channels (email, SMS, push) to use. The fake returns ['email', 'sms']. Tests pass. Is this the right final shape?",
+      "merged_advantage": "The merged skill applies the purity test and resolves this definitively: NotificationRouter.route(userId, notificationType) returns pure data (a list of channel strings) — no I/O, no external state mutation. This is a core candidate. The recording fake is a refactoring prompt, not a permanent solution. The merged skill prescribes: invert the dependency — pass the channel list as a value argument to the code under test instead of having it call NotificationRouter directly. The fake disappears. The routing logic (which channels for which notification types) becomes a pure function testable independently. The code under test becomes a pure function that receives channels and processes notifications through them. Only the merged skill encodes both the diagnosis (recording fake over pure-data collaborator = refactoring prompt) and the prescription (invert to value argument, eliminate the fake).",
+      "source1_gap": "welc-sensing-vs-separation identifies the recording fake as the correct sensing technique and would stop at 'tests pass' — it does not evaluate whether the collaborator returns pure data that signals a refactoring opportunity.",
+      "source2_gap": "fcis-mocks-as-architecture-signal would flag the mock as an architectural signal but does not provide Feathers' axis diagnostic to confirm which problem the fake was solving, and does not give the inversion prescription step-by-step (parameterize, extract, eliminate)."
+    }
+  ]
+}

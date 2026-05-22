@@ -28,7 +28,7 @@ tags: []
 Current branch:
 !`git branch --show-current 2>/dev/null`
 
-Functional option functions (With*):
+Functional option functions (With\*):
 !`grep -rn 'func With[A-Z]' --include='*.go' . 2>/dev/null | grep -v '_test.go' | head -10`
 
 Config/Options structs:
@@ -48,7 +48,7 @@ Config/Options structs:
 
 **Convergence note:** Both sources agree that functional options are not the universal default and that the config struct is the right choice for internal or stable APIs with known options; Tebeka uniquely adds that per-option error validation (`func(*T) error` return type) is functional options' decisive advantage for APIs with complex option-specific validation requirements, while rednafi uniquely introduces the dysfunctional options pattern (method chaining on `*config`) as a superior alternative for most external API cases, supported by a ~76× performance benchmark and IDE discoverability argument.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -68,7 +68,7 @@ Three Go option patterns, ranked by simplicity. The critical disagreement betwee
 
 **Convergence note:** Both sources agree that functional options are not the universal default and that the config struct is the right choice for internal or stable APIs with known options; Tebeka uniquely adds that per-option error validation (`func(*T) error` return type) is functional options' decisive advantage for APIs with complex option-specific validation requirements, while rednafi uniquely introduces the dysfunctional options pattern (method chaining on `*config`) as a superior alternative for most external API cases, supported by a ~76× performance benchmark and IDE discoverability argument.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -79,8 +79,13 @@ Three Go option patterns, ranked by simplicity. The critical disagreement betwee
 Export `Config` with public fields. Provide `NewConfig(required)` setting defaults. Callers set optional fields directly with named field syntax.
 
 ```go
-type Style struct { Fg, Bg string; Und bool }
+type Style struct {
+	Fg, Bg string
+	Und    bool
+}
+
 func NewStyle(fg, bg string) *Style { return &Style{Fg: fg, Bg: bg} }
+
 // Caller: s := NewStyle("red", "blue"); s.Und = true
 ```
 
@@ -94,7 +99,7 @@ Standard library precedent: `bufio.NewReader`, `bufio.NewWriter`. Breaks only if
 
 ```go
 func NewConfig(foo, bar string) *config {
-    return &config{foo: foo, bar: bar, fizz: 10, bazz: 100}
+	return &config{foo: foo, bar: bar, fizz: 10, bazz: 100}
 }
 func (c *config) WithFizz(fizz int) *config { c.fizz = fizz; return c }
 func (c *config) WithBazz(bazz int) *config { c.bazz = bazz; return c }
@@ -114,19 +119,24 @@ The name "dysfunctional options" is rednafi's coinage — this is Go's idiomatic
 
 ```go
 type Option func(*Server) error
+
 func WithPort(p int) Option {
-    return func(s *Server) error {
-        if p < 1 || p > 65535 { return fmt.Errorf("invalid port %d", p) }
-        s.port = p
-        return nil
-    }
+	return func(s *Server) error {
+		if p < 1 || p > 65535 {
+			return fmt.Errorf("invalid port %d", p)
+		}
+		s.port = p
+		return nil
+	}
 }
 func NewServer(opts ...Option) (*Server, error) {
-    s := &Server{port: 8080, host: "localhost"}
-    for _, opt := range opts {
-        if err := opt(s); err != nil { return nil, err }
-    }
-    return s, nil
+	s := &Server{port: 8080, host: "localhost"}
+	for _, opt := range opts {
+		if err := opt(s); err != nil {
+			return nil, err
+		}
+	}
+	return s, nil
 }
 ```
 
@@ -151,7 +161,7 @@ How many options? Are they stable?
         └── No → dysfunctional options / method chaining (Pattern 2) [rednafi]
 ```
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -171,7 +181,7 @@ In a second case (ce16), a library using `opts ...func(*Config)` gives users no 
 
 **Domain:** Library API design and IDE tooling. **What this demonstrates:** For the common case where callers do not need composable option slices and options do not require per-option error validation, dysfunctional options are faster, more discoverable, and require no closure allocation.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger ★
 
@@ -188,7 +198,7 @@ Instead of "functional options or config struct," use this skill when:
 
 **Not this skill when:** the question is about wiring services together (that is manual dependency injection); the question is about interface design (that is consumer-side interface placement); the API has no optional configuration.
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -217,10 +227,11 @@ If **no**: use dysfunctional options (Pattern 2). Follow rednafi's implementatio
 
 ```go
 func NewConfig(foo, bar string) *config {
-    return &config{foo: foo, bar: bar, fizz: 10, bazz: 100}
+	return &config{foo: foo, bar: bar, fizz: 10, bazz: 100}
 }
 func (c *config) WithFizz(fizz int) *config { c.fizz = fizz; return c }
 func (c *config) WithBazz(bazz int) *config { c.bazz = bazz; return c }
+
 // Usage: src.NewConfig("hello", "world").WithFizz(1).WithBazz(2)
 ```
 
@@ -230,19 +241,24 @@ Completion: IDE shows `WithFizz`, `WithBazz` as method completions on the factor
 
 ```go
 type Option func(*T) error
+
 func WithPort(p int) Option {
-    return func(t *T) error {
-        if p < 1 || p > 65535 { return fmt.Errorf("port out of range: %d", p) }
-        t.port = p
-        return nil
-    }
+	return func(t *T) error {
+		if p < 1 || p > 65535 {
+			return fmt.Errorf("port out of range: %d", p)
+		}
+		t.port = p
+		return nil
+	}
 }
 func NewT(opts ...Option) (*T, error) {
-    t := &T{port: 8080}  // defaults
-    for _, opt := range opts {
-        if err := opt(t); err != nil { return nil, err }
-    }
-    return t, nil
+	t := &T{port: 8080} // defaults
+	for _, opt := range opts {
+		if err := opt(t); err != nil {
+			return nil, err
+		}
+	}
+	return t, nil
 }
 ```
 
@@ -252,12 +268,13 @@ Completion: each option validates at call time; error attribution identifies the
 
 ```go
 func NewStyle(fg, bg string) *Style { return &Style{Fg: fg, Bg: bg} }
+
 // Callers: s := NewStyle("red", "blue"); s.Und = true
 ```
 
 Completion: named fields visible in IDE; zero closures, zero indirection.
 
----
+______________________________________________________________________
 
 ## B — Boundary
 

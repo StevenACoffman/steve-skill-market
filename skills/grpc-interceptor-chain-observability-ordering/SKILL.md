@@ -13,10 +13,10 @@ description: >
 type: merged-skill
 source_skills:
   - slug: grpc-go-for-professionals/grpc-interceptor-composition
-    book: "gRPC Go for Professionals"
+    book: gRPC Go for Professionals
     author: Clément Jean
   - slug: grpc-up-and-running/grpc-observability-three-pillar
-    book: "gRPC: Up and Running"
+    book: 'gRPC: Up and Running'
     author: Kasun Indrasiri and Danesh Kuruppu
 related_skills:
   - slug: grpc-go-for-professionals/grpc-interceptor-composition
@@ -85,19 +85,19 @@ Note: OTel uses the stats handler API, not the interceptor API, because it needs
 
 ```go
 s := grpc.NewServer(
-    grpc.StatsHandler(otelgrpc.NewServerHandler()),  // OTel — outside the chain
-    grpc.ChainUnaryInterceptor(
-        rateLimitInterceptor,
-        authInterceptor,
-        grpcMetrics.UnaryServerInterceptor(),
-        grpc_zap.UnaryServerInterceptor(zapLogger),
-    ),
-    grpc.ChainStreamInterceptor(
-        rateLimitStreamInterceptor,
-        authStreamInterceptor,
-        grpcMetrics.StreamServerInterceptor(),
-        grpc_zap.StreamServerInterceptor(zapLogger),
-    ),
+	grpc.StatsHandler(otelgrpc.NewServerHandler()), // OTel — outside the chain
+	grpc.ChainUnaryInterceptor(
+		rateLimitInterceptor,
+		authInterceptor,
+		grpcMetrics.UnaryServerInterceptor(),
+		grpc_zap.UnaryServerInterceptor(zapLogger),
+	),
+	grpc.ChainStreamInterceptor(
+		rateLimitStreamInterceptor,
+		authStreamInterceptor,
+		grpcMetrics.StreamServerInterceptor(),
+		grpc_zap.StreamServerInterceptor(zapLogger),
+	),
 )
 pb.RegisterYourServiceServer(s, &yourServer{})
 grpcMetrics.InitializeMetrics(s)
@@ -154,19 +154,19 @@ Note: OTel uses the stats handler API, not the interceptor API, because it needs
 
 ```go
 s := grpc.NewServer(
-    grpc.StatsHandler(otelgrpc.NewServerHandler()),  // OTel — outside the chain
-    grpc.ChainUnaryInterceptor(
-        rateLimitInterceptor,
-        authInterceptor,
-        grpcMetrics.UnaryServerInterceptor(),
-        grpc_zap.UnaryServerInterceptor(zapLogger),
-    ),
-    grpc.ChainStreamInterceptor(
-        rateLimitStreamInterceptor,
-        authStreamInterceptor,
-        grpcMetrics.StreamServerInterceptor(),
-        grpc_zap.StreamServerInterceptor(zapLogger),
-    ),
+	grpc.StatsHandler(otelgrpc.NewServerHandler()), // OTel — outside the chain
+	grpc.ChainUnaryInterceptor(
+		rateLimitInterceptor,
+		authInterceptor,
+		grpcMetrics.UnaryServerInterceptor(),
+		grpc_zap.UnaryServerInterceptor(zapLogger),
+	),
+	grpc.ChainStreamInterceptor(
+		rateLimitStreamInterceptor,
+		authStreamInterceptor,
+		grpcMetrics.StreamServerInterceptor(),
+		grpc_zap.StreamServerInterceptor(zapLogger),
+	),
 )
 pb.RegisterYourServiceServer(s, &yourServer{})
 grpcMetrics.InitializeMetrics(s)
@@ -191,15 +191,15 @@ grpcMetrics := grpc_prometheus.NewServerMetrics()
 zapLogger, _ := zap.NewProduction()
 
 s := grpc.NewServer(
-    grpc.StatsHandler(otelgrpc.NewServerHandler()),
-    grpc.ChainUnaryInterceptor(
-        grpcMetrics.UnaryServerInterceptor(),
-        grpc_zap.UnaryServerInterceptor(zapLogger),
-    ),
-    grpc.ChainStreamInterceptor(
-        grpcMetrics.StreamServerInterceptor(),
-        grpc_zap.StreamServerInterceptor(zapLogger),
-    ),
+	grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	grpc.ChainUnaryInterceptor(
+		grpcMetrics.UnaryServerInterceptor(),
+		grpc_zap.UnaryServerInterceptor(zapLogger),
+	),
+	grpc.ChainStreamInterceptor(
+		grpcMetrics.StreamServerInterceptor(),
+		grpc_zap.StreamServerInterceptor(zapLogger),
+	),
 )
 pb.RegisterProductInfoServer(s, &productInfoServer{})
 grpcMetrics.InitializeMetrics(s)
@@ -252,19 +252,19 @@ Instead of applying the chain composition rules (Go for Professionals) or the ob
 
    ```go
    s := grpc.NewServer(
-       grpc.StatsHandler(otelgrpc.NewServerHandler()),
-       grpc.ChainUnaryInterceptor(
-           rateLimitInterceptor,
-           authInterceptor,                          // auth before metrics — critical
-           grpcMetrics.UnaryServerInterceptor(),
-           grpc_zap.UnaryServerInterceptor(zapLogger),
-       ),
-       grpc.ChainStreamInterceptor(
-           rateLimitStreamInterceptor,
-           authStreamInterceptor,
-           grpcMetrics.StreamServerInterceptor(),
-           grpc_zap.StreamServerInterceptor(zapLogger),
-       ),
+   	grpc.StatsHandler(otelgrpc.NewServerHandler()),
+   	grpc.ChainUnaryInterceptor(
+   		rateLimitInterceptor,
+   		authInterceptor, // auth before metrics — critical
+   		grpcMetrics.UnaryServerInterceptor(),
+   		grpc_zap.UnaryServerInterceptor(zapLogger),
+   	),
+   	grpc.ChainStreamInterceptor(
+   		rateLimitStreamInterceptor,
+   		authStreamInterceptor,
+   		grpcMetrics.StreamServerInterceptor(),
+   		grpc_zap.StreamServerInterceptor(zapLogger),
+   	),
    )
    ```
 
@@ -272,7 +272,7 @@ Instead of applying the chain composition rules (Go for Professionals) or the ob
 
    ```go
    pb.RegisterYourServiceServer(s, &yourServer{})
-   grpcMetrics.InitializeMetrics(s)  // must be called after service registration
+   grpcMetrics.InitializeMetrics(s) // must be called after service registration
    ```
 
 5. **Expose the Prometheus scrape endpoint.**

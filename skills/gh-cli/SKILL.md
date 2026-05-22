@@ -1,10 +1,10 @@
 ---
-description: GitHub CLI (`gh`) comprehensive reference for repositories, issues, pull requests, Actions, projects, releases, gists, codespaces, organizations, extensions, and all GitHub operations from the command line.
+description: Use when performing any GitHub operation from the command line — creating PRs, managing issues, checking Actions status, working with releases, gists, codespaces, or organizations. Comprehensive reference for the gh CLI.
 metadata:
-    github-path: skills/gh-cli
-    github-ref: refs/heads/main
-    github-repo: https://github.com/github/awesome-copilot
-    github-tree-sha: 437437f7f20bcdbbdb3081cf164435a388c0a39a
+  github-path: skills/gh-cli
+  github-ref: refs/heads/main
+  github-repo: https://github.com/github/awesome-copilot
+  github-tree-sha: 437437f7f20bcdbbdb3081cf164435a388c0a39a
 name: gh-cli
 ---
 
@@ -24,7 +24,7 @@ brew install gh
 
 # Linux
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
 sudo apt update
 sudo apt install gh
 
@@ -45,7 +45,7 @@ gh auth login
 gh auth login --hostname enterprise.internal
 
 # Login with token
-gh auth login --with-token < mytoken.txt
+gh auth login --with-token <mytoken.txt
 
 # Check authentication status
 gh auth status
@@ -340,7 +340,7 @@ gh auth login --git-protocol ssh
 gh auth login --hostname enterprise.internal
 
 # Login with token from stdin
-gh auth login --with-token < token.txt
+gh auth login --with-token <token.txt
 
 # Insecure storage (plain text)
 gh auth login --insecure-storage
@@ -443,11 +443,11 @@ gh browse main.go --branch bug-fix
 gh browse --repo owner/repo
 
 # Open specific pages
-gh browse --actions       # Actions tab
-gh browse --projects      # Projects tab
-gh browse --releases      # Releases tab
-gh browse --settings      # Settings page
-gh browse --wiki          # Wiki page
+gh browse --actions  # Actions tab
+gh browse --projects # Projects tab
+gh browse --releases # Releases tab
+gh browse --settings # Settings page
+gh browse --wiki     # Wiki page
 
 # Print URL instead of opening
 gh browse --no-browser
@@ -659,8 +659,8 @@ gh repo deploy-key list
 
 # Add deploy key
 gh repo deploy-key add ~/.ssh/id_rsa.pub \
-  --title "Production server" \
-  --read-only
+	--title "Production server" \
+	--read-only
 
 # Delete deploy key
 gh repo deploy-key delete 12345
@@ -692,8 +692,8 @@ gh issue create --title "Bug: Login not working"
 
 # Create with title and body
 gh issue create \
-  --title "Bug: Login not working" \
-  --body "Steps to reproduce..."
+	--title "Bug: Login not working" \
+	--body "Steps to reproduce..."
 
 # Create with body from file
 gh issue create --body-file issue.md
@@ -901,8 +901,8 @@ gh pr create --title "Feature: Add new functionality"
 
 # Create with title and body
 gh pr create \
-  --title "Feature: Add new functionality" \
-  --body "This PR adds..."
+	--title "Feature: Add new functionality" \
+	--body "This PR adds..."
 
 # Fill body from template
 gh pr create --body-file .github/PULL_REQUEST_TEMPLATE.md
@@ -1027,7 +1027,7 @@ gh pr diff 123
 gh pr diff 123 --color always
 
 # Output to file
-gh pr diff 123 > pr-123.patch
+gh pr diff 123 >pr-123.patch
 
 # View diff of specific files
 gh pr diff 123 --name-only
@@ -1136,8 +1136,8 @@ gh pr comment 123 --body "Looks good!"
 
 # Comment on specific line
 gh pr comment 123 --body "Fix this" \
-  --repo owner/repo \
-  --head-owner owner --head-branch feature
+	--repo owner/repo \
+	--head-owner owner --head-branch feature
 
 # Edit comment
 gh pr comment 123 --edit 456789 --body "Updated"
@@ -1157,7 +1157,7 @@ gh pr review 123 --approve --body "LGTM!"
 
 # Request changes
 gh pr review 123 --request-changes \
-  --body "Please fix these issues"
+	--body "Please fix these issues"
 
 # Comment on PR
 gh pr review 123 --comment --body "Some thoughts..."
@@ -1298,9 +1298,9 @@ gh workflow run ci.yml
 
 # Run with inputs
 gh workflow run ci.yml \
-  --raw-field \
-  version="1.0.0" \
-  environment="production"
+	--raw-field \
+	version="1.0.0" \
+	environment="production"
 
 # Run from specific branch
 gh workflow run ci.yml --ref develop
@@ -1471,7 +1471,7 @@ gh release view v1.0.0 --web
 
 # Create release
 gh release create v1.0.0 \
-  --notes "Release notes here"
+	--notes "Release notes here"
 
 # Create release with notes from file
 gh release create v1.0.0 --notes-file notes.md
@@ -1854,12 +1854,12 @@ gh api /user
 
 # Request with method
 gh api --method POST /repos/owner/repo/issues \
-  --field title="Issue title" \
-  --field body="Issue body"
+	--field title="Issue title" \
+	--field body="Issue body"
 
 # Request with headers
 gh api /user \
-  --header "Accept: application/vnd.github.v3+json"
+	--header "Accept: application/vnd.github.v3+json"
 
 # Request with pagination
 gh api /user/repos --paginate
@@ -1887,7 +1887,7 @@ gh api /user --hostname enterprise.internal
 
 # GraphQL query
 gh api graphql \
-  -f query='
+	-f query='
   {
     viewer {
       login
@@ -1921,7 +1921,7 @@ gh ruleset check --repo owner/repo --branch main
 ```bash
 # Download attestation
 gh attestation download owner/repo \
-  --artifact-id 123456
+	--artifact-id 123456
 
 # Verify attestation
 gh attestation verify owner/repo
@@ -1934,10 +1934,10 @@ gh attestation trusted-root
 
 ```bash
 # Generate shell completion
-gh completion -s bash > ~/.gh-complete.bash
-gh completion -s zsh > ~/.gh-complete.zsh
-gh completion -s fish > ~/.gh-complete.fish
-gh completion -s powershell > ~/.gh-complete.ps1
+gh completion -s bash >~/.gh-complete.bash
+gh completion -s zsh >~/.gh-complete.zsh
+gh completion -s fish >~/.gh-complete.fish
+gh completion -s powershell >~/.gh-complete.ps1
 
 # Shell-specific instructions
 gh completion --shell=bash
@@ -2001,7 +2001,7 @@ gh pr list --json number,title --jq '.[] | select(.number > 100)'
 
 # Complex queries
 gh issue list --json number,title,labels \
-  --jq '.[] | {number, title: .title, tags: [.labels[].name]}'
+	--jq '.[] | {number, title: .title, tags: [.labels[].name]}'
 ```
 
 ### Template Output
@@ -2009,11 +2009,11 @@ gh issue list --json number,title,labels \
 ```bash
 # Custom template
 gh repo view \
-  --template '{{.name}}: {{.description}}'
+	--template '{{.name}}: {{.description}}'
 
 # Multiline template
 gh pr view 123 \
-  --template 'Title: {{.title}}
+	--template 'Title: {{.title}}
 Author: {{.author.login}}
 State: {{.state}}
 '
@@ -2041,15 +2041,15 @@ gh pr create --title "Fix #123" --body "Closes #123"
 ```bash
 # Close multiple issues
 gh issue list --search "label:stale" \
-  --json number \
-  --jq '.[].number' | \
-  xargs -I {} gh issue close {} --comment "Closing as stale"
+	--json number \
+	--jq '.[].number' |
+	xargs -I {} gh issue close {} --comment "Closing as stale"
 
 # Add label to multiple PRs
 gh pr list --search "review:required" \
-  --json number \
-  --jq '.[].number' | \
-  xargs -I {} gh pr edit {} --add-label needs-review
+	--json number \
+	--jq '.[].number' |
+	xargs -I {} gh pr edit {} --add-label needs-review
 ```
 
 ### Repository Setup Workflow
@@ -2057,10 +2057,10 @@ gh pr list --search "review:required" \
 ```bash
 # Create repository with initial setup
 gh repo create my-project --public \
-  --description "My awesome project" \
-  --clone \
-  --gitignore python \
-  --license mit
+	--description "My awesome project" \
+	--clone \
+	--gitignore python \
+	--license mit
 
 cd my-project
 
@@ -2114,7 +2114,7 @@ git push origin main
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-eval "$(gh completion -s bash)"  # or zsh/fish
+eval "$(gh completion -s bash)" # or zsh/fish
 
 # Create useful aliases
 alias gs='gh status'

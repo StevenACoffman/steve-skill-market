@@ -1,0 +1,94 @@
+{
+  "skill": "go-beyond-four-tenet-layout",
+  "version": "0.1.0",
+  "source_book": "Go Beyond — Ben B. Johnson",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I'm starting a new Go web service with a PostgreSQL database and a REST API. How should I structure my packages?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Apply all four tenets: suggest a root package for domain types (User, Order + service interfaces), a postgres/ subpackage implementing those interfaces, an http/ subpackage for the REST layer, a mock/ subpackage for testing, and cmd/service/main.go for wiring.",
+      "notes": "Classic trigger: new Go project, asking about structure."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "I keep getting 'import cycle not allowed' in my Go project. I have models/, handlers/, and services/ packages. How do I fix this?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Explain that functional grouping (models/handlers/services) is the root cause. Apply the four tenets: move domain types to root package; rename subpackages after their external dependency; resolve the cycle by having all packages depend on the root rather than on each other.",
+      "notes": "Classic trigger: Rails-style layout causing circular imports."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Should I put my Go models in a models/ package or in the root package?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Apply tenet 1: domain types (models) belong in the root package. Explain naming stutter (models.User vs myapp.User) and circular dependency risks of the models/ approach.",
+      "notes": "Direct question about tenet 1."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I want to unit test my HTTP handlers without spinning up a real database. How should I structure my Go project to make this possible?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Explain that tenets 1 (domain interfaces in root), 3 (shared mock/ subpackage), and 4 (wiring in main.go) together make this possible: handlers depend on domain interfaces; tests inject mock implementations from mock/.",
+      "notes": "Testing motivation for the four-tenet architecture."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "My Go project has a postgres package for database operations and an http package for the API. The http package imports postgres directly. Is this a problem?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Yes, this is a problem (ce05): http depends on postgres, coupling them permanently. Apply tenets 1+2: extract domain interfaces to root; http depends on root interfaces; postgres implements those interfaces. Neither http nor postgres imports the other.",
+      "notes": "Direct import from http to postgres — the ce05 counter-example scenario."
+    },
+    {
+      "id": "should-trigger-06",
+      "type": "should_trigger",
+      "prompt": "How do I create mocks for my Go service interfaces without using gomock or testify?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Apply tenet 3 (shared mock/ subpackage): create function-field structs in mock/ that implement each domain interface. Each field is a func matching the method signature; an Invoked bool tracks calls. Any test imports mock/ and sets the function fields it needs.",
+      "notes": "Tenet 3 — shared mock subpackage."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I set up go.mod for a multi-module Go repository?",
+      "expected_behavior": "Do not invoke go-beyond-four-tenet-layout. This is a Go module system question (go.mod, replace directives, workspace mode) not a package layout question. Different concern.",
+      "notes": "Lure: Go project structure, but about modules not packages."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What is the difference between a Go package and a Go module?",
+      "expected_behavior": "Do not invoke go-beyond-four-tenet-layout. This is a conceptual Go fundamentals question, not a layout decision question.",
+      "notes": "Lure: Go packages mentioned, but no layout decision needed."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Should I use tabs or spaces in my Go code?",
+      "expected_behavior": "Do not invoke go-beyond-four-tenet-layout. Formatting question (answer: gofmt uses tabs). No package structure relevance.",
+      "notes": "Pure style question, not architectural."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I'm building a microservices system in Go where each service has its own repository. Should I apply the four-tenet layout to each service?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout, but apply with the boundary caveat: yes, apply within each service repository independently. The root package and subpackages are intra-service concerns. Do not create a shared root package across services — that recreates monolith coupling. Each service has its own domain layer.",
+      "notes": "Boundary: microservices partially changes the applicability of the pattern."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I'm writing a small Go CLI tool that just reads a config file and calls an API. Do I need the four-tenet package layout?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout but recommend scaling down: for very small tools (<500 SLOC, one external dependency), a single package is fine. The four-tenet system adds overhead that isn't justified. Apply it if the tool grows or gains multiple dependencies.",
+      "notes": "Boundary: small script where the overhead isn't justified."
+    },
+    {
+      "id": "edge-03",
+      "type": "edge_case",
+      "prompt": "My Go app has both SQLite and Redis. How should I name my subpackages?",
+      "expected_behavior": "Invoke go-beyond-four-tenet-layout. Apply tenet 2 directly: one subpackage per dependency — sqlite/ and redis/. Both implement domain interfaces (e.g., sqlite/ implements UserStore, redis/ implements CacheStore). Neither imports the other; both depend only on the root package.",
+      "notes": "Multiple external dependencies — direct application of tenet 2."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "7 should_trigger + 3 should_not_trigger + 3 edge_case = 13 total. All should_not_triggers must pass (decoy tolerance 0)."
+}

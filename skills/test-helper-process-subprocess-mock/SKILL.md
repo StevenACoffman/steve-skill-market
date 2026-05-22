@@ -2,22 +2,13 @@
 allowed-tools: Bash, Read, Edit
 name: test-helper-process-subprocess-mock
 description: |
-  When production code calls exec.Command to run an external binary, make the
-  *exec.Cmd creation injectable via a commandFactory field. In tests, supply
-  helperProcess(), which re-executes the test binary itself with
-  -test.run=TestHelperProcess and GO_WANT_HELPER_PROCESS=1 in the environment.
-  TestHelperProcess returns immediately during normal go test runs; when the
-  env var is set, it implements mock subprocess behavior by switching on the
-  command arguments and exiting with a controlled code. The test binary
-  becomes its own mock: no external binaries, no OS-level mocking, no shell
-  scripts. The pattern originates in Go's own os/exec test suite, giving it
-  first-party legitimacy. Use Option 1 (real binary + exec.LookPath + t.Skip)
-  when the real binary is available in CI and its side effects are safe. Use
-  TestHelperProcess when the binary is absent, unreliable, or when you need to
-  simulate failure modes (non-zero exit, garbage stdout, crash) that a real
-  binary cannot produce on demand. Do not use this pattern for HTTP
-  services—use net/http/httptest instead. Do not use it for database
-  dependencies—use testcontainers or an in-process test database instead.
+  When production code calls exec.Command to run an external binary, or when
+  you need to simulate subprocess failure modes (non-zero exit, garbage stdout,
+  crash) that a real binary cannot produce on demand. Make *exec.Cmd creation
+  injectable via a commandFactory field; in tests supply helperProcess(), which
+  re-executes the test binary itself with TestHelperProcess and
+  GO_WANT_HELPER_PROCESS=1. Do not use for HTTP services (use httptest) or
+  databases (use testcontainers).
 source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
 source_chapter: Part 2 — Writing Testable Code / Subprocessing
 tags: [go, testing, subprocess, exec, mocking, testable-code]
@@ -50,17 +41,17 @@ the binary is absent:
 var testHasGit bool
 
 func init() {
-    if _, err := exec.LookPath("git"); err == nil {
-        testHasGit = true
-    }
+	if _, err := exec.LookPath("git"); err == nil {
+		testHasGit = true
+	}
 }
 
 func TestGitGetter(t *testing.T) {
-    if !testHasGit {
-        t.Log("git not found, skipping")
-        t.Skip()
-    }
-    // …
+	if !testHasGit {
+		t.Log("git not found, skipping")
+		t.Skip()
+	}
+	// …
 }
 ```
 
@@ -73,14 +64,14 @@ test `os/exec`. HashiCorp uses it for `go-plugin` and more.
 
 ```go
 func helperProcess(s ...string) *exec.Cmd {
-    cs := []string{"-test.run=TestHelperProcess", "--"}
-    cs = append(cs, s...)
-    env := []string{
-        "GO_WANT_HELPER_PROCESS=1",
-    }
-    cmd := exec.Command(os.Args[0], cs...)
-    cmd.Env = append(env, os.Environ()...)
-    return cmd
+	cs := []string{"-test.run=TestHelperProcess", "--"}
+	cs = append(cs, s...)
+	env := []string{
+		"GO_WANT_HELPER_PROCESS=1",
+	}
+	cmd := exec.Command(os.Args[0], cs...)
+	cmd.Env = append(env, os.Environ()...)
+	return cmd
 }
 ```
 
@@ -88,25 +79,25 @@ func helperProcess(s ...string) *exec.Cmd {
 
 ```go
 func TestHelperProcess(*testing.T) {
-    if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
-        return
-    }
-    defer os.Exit(0)
+	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
+		return
+	}
+	defer os.Exit(0)
 
-    args := os.Args
-    for len(args) > 0 {
-        if args[0] == "--" {
-            args = args[1:]
-            break
-        }
-        args = args[1:]
-    }
+	args := os.Args
+	for len(args) > 0 {
+		if args[0] == "--" {
+			args = args[1:]
+			break
+		}
+		args = args[1:]
+	}
 
-    cmd, args := args[0], args[1:]
-    switch cmd {
-    case "foo":
-        // implement mock behavior for "foo"
-    }
+	cmd, args := args[0], args[1:]
+	switch cmd {
+	case "foo":
+		// implement mock behavior for "foo"
+	}
 }
 ```
 
@@ -114,14 +105,13 @@ func TestHelperProcess(*testing.T) {
 set, so normal `go test` runs are unaffected. When it is set, the function
 implements mock subprocess behavior by switching on the command arguments.
 
----
+______________________________________________________________________
 
 ## I — Insight
 
 **The mechanism.** `os.Args[0]` inside a running test binary is the path to the
 compiled test binary itself. `helperProcess` constructs a command that
-re-invokes that same binary with `-test.run=TestHelperProcess`, causing `go
-test`'s runner to call only `TestHelperProcess`. The `GO_WANT_HELPER_PROCESS=1`
+re-invokes that same binary with `-test.run=TestHelperProcess`, causing `go test`'s runner to call only `TestHelperProcess`. The `GO_WANT_HELPER_PROCESS=1`
 environment variable acts as a gate: without it, `TestHelperProcess` returns
 immediately (zero cost during normal runs); with it, the function becomes the
 mock process.
@@ -137,13 +127,13 @@ than calling `exec.Command` directly:
 
 ```go
 type Runner struct {
-    // commandFactory defaults to exec.Command in production.
-    // Tests inject helperProcess.
-    commandFactory func(name string, arg ...string) *exec.Cmd
+	// commandFactory defaults to exec.Command in production.
+	// Tests inject helperProcess.
+	commandFactory func(name string, arg ...string) *exec.Cmd
 }
 
 func NewRunner() *Runner {
-    return &Runner{commandFactory: exec.Command}
+	return &Runner{commandFactory: exec.Command}
 }
 ```
 
@@ -164,7 +154,7 @@ Use TestHelperProcess when:
 - The binary has side effects that are unsafe or slow in tests (write to remote
   state, make network calls, modify filesystem).
 
----
+______________________________________________________________________
 
 ## A1 — Anchoring Cases
 
@@ -191,7 +181,7 @@ present in the test tree. The mock subprocess implements different behaviors
 HashiCorp ecosystem.
 
 > "You still actually execute something—but you are executing a mock. Make the
-> *exec.Cmd configurable and pass in a custom one. HashiCorp uses it for
+> \*exec.Cmd configurable and pass in a custom one. HashiCorp uses it for
 > go-plugin and more."
 
 **Case 3: TestGitGetter with Option 1 — the decision tree.** Terraform's `git`
@@ -205,7 +195,7 @@ sparse checkout) that would be cumbersome to simulate. TestGitGetter shows that
 Option 2 is not always the answer—the decision is driven by binary availability
 and side-effect risk, not a blanket preference.
 
----
+______________________________________________________________________
 
 ## A2 — Application Triggers
 
@@ -229,7 +219,7 @@ Do NOT apply this skill for:
 - Cases where the real binary is available in CI and has no harmful side
   effects — use Option 1 with `exec.LookPath` and `t.Skip()`.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -243,16 +233,16 @@ it to `exec.Command` in the constructor so production behavior is unchanged:
 
 ```go
 type Executor struct {
-    commandFactory func(name string, arg ...string) *exec.Cmd
+	commandFactory func(name string, arg ...string) *exec.Cmd
 }
 
 func NewExecutor() *Executor {
-    return &Executor{commandFactory: exec.Command}
+	return &Executor{commandFactory: exec.Command}
 }
 
 func (e *Executor) Run(name string, args ...string) ([]byte, error) {
-    cmd := e.commandFactory(name, args...)
-    return cmd.Output()
+	cmd := e.commandFactory(name, args...)
+	return cmd.Output()
 }
 ```
 
@@ -264,12 +254,12 @@ that re-executes the test binary with `-test.run=TestHelperProcess` and the
 
 ```go
 func helperProcess(s ...string) *exec.Cmd {
-    cs := []string{"-test.run=TestHelperProcess", "--"}
-    cs = append(cs, s...)
-    env := []string{"GO_WANT_HELPER_PROCESS=1"}
-    cmd := exec.Command(os.Args[0], cs...)
-    cmd.Env = append(env, os.Environ()...)
-    return cmd
+	cs := []string{"-test.run=TestHelperProcess", "--"}
+	cs = append(cs, s...)
+	env := []string{"GO_WANT_HELPER_PROCESS=1"}
+	cmd := exec.Command(os.Args[0], cs...)
+	cmd.Env = append(env, os.Environ()...)
+	return cmd
 }
 ```
 
@@ -280,44 +270,44 @@ function would run during every normal `go test` invocation:
 
 ```go
 func TestHelperProcess(t *testing.T) {
-    if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
-        return
-    }
-    defer os.Exit(0)
+	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
+		return
+	}
+	defer os.Exit(0)
 
-    // Strip args before "--"
-    args := os.Args
-    for len(args) > 0 {
-        if args[0] == "--" {
-            args = args[1:]
-            break
-        }
-        args = args[1:]
-    }
+	// Strip args before "--"
+	args := os.Args
+	for len(args) > 0 {
+		if args[0] == "--" {
+			args = args[1:]
+			break
+		}
+		args = args[1:]
+	}
 
-    if len(args) == 0 {
-        fmt.Fprintln(os.Stderr, "no command")
-        os.Exit(2)
-    }
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, "no command")
+		os.Exit(2)
+	}
 
-    cmd, args := args[0], args[1:]
-    switch cmd {
-    case "terraform":
-        switch {
-        case len(args) > 0 && args[0] == "init":
-            fmt.Println("Terraform has been successfully initialized!")
-            // os.Exit(0) is handled by defer above
-        case len(args) > 0 && args[0] == "apply":
-            fmt.Fprintln(os.Stderr, "Error: No configuration files found")
-            os.Exit(1)
-        default:
-            fmt.Fprintf(os.Stderr, "unknown subcommand: %s\n", args)
-            os.Exit(2)
-        }
-    default:
-        fmt.Fprintf(os.Stderr, "unknown command: %s\n", cmd)
-        os.Exit(2)
-    }
+	cmd, args := args[0], args[1:]
+	switch cmd {
+	case "terraform":
+		switch {
+		case len(args) > 0 && args[0] == "init":
+			fmt.Println("Terraform has been successfully initialized!")
+			// os.Exit(0) is handled by defer above
+		case len(args) > 0 && args[0] == "apply":
+			fmt.Fprintln(os.Stderr, "Error: No configuration files found")
+			os.Exit(1)
+		default:
+			fmt.Fprintf(os.Stderr, "unknown subcommand: %s\n", args)
+			os.Exit(2)
+		}
+	default:
+		fmt.Fprintf(os.Stderr, "unknown command: %s\n", cmd)
+		os.Exit(2)
+	}
 }
 ```
 
@@ -328,26 +318,26 @@ In each test that exercises the subprocess path, set `commandFactory` to
 
 ```go
 func TestExecutor_TerraformInit_Success(t *testing.T) {
-    e := NewExecutor()
-    e.commandFactory = helperProcess
+	e := NewExecutor()
+	e.commandFactory = helperProcess
 
-    out, err := e.Run("terraform", "init")
-    if err != nil {
-        t.Fatalf("unexpected error: %v", err)
-    }
-    if !bytes.Contains(out, []byte("successfully initialized")) {
-        t.Errorf("expected init success message, got: %s", out)
-    }
+	out, err := e.Run("terraform", "init")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !bytes.Contains(out, []byte("successfully initialized")) {
+		t.Errorf("expected init success message, got: %s", out)
+	}
 }
 
 func TestExecutor_TerraformApply_Failure(t *testing.T) {
-    e := NewExecutor()
-    e.commandFactory = helperProcess
+	e := NewExecutor()
+	e.commandFactory = helperProcess
 
-    _, err := e.Run("terraform", "apply")
-    if err == nil {
-        t.Fatal("expected error, got nil")
-    }
+	_, err := e.Run("terraform", "apply")
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
 }
 ```
 
@@ -358,7 +348,7 @@ different stdout) maps to one `case` in the switch in `TestHelperProcess`.
 Keep behaviors minimal and deterministic: no sleeps, no randomness, no external
 calls inside `TestHelperProcess`.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Blind Spots
 

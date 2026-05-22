@@ -6,10 +6,10 @@ description: Use when writing a Go test for a function that has stateful externa
 type: merged-skill
 source_skills:
   - slug: rednafi/test-state-not-interactions
-    book: "Go Advice"
+    book: Go Advice
     author: Redowan Delowar (rednafi)
   - slug: hashimoto/table-driven-named-cases
-    book: "Advanced Testing with Go"
+    book: Advanced Testing with Go
     author: Mitchell Hashimoto
 related_skills:
   - slug: rednafi/test-state-not-interactions
@@ -53,18 +53,18 @@ Map-keyed test tables (desired pattern):
 >
 > ```go
 > func TestAdd(t *testing.T) {
->     cases := map[string]struct{ A, B, Expected int }{
->         "foo": {1, 1, 2},
->         "bar": {1, -1, 0},
->     }
->     for k, tc := range cases {
->         actual := tc.A + tc.B
->         if actual != tc.Expected {
->             t.Errorf(
->                 "%s: %d + %d = %d, expected %d",
->                 k, tc.A, tc.B, actual, tc.Expected)
->         }
->     }
+> 	cases := map[string]struct{ A, B, Expected int }{
+> 		"foo": {1, 1, 2},
+> 		"bar": {1, -1, 0},
+> 	}
+> 	for k, tc := range cases {
+> 		actual := tc.A + tc.B
+> 		if actual != tc.Expected {
+> 			t.Errorf(
+> 				"%s: %d + %d = %d, expected %d",
+> 				k, tc.A, tc.B, actual, tc.Expected)
+> 		}
+> 	}
 > }
 > ```
 >
@@ -74,7 +74,7 @@ Map-keyed test tables (desired pattern):
 
 **Convergence note:** Both authors prescribe a concrete structural fix — fake over mock (rednafi); map over slice (Hashimoto) — that makes test failure output self-describing without requiring the reader to trace implementation code. rednafi arrived at this from a correctness argument (mocks hide real bugs by only recording call paths); Hashimoto arrived at it from a diagnostic efficiency argument (slice indices require counting to locate the failing case). The two prescriptions are orthogonal and compose directly: the map key names the behavioral scenario, the fake's state assertion proves the scenario produced the right outcome.
 
----
+______________________________________________________________________
 
 ### I — Methodological Framework (Interpretation)
 
@@ -90,7 +90,7 @@ A test for a function with external dependencies and multiple input cases faces 
 
 **When to apply.** Apply the full merged pattern — map-keyed table + handwritten fake + state assertions — when a function: (1) has at least one external stateful dependency, and (2) has multiple distinguishable input scenarios or error conditions. If the function has dependencies but only one meaningful scenario, write a single named case (still use the map — it costs nothing and the function will likely accumulate cases). If the function is a pure function with no dependencies, there is no fake to write; use a map-keyed table with direct value assertions.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -110,18 +110,18 @@ A test for a function with external dependencies and multiple input cases faces 
 >
 > ```go
 > func TestAdd(t *testing.T) {
->     cases := map[string]struct{ A, B, Expected int }{
->         "foo": {1, 1, 2},
->         "bar": {1, -1, 0},
->     }
->     for k, tc := range cases {
->         actual := tc.A + tc.B
->         if actual != tc.Expected {
->             t.Errorf(
->                 "%s: %d + %d = %d, expected %d",
->                 k, tc.A, tc.B, actual, tc.Expected)
->         }
->     }
+> 	cases := map[string]struct{ A, B, Expected int }{
+> 		"foo": {1, 1, 2},
+> 		"bar": {1, -1, 0},
+> 	}
+> 	for k, tc := range cases {
+> 		actual := tc.A + tc.B
+> 		if actual != tc.Expected {
+> 			t.Errorf(
+> 				"%s: %d + %d = %d, expected %d",
+> 				k, tc.A, tc.B, actual, tc.Expected)
+> 		}
+> 	}
 > }
 > ```
 >
@@ -131,7 +131,7 @@ A test for a function with external dependencies and multiple input cases faces 
 
 **Convergence note:** Both authors prescribe a concrete structural fix — fake over mock (rednafi); map over slice (Hashimoto) — that makes test failure output self-describing without requiring the reader to trace implementation code. rednafi arrived at this from a correctness argument (mocks hide real bugs by only recording call paths); Hashimoto arrived at it from a diagnostic efficiency argument (slice indices require counting to locate the failing case). The two prescriptions are orthogonal and compose directly: the map key names the behavioral scenario, the fake's state assertion proves the scenario produced the right outcome.
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -147,7 +147,7 @@ A test for a function with external dependencies and multiple input cases faces 
 
 **When to apply.** Apply the full merged pattern — map-keyed table + handwritten fake + state assertions — when a function: (1) has at least one external stateful dependency, and (2) has multiple distinguishable input scenarios or error conditions. If the function has dependencies but only one meaningful scenario, write a single named case (still use the map — it costs nothing and the function will likely accumulate cases). If the function is a pure function with no dependencies, there is no fake to write; use a map-keyed table with direct value assertions.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -161,7 +161,7 @@ A test for a function with external dependencies and multiple input cases faces 
 
 **Result:** Handwritten `FakeDB` catches the bug on first run. The assertion `reflect.DeepEqual(db.ListUsers(), []string{"alice"})` — the state of the store after the operation — is the signal, not `mock.AssertExpectations`.
 
----
+______________________________________________________________________
 
 ### Case 2: Terraform — "Test Index 3014 Failed" and the Map-Keyed Fix (Hashimoto)
 
@@ -173,7 +173,7 @@ A test for a function with external dependencies and multiple input cases faces 
 
 **Result:** The convention is now applied from the start on all new HashiCorp projects. The cost of the Terraform migration was absorbed once; the benefit — self-describing failure messages — accrues at every subsequent debugging session.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -196,7 +196,7 @@ Instead of asking "should I use mocks?" (rednafi alone) or "which case in my tab
 - The test is a sequential integration test that boots a server, sends multiple requests, and verifies system state — those are not independent parallel cases and do not fit the table pattern.
 - Testing a gRPC server where generated protocol types and interceptors make handwritten fakes painful — one case where generated mocks are genuinely ergonomic.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -218,8 +218,8 @@ Define the interface in the consumer package (Go's implicit satisfaction). Inclu
 
 ```go
 type DB interface {
-    InsertUser(name string) error
-    ListUsers() []string
+	InsertUser(name string) error
+	ListUsers() []string
 }
 ```
 
@@ -229,27 +229,27 @@ The fake holds in-memory state and encodes exactly the domain invariants needed 
 
 ```go
 type FakeDB struct {
-    seen  map[string]struct{}
-    order []string
+	seen  map[string]struct{}
+	order []string
 }
 
 func NewFakeDB() *FakeDB {
-    return &FakeDB{seen: make(map[string]struct{})}
+	return &FakeDB{seen: make(map[string]struct{})}
 }
 
 func (f *FakeDB) InsertUser(name string) error {
-    if _, ok := f.seen[name]; ok {
-        return usersvc.ErrDuplicate  // domain sentinel, not a string
-    }
-    f.seen[name] = struct{}{}
-    f.order = append(f.order, name)
-    return nil
+	if _, ok := f.seen[name]; ok {
+		return usersvc.ErrDuplicate // domain sentinel, not a string
+	}
+	f.seen[name] = struct{}{}
+	f.order = append(f.order, name)
+	return nil
 }
 
 func (f *FakeDB) ListUsers() []string {
-    out := make([]string, len(f.order))
-    copy(out, f.order)
-    return out
+	out := make([]string, len(f.order))
+	copy(out, f.order)
+	return out
 }
 ```
 
@@ -259,26 +259,26 @@ Each key is a short English phrase describing the behavioral scenario. Each valu
 
 ```go
 cases := map[string]struct {
-    name      string
-    setupFake func(*FakeDB)
-    expectErr error
-    expectUsers []string
+	name        string
+	setupFake   func(*FakeDB)
+	expectErr   error
+	expectUsers []string
 }{
-    "first insert succeeds": {
-        name:        "alice",
-        expectUsers: []string{"alice"},
-    },
-    "duplicate returns ErrDuplicate": {
-        name:      "alice",
-        setupFake: func(db *FakeDB) { db.InsertUser("alice") },
-        expectErr: ErrDuplicate,
-        expectUsers: []string{"alice"},
-    },
-    "empty name returns ErrInvalid": {
-        name:        "",
-        expectErr:   ErrInvalid,
-        expectUsers: []string{},
-    },
+	"first insert succeeds": {
+		name:        "alice",
+		expectUsers: []string{"alice"},
+	},
+	"duplicate returns ErrDuplicate": {
+		name:        "alice",
+		setupFake:   func(db *FakeDB) { db.InsertUser("alice") },
+		expectErr:   ErrDuplicate,
+		expectUsers: []string{"alice"},
+	},
+	"empty name returns ErrInvalid": {
+		name:        "",
+		expectErr:   ErrInvalid,
+		expectUsers: []string{},
+	},
 }
 ```
 
@@ -288,59 +288,59 @@ Completion criterion: each key is a short English phrase describing the scenario
 
 ```go
 func assert(t *testing.T, cond bool, msg string) {
-    t.Helper()
-    if !cond {
-        t.Fatal(msg)
-    }
+	t.Helper()
+	if !cond {
+		t.Fatal(msg)
+	}
 }
 
 func ok(t *testing.T, err error) {
-    t.Helper()
-    if err != nil {
-        t.Fatalf("unexpected error: %v", err)
-    }
+	t.Helper()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 }
 
 func TestUserService_CreateUser(t *testing.T) {
-    cases := map[string]struct {
-        name        string
-        setupFake   func(*FakeDB)
-        expectErr   error
-        expectUsers []string
-    }{
-        "first insert succeeds": {
-            name:        "alice",
-            expectUsers: []string{"alice"},
-        },
-        "duplicate returns ErrDuplicate": {
-            name:      "alice",
-            setupFake: func(db *FakeDB) { db.InsertUser("alice") },
-            expectErr: ErrDuplicate,
-            expectUsers: []string{"alice"},
-        },
-    }
+	cases := map[string]struct {
+		name        string
+		setupFake   func(*FakeDB)
+		expectErr   error
+		expectUsers []string
+	}{
+		"first insert succeeds": {
+			name:        "alice",
+			expectUsers: []string{"alice"},
+		},
+		"duplicate returns ErrDuplicate": {
+			name:        "alice",
+			setupFake:   func(db *FakeDB) { db.InsertUser("alice") },
+			expectErr:   ErrDuplicate,
+			expectUsers: []string{"alice"},
+		},
+	}
 
-    for name, tc := range cases {
-        t.Run(name, func(t *testing.T) {
-            db := NewFakeDB()
-            if tc.setupFake != nil {
-                tc.setupFake(db)
-            }
-            svc := usersvc.NewUserService(db)
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			db := NewFakeDB()
+			if tc.setupFake != nil {
+				tc.setupFake(db)
+			}
+			svc := usersvc.NewUserService(db)
 
-            err := svc.CreateUser(tc.name)
+			err := svc.CreateUser(tc.name)
 
-            if tc.expectErr != nil {
-                assert(t, errors.Is(err, tc.expectErr),
-                    fmt.Sprintf("%s: expected %v, got %v", name, tc.expectErr, err))
-            } else {
-                ok(t, err)
-            }
-            if got, want := db.ListUsers(), tc.expectUsers; !reflect.DeepEqual(got, want) {
-                t.Errorf("%s: users: got %v, want %v", name, got, want)
-            }
-        })
-    }
+			if tc.expectErr != nil {
+				assert(t, errors.Is(err, tc.expectErr),
+					fmt.Sprintf("%s: expected %v, got %v", name, tc.expectErr, err))
+			} else {
+				ok(t, err)
+			}
+			if got, want := db.ListUsers(), tc.expectUsers; !reflect.DeepEqual(got, want) {
+				t.Errorf("%s: users: got %v, want %v", name, got, want)
+			}
+		})
+	}
 }
 ```
 
@@ -360,7 +360,7 @@ If the function has exactly one scenario today, ask: "Could this function plausi
 - **Grouped (parent subtest):** When test cases need sequential shared state (create-then-list flows), create the fake once in the parent test and share it via closure across subtests. Use with care — map iteration order is randomized in Go.
 - **TestMain:** Only for expensive infrastructure (a real container, a compiled binary). Never use it to share in-memory fakes across tests.
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Failure Modes
 
@@ -383,7 +383,7 @@ If the function has exactly one scenario today, ask: "Could this function plausi
 
 - **Map-keyed table with generated mocks:** You apply Hashimoto's naming convention (map key, descriptive string, key in error format) but retain a generated mock (mockery/gomock) behind it. The failure messages now name the scenario, but the assertions still check call paths. This is better than anonymous slice-indexed mocks, but it does not catch swallowed errors or data invariant violations. The synthesis is incomplete: naming without state assertions gives you DX benefits but not correctness benefits. The full merged pattern requires both: map key for naming + fake state assertion for correctness.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -393,7 +393,7 @@ If the function has exactly one scenario today, ask: "Could this function plausi
 - **rednafi/consumer-side-interface-segregation** — depends-on: defining a minimal interface in the consumer package is the prerequisite for building a fake that implements only the methods the code under test calls
 - **rednafi/repository-unit-of-work** — composes-with: the `Store` interface from the repository pattern is exactly what this skill puts a handwritten fake behind
 
----
+______________________________________________________________________
 
 ## Audit Information
 

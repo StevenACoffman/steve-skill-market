@@ -1,0 +1,103 @@
+{
+  "skill_id": "go-consumer-side-interface-placement",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "go-with-the-domain/consumer-side-interface-definition",
+    "go-beyond/go-beyond-interface-consumer-ownership"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm writing a Go service and my HTTP handler needs to call a payment gateway — should I define the interface in the handler's package or in a shared package like 'contracts'?",
+      "expected_behavior": "Explain consumer-side placement: the handler package defines the interface, not a shared contracts package. Describe the three placement forms (inline, package-level, root domain) and use the decision table to resolve which applies. Warn that a shared contracts package recreates coupling.",
+      "expected_not": "Should not tell the user to put the interface in the provider package or in a contracts/ package"
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "My Go build is failing with 'import cycle not allowed: package app imports adapters imports app'. How do I fix this structurally, not just by moving files around?",
+      "expected_behavior": "Diagnose the import cycle as an interface-placement error: the interface is defined in the wrong package. Direct the user to move the interface into the consuming (app) package, making the direction adapters → app compiler-enforced. Show the package-level unexported interface pattern.",
+      "expected_not": "Should not suggest workarounds like extracting a third package without addressing the dependency-direction principle"
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "I need to mock a third-party Yo notification client in my tests but the library doesn't export an interface — only a concrete struct. How do I write a test without hitting the real API?",
+      "expected_behavior": "Show the inline interface-on-struct pattern: define the interface inside the consuming struct's field declaration, covering only the one or two methods actually called. Demonstrate the three-line test stub in the test file with no import of the provider package.",
+      "expected_not": "Should not recommend code generation tools or wrapping the client in a separate package just to add an interface"
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "My application service imports a 10-method DB adapter interface from the adapters package, but we only call 2 of those methods. Every test mock has to implement all 10. How do I fix this?",
+      "expected_behavior": "Apply minimal-consumer-side interface: the app package defines its own unexported interface listing only the 2 methods it calls. The adapter satisfies it implicitly. The mock in the test file is 2 methods. Explain the producer-exports-concrete, consumer-defines-interface discipline.",
+      "expected_not": "Should not suggest reducing the adapter's exported interface or adding compile-time assertion tricks as the primary fix"
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I have an http package and a sqlite package both implementing database operations. Where should I define the repository interface so both can implement it without creating import cycles?",
+      "expected_behavior": "Identify this as the root-domain-package placement case: the interface is itself a domain concept implemented by multiple infrastructure packages. Define it in the root domain package; both http/ and sqlite/ import the domain root, never each other.",
+      "expected_not": "Should not suggest putting the interface in either the http or sqlite package"
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How do I use type embedding to extend a struct with additional methods in Go without creating a new interface?",
+      "expected_behavior": "Answer using Go struct embedding — embed the base type, optionally override methods. This is composition, not interface design.",
+      "expected_not": "Should not invoke go-consumer-side-interface-placement"
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I want to use Go generics to write a sorting function that works for any slice whose element type has a Less method. How should I write the type constraint?",
+      "expected_behavior": "Answer using a generic type constraint with a method set (interface used as constraint). This is generics, not interface placement.",
+      "expected_not": "Should not invoke go-consumer-side-interface-placement"
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I want to verify at compile time that my PostgresRepo struct implements the io.Reader interface. What's the idiomatic Go way to do that?",
+      "expected_behavior": "Answer with the blank-identifier compile-time assertion: var _ io.Reader = (*PostgresRepo)(nil). This is about compile-time interface satisfaction verification, not interface placement.",
+      "expected_not": "Should not invoke go-consumer-side-interface-placement"
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I have five different packages in my service that all define an interface with a single Send(string) error method for different notification backends. My colleague says I should extract a shared interface type so we can use them interchangeably. What should I do?",
+      "expected_behavior": "Acknowledge the interface proliferation blind spot: five identical-shaped interfaces are five distinct types in Go. If interchangeability is genuinely needed, the skill's root-domain-package placement applies — define the interface once in the domain package that all five adapters must implement. If they are truly independent consumers, the proliferation is acceptable but requires tooling (gopls/grep) for discovery. Do NOT create a contracts/ package — that recreates coupling.",
+      "decision_axis": "Whether the interface is a shared domain concept (root package) vs. truly independent per-consumer contracts (tolerate proliferation). The placement decision table in I resolves this."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "My application struct holds a direct *sql.DB field. All handler tests pass currently but they require a real database. Should I replace the field with an interface?",
+      "expected_behavior": "Apply the placement decision: the handler (consuming) package defines an unexported interface listing only the DB methods each handler calls. But caution: for a trivial single-package script with one implementation and no realistic need to swap, inline-on-struct may be over-engineering. Assess if the test isolation benefit justifies the indirection — if tests genuinely need isolation from the real DB, yes. Present the inline placement form if only one or two methods are called by one handler.",
+      "decision_axis": "Inline-on-struct vs. package-level placement — the trigger is whether crossing an architectural layer boundary. A single-package script with *sql.DB may warrant neither."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I'm building a library (not an application service) that other developers will import. Should I export interfaces from my library package so callers can easily mock my types in their tests?",
+      "expected_behavior": "Apply the producer-side discipline: library packages export concrete types (structs/pointers), not interfaces. Each caller defines the minimal interface they need for their test. Exporting a fat interface from the library forces every caller's mock to implement all methods and creates a breaking change whenever the library adds a method. The 'not this skill' boundary applies for stdlib interfaces like io.Reader — those are minimal provider-side interfaces by design.",
+      "decision_axis": "The B section boundary: this pattern targets application/service code. Library authors cannot use consumer-side placement because there is no single consumer to own the interface. Callers are the consumers and each defines their own."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm writing a DDD training booking service. My app package's TrainingService needs a database adapter, but I also need to wrap a third-party calendar API (Calendly) that only exposes one method I actually use. How should I structure the interfaces for both dependencies?",
+      "merged_advantage": "The merged skill provides the full placement decision tree distinguishing three valid forms: package-level unexported interface for the architectural adapter boundary (TrainingRepository in app/), and inline-on-struct for the single-method third-party client (CalendlyClient inline on TrainingService). Neither source alone covers both cases with explicit triggers for choosing between them.",
+      "source1_gap": "go-with-the-domain/consumer-side-interface-definition focuses on package-level placement at the architectural adapter boundary and import-cycle prevention. It does not address the inline-on-struct form for simple third-party wrapping — it would apply the package-level pattern even for the trivial Calendly case, introducing unnecessary abstraction.",
+      "source2_gap": "go-beyond/go-beyond-interface-consumer-ownership focuses on inline placement and caller-minimal design but does not explain the import-cycle enforcement argument or when package-level placement is structurally required (not optional). It would miss the TrainingRepository case's architectural necessity."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "A code review comment says to move our UserService interface from the domain root package into the http handler package since 'interfaces belong in the consumer package'. Is the reviewer right?",
+      "merged_advantage": "The merged skill's placement decision table explicitly validates the root-domain-package as a third legitimate form when the interface is a domain concept implemented by multiple infrastructure packages. It resolves the surface contradiction: Three Dots Labs treats package-level consuming-package placement as universal; Johnson carves out the root-package case. The merged skill makes both valid with explicit triggers, allowing a direct answer: if http/, sqlite/, and grpc/ all implement UserService and root is the domain layer, the interface belongs at the root — the reviewer is applying the rule too broadly.",
+      "source1_gap": "go-with-the-domain/consumer-side-interface-definition treats package-level placement in the consuming package as the universal rule. It would validate the reviewer's comment even in the root-domain case.",
+      "source2_gap": "go-beyond/go-beyond-interface-consumer-ownership introduces the root-package exception but does not provide the architectural criterion (multiple infrastructure adapters, interface is a domain concept) that distinguishes it from the anti-pattern of a shared contracts/ package. Without this criterion, the merged skill's decision table cannot be reconstructed."
+    }
+  ]
+}

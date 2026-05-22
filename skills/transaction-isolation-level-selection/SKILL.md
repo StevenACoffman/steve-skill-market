@@ -17,8 +17,8 @@ description: |
   - The application is read-only or single-writer.
 
   Key signals: "double-booking," "race condition," "write skew," "lost update," "phantom read," "concurrent requests," "check-then-act," "ORM saves."
-source_book: "Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini"
-source_chapter: "Chapter 8: Transactions"
+source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
+source_chapter: 'Chapter 8: Transactions'
 tags: [transactions, isolation-levels, concurrency, serializability, snapshot-isolation, write-skew]
 related_skills: [replication-lag-as-correctness, consistency-model-selection, timeliness-vs-integrity-distinction]
 ---
@@ -44,7 +44,7 @@ Check-then-act patterns (read-modify-write):
 >
 > — Kleppmann & Riccomini, Chapter 8: Transactions
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -59,7 +59,7 @@ The decision procedure:
 3. Select the weakest level that prevents the anomalies you identified. Serializable is the safe default for any check-then-act pattern; weaker levels are justified only when a specific performance requirement makes them necessary.
 4. Where serializability is too costly, use explicit locking (SELECT FOR UPDATE) for specific critical paths rather than dropping the isolation level globally.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application (From the Book)
 
@@ -77,7 +77,7 @@ The decision procedure:
 - **Conclusion:** Weaker isolation than read committed is the root cause. The fix is either a multi-object transaction covering both writes, or eliminating the denormalized counter.
 - **Result:** The anomaly (email visible, counter still zero) is a direct, observable consequence of isolation failure — not a bug in application logic.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario (Future Trigger) ★
 
@@ -100,31 +100,35 @@ The decision procedure:
 - Difference from `replication-lag-as-correctness`: isolation levels are about concurrent transactions on the same data within a single node or primary; replication lag is about stale reads from follower replicas.
 - Difference from `consistency-model-selection`: isolation levels (serializability) govern transaction ordering; linearizability governs whether a single read sees the most recent write — these are orthogonal properties.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
 1. **Enumerate the anomalies the application cannot tolerate**
+
    - List each place where the application reads a value, makes a decision based on it, and then writes. Classify: lost update? write skew? dirty read? phantom read?
    - Completion criteria: Every check-then-act and read-modify-write in the codebase is identified and labeled with the anomaly class it requires protection from.
 
 2. **Verify the database's actual isolation level**
+
    - Look up the database's actual default isolation level (not the advertised ACID claim). Check whether the configured isolation level matches the label (Oracle "serializable" = snapshot isolation; MySQL "repeatable read" ≠ PostgreSQL "repeatable read").
    - Completion criteria: You can state: "This database, at this configuration, prevents X, Y anomalies and allows Z anomaly."
    - Stop condition: If the database provides only read committed by default and you have write-skew-sensitive code paths, stop and escalate — do not proceed without resolution.
 
 3. **Match anomaly requirements to isolation levels**
+
    - Write skew + phantom reads → requires serializable isolation (PostgreSQL SERIALIZABLE, CockroachDB, Spanner, FoundationDB).
    - Lost updates only → snapshot isolation with atomic operations or SELECT FOR UPDATE.
    - Dirty reads only → read committed (already the default in most databases).
    - Completion criteria: Each code path has a confirmed mapping to the minimum isolation level that protects it.
 
 4. **Implement and test under concurrency**
+
    - Set the isolation level explicitly (do not rely on defaults). Write concurrent integration tests that reproduce the specific anomaly under artificial timing.
    - Completion criteria: A test that reproduces the anomaly at weaker isolation fails, and the same test passes at the selected isolation level.
    - Stop condition: If serializable isolation causes unacceptable performance regression, evaluate explicit locking (SELECT FOR UPDATE) on specific rows rather than a global isolation downgrade.
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -150,7 +154,7 @@ The decision procedure:
 
 - **Linearizability vs. serializability**: Serializability is a transaction isolation property (multi-operation transactions behave as if executed serially). Linearizability is a per-object recency guarantee (reads see the most recent write). A database can have one without the other. Conflating them leads to choosing isolation levels for the wrong reason — linearizability is needed for distributed locking, not for write-skew prevention.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -158,7 +162,7 @@ The decision procedure:
 - **contrasts_with**: consistency-model-selection — serializability (transaction ordering) and linearizability (replica recency) are orthogonal properties; neither implies the other.
 - **composes_with**: timeliness-vs-integrity-distinction — the TVI framework determines which anomalies are integrity-critical (requiring serializable isolation) vs. merely annoying (tolerable with weaker isolation).
 
----
+______________________________________________________________________
 
 ## Audit Information
 

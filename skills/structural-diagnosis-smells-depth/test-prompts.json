@@ -1,0 +1,111 @@
+{
+  "skill_id": "structural-diagnosis-smells-depth",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "fowler-refactoring/fowler-code-smells",
+    "jousterhout/deep-module-classitis-diagnosis"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm reviewing a PR that extracts a 400-line UserService class into four classes: UserCreationService, UserValidationService, UserNotificationService, and UserPersistenceService. The reviewer says it's cleaner but I'm not sure. How do I evaluate whether this split is actually an improvement?",
+      "expected_behavior": "Run the two-pass diagnostic. Pass 1: identify whether Large Class was the triggering smell and whether the split direction matches the smell treatment. Pass 2: apply the depth ratio to each proposed sub-class — list what a caller must know (interface width) vs. what is hidden (area). If the four sub-classes always appear together at call sites and each has an interface nearly as wide as its body, this is classitis — the split degrades depth. Apply the merge hypothesis: would a caller passing fewer arguments and reading fewer files indicate a net improvement? Communicate the finding with smell name + depth evidence + treatment decision.",
+      "expected_not": "Should not approve the split based solely on 'cleaner' or 'single responsibility principle' without evaluating whether the sub-classes are deeper than the original. Should not reject the split based on class count alone without applying the depth ratio."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "I have a method called processOrder() that is 300 lines long. My tech lead says 'extract every 10-line block into its own method.' I feel like that might make it worse. How do I decide?",
+      "expected_behavior": "Apply the override rule. Pass 1: Long Function smell fires — treatment pointer is Extract Function. Pass 2: evaluate the depth ratio of the proposed extractions. If the 300-line method is a state machine or complex sequential protocol where each block is tightly coupled to shared local state (high depth ratio — narrow interface, rich hidden behavior), then extracting 30 short functions produces fragments where naming the pieces adds no clarity and callers must understand the sequence anyway. The Boundaries section explicitly names this: 'Sometimes long functions are clearer as one unit: a state machine as a 60-line switch or a table-driven parser may be clearer than a dozen small functions.' The smell correctly identified a candidate; the depth check overrides the mechanical extraction prescription.",
+      "expected_not": "Should not automatically agree with extracting every 10-line block. Should not dismiss the Long Function smell without running the depth ratio test to see whether extraction would produce deeper or shallower modules."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "In a code review I found a class where calculateDiscount() references seven getter methods on a PricingRule object and only one field from its own class. The reviewer says 'leave it, it works.' How do I make the case for moving it?",
+      "expected_behavior": "Apply Pass 1: Feature Envy smell — seven interactions with PricingRule's internals, one with the class's own fields. Treatment pointer: Move Function to PricingRule. Apply Pass 2: would moving calculateDiscount() to PricingRule make PricingRule deeper? Yes — it encapsulates domain logic currently leaked to the caller, hiding more behavior behind PricingRule's existing interface. Both passes agree. Communicate with smell name + structural evidence + depth validation. The 'it works' argument is not a structural argument — working code and well-structured code are orthogonal.",
+      "expected_not": "Should not retreat to 'leave it' based on functional correctness. Should not frame the recommendation as aesthetic preference — the argument must use both smell vocabulary and depth evidence."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "Every time I change the Order class I also have to change ShippingCalculator, TaxEngine, and InvoiceFormatter. These are all separate classes but they always move together. What's the structural problem and what should I do?",
+      "expected_behavior": "Apply Pass 1: Shotgun Surgery smell — one change fans out across multiple classes. Treatment pointer: consolidation (Move Function / Move Field). Apply Pass 2 with the merge hypothesis: mentally merge these classes and ask whether callers would pass fewer arguments, handle fewer types, read fewer files. If the merged class handles coherent behavior that callers always need together, the merge improves depth. If the classes genuinely handle unrelated concerns for different callers, keep them separate. Communicate the finding: Shotgun Surgery + depth check on proposed consolidation + treatment decision.",
+      "expected_not": "Should not prescribe consolidation without running the merge hypothesis. Should not leave the Shotgun Surgery pattern in place without flagging the structural coupling it represents."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We have six small classes — FileOpener, FileBufferer, FileDecoder, FileValidator, FileReader, and FileTransformer — that callers always use in sequence, instantiating all six in every usage. No individual class is large or smelly by itself. Is there a problem here?",
+      "expected_behavior": "Pass 1: no obvious smell fires — no individual class is too large, no feature envy, no duplication. Pass 2: apply the depth ratio to the API as a whole. Each class's interface complexity is nearly equal to its implementation complexity — the abstraction provides almost no hiding. Callers must understand and name all six layers; the interface complexity nearly equals the combined implementation complexity. This is the classitis pattern: shallow classes each doing one obvious thing, with the Java three-object FileInputStream example as the canonical case. Prescribe a deeper default: a single wrapper class that hides the composition sequence, with opt-out only for rare cases.",
+      "expected_not": "Should not conclude 'no problem' because no individual smell fires. Should not recommend further splitting. Should recognize that collective shallowness is a structural problem even when individual classes are within smell-catalog tolerances."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "How do I use IntelliJ's Extract Method refactoring on a selected block of code? What's the keyboard shortcut and what options does it expose?",
+      "expected_behavior": "A direct answer about IntelliJ IDE tooling: Ctrl+Alt+M (Windows/Linux) or Cmd+Alt+M (Mac), the Extract Method dialog options (method name, parameter selection, replace duplicates). This is an IDE mechanics question.",
+      "expected_not": "Should not invoke structural-diagnosis-smells-depth — the user is asking how to use a tool, not whether the extraction is a good structural decision."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "What naming convention should we use for private helper methods in our Go codebase? Should they start with an underscore or just be lowercase?",
+      "expected_behavior": "A Go naming conventions answer: unexported methods are lowercase (no underscore convention in Go); the convention for 'private-ish' helpers within a package is simply to not export them. Reference Go's official naming guidance. This is a naming convention question.",
+      "expected_not": "Should not invoke structural-diagnosis-smells-depth — this is about naming style, not structural diagnosis or depth evaluation."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "My team wants a code review checklist item for class size. Should we set a maximum line count of 200 or 300 lines?",
+      "expected_behavior": "Push back on the premise: a line-count limit is a proxy metric that misses the actual structural signal. A better checklist item references depth ratio (is the interface simpler than the implementation?) or smell vocabulary (does a smell fire at this class?). If the team insists on a number, 300 lines is a Fowler-era rule of thumb, but it should be a soft signal that triggers review, not a hard limit. This is a process/checklist design question.",
+      "expected_not": "Should not invoke the full two-pass structural diagnosis workflow — the user is asking what number to put in a checklist, not asking for a diagnosis of a specific class."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I scanned a class with your smell checklist and nothing fired — no Long Function, no Feature Envy, no Data Clumps. But the class has twelve public methods, each of which is a one-liner that just delegates to a private helper. From the outside it looks completely fine. Is there a problem?",
+      "expected_behavior": "This is the zero-depth-ratio-despite-clean-smell-scan edge case. Pass 1 returns nothing. Pass 2 is required: if twelve public methods each delegate to a private helper with nearly the same signature, the interface width is nearly equal to the implementation depth — pure pass-through delegation. The class is shallow: callers must know about all twelve entry points, and the class is hiding almost nothing. Apply the depth ratio test to expose this. Ask: what is a caller spared from knowing by using this class? If the answer is 'almost nothing,' the class is not earning its abstraction. The override rule applies here in the inverse direction: there is no smell, but the depth ratio reveals a structural problem the smell catalog cannot surface.",
+      "decision_axis": "The two-pass workflow's second pass catches structural problems that the smell catalog misses: 'The depth ratio catches structural problems that the smell catalog misses. Classes can all be within smell-catalog tolerances and still be collectively shallow.' The pass-through delegation pattern produces exactly this failure mode."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I have an AuthorizationChecker class. It has a narrow interface — just one method: isAuthorized(user, resource, action). But internally it's only 15 lines: it just calls three other services and returns the conjunction of their responses. No business logic of its own. Should I merge it into its callers?",
+      "expected_behavior": "Apply the trust/security boundary exception in Boundaries: 'A class measured as shallow at a trust or security boundary is correctly shallow — explicit interface at a privilege crossing is auditable by design.' AuthorizationChecker is shallow (thin implementation, narrow interface), but the shallowness may be correct: an explicit, auditable authorization crossing point is a security design, not a structural flaw. Apply the testability and security audit check before prescribing elimination. If the class exists to provide a single, reviewable crossing point for access control decisions, shallowness is intentional. If it exists purely as a pass-through with no security reasoning, merging into callers may be appropriate but loses the single crossing-point audit trail.",
+      "decision_axis": "Boundaries exception: 'A class measured as shallow at a trust or security boundary is correctly shallow — explicit interface at a privilege crossing is auditable by design.' The depth ratio override must be evaluated against security and auditability concerns, not only caller convenience."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "A Long Function smell fired on a 90-line method. I ran the depth ratio — the proposed extraction would produce three deeper sub-methods, each with a narrower interface than the original. Both smell and depth agree: extract. But we have no test suite for this class. Should I proceed?",
+      "expected_behavior": "Both diagnostic passes agree on the structural improvement, but the Source A Failures section is explicit: 'Refactoring without tests: applying a refactoring because a smell exists, without a test suite to catch regressions, introduces bugs.' The two-pass diagnosis does not override the precondition for safe refactoring — a characterization test suite must come first. The correct sequence: (1) introduce characterization tests (golden-file or approval tests) to pin the current behavior, (2) then extract with confidence. The structural diagnosis is sound; the execution precondition is not met.",
+      "decision_axis": "Source A failure: 'Refactoring without tests — applying a refactoring because a smell exists, without a test suite to catch regressions, introduces bugs.' The diagnostic result is valid; the safety precondition (test suite existence) gates whether to act on it."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "A code reviewer is insisting we extract a 200-line OrderProcessor class into OrderValidator, OrderPricer, and OrderFulfiller because 'the single responsibility principle requires it.' The original class has a narrow, stable public interface — just processOrder(order) — and hides complex domain logic inside. How do I evaluate and respond to this review comment?",
+      "merged_advantage": "The merged skill encodes the override rule: if a smell (Large Class) identifies a candidate for splitting, but the depth ratio shows the proposed sub-classes would be shallower than the original, the depth ratio overrides the smell. Only the merged skill contains this override rule. The merged skill also provides the communication format: '[Smell name] — [structural evidence] — depth check: proposed outcome is shallower — treatment: override — alternative: simplify the interface rather than split.' This lets the reviewer respond with concrete structural evidence rather than a counter-assertion.",
+      "source1_gap": "fowler-code-smells identifies Large Class as a splitting candidate and would support the reviewer's prescription — it does not encode the depth ratio override that can veto the treatment when the proposed split degrades depth.",
+      "source2_gap": "deep-module-classitis-diagnosis evaluates depth and would flag the split as producing shallower modules, but does not provide the smell vocabulary to engage with the reviewer's SRP framing or the two-pass communication format for code review."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "After a sprint retrospective my team agreed to split up our largest class — 600 lines, many responsibilities. We made a list of six proposed sub-classes. Now we need to decide which of the six splits to actually make and which to skip. How do we prioritize?",
+      "merged_advantage": "The merged skill provides the two-pass triage: run Pass 1 (smell scan) across all six proposals to identify which are driven by named smells with known treatments, then run Pass 2 (depth ratio) on each to validate which splits produce deeper results. This gives a concrete ranked prioritization: splits where smell and depth agree get highest priority; splits where depth check shows shallower outcome get overridden; splits with no smell firing and no depth improvement get deprioritized. Neither source alone provides this combined ranking methodology.",
+      "source1_gap": "fowler-code-smells provides a list of treatments per smell but does not provide a mechanism to evaluate whether those treatments actually improve the structural outcome — all smell-identified splits look equally valid without the depth check.",
+      "source2_gap": "deep-module-classitis-diagnosis evaluates depth outcomes but does not give the smell vocabulary to identify which of the six proposals are driven by named structural problems vs. arbitrary decomposition, making it hard to distinguish good split proposals from arbitrary ones."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "We're reviewing a library API we're about to release publicly. It has twelve classes that internal callers always instantiate together in a standard three-step setup. No individual class has an obvious smell. But I want to validate whether the API design is as good as it can be before we publish it.",
+      "merged_advantage": "The merged skill's Pass 2 operates at the API scope level — above method and class scope — and catches the classitis pattern where no individual smell fires but collective shallowness creates unnecessary caller burden. The skill applies the depth ratio to the API as a whole and prescribes a deeper default: a single wrapper class or factory that hides the composition sequence. This is exactly the Java three-object file open case (FileInputStream + BufferedInputStream + ObjectInputStream). Neither source alone catches this: the smell catalog has no API-level smell for 'requires three objects to do one thing'; the depth framework alone needs the smell vocabulary to help frame the diagnosis for API consumers.",
+      "source1_gap": "fowler-code-smells operates at method and class scope — it does not have a named smell for the pattern of requiring callers to compose multiple shallow classes for a single operation. The catalog would return no findings on this API.",
+      "source2_gap": "deep-module-classitis-diagnosis would identify the shallowness of the three-step setup but does not provide the smell vocabulary to communicate the finding to API consumers or to frame it in terms of known structural patterns they can act on."
+    }
+  ]
+}

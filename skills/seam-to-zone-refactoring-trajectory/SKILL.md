@@ -6,10 +6,10 @@ description: Use when working with legacy code that has tangled dependencies and
 type: merged-skill
 source_skills:
   - slug: welc/welc-seam-model
-    book: "Working Effectively with Legacy Code"
+    book: Working Effectively with Legacy Code
     author: Michael C. Feathers
   - slug: fcis/fcis-two-zone-architecture
-    book: "Functional Core, Imperative Shell"
+    book: Functional Core, Imperative Shell
     author: Gary Bernhardt
 related_skills:
   - slug: welc/welc-seam-model
@@ -50,7 +50,7 @@ Go files without corresponding test files:
 
 > "The ideal program contains a large body of immutable code written in a functional style, and then small pieces of mutable code doing imperative things — but having those pieces be very localized, separate from the data, and separate from the core behavior of the system. Push all the logic and data manipulation into immutable objects, and confine every side effect, every mutable reference, and every interaction with the outside world to a thin outer shell."
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -70,7 +70,7 @@ When you break a dependency using a seam and extract a fake for testing, the ext
 
 **For legacy code:** Seam-first. Locate the enabling point, introduce the minimum substitution, get the code under test. Then use two-zone as the refactoring target: each dependency-breaking step should move the code closer to the two-zone structure — pure logic toward value objects, I/O toward a thin shell.
 
----
+______________________________________________________________________
 
 ### A1 — Applications
 
@@ -90,7 +90,7 @@ When you break a dependency using a seam and extract a fake for testing, the ext
 
 > "The ideal program contains a large body of immutable code written in a functional style, and then small pieces of mutable code doing imperative things — but having those pieces be very localized, separate from the data, and separate from the core behavior of the system. Push all the logic and data manipulation into immutable objects, and confine every side effect, every mutable reference, and every interaction with the outside world to a thin outer shell."
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -110,7 +110,7 @@ When you break a dependency using a seam and extract a fake for testing, the ext
 
 **For legacy code:** Seam-first. Locate the enabling point, introduce the minimum substitution, get the code under test. Then use two-zone as the refactoring target: each dependency-breaking step should move the code closer to the two-zone structure — pure logic toward value objects, I/O toward a thin shell.
 
----
+______________________________________________________________________
 
 ## A1 — Applications
 
@@ -126,7 +126,7 @@ With the seam established, apply the two-zone diagnostic: does `PostReceiveError
 
 **Result:** Tests can run `Init()` and verify its other behavior without triggering `PostReceiveError`'s real side effects. No production code path changed.
 
----
+______________________________________________________________________
 
 ### Case 2: Bernhardt — Ruby Twitter Client — Two-Zone Design from the Start (New Code Domain)
 
@@ -140,7 +140,7 @@ Each state change in the shell is a single assignment line: `@cursor = cursor.mo
 
 **Result:** A working production application with high test confidence, lock-free concurrency, and all side effects traceable to one file.
 
----
+______________________________________________________________________
 
 ## A2 — When to Use This Skill
 
@@ -162,7 +162,7 @@ Use this skill — not one of its source skills — when:
 - "I can't test this without changing the code" (seam analysis first)
 - "My business logic is mixed in with database calls" (two-zone prescription)
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -171,14 +171,16 @@ Use this skill — not one of its source skills — when:
 1. **Identify the dependency that is blocking the test.** Name the specific call or symbol connecting the code under test to infrastructure that cannot run in the test environment (database, filesystem, network, hardware, global side-effect function).
 
 2. **Determine whether a seam already exists.** Ask in order:
+
    - Is the call through a virtual method or interface? → Object seam; enabling point is wherever the concrete object is created.
    - Is the symbol resolved by the linker or classpath? → Link seam; enabling point is the build script or classpath.
    - Does a C/C++ preprocessor run before this code? → Preprocessing seam; enabling point is the `#define` or alternate header.
-   If no seam exists, introduce the minimum change that creates one (virtual wrapper, extracted factory method, function-type field).
+     If no seam exists, introduce the minimum change that creates one (virtual wrapper, extracted factory method, function-type field).
 
 3. **Act at the enabling point, not the seam location.** Construct or configure the fake at the enabling point. The seam location (the call site) must remain unchanged in production code.
 
 4. **Classify the extracted behavior: data or I/O?** Ask: does the fake return pure data (in → out, no side effects), or does it perform I/O (write, network, mutation of external state)?
+
    - If data: this is the two-zone signal — the behavior belongs in the functional core. The fake is a refactoring prompt, not a permanent solution. Proceed to Phase 2.
    - If I/O: this is genuine shell behavior. The fake is the correct permanent test tool. Stop here.
 
@@ -196,7 +198,7 @@ Use this skill — not one of its source skills — when:
 
 Begin at Step 5. Design with the two zones explicit from the start. Apply the side-effect test before writing any class. No seam analysis needed unless the code later degrades.
 
----
+______________________________________________________________________
 
 ## B — Boundaries
 

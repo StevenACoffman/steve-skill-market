@@ -6,10 +6,10 @@ description: Use when designing the test architecture for a Go HTTP service from
 type: merged-skill
 source_skills:
   - slug: lets-go/letsgo-layered-testing
-    book: "Let's Go"
+    book: Let's Go
     author: Alex Edwards
   - slug: matryer-http-services/matryer-run-e2e-testing
-    book: "How I Write HTTP Services in Go After 13 Years"
+    book: How I Write HTTP Services in Go After 13 Years
     author: Mat Ryer
 related_skills:
   - slug: lets-go/letsgo-layered-testing
@@ -61,7 +61,7 @@ run()-based e2e tests:
 
 **Convergence note:** Both authors independently concluded that `httptest.ResponseRecorder`-only handler tests are an inferior default because they bypass the middleware chain — the HTTP routing, auth, session, and CSRF layers that users actually traverse. Each advocates for a test that exercises the full HTTP stack. They diverge on exactly one critical dimension: Ryer uses real dependencies (real database, real migrations, real auth via `run()`), which catches integration failures but requires infrastructure; Edwards uses mock injection (in-memory mock models behind the real routing and middleware stack), which is fast and CI-friendly but catches only behavior the mock encodes.
 
----
+______________________________________________________________________
 
 ### I — Methodological Framework (Interpretation)
 
@@ -89,7 +89,7 @@ These are not alternatives. They target different failure classes and compose as
 
 **The delete-duplicates rule.** Ryer is explicit that once an e2e test covers what a handler unit test already asserts, the handler unit test should be deleted. This reduces maintenance cost: one handler change should require updating one test, not three. Edwards' three-tier model (unit + e2e + integration) does not advocate for deletion. The merged strategy treats deletion as appropriate when a handler test duplicates Tier 1 or Tier 2 coverage — but as a team decision, not a unilateral one.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -117,7 +117,7 @@ These are not alternatives. They target different failure classes and compose as
 
 **Convergence note:** Both authors independently concluded that `httptest.ResponseRecorder`-only handler tests are an inferior default because they bypass the middleware chain — the HTTP routing, auth, session, and CSRF layers that users actually traverse. Each advocates for a test that exercises the full HTTP stack. They diverge on exactly one critical dimension: Ryer uses real dependencies (real database, real migrations, real auth via `run()`), which catches integration failures but requires infrastructure; Edwards uses mock injection (in-memory mock models behind the real routing and middleware stack), which is fast and CI-friendly but catches only behavior the mock encodes.
 
----
+______________________________________________________________________
 
 ## I — Methodological Framework (Interpretation)
 
@@ -145,7 +145,7 @@ These are not alternatives. They target different failure classes and compose as
 
 **The delete-duplicates rule.** Ryer is explicit that once an e2e test covers what a handler unit test already asserts, the handler unit test should be deleted. This reduces maintenance cost: one handler change should require updating one test, not three. Edwards' three-tier model (unit + e2e + integration) does not advocate for deletion. The merged strategy treats deletion as appropriate when a handler test duplicates Tier 1 or Tier 2 coverage — but as a team decision, not a unilateral one.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -159,7 +159,7 @@ These are not alternatives. They target different failure classes and compose as
 
 **Result:** A smaller, more powerful test suite. Handler unit tests are deleted when they duplicate e2e coverage. The `/healthz` readiness endpoint serves double duty: test synchronization and production health monitoring.
 
----
+______________________________________________________________________
 
 ### Case 2: Let's Go Snippet Application — Mock-Injection E2e with CSRF and Sessions (Edwards)
 
@@ -171,7 +171,7 @@ These are not alternatives. They target different failure classes and compose as
 
 **Result:** The test exercises routing, `nosurf` middleware, `scs` session middleware, authentication, template rendering, and redirect logic — all with mock models and no database container. The full middleware stack is tested; the data layer is controlled and deterministic.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -193,7 +193,7 @@ Instead of asking "should I unit test my handlers?" (Ryer alone) or "how do I se
 - The question is about a non-Go language (this skill is Go-specific: `httptest`, `go test`, `run()`).
 - The user is asking about load testing, chaos testing, or contract testing between services — those require different tools.
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -205,10 +205,10 @@ Ensure the `application` struct (or equivalent) holds interface-typed fields for
 
 ```go
 type application struct {
-    snippets models.SnippetModelInterface
-    users    models.UserModelInterface
-    logger   *slog.Logger
-    // ...
+	snippets models.SnippetModelInterface
+	users    models.UserModelInterface
+	logger   *slog.Logger
+	// ...
 }
 ```
 
@@ -220,13 +220,13 @@ Create `internal/models/mocks/` with one mock file per model interface. Implemen
 type MockSnippetModel struct{}
 
 func (m *MockSnippetModel) Insert(title, content string, expires int) (int, error) {
-    return 2, nil
+	return 2, nil
 }
 func (m *MockSnippetModel) Get(id int) (models.Snippet, error) {
-    if id == 1 {
-        return mockSnippet, nil
-    }
-    return models.Snippet{}, models.ErrNoRecord
+	if id == 1 {
+		return mockSnippet, nil
+	}
+	return models.Snippet{}, models.ErrNoRecord
 }
 ```
 
@@ -234,17 +234,17 @@ func (m *MockSnippetModel) Get(id int) (models.Snippet, error) {
 
 ```go
 func newTestApplication(t *testing.T) *application {
-    templateCache, err := newTemplateCache()
-    if err != nil {
-        t.Fatal(err)
-    }
-    return &application{
-        logger:        slog.New(slog.NewTextHandler(io.Discard, nil)),
-        snippets:      &mocks.MockSnippetModel{},
-        users:         &mocks.MockUserModel{},
-        templateCache: templateCache,
-        sessionManager: scs.New(),
-    }
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return &application{
+		logger:         slog.New(slog.NewTextHandler(io.Discard, nil)),
+		snippets:       &mocks.MockSnippetModel{},
+		users:          &mocks.MockUserModel{},
+		templateCache:  templateCache,
+		sessionManager: scs.New(),
+	}
 }
 ```
 
@@ -254,17 +254,17 @@ func newTestApplication(t *testing.T) *application {
 type testServer struct{ *httptest.Server }
 
 func newTestServer(t *testing.T, h http.Handler) *testServer {
-    ts := httptest.NewTLSServer(h)
-    jar, err := cookiejar.New(nil)
-    if err != nil {
-        t.Fatal(err)
-    }
-    ts.Client().Jar = jar
-    ts.Client().CheckRedirect = func(req *http.Request, via []*http.Request) error {
-        return http.ErrUseLastResponse
-    }
-    t.Cleanup(ts.Close)
-    return &testServer{ts}
+	ts := httptest.NewTLSServer(h)
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts.Client().Jar = jar
+	ts.Client().CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+	t.Cleanup(ts.Close)
+	return &testServer{ts}
 }
 ```
 
@@ -272,14 +272,14 @@ func newTestServer(t *testing.T, h http.Handler) *testServer {
 
 ```go
 func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (int, http.Header, string) {
-    req, err := http.NewRequest(http.MethodPost, ts.URL+urlPath,
-        strings.NewReader(form.Encode()))
-    if err != nil {
-        t.Fatal(err)
-    }
-    req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Set("Sec-Fetch-Site", "same-origin") // required by nosurf
-    // ...
+	req, err := http.NewRequest(http.MethodPost, ts.URL+urlPath,
+		strings.NewReader(form.Encode()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Sec-Fetch-Site", "same-origin") // required by nosurf
+	// ...
 }
 ```
 
@@ -287,19 +287,19 @@ func (ts *testServer) postForm(t *testing.T, urlPath string, form url.Values) (i
 
 ```go
 func extractCSRFToken(t *testing.T, body string) string {
-    t.Helper()
-    re := regexp.MustCompile(`<input type='hidden' name='csrf_token' value='(.+?)'>`)
-    matches := re.FindStringSubmatch(body)
-    if len(matches) < 2 {
-        t.Fatal("no csrf token found in body")
-    }
-    return html.UnescapeString(matches[1])
+	t.Helper()
+	re := regexp.MustCompile(`<input type='hidden' name='csrf_token' value='(.+?)'>`)
+	matches := re.FindStringSubmatch(body)
+	if len(matches) < 2 {
+		t.Fatal("no csrf token found in body")
+	}
+	return html.UnescapeString(matches[1])
 }
 ```
 
 **Step 7 (conditional — integration layer):** If model SQL correctness matters, add `newTestDB(t)` that opens a real connection, runs `testdata/setup.sql`, and registers `t.Cleanup` to run `testdata/teardown.sql`. This is a separate integration test tier, not part of the fast e2e suite.
 
----
+______________________________________________________________________
 
 ### Tier 2: Real-Dependency E2e via Run() (Ryer — Catches Integration Failures)
 
@@ -307,7 +307,7 @@ func extractCSRFToken(t *testing.T, body string) string {
 
 ```go
 func run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
-    // parse args, connect to DB, run migrations, start server
+	// parse args, connect to DB, run migrations, start server
 }
 ```
 
@@ -323,32 +323,32 @@ The handler returns 200 OK when the service is up and dependencies are reachable
 
 ```go
 func waitForReady(ctx context.Context, timeout time.Duration, endpoint string) error {
-    client := http.Client{}
-    startTime := time.Now()
-    for {
-        req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
-        if err != nil {
-            return fmt.Errorf("failed to create request: %w", err)
-        }
-        resp, err := client.Do(req)
-        if err != nil {
-            continue
-        }
-        if resp.StatusCode == http.StatusOK {
-            resp.Body.Close()
-            return nil
-        }
-        resp.Body.Close()
-        select {
-        case <-ctx.Done():
-            return ctx.Err()
-        default:
-            if time.Since(startTime) >= timeout {
-                return fmt.Errorf("timeout reached while waiting for endpoint")
-            }
-            time.Sleep(250 * time.Millisecond)
-        }
-    }
+	client := http.Client{}
+	startTime := time.Now()
+	for {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+		if err != nil {
+			return fmt.Errorf("failed to create request: %w", err)
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		if resp.StatusCode == http.StatusOK {
+			resp.Body.Close()
+			return nil
+		}
+		resp.Body.Close()
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			if time.Since(startTime) >= timeout {
+				return fmt.Errorf("timeout reached while waiting for endpoint")
+			}
+			time.Sleep(250 * time.Millisecond)
+		}
+	}
 }
 ```
 
@@ -356,29 +356,29 @@ func waitForReady(ctx context.Context, timeout time.Duration, endpoint string) e
 
 ```go
 func TestCreateUser(t *testing.T) {
-    ctx, cancel := context.WithCancel(context.Background())
-    t.Cleanup(cancel)
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
 
-    go run(ctx, []string{}, os.Stdout, os.Stderr)
+	go run(ctx, []string{}, os.Stdout, os.Stderr)
 
-    err := waitForReady(ctx, 5*time.Second, "http://localhost:8080/healthz")
-    if err != nil {
-        t.Fatalf("server did not become ready: %v", err)
-    }
+	err := waitForReady(ctx, 5*time.Second, "http://localhost:8080/healthz")
+	if err != nil {
+		t.Fatalf("server did not become ready: %v", err)
+	}
 
-    resp, err := http.Post(
-        "http://localhost:8080/api/v1/users",
-        "application/json",
-        strings.NewReader(`{"name":"alice"}`),
-    )
-    if err != nil {
-        t.Fatalf("request failed: %v", err)
-    }
-    defer resp.Body.Close()
+	resp, err := http.Post(
+		"http://localhost:8080/api/v1/users",
+		"application/json",
+		strings.NewReader(`{"name":"alice"}`),
+	)
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer resp.Body.Close()
 
-    if resp.StatusCode != http.StatusCreated {
-        t.Errorf("want 201, got %d", resp.StatusCode)
-    }
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("want 201, got %d", resp.StatusCode)
+	}
 }
 ```
 
@@ -391,7 +391,7 @@ For each handler unit test, ask:
 
 If yes to both: delete it. Retain handler unit tests only for code paths that neither tier can practically reach (obscure error branches, complex parsing logic worth TDD before the server is up).
 
----
+______________________________________________________________________
 
 ## B — Boundaries and Failure Modes
 
@@ -417,7 +417,7 @@ If yes to both: delete it. Retain handler unit tests only for code paths that ne
 
 Ryer explicitly advocates deleting handler unit tests that duplicate e2e coverage. Edwards presents a three-tier model (unit + e2e + integration) without advocating for test deletion. These cannot be fully reconciled. The merged strategy surfaces this as a team governance decision: the deletion rule reduces maintenance cost and is technically sound, but it requires explicit team alignment before execution. On teams where unit test coverage is a CI gate or code review requirement, the deletion rule cannot be applied unilaterally.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
@@ -428,7 +428,7 @@ Ryer explicitly advocates deleting handler unit tests that duplicate e2e coverag
 - **lets-go/letsgo-application-struct-di** — depends-on (Tier 1): `newTestApplication(t)` is only possible because the application struct accepts interface-typed fields; the DI struct design enables mock injection
 - **lets-go/letsgo-middleware-composition** — depends-on (Tier 1): `routes()` returning `http.Handler` is the design decision that enables `httptest.NewTLSServer(app.routes())` to exercise the full middleware stack in one line
 
----
+______________________________________________________________________
 
 ## Audit Information
 

@@ -136,8 +136,8 @@ Instead of applying idempotency keys alone (which does not protect against clien
 ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 defer cancel()
 resp, err := orderClient.PlaceOrder(ctx, &pb.PlaceOrderRequest{
-    IdempotencyKey: idempotencyKey,  // client-generated UUID, step 2
-    // ...
+	IdempotencyKey: idempotencyKey, // client-generated UUID, step 2
+	// ...
 })
 ```
 
@@ -146,7 +146,7 @@ This is the only place in the entire chain where a new root deadline is created.
 **Step 2: Generate the idempotency key at the originating client, before the first call.**
 
 ```go
-idempotencyKey := uuid.New().String()  // generated once, before the first network call
+idempotencyKey := uuid.New().String() // generated once, before the first network call
 ```
 
 The same key is used for the original request and all retries of the same user action. A new user action generates a new key. Do not generate the key inside the retry loop.
@@ -155,12 +155,12 @@ The same key is used for the original request and all retries of the same user a
 
 ```go
 func (s *orderService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
-    // Extract idempotency key from the request and include it in downstream calls
-    paymentResp, err := s.paymentClient.Charge(ctx, &pb.ChargeRequest{  // ctx, not context.Background()
-        IdempotencyKey: req.IdempotencyKey,  // propagate unchanged
-        Amount:         req.Amount,
-    })
-    // ...
+	// Extract idempotency key from the request and include it in downstream calls
+	paymentResp, err := s.paymentClient.Charge(ctx, &pb.ChargeRequest{ // ctx, not context.Background()
+		IdempotencyKey: req.IdempotencyKey, // propagate unchanged
+		Amount:         req.Amount,
+	})
+	// ...
 }
 ```
 
@@ -170,7 +170,7 @@ Never create `context.WithTimeout(context.Background(), ...)` inside a handler. 
 
 ```go
 if ctx.Err() != nil {
-    return nil, status.FromContextError(ctx.Err()).Err()
+	return nil, status.FromContextError(ctx.Err()).Err()
 }
 ```
 
@@ -180,8 +180,10 @@ Avoid beginning work that cannot complete within the remaining budget.
 
 ```go
 // Relational database: wrap operation and key insertion in one transaction
+// database/sql:
 _, err = tx.ExecContext(ctx, `INSERT INTO requests (idempotency_key, result, ...) VALUES ($1, $2, ...)
     ON CONFLICT (idempotency_key) DO NOTHING`, req.IdempotencyKey, serializedResult)
+// pgx (this repo): tx.Exec(ctx, ...) — no "Context" suffix; use sqlc-generated method when available
 ```
 
 On duplicate key: return the stored result without reprocessing. The UNIQUE constraint on `idempotency_key` is the deduplication mechanism.

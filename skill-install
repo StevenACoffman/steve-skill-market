@@ -2,11 +2,12 @@
 # skill-install — install skills from this marketplace into a target repo
 #
 # Usage:
-#   skill-install <skill-name> [target-dir]   install one skill
-#   skill-install --all [target-dir]          install all skills
-#   skill-install --from-manifest <file>      re-install from a manifest
-#   skill-install --update <skill-name> [target-dir]  overwrite installed skill
-#   skill-install --list                      list available skills (delegates to skill-list)
+#   skill-install <skill-name> [target-dir]            install one skill
+#   skill-install --all [target-dir]                   install all skills
+#   skill-install --from-manifest <file>               re-install from a manifest
+#   skill-install --update <skill-name> [target-dir]   overwrite installed skill
+#   skill-install --from-url <url> [skill|--all] [target-dir]  install from a GitHub URL
+#   skill-install --list                               list available skills
 #
 # target-dir defaults to the current working directory.
 # Skills are installed into <target-dir>/.agents/skills/<name>/SKILL.md
@@ -18,13 +19,26 @@ MARKET_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_DIR="$MARKET_DIR/skills"
 
 usage() {
-  sed -n '2,12p' "$0" | sed 's/^# //'
+  sed -n '2,13p' "$0" | sed 's/^# //'
   exit 1
 }
 
 # Resolve marketplace git SHA for manifest
 market_sha() {
   git -C "$MARKET_DIR" rev-parse --short HEAD 2>/dev/null || echo "unknown"
+}
+
+# Return the canonical source reference for manifest entries.
+# Prefers the git remote URL (normalised to HTTPS, .git suffix stripped)
+# so the manifest is portable across machines. Falls back to the local path.
+market_source() {
+  local remote
+  remote=$(git -C "$MARKET_DIR" remote get-url origin 2>/dev/null) || { echo "$MARKET_DIR"; return; }
+  # Normalise SSH remote (git@github.com:org/repo.git) → HTTPS
+  remote="${remote/git@github.com:/https://github.com/}"
+  # Strip .git suffix
+  remote="${remote%.git}"
+  echo "$remote"
 }
 
 install_skill() {
@@ -51,9 +65,9 @@ install_skill() {
 
   # Write/update manifest entry
   local manifest="$target/.agents/skill-manifest.yml"
-  local sha
+  local sha source_ref date
   sha=$(market_sha)
-  local date
+  source_ref=$(market_source)
   date=$(date +%Y-%m-%d)
 
   mkdir -p "$target/.agents"
@@ -62,10 +76,8 @@ install_skill() {
   # Remove existing entry for this skill, then append updated one
   local tmp
   tmp=$(mktemp)
-  grep -v "^- skill: $skill$" "$manifest" > "$tmp" || true
-  # Also remove the 3 lines following a matching entry (source/sha/installed_at)
   python3 - "$skill" "$manifest" "$tmp" << 'PYEOF'
-import sys, re
+import sys
 skill, src_path, dst_path = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(src_path) as f:
     lines = f.readlines()
@@ -76,7 +88,7 @@ for line in lines:
         skip -= 1
         continue
     if line.strip() == f"- skill: {skill}":
-        skip = 3  # skip skill + source + sha + installed_at lines
+        skip = 3  # skip source + sha + installed_at lines
         continue
     result.append(line)
 with open(dst_path, 'w') as f:
@@ -85,7 +97,7 @@ PYEOF
 
   cat >> "$tmp" << EOF
 - skill: $skill
-  source: $MARKET_DIR
+  source: $source_ref
   sha: $sha
   installed_at: $date
 EOF
@@ -99,6 +111,7 @@ MODE=""
 TARGET=""
 SKILL_ARG=""
 MANIFEST_FILE=""
+FROM_URL=""
 
 case "${1:-}" in
   --list)
@@ -117,6 +130,24 @@ case "${1:-}" in
     MODE="from-manifest"
     MANIFEST_FILE="${2:?error: --from-manifest requires a manifest file path}"
     TARGET="$(dirname "$MANIFEST_FILE")/.."
+    ;;
+  --from-url)
+    FROM_URL="${2:?error: --from-url requires a URL}"
+    # Remaining args: optional skill name (or --all) and optional target dir
+    shift 2
+    case "${1:-}" in
+      --all|"")
+        MODE="all"
+        TARGET="${2:-.}"
+        ;;
+      -*)
+        echo "error: unexpected option after --from-url: '$1'" >&2; usage ;;
+      *)
+        MODE="one"
+        SKILL_ARG="$1"
+        TARGET="${2:-.}"
+        ;;
+    esac
     ;;
   --help|-h)
     usage
@@ -137,6 +168,17 @@ esac
 
 # Resolve target to absolute path
 TARGET="$(cd "$TARGET" && pwd)"
+
+# If --from-url was given, clone the marketplace to a temp dir and redirect
+# MARKET_DIR / SKILLS_DIR so the rest of the script works unchanged.
+if [[ -n "$FROM_URL" ]]; then
+  CLONE_DIR=$(mktemp -d)
+  trap 'rm -rf "$CLONE_DIR"' EXIT
+  echo "cloning $FROM_URL ..."
+  git clone --depth 1 "$FROM_URL" "$CLONE_DIR/market" --quiet
+  MARKET_DIR="$CLONE_DIR/market"
+  SKILLS_DIR="$MARKET_DIR/skills"
+fi
 
 case "$MODE" in
   one)

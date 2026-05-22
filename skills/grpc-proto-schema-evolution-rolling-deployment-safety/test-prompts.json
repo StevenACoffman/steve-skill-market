@@ -1,0 +1,103 @@
+{
+  "skill_id": "grpc-proto-schema-evolution-rolling-deployment-safety",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "kleppmann/schema-evolution-compatibility-planning",
+    "grpc-up-and-running/grpc-proto-contract-design"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "We added a new optional string field fulfillment_priority to a Protobuf message deployed across three services. The field addition itself looked safe. But after our rolling deployment, engineers reported that some order records have the field missing — specifically records that were updated during the deployment window. No errors were logged anywhere. What happened and how do we prevent it?",
+      "expected_behavior": "Diagnose the read-modify-write forward compatibility failure: old-version nodes read records written by new-version nodes (which include fulfillment_priority), reconstruct Go structs from the parsed proto fields, update a known field (e.g., status), and serialize back from the struct — not from the original parsed message. The struct does not model fulfillment_priority, so it is silently dropped on write-back. No error is raised at any layer. The fix: ensure the ORM's write-back path serializes from the original parsed proto message (preserving unknown fields in the XXX_unrecognized / proto3 unknown fields mechanism) rather than reconstructing from a struct. Add the unknown-field preservation test (old-code deserialize, modify, write-back, re-read with new code, assert field is present). If the ORM cannot be configured this way, enforce deployment order so old nodes are retired before new-format records exist.",
+      "expected_not": "Should not suggest that proto3 optional fields are inherently safe without checking the ORM write-back path. Should not recommend simply redeploying faster as the fix."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "We're planning to remove the legacy_sku field from our Product proto. It's currently field number 5. Another developer suggests we can reuse field number 5 for a new routing_key field since legacy_sku is gone. Is this safe?",
+      "expected_behavior": "Stop — field number reuse is never permitted. Field number 5 may exist in records persisted to databases, message queues, or event logs. Any old code compiled against the old proto will decode the new routing_key bytes (field 5) as legacy_sku. Any new code reading old records will decode the old legacy_sku bytes as routing_key — wrong type, wrong semantics, no error raised. The correct procedure: (1) reserve field number 5 and the name: reserved 5; reserved 'legacy_sku'; in the proto message, (2) assign the new routing_key field a fresh, never-used field number (e.g., 7). Add buf breaking detection to CI to catch future field number reuse automatically.",
+      "expected_not": "Should not suggest that reuse is safe if all persisted records are migrated first — the risk remains for any in-flight records or logs during the migration window. Should not suggest using a new proto package version as an alternative to using reserved."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "A new service engineer proposed adding a required field user_verified: bool = 8 to our UserProfile proto message to enforce that all profiles must have a verified status. We're running a rolling deployment across 12 pods. Is this safe to deploy?",
+      "expected_behavior": "Stop — adding a required field violates backward compatibility and will crash old-version nodes during the rolling deployment window. Old nodes running the version compiled against the old proto will receive messages written by new nodes that include user_verified = 8. When old code tries to decode a message and cannot find the required field (old code doesn't know about field 8), it will fail or crash. The correct approach: add user_verified as optional (the Protobuf default) with a sensible default value (false). Once all nodes are running the new version, enforce the 'verified' business rule at the application layer — not at the proto required-field level. Proto3 does not support required fields for this exact reason.",
+      "expected_not": "Should not suggest adding the required field as a temporary measure and making it optional later. Should not suggest slowing down the rollout as the mitigation — the schema change itself is the problem."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I'm using buf CLI in my proto workflow. How do I set up buf breaking change detection so that someone on my team can't accidentally reuse a removed field number or change a field type on an existing field number and merge it to main without being caught?",
+      "expected_behavior": "Add buf breaking --against '.git#branch=main' to the CI pipeline. This command compares the current proto state against the main branch and fails if any breaking change is detected — including field number reuse, field type changes on existing numbers, field removal, and service method removal. Show the buf.yaml configuration and where to add the check in CI. Explain that protoc itself has no breaking-change detection — buf is required for automated enforcement. Also explain what buf does NOT catch: semantically breaking changes that are proto-compatible (same field type, different semantic meaning — those require API review).",
+      "expected_not": "Should not suggest relying on code review alone for breaking-change detection. Should not suggest the deprecated protoc-gen-lint as an alternative."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We have a gRPC API (ecommerce.v1) that needs a breaking redesign — we need to change field types, rename several fields, and restructure a message in a way that cannot be done with additive changes. Five external teams depend on our v1 API. What's the migration strategy?",
+      "expected_behavior": "Create a new package version: package ecommerce.v2 with a new go_package pointing to the v2 module path. Run v1 and v2 simultaneously — the gRPC server registers both service versions. Communicate a sunset timeline to the five dependent teams. Maintain v1 until the last consumer has migrated to v2 and the migration is confirmed. Do not remove v1 until zero clients are using it. Add buf breaking checks for v2 from its inception so the new version is protected from future breaking changes. The v1 service implementation can delegate to shared business logic, reducing duplication during the transition window.",
+      "expected_not": "Should not suggest a flag-day cutover where all five teams migrate simultaneously. Should not suggest modifying v1 in place with the breaking changes and issuing a 'migrate by date' notice."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to organize my proto files across multiple services in a monorepo. Should I put all protos in a single top-level protos/ directory or co-locate them with each service? What's the recommended layout?",
+      "expected_behavior": "Cover proto file organization patterns: monorepo with a central protos/ directory (easier cross-service imports, single buf module), co-location with services (cleaner service ownership, requires buf workspace for cross-service imports), or a dedicated proto repository. This is a project layout / module organization question.",
+      "expected_not": "Should not invoke grpc-proto-schema-evolution-rolling-deployment-safety — proto file organization is a layout/structure question, not a schema evolution, field number safety, or rolling deployment compatibility question."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "I'm choosing between JSON, Protobuf, and Avro for events on a Kafka topic. The events are consumed by 8 services maintained by different teams. Which format should I use?",
+      "expected_behavior": "Compare format trade-offs for long-lived event schemas: Protobuf and Avro enforce compatibility rules structurally (buf/schema registry blocks incompatible changes before they reach consumers), while JSON relies on developer discipline and code review. Avro requires a schema registry for decoding. Protobuf integrates with buf and gRPC tooling if services are already using gRPC. The choice depends on team tooling familiarity, existing infrastructure, and schema governance requirements. This is a format selection question.",
+      "expected_not": "Should not invoke grpc-proto-schema-evolution-rolling-deployment-safety — while the skill mentions this comparison in its boundary section, the question is about format selection, not about safe evolution of an already-chosen Protobuf schema during rolling deployments."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "How do I implement server reflection in my gRPC Go service so that tools like grpcurl and Postman can discover available RPC methods without needing the proto files?",
+      "expected_behavior": "Import google.golang.org/grpc/reflection, call reflection.Register(s) after service registration in main.go, and import _ 'google.golang.org/grpc/reflection' to trigger the side-effect registration. This enables grpcurl and other tools to enumerate services and methods at runtime. This is a gRPC reflection / developer tooling question.",
+      "expected_not": "Should not invoke grpc-proto-schema-evolution-rolling-deployment-safety — server reflection setup has no connection to field number contracts, forward/backward compatibility, or rolling deployment safety."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "We renamed a field in a Protobuf message from user_id to account_id while keeping the same field number (1). The field is a string. buf breaking says this is safe. Our Go generated code changed. But our platform team is raising a concern: 'The billing service uses user_id to look up records in the users table. If we change the name, the billing service team might misunderstand account_id as referencing the accounts table instead.' Is this a safe change?",
+      "expected_behavior": "This is a semantically breaking change even though it is proto-compatible. buf breaking detects structural breaks (field number, type, removal) but does not detect semantic contract changes. Renaming user_id → account_id on field number 1 is safe at the wire-format level — no deployed binary needs to be updated simultaneously. But it changes the semantic contract: a field previously understood to reference the users table is now named in a way that implies the accounts table. Any service that reads this field's value and uses it as a users table foreign key without reading the field name — which is all services, since the wire format is field number only — is not broken technically. But any developer reading the proto or writing new integrations will misunderstand what the field refers to. The safe handling: (1) buf breaking will not catch this, (2) API review and a changelog entry are required, (3) consider whether an accompanying migration or documentation update is needed for the billing service team. This is the boundary the skill explicitly calls out: buf catches structural breaks, not semantic ones.",
+      "decision_axis": "Whether the change is proto-structural (wire-format breaking, caught by buf) vs. semantically breaking at the application contract level (not caught by buf, requires API review)."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "Our service performs a rolling deployment atomically — we use a blue-green deployment where all old pods are terminated before any new pods start traffic. Traffic is routed to blue (old) or green (new), never split. Do we need to worry about forward compatibility for this deployment?",
+      "expected_behavior": "For a true blue-green deployment where old and new code never coexist on live traffic — and where the database or event log does not persist records from one deployment that will be read by the other — forward compatibility requirements are eliminated during the deployment window itself. However: (1) if the database contains records written by the new version that could be read by old code during a rollback, forward compatibility still applies; (2) if any message queues, event logs, or caches persist new-format records that a rolled-back old version would process, forward compatibility still applies; (3) the skill notes this explicitly: 'Atomic deployment (all nodes upgraded simultaneously) eliminates forward compatibility requirements — but is only feasible for monolithic single-version deployments.' For services with a rollback path that might read new-format data, forward compatibility must still be maintained.",
+      "decision_axis": "Whether old-code-read of new-format data is possible during rollback or via persistent storage — if the deployment is truly atomic with no rollback path that touches new-format data, forward compatibility is not required for the deployment window."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I changed a field from string priority = 5 to int32 priority_level = 5 in our Protobuf message — same field number, different type and name. The service deployed without any startup errors. But downstream consumers are reporting garbled data. buf breaking did NOT catch this change. How?",
+      "expected_behavior": "This is a wire-type change on the same field number — one of the most dangerous proto mutations. String fields use wire type 2 (length-delimited). int32 fields use wire type 0 (varint). Any old binary that reads a message written by the new code will attempt to decode a varint (wire type 0) as a length-delimited string (wire type 2), or vice versa. The proto decoder does not raise an error in all cases — it may produce garbage values, wrong field population, or skip the field. This should be caught by buf breaking (it detects type changes on the same field number). If buf breaking did not catch it, check: (1) whether buf breaking is configured against the correct baseline branch, (2) whether the proto files being checked are the same ones being compiled (buf module configuration). The fix: add a new field int32 priority_level = 6, deprecate field 5, reserve field number 5 once all consumers have migrated.",
+      "decision_axis": "Whether buf breaking is correctly configured and running against the right baseline — a type change on the same field number must be detected by buf before deployment."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our team is adding a new optional field delivery_window_hours: int32 = 9 to the Order proto. Three services read and write Order records. One of them is a legacy batch processor that reads orders, updates status, and writes them back via an ORM that maps proto fields to a Go struct. How do we safely deploy this change and what tests do we need?",
+      "merged_advantage": "The merged skill identifies the specific risk the legacy batch processor introduces — the read-modify-write forward compatibility failure — and prescribes the exact test to catch it: deserialize a new-format record (with delivery_window_hours) using old code, modify a known field, write back, re-read with new code, assert delivery_window_hours = original value. It also provides the deployment order guidance (deploy new code first so records with the new field exist; ensure old code's ORM preserves unknown fields on write-back before old nodes process new records) and the buf CI check to protect the field number. Neither source alone covers both the ORM write-back failure mode AND the proto syntax requirements.",
+      "source1_gap": "kleppmann/schema-evolution-compatibility-planning identifies the read-modify-write forward compatibility failure mode and the bidirectionality framework, but does not provide proto-specific tooling: the reserved syntax to protect removed field numbers, buf CLI commands for CI breaking-change detection, or the proto3 optional field syntax.",
+      "source2_gap": "grpc-up-and-running/grpc-proto-contract-design provides the proto syntax rules (new field number, optional, reserved for removed fields) and buf tooling, but does not analyze the ORM write-back failure mode or prescribe the unknown-field preservation test — a team following it alone would add the field correctly but have no test to catch the silent data loss from the legacy batch processor."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "After a recent deployment we discovered that records modified by old-version nodes during the 30-minute rolling window are missing the new supplier_id field. No errors were logged. The deployment was technically correct — supplier_id was added as a new optional field with a new field number, and buf breaking passed. How do we do a post-mortem analysis and prevent this class of failure permanently?",
+      "merged_advantage": "The merged skill provides both the post-mortem diagnosis (the read-modify-write forward compatibility failure at the ORM layer — not the proto layer, which was correctly implemented) and the permanent prevention measures: (1) the unknown-field preservation test in step 4 of execution that exercises old-code write-back of new-format records, (2) the deployment order check (does any service running old code write back records written by new code?), (3) ORM configuration audit to use parsed message serialization not struct reconstruction. The synthesis-specific framing is explicit: 'the field addition was correct at the proto layer; the data loss occurred at the application layer above the proto layer.' Neither source alone bridges these two layers.",
+      "source1_gap": "kleppmann/schema-evolution-compatibility-planning frames the post-mortem diagnosis correctly (forward compatibility failure at the application layer) but does not provide the proto-specific test using proto.Marshal/Unmarshal with old and new generated code structs, the buf tooling for CI protection, or the reserved field syntax.",
+      "source2_gap": "grpc-up-and-running/grpc-proto-contract-design would confirm the field addition was done correctly (new number, optional, buf passed) but has no analysis of why data was lost despite a correct proto change — it does not model the ORM layer above the proto layer or the rolling deployment coexistence window where old code encounters new-format records."
+    }
+  ]
+}

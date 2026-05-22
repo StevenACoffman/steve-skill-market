@@ -1,0 +1,103 @@
+{
+  "skill_id": "go-test-state-driven-table",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "rednafi/test-state-not-interactions",
+    "hashimoto/table-driven-named-cases"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "I'm writing a test for a Go CreateUser service method that writes to a database. My test uses gomock to verify that db.InsertUser(\"alice\") was called exactly once. A colleague refactored CreateUser to call db.UpsertUser instead of InsertUser — same behavior, different method name. Now my test fails even though the service works correctly. How do I fix this so the test isn't broken by harmless internal refactors?",
+      "expected_behavior": "Skill identifies the root problem: interaction testing (mock.AssertExpectations) locks tests to implementation structure, not behavior. Recommends replacing the generated mock with a handwritten FakeDB that holds in-memory state (a seen map[string]struct{} and an order []string). The test asserts on db.ListUsers() after the operation — what is now in the store — rather than which method was called. A rename from InsertUser to UpsertUser does not break the state assertion. Walks through the FakeDB implementation and the state assertion pattern.",
+      "expected_not": "Should not recommend updating the mock expectation to use UpsertUser. Should not suggest adding both InsertUser and UpsertUser to the mock expectations. Should not suggest generated mocks are fine for this use case."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "I have a Go function NotificationService.Send that dispatches an event to a message queue. I have four test cases: happy path, queue-full error, retry-on-transient-error, and invalid-payload error. My CI failure messages look like 'test index 2 failed' and I have to count rows in the test table to find which case that is. How do I restructure the test?",
+      "expected_behavior": "Skill recommends converting the []struct table to a map[string]struct{} table with descriptive keys: \"happy path dispatches event\", \"queue full returns ErrQueueFull\", \"transient error triggers retry\", \"invalid payload returns ErrInvalid\". Uses t.Run(name, ...) for per-case subtests so that failure output reads 'TestNotificationService_Send/queue full returns ErrQueueFull: got nil, want ErrQueueFull'. Includes the map key as the first token in every error format string. Also pairs with a handwritten FakeQueue that tracks dispatched messages by state, not call counts.",
+      "expected_not": "Should not suggest adding a 'name string' field to a []struct table as a substitute for map keys. Should not suggest slice-indexed tables are acceptable with a comment."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "An LLM generated tests for my Go UserRepository using mockery. The tests all call mock.AssertExpectations(t) after calling the service method. My service has a bug where it swallows the database error from InsertUser and returns nil to the caller, but all the tests are green. How do I rewrite the tests so they would actually catch this bug?",
+      "expected_behavior": "Skill explains the mock-passes-bug-lands failure mode: the mock records that InsertUser was called and AssertExpectations passes, but the swallowed error is invisible because no state assertion is made. Rewrites the test using a handwritten FakeDB with a seen map that returns ErrDuplicate on the second insert. The state assertion require.ErrorIs(t, err, ErrDuplicate) fails immediately when CreateUser swallows the error, because the caller gets nil instead of ErrDuplicate. Structures the cases as a map[string]struct{} table covering both the success and the error cases.",
+      "expected_not": "Should not suggest improving the mock setup to also check the return value. Should not suggest adding a separate integration test as the only fix — the unit test itself should be rewritten."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "I'm writing a Go test for an OrderService.PlaceOrder function. It writes to a database and also pushes a confirmation event to a message queue. I have three test cases: successful order, out-of-stock error, and payment-declined error. How do I structure the test to cover all three scenarios, verify the state of both the database and the queue after each operation, and make sure failing test output immediately tells me which scenario failed?",
+      "expected_behavior": "Skill applies the full merged pattern: (1) define minimal DB and Queue interfaces with only the methods PlaceOrder actually calls; (2) build a handwritten FakeDB (seen map, state assertion via ListOrders()) and FakeQueue (dispatched []Event, state assertion via Dispatched()); (3) declare a map[string]struct{} table with keys 'successful order creates DB record and dispatches event', 'out-of-stock returns ErrOutOfStock and skips queue', 'payment declined returns ErrPaymentDeclined and skips queue'; (4) each case has a setupFake func and expectErr + expectOrders + expectQueueLen fields; (5) the test loop uses t.Run(name, ...) and asserts on FakeDB.ListOrders() and FakeQueue.Dispatched() — not on call counts.",
+      "expected_not": "Should not suggest two separate test functions for DB and queue. Should not suggest a slice-indexed table. Should not suggest generated mocks for either dependency."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "I have a single-case Go test for a CacheService.Get function. My tech lead says I should use the map[string]struct{} table pattern even for a single case. That seems like unnecessary boilerplate. Why?",
+      "expected_behavior": "Skill quotes Hashimoto: 'Follow this pattern a lot; use it even for single cases if the function could plausibly need more cases in the future.' For a CacheService.Get, the function will almost certainly accumulate cases: cache hit, cache miss, expired key, invalid key. Writing the table from the start costs three lines; not writing it means you refactor from a flat test to a table when the second case is added — and the flat test structure discourages adding cases by making each new case a structural change. The pattern should be the default for any function with external dependencies.",
+      "expected_not": "Should not concede that flat single-case tests are fine for functions with dependencies. Should not suggest waiting until the second case before adding the table."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "I want to use Go's built-in fuzzing to find edge cases in my JSON parser. How do I write a fuzz test and what kind of corpus entries should I seed it with?",
+      "expected_behavior": "This is a fuzz testing question using Go's testing.F and go test -fuzz. The appropriate pattern is func FuzzParseJSON(f *testing.F) with f.Add() corpus seeds and f.Fuzz(func(t *testing.T, data []byte) {...}). No fake collaborator or map-keyed table is involved — fuzzing is property verification across generated inputs, not scenario-based state testing.",
+      "expected_not": "Should not invoke go-test-state-driven-table, which is for functions with stateful external dependencies and multiple discrete scenarios, not for fuzz-based property verification of pure parsing functions."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "How do I configure Go test coverage reporting to fail CI if coverage drops below 70%? We're using GitHub Actions.",
+      "expected_behavior": "This is a CI coverage gate configuration question. The appropriate approach involves go test -coverprofile=coverage.out, go tool cover to parse the profile, and a GitHub Actions step that checks the percentage and exits non-zero if it falls below the threshold. Tools like goverage or third-party actions can automate the gate. No fake collaborator or table structure is involved.",
+      "expected_not": "Should not invoke go-test-state-driven-table, which addresses how to write tests that assert state rather than interactions, not how to enforce coverage thresholds in CI pipelines."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "I need to benchmark two implementations of a Go sorting function to compare their ns/op. How do I write the benchmark and use benchstat to compare results?",
+      "expected_behavior": "This is a Go benchmarking question using testing.B. The appropriate pattern is func BenchmarkSort(b *testing.B) with b.N iterations. benchstat from golang.org/x/perf/cmd/benchstat compares benchmark output across runs. No stateful fake or map-keyed test table is involved.",
+      "expected_not": "Should not invoke go-test-state-driven-table, which addresses correctness testing with stateful collaborators, not performance benchmarking of pure functions."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "I'm writing a test for a Go AccessControl.IsAllowed function that takes four boolean inputs: isAdmin, isOwner, isPublic, and isBanned. The function has 16 possible bool combinations. I started a map[string]struct{} table and now I have 16 entries. My tech lead says a table with 16 bool-combination entries is harder to read than 16 sequential if/assert blocks. Is she right? When does the map table stop helping?",
+      "expected_behavior": "The tech lead's concern is valid for this specific case. The map-keyed table pattern shines when each case exercises a meaningfully distinct behavioral scenario with a descriptive name. For 16 bool combinations, the entries are not behavioral scenarios — they are exhaustive enumeration of an input matrix. At this point, the table's map key becomes a mechanical description ('admin=true owner=false public=true banned=false') rather than a scenario name ('admin always allowed regardless of owner status'). The skill's decision axis is behavioral scenario density: if the cases cluster into a small number of human-recognizable scenarios, use the table; if the cases are an exhaustive combinatorial matrix of flags, consider a parametric helper (e.g. checkAccess(t, isAdmin, isOwner, isPublic, isBanned, expectAllowed)) called sequentially — or group the 16 cases into three or four named scenario groups and collapse within each group. The map table is not obligatory when the naming value is zero.",
+      "decision_axis": "The map-keyed table optimizes for named behavioral scenarios. When the cases are exhaustive flag combinations rather than distinct scenarios, the naming benefit collapses and a sequential or parametric structure may read more clearly."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "I'm using the map[string]struct{} table pattern for my Go CacheService tests. I have a case 'get after set returns value' and a case 'get after expiry returns miss'. The second case needs to read a value that was set in the first case — they're sequential and stateful across cases. But map iteration order in Go is randomized. How do I handle this?",
+      "expected_behavior": "Sequential stateful scenarios (where case B depends on state left by case A) do not fit the map-keyed table pattern. The skill's B-section notes: 'Map iteration order is randomized: Running cases in random order is usually beneficial (catches order-dependent bugs) but can surprise developers who expect deterministic ordering. If order matters (sequential state scenarios), use a different structure.' Options: (1) use a single FakeCache with a setupFake func that pre-populates state for each case independently — so 'get after set returns value' runs SetItem in its setupFake before the assertion, not relying on another case's side effect; (2) if the sequential flow is genuinely important to document (create → read → expire → evict), use a single test function with explicit sequential steps rather than a table. The independence of test cases is a feature of the table pattern — losing it means the pattern no longer applies.",
+      "decision_axis": "The skill's lifecycle scope guidance: use per-test (default) fresh fakes for independent cases; use grouped sequential structure for flows that require shared state. Cross-case state dependency is a signal to step out of the map table and into a sequential test or a parent-subtest with shared fake."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "I need to write a Go test for a PostgreSQL-backed UserRepository. The real Postgres implementation has 14 methods on a large Store interface and uses transactions, savepoints, and advisory locks. I started building a handwritten FakeStore but it already has 200 lines of fake implementation code and I haven't even covered half the methods. At what point should I give up on the handwritten fake and use something else?",
+      "expected_behavior": "The skill's 'Do NOT use' and B-section guidance apply here: 'The external dependency is too complex for a handwritten fake (SQL transaction semantics, large binary protocols, network timing) — use testcontainers against a real service instead.' Also: 'Large interface drift: Handwritten fakes must be maintained as interfaces change. For interfaces with 10+ methods or fast-evolving contracts across many consumers, the maintenance burden is real. Use generated mocks or testcontainers in those cases.' For a 14-method transactional interface, a real PostgreSQL container via testcontainers-go is the right tool: it exercises real constraints, real transaction semantics, and real advisory lock behavior that a fake cannot faithfully replicate. The map-keyed table structure still applies — each case gets a named entry — but the collaborator is the real DB in a container, not a fake.",
+      "decision_axis": "The handwritten fake is appropriate for dependencies with small interfaces (2–5 methods) and simple invariants (duplicate detection, presence checking). It is not appropriate for large transactional interfaces with complex semantics — use testcontainers there, and retain the map-keyed table structure for case organization."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "I'm writing a Go test for a function that calls a cache service — CacheService.Get and CacheService.Set. My tech lead asked: 'Should you use a mock or assert on state?' I know I should check state but I don't know how to structure multiple scenarios (cache hit, cache miss, expired key) in a way that makes failing test output immediately useful. How do I combine both decisions?",
+      "merged_advantage": "The merged skill is the only source that answers both the mock-vs-state decision AND provides the concrete table structure for multiple scenarios simultaneously. It prescribes a handwritten FakeCache (rednafi: state not interactions) organized in a map[string]struct{} table with keys 'cache hit returns stored value', 'cache miss returns ErrNotFound', 'expired key returns ErrExpired' (Hashimoto: named cases). The state assertion — assert.Equal(t, expectedValue, fakeCache.stored[key]) — and the named failure output — 'cache miss returns ErrNotFound: got nil, want ErrNotFound' — are only both present in the merged pattern.",
+      "source1_gap": "rednafi (test-state-not-interactions) alone answers the mock-vs-state question and provides the FakeDB pattern, but gives no guidance on organizing multiple scenarios. A rednafi-only implementation would produce a flat test with three sequential assertions inside a single test function — no named cases, 'test failed' in the failure message with no scenario name.",
+      "source2_gap": "Hashimoto (table-driven-named-cases) alone provides the map[string]struct{} table structure and named failure output, but does not address the fake-vs-mock question. A Hashimoto-only implementation might pair the named table with a generated mock (gomock, mockery) — giving named failure messages but interaction assertions that miss swallowed errors and are fragile to renames."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "An LLM generated a test suite for my Go UserService using mockery. All tests use mock.EXPECT().InsertUser(...).Return(nil).Once() and mock.AssertExpectations(t). The tests pass, but a real bug (CreateUser silently ignoring the DB error) is in production. I need to rewrite the tests. I also want the failure output to immediately name which scenario failed without having to count table rows. How do I fix both problems at once?",
+      "merged_advantage": "The merged skill addresses both failure modes in a single rewrite: replace the generated mock with a handwritten FakeDB (rednafi: catches the swallowed error via state assertion require.ErrorIs(t, err, ErrDuplicate)), organize cases as a map[string]struct{} with descriptive keys (Hashimoto: 'first insert succeeds', 'duplicate returns ErrDuplicate'), and use t.Run(name, ...) for named subtest output. The merged skill also anticipates the LLM bloat pattern explicitly (Trigger 5: 'LLM generated a test suite using mocks') and prescribes both fixes together.",
+      "source1_gap": "rednafi alone fixes the correctness problem (fake catches the swallowed error) but does not address test organization — the resulting test might still be a flat function with sequential assertions, producing 'TestUserService_CreateUser failed' with no scenario name in the output.",
+      "source2_gap": "Hashimoto alone fixes the naming problem (map[string]struct{} gives named failure output) but does not address the interaction-vs-state problem. Applying Hashimoto's fix to the LLM-generated tests would give named failure messages but leave mock.AssertExpectations in place — still missing the swallowed-error bug."
+    }
+  ]
+}

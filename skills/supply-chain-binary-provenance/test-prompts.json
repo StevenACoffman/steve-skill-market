@@ -1,0 +1,62 @@
+{
+  "skill": "supply-chain-binary-provenance",
+  "description": "Use this skill when designing deployment controls, evaluating build pipeline security, or responding to the question 'how do we know the binary running in production corresponds to the code that was reviewed?'",
+  "test_prompts": [
+    {
+      "id": "supply-chain-binary-provenance-should-01",
+      "category": "should_invoke",
+      "prompt": "A developer's GitHub account was compromised last week. Before we caught it, the attacker created a feature branch with malicious code and triggered a CI build. The build artifact was in our artifact registry before we identified the incident. How do we make sure an attacker who compromises one developer account can't get malicious code into production, even if they can trigger CI builds?",
+      "expected": "invoke",
+      "rationale": "Exact binary provenance trigger scenario: compromised developer credentials triggering builds from malicious branches. The provenance-based deployment policy that requires artifacts to be built from reviewed source in the main branch would have caught this. The deployment rejection would not require detecting the stolen token."
+    },
+    {
+      "id": "supply-chain-binary-provenance-should-02",
+      "category": "should_invoke",
+      "prompt": "We have mandatory code review, but there's nothing technically preventing a developer from deploying directly from their laptop with a built artifact they produce locally. We rely on the honor system. How do we make 'was this artifact produced by our CI pipeline from reviewed code' a machine-verifiable property rather than a social convention?",
+      "expected": "invoke",
+      "rationale": "This is the core binary provenance problem statement almost verbatim: converting social convention (honor system for code review) into machine-verifiable property (provenance-based deployment policy). 'Was this artifact produced by our CI pipeline' is a canonical trigger phrase."
+    },
+    {
+      "id": "supply-chain-binary-provenance-should-03",
+      "category": "should_invoke",
+      "prompt": "We had a SolarWinds-style concern raised internally: one of our build workers has broader network access than it should, and if it were compromised, malicious code could be injected during compilation without changing the source. Our current deployment checks are: 'does the artifact hash match what the registry recorded?' Is that sufficient?",
+      "expected": "invoke",
+      "rationale": "Artifact hashing verifies integrity in transit but not provenance — the skill explicitly distinguishes these. A compromised build worker injecting malicious code during compilation produces an artifact whose hash matches what the registry recorded (the registry recorded the tampered artifact). Binary provenance that records which build worker and pipeline version produced the artifact would catch the pipeline compromise."
+    },
+    {
+      "id": "supply-chain-binary-provenance-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We need two engineers to approve every pull request before it can be merged. One reviewer is not enough given the sensitivity of our codebase. How do we enforce this in GitHub so it can't be bypassed by branch protection exemptions?",
+      "expected": "skip",
+      "rationale": "This is a multi-party authorization / code review enforcement question, not binary provenance. MPA is the human-approval layer; binary provenance is the machine-verification layer that the artifact corresponds to reviewed code. The right skill is multi-party authorization design. Binary provenance depends on MPA but does not govern how MPA is configured in GitHub."
+    },
+    {
+      "id": "supply-chain-binary-provenance-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We shipped firmware v3.2 to our IoT devices and discovered a critical vulnerability. Now we need to make sure devices can't be rolled back to v3.1 which has the same vulnerability. How do we prevent rollback on devices that have already received the patch?",
+      "expected": "skip",
+      "rationale": "Rollback prevention is the MASVN / recovery-design-masvn skill. Binary provenance verifies that an artifact was built from reviewed source via the verified pipeline — it does not enforce a minimum version floor on the device. The distinction from the SKILL.md: 'MASVN is about ROLLBACK prevention; binary provenance is about BUILD integrity.'"
+    },
+    {
+      "id": "supply-chain-binary-provenance-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We're a 5-person startup. Our CI/CD is GitHub Actions, we have branch protection requiring one reviewer, and we deploy Docker images tagged with the git SHA. Is there anything obvious we're missing?",
+      "expected": "skip",
+      "rationale": "Small organization with low insider risk and simple build infrastructure — the skill's boundary explicitly says not to apply in this context. The operational complexity of full binary provenance (signing infrastructure, provenance storage, policy engine) is not appropriate here. The current setup (git SHA tagging, code review, branch protection) is reasonable for this scale. No skill invocation needed; a brief review of the existing setup is sufficient."
+    },
+    {
+      "id": "supply-chain-binary-provenance-boundary-01",
+      "category": "boundary",
+      "prompt": "We sign our release artifacts with a GPG key that lives on our lead developer's workstation. We verify the signature before deploying. Is this sufficient to guarantee supply chain integrity, or is there a gap?",
+      "expected": "invoke",
+      "rationale": "Code signing with a key on a developer workstation is the gap the skill specifically addresses: if the workstation is compromised, the attacker can sign malicious artifacts. The signing key must be in an HSM or equivalent and tied to the build infrastructure, not a workstation. Invoke to explain why workstation-based signing does not close the supply chain gap and what binary provenance adds over code signing alone."
+    },
+    {
+      "id": "supply-chain-binary-provenance-boundary-02",
+      "category": "boundary",
+      "prompt": "We're evaluating SLSA compliance levels for our build pipeline. We're currently at SLSA level 1 (provenance exists but isn't verified) and want to understand what level 2 and 3 require and whether it's worth the investment for our threat model.",
+      "expected": "invoke",
+      "rationale": "SLSA level progression is the operationalized form of the binary provenance model the skill covers. The skill notes that its framework predates SLSA and that 'current implementations should map to SLSA levels.' Invoke to map the skill's provenance framework to SLSA level requirements and help the team evaluate the investment against their threat model."
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "skill": "cli-interface-stability",
+  "version": "0.1.0",
+  "source_book": "Command Line Interface Guidelines — Prasad, Firshman, Tashian, Parish",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I want to rename my CLI's --verbose flag to --log-level=debug in the next release. Users can just pass the new flag — is it OK to remove --verbose?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should explain that --verbose is a stable surface and cannot be silently removed. It should prescribe the in-program deprecation cycle: emit a warning when --verbose is used, detect migration to --log-level, and suppress the warning. Only remove --verbose after the documented deprecation period.",
+      "notes": "Matches KEY TRIGGER SIGNAL 'rename this flag' / 'remove this option'. Classic flag rename scenario."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "Our CLI tool has grown organically and the table output has inconsistent column names and spacing. Can we clean up the output format in our next quarterly release without worrying about backward compatibility?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should explain the asymmetry of output stability: human-formatted table output is safe to change freely (consumed by eyes, not code). However, the agent should ask/check whether any scripts currently parse the output — if so, that output has become a stable machine interface and requires a deprecation cycle. The recommended fix: add --json/--plain and direct script consumers there.",
+      "notes": "Tests the human-output-vs-machine-output asymmetry. The ce04 failure pattern (over-stabilizing human output) and its inverse."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "I'm designing a new CLI and I want to let users abbreviate subcommands — so `mycli inst` would run `mycli install`. Seems more convenient for interactive use. Is this a good idea?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should warn against arbitrary prefix abbreviation: every in-use abbreviation becomes a de-facto stable interface, and any future subcommand sharing that prefix (e.g., 'init') will conflict. If shortcuts are wanted, define explicit documented aliases with stable names.",
+      "notes": "Matches language signal 'I want to support short-form aliases for subcommands'. Tests the prefix-abbreviation lock-in failure pattern (ce03)."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "How do I safely remove a --legacy-mode flag from my CLI? It was a mistake and I want it gone, but I'm worried about breaking existing users.",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should walk through the full in-program deprecation cycle: step 1 emit deprecation warning on every use naming what to use instead and when it will be removed; step 2 detect migration and suppress warning; step 3 document in changelog; step 4 remove only after the deprecation period has elapsed.",
+      "notes": "Matches KEY TRIGGER SIGNAL 'how do I deprecate' and the 'remove a --legacy-mode flag' scenario from A2."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "My CLI's most common subcommand is `run`. I'm thinking of making it implicit so users can just type `mycli script.sh` instead of `mycli run script.sh`. Is that a good design?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should warn against the implicit/catch-all subcommand trap: making `run` implicit permanently consumes the tool's entire unprefixed argument namespace. Any future subcommand whose name a user might type as a bare argument becomes impossible to add. The gain in convenience is not worth the permanent namespace lock.",
+      "notes": "Matches language signal 'Can I make the default subcommand implicit?' Tests the catch-all subcommand lock-in failure pattern (ce02)."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "Should I use --base-url or MYAPP_BASE_URL environment variable for configuring my CLI's API endpoint? I want users to set it once and not retype it.",
+      "expected_behavior": "Do NOT invoke cli-interface-stability. This is a configuration placement question about which mechanism to use initially. cli-interface-stability covers whether names can change over time, not the initial design choice of flags vs env vars. The correct skill is cli-configuration-hierarchy.",
+      "notes": "Lure from adjacent skill: about flags vs env vars for a CLI setting. That is cli-configuration-hierarchy territory. Interface stability would apply only if the user wanted to rename the env var after it was established."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "I'm adding a /users/{id} REST endpoint to my API. Is it OK to change the response schema in a minor version bump?",
+      "expected_behavior": "Do NOT invoke cli-interface-stability. This is an HTTP API / REST endpoint versioning question, not a CLI surface question. The skill explicitly excludes internal API design (library functions, RPCs, HTTP endpoints).",
+      "notes": "Out-of-scope: REST API versioning is not a CLI surface. The skill boundary explicitly excludes internal API design."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "My delete command removes a whole cloud environment. Should I require users to type the environment name to confirm, or is a --force flag enough?",
+      "expected_behavior": "Do NOT invoke cli-interface-stability. This is a confirmation UX / destructive operation safety question. The concern is whether the confirmation mechanism is strong enough for a severe-tier destructive action, which is the domain of cli-destructive-confirmation-tiers.",
+      "notes": "Lure from adjacent skill: mentions --force flag and CLI design, but the question is about confirmation UX for destructive operations, not backward compatibility of interface surfaces."
+    },
+    {
+      "id": "edge-case-01",
+      "type": "edge_case",
+      "prompt": "My CLI is an internal tool used only by our five-person team. We all work in the same repo and can coordinate changes synchronously. Do I still need to go through a formal deprecation cycle when I rename a flag?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should apply the boundary condition: for an internal tool with a single small team that can coordinate synchronously, the formal deprecation cycle overhead may exceed its value. The agent should acknowledge this boundary explicitly and advise lightweight coordination (e.g., grep all scripts for the old flag and update in one PR) rather than a multi-release deprecation cycle.",
+      "notes": "Edge case: the skill boundary explicitly lists 'single team that can coordinate synchronously' as a case where the formal cycle may be skipped. Tests awareness of that exception."
+    },
+    {
+      "id": "edge-case-02",
+      "type": "edge_case",
+      "prompt": "Our CLI exits with code 1 for all errors. We want to add more specific exit codes — 2 for auth failure, 3 for network error, etc. — so scripts can handle them differently. Is this a breaking change?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should recognize that exit codes are part of the stable interface contract. Adding new non-zero codes is an additive change, but scripts that currently treat any non-zero as generic failure may be broken if they check for code 1 specifically. The agent should recommend treating this as a minor behavioral change, document the new codes clearly, and note that exit codes are the most commonly broken stable surface.",
+      "notes": "Edge case: exit codes as a stable surface. The skill mentions exit codes are in scope but notes they're the most commonly broken surface. Adding new codes is technically additive but may still surprise existing scripts."
+    },
+    {
+      "id": "edge-case-03",
+      "type": "edge_case",
+      "prompt": "My CLI fetches a list of available plugins from https://plugins.mycompany.com at runtime. That URL is hardcoded in the binary. Is this a stability concern?",
+      "expected_behavior": "Invoke cli-interface-stability. The agent should flag this as the external URL time-bomb anti-pattern (ce05): an external service dependency is not under the tool's control and can break the stable interface contract from outside. The agent should recommend making the URL configurable (env var or config file) so users can point to a mirror or local server if the original URL disappears.",
+      "notes": "Edge case: tests the ce05 failure pattern about external URL dependencies. The external URL is a stability risk not captured by the standard flag/subcommand taxonomy."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
+}

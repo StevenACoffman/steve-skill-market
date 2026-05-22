@@ -6,10 +6,10 @@ description: Use when justifying refactoring or design investment to managers, p
 type: merged-skill
 source_skills:
   - slug: fowler-refactoring/fowler-design-stamina
-    book: "Refactoring: Improving the Design of Existing Code, 2nd Ed."
+    book: 'Refactoring: Improving the Design of Existing Code, 2nd Ed.'
     author: Martin Fowler
   - slug: jousterhout/strategic-vs-tactical-programming
-    book: "A Philosophy of Software Design"
+    book: A Philosophy of Software Design
     author: John Ousterhout
 related_skills:
   - slug: fowler-refactoring/fowler-design-stamina
@@ -46,7 +46,7 @@ Current branch:
 >
 > The **tactical tornado** is the developer who ships feature after feature at high speed, appearing extremely productive. Management celebrates them. But they leave behind code that is difficult for everyone else to work in: tangled dependencies, poor abstractions, implicit assumptions, missing documentation. The tactical tornado's output looks like velocity; it is actually debt issuance.
 
----
+______________________________________________________________________
 
 ### I — Unified Framework
 
@@ -65,7 +65,7 @@ The audience conditional determines whether you name the investment explicitly:
 
 **Continuous over scheduled**: both authors agree that refactoring should be woven into normal work, not scheduled as a separate "tech debt sprint." Large refactoring blocks train stakeholders to view investment as a cost center and carry higher regression risk.
 
----
+______________________________________________________________________
 
 ### A1 — Applications
 
@@ -87,7 +87,7 @@ The audience conditional determines whether you name the investment explicitly:
 >
 > The **tactical tornado** is the developer who ships feature after feature at high speed, appearing extremely productive. Management celebrates them. But they leave behind code that is difficult for everyone else to work in: tangled dependencies, poor abstractions, implicit assumptions, missing documentation. The tactical tornado's output looks like velocity; it is actually debt issuance.
 
----
+______________________________________________________________________
 
 ## I — Unified Framework
 
@@ -106,7 +106,7 @@ The audience conditional determines whether you name the investment explicitly:
 
 **Continuous over scheduled**: both authors agree that refactoring should be woven into normal work, not scheduled as a separate "tech debt sprint." Large refactoring blocks train stakeholders to view investment as a cost center and carry higher regression risk.
 
----
+______________________________________________________________________
 
 ## A1 — Applications
 
@@ -120,7 +120,7 @@ The audience conditional determines whether you name the investment explicitly:
 
 **Result:** Refactoring happens continuously and invisibly, the feature ships, and the manager sees delivery speed rather than a cost center.
 
----
+______________________________________________________________________
 
 ### Case 2: Ousterhout — Tactical Tornado Identification (Engineering Culture Domain)
 
@@ -132,7 +132,7 @@ The audience conditional determines whether you name the investment explicitly:
 
 **Result:** The organization develops hiring, code review, and performance criteria that account for downstream code quality — measuring the velocity of other developers on a contributor's code, not just their own output.
 
----
+______________________________________________________________________
 
 ## A2 — When to Use This Skill
 
@@ -154,7 +154,7 @@ Use this skill — not one of its source skills — when:
 - "Why are we spending time on this instead of building new things?"
 - "This developer is our most productive engineer" (without evidence of downstream quality)
 
----
+______________________________________________________________________
 
 ## E — Execution
 
@@ -176,7 +176,7 @@ Use this skill — not one of its source skills — when:
 
 7. **Recognize that individual strategic behavior requires institutional support.** A single developer cannot be strategic inside a tactical culture. If the surrounding culture rewards feature count alone and penalizes design investment, individual discipline will be swamped. The 10–20% budget is most effective when it is a team norm, not a personal practice.
 
----
+______________________________________________________________________
 
 ## B — Boundaries
 

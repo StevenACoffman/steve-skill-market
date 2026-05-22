@@ -1,0 +1,111 @@
+{
+  "skill_id": "imag-unified-incident-response",
+  "skill_type": "merged-skill",
+  "source_skills": [
+    "site-reliability-engineering/incident-management-role-separation",
+    "google-bsrs/unified-incident-management-imag"
+  ],
+  "tests": [
+    {
+      "id": "st-001",
+      "type": "should_trigger",
+      "prompt": "We had a ransomware attack that simultaneously encrypted data and caused a service outage. The SRE on-call and security IR team both spun up separate war rooms with different incident commanders. Leadership got two conflicting situation reports. The outage lasted 6 hours longer than it should have because the two teams didn't know what the other had tried. How do we prevent this next time?",
+      "expected_behavior": "Identify the combined incident failure mode: separate war rooms with separate ICs produce duplicated investigation, conflicting timelines, and no single source of truth. Prescribe IMAG unified framework: one IC with authority over both functions, SRE and security personnel filling operational roles under that IC. Add OpSec: ransomware attackers may have foothold — the standard Slack channel was likely compromised. Prescribe pre-planned out-of-band OpSec channel and joint training of SRE and security IR teams before the next incident.",
+      "expected_not": "Should not suggest improving communication between the two war rooms as the fix. Should not suggest the two separate ICs just 'coordinate better.' Should not ignore the OpSec channel requirement."
+    },
+    {
+      "id": "st-002",
+      "type": "should_trigger",
+      "prompt": "During a database incident last month, our senior DBA (most technically capable person on-call) took incident commander, was simultaneously writing SQL queries to diagnose the problem, answering calls from VPs, and trying to coordinate three other engineers. The incident took twice as long as it should have. What went wrong and how do we restructure?",
+      "expected_behavior": "Identify the IC cognitive load failure: the most technically capable person was assigned IC, destroying their ability to maintain the high-level incident mental model. The DBA should have been assigned Ops Lead. Prescribe: assign someone with situational awareness and communication skill as IC; assign the DBA as Ops Lead (the only person authorized to make changes); assign a Comms Lead to shield both from VP calls. Explain that IC does not touch production — the moment IC modifies the system, coordination collapses.",
+      "expected_not": "Should not suggest the DBA just needs to multitask better. Should not suggest adding more engineers without restructuring roles. Should not validate the senior-engineer-as-IC default."
+    },
+    {
+      "id": "st-003",
+      "type": "should_trigger",
+      "prompt": "A routine network misconfiguration investigation suddenly turned up unauthorized changes in the access logs that no engineer claims to have made. The incident has been running for 45 minutes on our standard Slack channel with 30 engineers watching the thread. The IC suspects an active attacker. What do we do right now?",
+      "expected_behavior": "Apply the pivot protocol immediately: (1) IC restricts all further incident communications to the pre-planned out-of-band channel — standard Slack must go quiet; (2) IC contacts security IR team and establishes unified response structure; (3) document everything communicated via Slack for the past 45 minutes as potential exposure (the attacker may have been watching); (4) IC does not improvise OpSec — use pre-planned channel. If the out-of-band channel doesn't exist, this is a preparation failure — the team must now improvise under the worst conditions.",
+      "expected_not": "Should not suggest continuing on Slack with OpSec precautions. Should not suggest the IC first finishes diagnosing the network misconfiguration before involving security IR."
+    },
+    {
+      "id": "st-004",
+      "type": "should_trigger",
+      "prompt": "An engineer named Jordan joined our incident response mid-incident, realized they knew a fix that hadn't been tried, and pushed a configuration change to production without telling the IC. The change conflicted with something another engineer had already tried and made the incident worse. How do we prevent this from happening again?",
+      "expected_behavior": "This is the Malcolm counter-example: unauthorized changes create system state no one can reason about, making the incident harder to resolve. Prescribe: reinforce that only the Ops Lead modifies production during an incident — this constraint is absolute. IC must brief all incoming responders on the Ops Lead constraint immediately on joining. Prescribe mandatory role briefing within 60 seconds of any engineer joining an active incident. Post-incident: this becomes a postmortem action item — add an explicit 'no unauthorized changes' protocol to the incident runbook with IC notification requirements.",
+      "expected_not": "Should not frame Jordan's action as a communication failure that can be fixed with better tools. Should not suggest Jordan should have 'asked first' without prescribing the structural Ops Lead constraint."
+    },
+    {
+      "id": "st-005",
+      "type": "should_trigger",
+      "prompt": "We're building incident response playbooks. Our SRE team has one framework and our security IR team has a completely separate one — different role names, different escalation paths, different documentation formats. A major combined incident revealed we couldn't interoperate. How do we unify our approach?",
+      "expected_behavior": "Apply the IMAG unification mandate: use the same framework across both functions so teams can interoperate under stress without framework translation overhead. Prescribe: adopt IMAG as the unified framework with a security-specific OpSec annex (pre-planned channel, need-to-know list, pivot criteria). Retire separate playbooks in favor of one command structure with type-specific annexes. Train both teams together before incidents — joint exercises (DiRT-style) are the only way to validate interoperability. Shared training is the primary upfront cost; the payoff is zero framework translation under stress.",
+      "expected_not": "Should not suggest maintaining separate frameworks with a 'coordination protocol' between them. Should not suggest a liaison role instead of shared training and unified structure."
+    },
+    {
+      "id": "snt-001",
+      "type": "should_not_trigger",
+      "prompt": "We want to write a blameless postmortem for last week's database outage. How should we structure it to make sure we identify contributing factors without assigning blame to individuals?",
+      "expected_behavior": "This is a blameless postmortem process problem. Use the blameless-postmortem-process skill to structure the timeline, contributing factors, systems thinking framing, and action item format. IMAG incident response handles the live incident coordination; the postmortem process handles the after-action review.",
+      "expected_not": "Should not invoke imag-unified-incident-response — the incident is resolved and the question is about postmortem writing methodology, not live incident coordination or OpSec."
+    },
+    {
+      "id": "snt-002",
+      "type": "should_not_trigger",
+      "prompt": "We want to set up automated runbooks that trigger when specific alert conditions are met — for example, automatically restarting a service when its health check fails three times. How do we build this automation safely?",
+      "expected_behavior": "This is an automated remediation and runbook design problem. Use operational automation patterns to design safe automated responses with circuit breakers, rate limits, and human escalation paths for runbooks that fail. IMAG role separation applies to human-coordinated incidents, not to automated single-service remediations.",
+      "expected_not": "Should not invoke imag-unified-incident-response — single-service automated remediation doesn't require multi-person role coordination, IC assignment, or OpSec considerations."
+    },
+    {
+      "id": "snt-003",
+      "type": "should_not_trigger",
+      "prompt": "We're evaluating whether to adopt PagerDuty or OpsGenie for our on-call alerting and escalation routing. What's the best tool for our use case?",
+      "expected_behavior": "This is an on-call tooling selection problem. Evaluate based on on-call rotation management features, escalation policy flexibility, and integration ecosystem. IMAG addresses organizational role structure and coordination mechanics, not tooling selection for alert routing.",
+      "expected_not": "Should not invoke imag-unified-incident-response — tool selection for pager routing is independent of incident command structure and OpSec framework design."
+    },
+    {
+      "id": "ec-001",
+      "type": "edge_case",
+      "prompt": "A minor alert fires at 2am. The on-call engineer investigates and resolves it in 20 minutes. No user impact, no escalation needed. Should they declare this an incident and assign IC, Ops Lead, and Comms Lead roles?",
+      "expected_behavior": "Apply the scaling criterion from the Boundary section: 'The incident is resolvable by a single on-call engineer without stakeholder escalation or multi-person coordination. The overhead of formal role assignment exceeds the benefit at small incident scale.' A 20-minute single-engineer fix with no user impact does not require IMAG role assignment. The engineer is de facto IC and Ops Lead simultaneously at this scale. IMAG scales down — but the minimum requirement is: document what was investigated and changed (for postmortem data and pattern tracking), and if scope expands, immediately escalate to formal role assignment.",
+      "decision_axis": "'Do not use when: The incident is resolvable by a single on-call engineer without stakeholder escalation or multi-person coordination.' IMAG scales to incident complexity — small incidents don't require full role separation."
+    },
+    {
+      "id": "ec-002",
+      "type": "edge_case",
+      "prompt": "Our security IR team and SRE team are both small (3 engineers each). A combined security-reliability incident fires. IMAG calls for four distinct roles but we only have 6 people total including both teams. How do we apply the framework with insufficient personnel?",
+      "expected_behavior": "Apply the small-team adaptation: 'Very small teams (2–5 engineers) where filling four distinct roles is not feasible. IMAG scales down, but some structural elements assume multiple people are available.' With 6 people across both teams: combine IC and Comms Lead as one role (minimize this; have IC delegate Comms as first priority when a second person is available). Designate Ops Lead (one person from whichever team owns the affected system). The minimum viable structure: named IC who does not touch production, named Ops Lead who is the only one making changes. The remaining 4 engineers fill investigation threads under IC direction. The OpSec requirement still applies regardless of team size — activate pre-planned out-of-band channel immediately.",
+      "decision_axis": "'Very small teams where filling four distinct roles is not feasible' — IMAG scales down with IC/Comms combination as the first consolidation; Ops Lead constraint is the last to collapse as it prevents unknown system state."
+    },
+    {
+      "id": "ec-003",
+      "type": "edge_case",
+      "prompt": "Forty minutes into an active incident, the IC needs to hand off to the next shift. How is the handoff done without losing the mental model that makes IC effective?",
+      "expected_behavior": "Apply the handoff protocol: IC transfers must be written, not verbal. The live incident document is the state transfer artifact — IC has been maintaining it throughout the incident. The incoming IC receives: current system state, changes tried and their outcomes, open investigation threads and their owners, current hypotheses, and the communication cadence to stakeholders. Brief verbal sync (under 5 minutes) to supplement the document. The outgoing IC remains briefly available for questions before going offline. The Malcolm counter-example illustrates the risk of knowledge gaps during transitions — incoming IC must understand the full state before taking command. For security incidents: handoff via OpSec channel only; confirm the incoming IC is on the need-to-know list.",
+      "decision_axis": "Execution Step 7 mentions postmortem initiation at resolution, but the handoff protocol is embedded in the IC role definition: 'Handovers done verbally without written state transfer: incoming responders lack context and re-investigate already-resolved threads' (Boundary section)."
+    },
+    {
+      "id": "pm-001",
+      "type": "prefer_merged_over_source",
+      "prompt": "We correctly applied IMAG role separation during a reliability incident — IC assigned (not the most capable engineer), Ops Lead as the only one making changes, Comms Lead shielding the technical team. Mid-incident, forensics found evidence of an unauthorized access. We knew we should activate OpSec but: we had no pre-planned out-of-band channel, the security IR team had never trained with us on IMAG, and we didn't know who the need-to-know list should include. We improvised and it was a mess. What was the preparation failure?",
+      "merged_advantage": "The merged skill identifies the synthesis-specific failure mode: the pivot that fails because OpSec wasn't pre-planned. The SRE book's role mechanics were executed correctly; the BSRS's OpSec requirement was known in principle. The failure is that the pivot protocol requires both, pre-planned and practiced together, before the incident. The merged skill makes the preparation requirement concrete: pre-plan OpSec channel, pre-define need-to-know list, run joint training with security IR, build pivot decision criteria into the incident declaration protocol. Neither source alone makes this sufficiently concrete as a preparation task.",
+      "source1_gap": "incident-management-role-separation (SRE book) would validate the role separation mechanics as correct and would have no prescription for the OpSec activation failure — OpSec is not part of the SRE book's incident management framework.",
+      "source2_gap": "unified-incident-management-imag (BSRS) prescribes OpSec and the pivot protocol, but describes them at a framework level without the specific preparation checklist items: pre-planned channel before incidents, joint training requirement, pivot decision criteria. The BSRS assumes familiarity with IMAG role mechanics that the team already had."
+    },
+    {
+      "id": "pm-002",
+      "type": "prefer_merged_over_source",
+      "prompt": "We're setting up incident response from scratch. Our company handles both reliability incidents (service outages) and security incidents (breaches, vulnerability response). We want one framework that works for both without building two separate playbooks that diverge over time. Walk us through what a unified framework looks like and what's different between the two incident types.",
+      "merged_advantage": "The merged skill provides both the detailed role mechanics (IC cognitive load model, Ops Lead constraint, Comms Lead shielding, Malcolm counter-example — from the SRE book) AND the security-specific extensions (OpSec, pivot protocol, joint training mandate, explicit incident declaration format — from the BSRS). A practitioner reading only one source gets an incomplete picture: SRE book provides mechanics without security extensions; BSRS states 'we use the same methodology' but assumes the mechanics are already known. The merged skill provides the unified answer as a single coherent framework.",
+      "source1_gap": "incident-management-role-separation (SRE book) provides excellent role mechanics for reliability incidents but has no OpSec content, no pivot protocol, no guidance on combined incidents, and no joint training mandate for cross-functional interoperability.",
+      "source2_gap": "unified-incident-management-imag (BSRS) provides the security extensions and the unification mandate but explicitly says 'we use the same methodology as SRE incident management' without restating the mechanics. A team reading only BSRS would lack the IC cognitive load model, the Ops Lead constraint rationale, the Comms Lead scope boundaries, and the Malcolm counter-example that make the framework concrete."
+    },
+    {
+      "id": "pm-003",
+      "type": "prefer_merged_over_source",
+      "prompt": "Our organization has trained engineers on IMAG roles (IC, Ops Lead, Comms Lead, Planning Lead) for reliability incidents. We now want to extend this to security incident response. The security IR team says 'we already have our own process — IMAG will slow us down.' How do we make the case for unification and what concretely changes for security incidents?",
+      "merged_advantage": "The merged skill provides both the unification argument (drawn from BSRS: 'having the same framework for response enables both groups to seamlessly interoperate under stress') and the concrete security-specific differences (OpSec channel requirement, need-to-know restriction, pivot protocol, joint training mandate). The argument is: IMAG doesn't slow down security IR — framework translation at the moment of a combined incident does. The concrete additions are minimal: OpSec channel pre-planning, a need-to-know list, and pivot criteria. The core roles and mechanics are identical. Neither source alone provides both the persuasion case and the concrete delta.",
+      "source1_gap": "incident-management-role-separation (SRE book) provides the reliability mechanics but cannot make the unification argument for security — it has no content on security IR interoperability, OpSec, or combined incidents.",
+      "source2_gap": "unified-incident-management-imag (BSRS) makes the unification argument and prescribes OpSec additions, but assumes familiarity with IMAG mechanics. It cannot answer 'what concretely changes' in a way that is persuasive to a security team that hasn't internalized the IMAG role mechanics from the SRE book."
+    }
+  ]
+}

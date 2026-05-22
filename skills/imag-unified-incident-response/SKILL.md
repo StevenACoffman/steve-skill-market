@@ -6,10 +6,10 @@ description: Use this skill when an organization needs incident response that wo
 type: merged-skill
 source_skills:
   - slug: site-reliability-engineering/incident-management-role-separation
-    book: "Site Reliability Engineering"
+    book: Site Reliability Engineering
     author: Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
   - slug: google-bsrs/unified-incident-management-imag
-    book: "Building Secure and Reliable Systems"
+    book: Building Secure and Reliable Systems
     author: Google
 related_skills:
   - slug: site-reliability-engineering/incident-management-role-separation
@@ -47,7 +47,7 @@ Runbook / incident docs:
 
 **Convergence note:** Both books explicitly confirm the same four-role ICS-based structure as the correct response coordination framework. The BSRS directly states "we use the same methodology" as the SRE book's incident management framework — this is intentional unification, not coincidental convergence. The SRE book contributes the detailed coordination mechanics (IC cognitive load model, the "most capable engineer should often not be IC" principle, the Malcolm freelancing counter-example). The BSRS contributes the security-specific extensions (Operational Security, the unification mandate across IR functions, the explicit incident declaration protocol, and the pivot protocol for when reliability incidents reveal security dimensions).
 
----
+______________________________________________________________________
 
 ### I — Unified Framework (Interpretation)
 
@@ -100,7 +100,7 @@ The pivot protocol must be pre-planned and exercised. Teams that have not rehear
 
 If SRE and security IR teams each run their own response in parallel, the result is: duplicated investigation work, conflicting timelines sent to leadership, no single source of truth, and the attacker potentially benefiting from the gap between the two responses. IMAG provides a single IC with authority over both functions. Both SRE and security IR personnel fill operational roles under that IC, not separate commanders with separate authority structures.
 
----
+______________________________________________________________________
 
 ### A1 — Past Application
 
@@ -120,7 +120,7 @@ If SRE and security IR teams each run their own response in parallel, the result
 
 **Convergence note:** Both books explicitly confirm the same four-role ICS-based structure as the correct response coordination framework. The BSRS directly states "we use the same methodology" as the SRE book's incident management framework — this is intentional unification, not coincidental convergence. The SRE book contributes the detailed coordination mechanics (IC cognitive load model, the "most capable engineer should often not be IC" principle, the Malcolm freelancing counter-example). The BSRS contributes the security-specific extensions (Operational Security, the unification mandate across IR functions, the explicit incident declaration protocol, and the pivot protocol for when reliability incidents reveal security dimensions).
 
----
+______________________________________________________________________
 
 ## I — Unified Framework (Interpretation)
 
@@ -173,7 +173,7 @@ The pivot protocol must be pre-planned and exercised. Teams that have not rehear
 
 If SRE and security IR teams each run their own response in parallel, the result is: duplicated investigation work, conflicting timelines sent to leadership, no single source of truth, and the attacker potentially benefiting from the gap between the two responses. IMAG provides a single IC with authority over both functions. Both SRE and security IR personnel fill operational roles under that IC, not separate commanders with separate authority structures.
 
----
+______________________________________________________________________
 
 ## A1 — Past Application
 
@@ -191,7 +191,7 @@ If SRE and security IR teams each run their own response in parallel, the result
 - **Conclusion:** The pre-existing framework and shared training eliminated coordination overhead at the moment of highest stress. Teams that have "never worked together under the same framework will not seamlessly interoperate during a combined incident."
 - **Result:** Response was structured and VP-approved without improvisation, demonstrating that IMAG's framework overhead is upfront investment rather than at-incident cost.
 
----
+______________________________________________________________________
 
 ## A2 — Trigger Scenario ★
 
@@ -213,7 +213,7 @@ If SRE and security IR teams each run their own response in parallel, the result
 - "The incident commander is writing SQL queries and answering VP calls simultaneously"
 - "Malcolm just made changes without telling anyone"
 
----
+______________________________________________________________________
 
 ## E — Execution Steps
 
@@ -237,7 +237,7 @@ If SRE and security IR teams each run their own response in parallel, the result
 - Train both SRE and security IR teams in IMAG roles together, before incidents occur. Shared exercise (DiRT-style) is the only way to validate interoperability.
 - Build the pivot decision criteria into the incident declaration protocol: at what point does an engineer declare that a reliability incident has become a security incident requiring OpSec activation?
 
----
+______________________________________________________________________
 
 ## B — Boundary ★
 
@@ -265,7 +265,7 @@ If SRE and security IR teams each run their own response in parallel, the result
 - Pure reliability organizations with no meaningful security IR function and no combined incident risk — standard ICS/on-call runbooks without OpSec additions are sufficient.
 - Very small teams (2–5 engineers) where filling four distinct roles is not feasible. IMAG scales down, but some structural elements assume multiple people are available.
 
----
+______________________________________________________________________
 
 ## Related Skills
 
