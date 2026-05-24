@@ -316,13 +316,15 @@ ______________________________________________________________________
 ## Client Setup and Authentication
 
 ```go
-import "github.com/Khan/genqlient/graphql"
+func newClients(endpoint string) (graphql.Client, graphql.Client) {
+	// Standard POST client:
+	post := graphql.NewClient(endpoint, http.DefaultClient)
 
-// Standard POST client:
-client := graphql.NewClient("https://api.example.com/graphql", http.DefaultClient)
+	// GET client (queries only; useful for CDN caching; cannot be used for mutations):
+	get := graphql.NewClientUsingGet(endpoint, nil)
 
-// GET client (queries only; useful for CDN caching; cannot be used for mutations):
-client := graphql.NewClientUsingGet("https://api.example.com/graphql", nil)
+	return post, get
+}
 ```
 
 **Adding auth headers via transport:**
@@ -372,32 +374,33 @@ ______________________________________________________________________
 Every generated function returns `(*ResponseType, error)`. Three error shapes:
 
 ```go
-import "github.com/vektah/gqlparser/v2/gqlerror"
+func handleErrors(ctx context.Context, client graphql.Client) {
+	resp, err := GetUser(ctx, client, "login")
+	_ = resp
 
-resp, err := GetUser(ctx, client, "login")
+	var list gqlerror.List
+	var httpErr *graphql.HTTPError
 
-var list gqlerror.List
-var httpErr *graphql.HTTPError
+	switch {
+	case err == nil:
+		// success — use resp normally
 
-switch {
-case err == nil:
-    // success — use resp normally
+	case errors.As(err, &list):
+		// Server returned HTTP 200 with GraphQL errors in the payload.
+		// resp is non-nil and MAY have partial data (some fields set, others zero).
+		for _, e := range list {
+			log.Printf("GraphQL error: %s at %v (extensions: %v)", e.Message, e.Path, e.Extensions)
+		}
+		// Decide whether to use partial resp.User data or discard it.
 
-case errors.As(err, &list):
-    // Server returned HTTP 200 with GraphQL errors in the payload.
-    // resp is non-nil and MAY have partial data (some fields set, others zero).
-    for _, e := range list {
-        log.Printf("GraphQL error: %s at %v (extensions: %v)", e.Message, e.Path, e.Extensions)
-    }
-    // Decide whether to use partial resp.User data or discard it.
+	case errors.As(err, &httpErr):
+		// Non-200 HTTP response (rate limit, auth failure, server error).
+		log.Printf("HTTP %d: %v", httpErr.StatusCode, httpErr.Response.Errors)
 
-case errors.As(err, &httpErr):
-    // Non-200 HTTP response (rate limit, auth failure, server error).
-    log.Printf("HTTP %d: %v", httpErr.StatusCode, httpErr.Response.Errors)
-
-default:
-    // Network error, DNS failure, context cancellation, etc.
-    log.Printf("network error: %v", err)
+	default:
+		// Network error, DNS failure, context cancellation, etc.
+		log.Printf("network error: %v", err)
+	}
 }
 ```
 
@@ -513,13 +516,17 @@ query GetPlayers {
 ```go
 // Pass the embedded fragment to shared functions:
 func PrintUser(u UserFields) { fmt.Println(u.Id, u.Name) }
-PrintUser(resp.Game.Winner.UserFields)
 
 // Or use genqlient's getter interface — both Winner and Banker have GetName():
 type HasName interface{ GetName() string }
+
 func printName(v HasName) { fmt.Println(v.GetName()) }
-printName(resp.Game.Winner)
-printName(resp.Game.Banker)
+
+func useFragments(resp *GetPlayersResponse) {
+	PrintUser(resp.Game.Winner.UserFields)
+	printName(resp.Game.Winner)
+	printName(resp.Game.Banker)
+}
 ```
 
 **flatten** removes the wrapper struct when a field's selection is a single

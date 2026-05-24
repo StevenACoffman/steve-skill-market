@@ -1,0 +1,77 @@
+{
+  "skill": "value-gap-migration-metrics",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "We're 70% through our cloud migration but the business says they don't see any value. IT says things are going great. What's happening?",
+      "reason": "This is the canonical value-gap scenario. Technical migration has outpaced organizational change; proxy metrics show progress; business outcomes show none."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "Our board presentation shows we've migrated 847 of 1,200 servers to the cloud. Is this the right thing to show the board?",
+      "reason": "Server count is a proxy metric. The skill provides the CTRL-F test and explains why this metric does not communicate business progress to a board audience."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "We had a slow start to our cloud migration but we're planning to deliver most of the value in the second half. Is this realistic?",
+      "reason": "This is the hockey-stick fallacy. The skill explains why deferred-value claims almost never materialize and what the realistic S-curve expectation looks like."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "How should we sequence which applications to migrate first — easiest ones to build momentum, or something else?",
+      "reason": "Sequencing by technical convenience (easiest first) is one of the levers the skill addresses. The correct approach is to sequence by value contribution, even if technically harder."
+    },
+    {
+      "id": "tp05",
+      "type": "should_invoke",
+      "prompt": "Business stakeholders are losing confidence in our cloud program. Our instinct is to accelerate the migration to show more progress. Is that the right response?",
+      "reason": "Accelerating technical migration to address eroding business support is exactly the wrong response if a value gap exists. The skill explains that the constraint is organizational, not technical."
+    },
+    {
+      "id": "tp06",
+      "type": "should_invoke",
+      "prompt": "What metrics should we use to measure cloud migration success in our quarterly business review?",
+      "reason": "The skill provides the explicit framework: distinguish IT proxy metrics from business value metrics, define the transition from one to the other as migration matures."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "We need to decide whether to migrate our monolith to containers or rewrite it as microservices. What are the trade-offs?",
+      "reason": "This is a migration strategy / application architecture question, not a metrics or value-gap question."
+    },
+    {
+      "id": "tp08",
+      "type": "should_not_invoke",
+      "prompt": "Our enterprise cloud platform requires all developers to submit a ticket to get a new environment provisioned. Is this a problem?",
+      "reason": "This is an Enterprise Non-Cloud diagnostic question (on-demand self-service violated), not a migration metrics / value gap question."
+    },
+    {
+      "id": "tp09",
+      "type": "should_not_invoke",
+      "prompt": "We want to avoid cloud vendor lock-in. What's the best approach?",
+      "reason": "This is a lock-in cost optimization / ROL question, not a migration metrics question."
+    },
+    {
+      "id": "tp10",
+      "type": "should_not_invoke",
+      "prompt": "Our team writes cloud strategy principles but they all seem obvious and no one debates them. How do we make better principles?",
+      "reason": "This is a principles quality checklist question (opposite test, memorability). Not a value-gap question."
+    },
+    {
+      "id": "tp11",
+      "type": "blurred_boundary",
+      "prompt": "We migrated to the cloud primarily to vacate an expiring data center contract. We met the deadline and moved 100% of workloads. Is that success?",
+      "reason": "Boundary case: the skill's boundary section explicitly notes that cost-avoidance or contract-expiry migrations have cost and completion as legitimate primary metrics, not just proxy metrics. But the skill's value framing still applies if the organization claims broader benefits beyond contract compliance."
+    },
+    {
+      "id": "tp12",
+      "type": "blurred_boundary",
+      "prompt": "Our cloud program has been running for 18 months. We have great deployment automation and 90% of servers migrated. But customer satisfaction scores haven't changed. Should we be worried?",
+      "reason": "This involves both the value gap (customer satisfaction unchanged despite strong IT metrics) and the question of whether customer satisfaction is a lagging metric with a longer feedback cycle. The skill applies to name the value gap, but the boundary section's note about lagging indicators is also relevant here."
+    }
+  ]
+}

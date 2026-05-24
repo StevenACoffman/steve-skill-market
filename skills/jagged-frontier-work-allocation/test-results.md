@@ -1,0 +1,47 @@
+# Test Results: Jagged Frontier Work Allocation
+
+**Date:** 2026-05-05
+**Status:** PASS
+
+## Invocation Boundary Analysis
+
+The description is well-targeted: it requires a PM or knowledge worker deciding "which portions of a specific task or workflow to delegate to AI versus retain for human judgment" — particularly with inconsistent AI output quality or a mix of synthesis and judgment-call work. This is a narrower scope than AI governance in general (explicitly excluded in B section) and narrower than prompt engineering (also correctly excluded). The A2 triggers are highly practical: PM who got burned using AI for vendor contract recommendation, sprint planning workflow design, junior PM delegation concern, program board packet preparation, and post-mortem on AI-influenced bad decisions.
+
+The key discriminations the skill must make: (a) from organizational AI policy questions (not individual work allocation), (b) from tooling selection and integration questions, (c) from prompt engineering questions. All three are represented in the should-not-invoke set. The B section is honest about the limitations: the -19pp finding is study-specific, the frontier is not static, and PM work that is "primarily relational, political, or organizational" doesn't fit the Centaur/Cyborg posture framework neatly. These are genuine boundaries that practitioners need to understand.
+
+## Prompt-by-Prompt Results
+
+### Should_invoke
+
+| ID    | Prompt summary                                                                                                                    | Result | Notes                                                                                                                                                                           |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp-01 | AI great for status reports, but gave confident answer on which initiative to deprioritize that missed political reality entirely | PASS   | Direct match to A2 bullet 1; volume/variance split applies; confidence-accuracy mismatch risk on organizational-politics decisions is the specific failure mode named           |
+| tp-02 | Redesigning sprint planning process, want to map which steps AI should handle vs. team should own                                 | PASS   | Task decomposition and volume/variance test for sprint planning components; Centaur vs. Cyborg posture selection; A2 bullet 2 directly covers this                              |
+| tp-03 | Junior PM produces polished AI-assisted deliverables but can't explain the reasoning behind recommendations                       | PASS   | Compression implication: AI eliminated information-translation layer, value now concentrated in problem framing and consequence ownership; A2 bullet 3 covers coaching scenario |
+| tp-04 | Post-mortem reveals bad calls made under pressure when team was leaning heavily on AI; AI analysis looked solid                   | PASS   | Override trigger concept; crunch situations produce high-variance edge cases outside AI competency; -19pp BCG finding is the empirical anchor; A2 bullet 5 directly covers this |
+
+### Should_not_invoke (Decoys)
+
+| ID    | Prompt summary                                                                                              | Result | Notes                                                                                                                                                                                        |
+| ----- | ----------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp-05 | What AI model should we use for meeting transcription and how to integrate with project management system   | PASS   | Tooling selection and integration question, not work-allocation decision; B section explicitly covers this boundary                                                                          |
+| tp-06 | PMO putting together AI governance policy for entire program — acceptable use, data handling, documentation | PASS   | Organizational/institutional governance question; B section explicitly states the skill "does not address how to structure PM teams, organizational AI policies, or institutional decisions" |
+| tp-07 | How do I write a better prompt to get AI to produce a more useful risk register                             | PASS   | Prompt engineering question; allocation decision already made; B section (and description's emphasis on allocation decision) exclude this                                                    |
+
+### Blurred_boundary
+
+| ID    | Prompt summary                                                                                                                                                   | Result     | Notes                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp-08 | PM uses AI for almost everything, happy with results, but struggles to justify recommendations to steering committee and feels like using "someone else's logic" | PASS       | Cyborg posture without adequate calibration producing diffusion of authorship; compression implication applies; may also touch professional development concerns outside strict skill scope; expected behavior correctly acknowledges the boundary                                                                                                                                     |
+| tp-09 | Vendor down-select with complex scoring matrix and vague criteria; politically sensitive choice; considering AI to synthesize evaluation notes                   | PASS       | Synthesis layer (consolidating notes) is AI-appropriate; weighting and final recommendation is human-owned; vague criteria create the specific confidence-accuracy mismatch risk; Centaur posture with human owning selection                                                                                                                                                          |
+| tp-10 | Using AI for status tracking and cross-stream dependency flagging across 10 workstreams; AI flagged fake dependency, missed real one                             | BORDERLINE | Recalibration step applies; structural dependencies in data are AI-suitable; organizational/relational dependencies requiring context and history are not; but this also touches program governance (interaction layer ownership) and could trigger program-governance-ecological-design for the larger governance question; expected behavior correctly identifies the dual relevance |
+
+## Issues Found
+
+One genuine gap in the Execution section: Step 6 ("Re-calibrate after each use") is correct but doesn't give the practitioner concrete guidance on how to maintain or document their frontier map over time. For a PM with many task types and multiple AI interactions per day, informal note-taking is the implied mechanism, but some practitioners would benefit from a more structured recalibration approach. This is a minor gap — the advice to "note it and update your frontier map" is sufficient for most purposes.
+
+The B section note that "PM work that is primarily relational, political, or organizational... does not fit neatly into either posture" is important and correctly placed. However, it creates a gap for tp-01 and tp-09 type scenarios where the relational/political dimension is the exact failure mode being diagnosed. The skill does handle these — through the confidence-accuracy mismatch check in Step 3 — but a practitioner who reads the B section too broadly might incorrectly think the skill doesn't apply. The warning is about the Centaur/Cyborg posture framework, not about whether the skill applies to these scenarios. This is a wording clarification opportunity, not a rework requirement.
+
+## Verdict
+
+PASS — The volume/variance split and confidence-accuracy mismatch check provide executable decision rules; the Centaur/Cyborg posture distinction is a useful design tool; the -19pp BCG finding grounds the skill's central claim empirically; invocation boundary correctly excludes tooling, policy, and prompt engineering questions while covering the full range of individual work-allocation decisions.

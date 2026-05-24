@@ -1,0 +1,101 @@
+{
+  "skill": "lock-in-cost-optimization",
+  "prompts": [
+    {
+      "id": "li-invoke-01",
+      "type": "should_invoke",
+      "prompt": "Our architecture review board rejected using AWS DynamoDB because it creates vendor lock-in. We need to use PostgreSQL on EC2 instead. Is this the right call?",
+      "reason": "Classic over-insuring against lock-in — needs ROL calculation and U-curve analysis"
+    },
+    {
+      "id": "li-invoke-02",
+      "type": "should_invoke",
+      "prompt": "We're building a Kubernetes abstraction layer so our applications can run on EKS, GKE, or AKS without modification. Is this a good way to avoid cloud lock-in?",
+      "reason": "Esperanto Effect risk — abstraction layer creates new lock-in while blocking native capabilities"
+    },
+    {
+      "id": "li-invoke-03",
+      "type": "should_invoke",
+      "prompt": "AWS is offering us enterprise support, dedicated TAMs, and favorable pricing in exchange for making AWS our primary platform. Should we accept?",
+      "reason": "ROL evaluation — conscious lock-in with tangible benefits; needs benefit vs. switching cost analysis"
+    },
+    {
+      "id": "li-invoke-04",
+      "type": "should_invoke",
+      "prompt": "How do I make the case to my engineering team that avoiding all cloud-specific services is actually costing us more than any future migration would?",
+      "reason": "Explaining the U-curve / over-insurance argument — total cost vs. switching cost minimization"
+    },
+    {
+      "id": "li-invoke-05",
+      "type": "should_invoke",
+      "prompt": "Our team insists on using only open-source, cloud-agnostic tools so we can switch providers any time. The self-management overhead is significant. How do I evaluate this trade-off?",
+      "reason": "Underutilization cost of portability investment — needs explicit U-curve analysis"
+    },
+    {
+      "id": "li-invoke-06",
+      "type": "should_invoke",
+      "prompt": "We have lock-in to our current CI/CD platform, our cloud provider, and our container orchestration system. Which type of lock-in matters most and how do we prioritize?",
+      "reason": "Eight-dimension taxonomy — different lock-in types have different probability and switching cost profiles"
+    },
+    {
+      "id": "li-invoke-07",
+      "type": "should_invoke",
+      "prompt": "Our architecture principle says 'avoid cloud vendor lock-in.' We're trying to use it to make decisions but it doesn't help us decide anything — every option seems to violate it. What's wrong?",
+      "reason": "Principle failure — 'avoid lock-in' without a threshold or cost model is not an actionable principle; Gregor's First Law context"
+    },
+    {
+      "id": "li-invoke-08",
+      "type": "should_invoke",
+      "prompt": "We spent $2M building a multi-cloud abstraction layer. Now we're told we can't use managed ML services because they're not in the abstraction. Was this worth it?",
+      "reason": "Post-hoc ROL analysis — underutilization cost of Esperanto layer vs. switching cost reduction achieved"
+    },
+    {
+      "id": "li-no-invoke-01",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure AWS IAM roles for a Lambda function?",
+      "reason": "Operational configuration task — no lock-in trade-off decision involved"
+    },
+    {
+      "id": "li-no-invoke-02",
+      "type": "should_not_invoke",
+      "prompt": "What is the SLA for Google Cloud SQL?",
+      "reason": "Vendor specification lookup — not a lock-in cost analysis"
+    },
+    {
+      "id": "li-no-invoke-03",
+      "type": "should_not_invoke",
+      "prompt": "How does Kubernetes rolling deployment work?",
+      "reason": "Technical concept explanation — no lock-in optimization decision"
+    },
+    {
+      "id": "li-no-invoke-04",
+      "type": "should_not_invoke",
+      "prompt": "We're migrating from on-premises to AWS. What order should we migrate our applications?",
+      "reason": "Migration sequencing question — related to hybrid cloud strategy, not lock-in cost optimization"
+    },
+    {
+      "id": "li-no-invoke-05",
+      "type": "should_not_invoke",
+      "prompt": "How do we negotiate better pricing with our cloud provider?",
+      "reason": "Commercial negotiation — tangentially related to ROL but the core question is procurement, not architectural lock-in optimization"
+    },
+    {
+      "id": "li-blur-01",
+      "type": "blurred_boundary",
+      "prompt": "We're a government agency required by regulation to use multiple cloud providers and to be able to switch providers within 90 days. How do we approach this?",
+      "reason": "Regulatory mandate for portability changes the expected switching probability to near-1.0 — the framework applies differently when the switch is mandated, not merely possible; the portability investment is no longer optional"
+    },
+    {
+      "id": "li-blur-02",
+      "type": "blurred_boundary",
+      "prompt": "We accepted significant AWS lock-in three years ago based on ROL reasoning. Now AWS has raised prices 40%. Should we have built in more portability?",
+      "reason": "Retroactive ROL evaluation — the framework's probability estimates were proven wrong; this is the legitimate tail-risk scenario the model understates; boundary between 'model was wrong' and 'model was right and we had bad luck'"
+    },
+    {
+      "id": "li-blur-03",
+      "type": "blurred_boundary",
+      "prompt": "We want to use Cloud Spanner for its globally-distributed transaction capability. No other product does this. Is using it a lock-in risk we should worry about?",
+      "reason": "Unique capability with high switching cost — strong ROL case, but also represents a genuine architecture lock-in if the product is discontinued or pricing changes radically; needs both ROL analysis and risk assessment"
+    }
+  ]
+}

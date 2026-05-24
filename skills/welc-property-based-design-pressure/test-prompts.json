@@ -1,0 +1,65 @@
+{
+  "skill_id": "welc-property-based-design-pressure",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "I'm trying to write property-based tests for my order-processing function, but every property I come up with needs exception clauses — 'this holds unless the order has no line items', 'unless the currency is unsupported', 'unless the discount code is expired'. Is my testing framework not expressive enough?",
+      "expected_concepts": ["exception clauses are a design signal not a testing problem", "the function has multiple hidden sub-responsibilities", "decompose into separate functions each with clean universal properties"]
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "Should I use property-based tests for our user CRUD API? We have create, read, update, and delete endpoints and I want to be more rigorous about testing.",
+      "expected_concepts": ["simple CRUD does not warrant property-based tests", "the trivial invariant 'what you store is what you retrieve' is correctly tested with examples", "property-based tests add signal when non-trivial invariants exist"]
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "I can always come up with good examples for my CSV parsing function and they all pass. But when I try to state a general property — something that must be true for all valid inputs — I just can't figure out what the rule is. What am I missing?",
+      "expected_concepts": ["inability to state a universal property is diagnostic information", "think about structural invariants: round-trip, size preservation, element membership", "if no clean property emerges the function may be doing too many things"]
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "We're about to do a major refactor of our sorting and ranking logic. We want tests that won't break when we change the implementation — they should test what the code does, not how it does it. What kind of tests should we write first?",
+      "expected_concepts": ["property-based tests test WHAT not HOW", "invariant properties survive rewrites", "properties should be universal across all valid inputs not coupled to implementation details"]
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I install Hypothesis for Python and configure it to generate inputs for my test suite?",
+      "expected_concepts": ["framework installation and configuration question", "not about design pressure or property articulation difficulty"]
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "My test coverage is at 72% and my manager wants it at 80%. What's the fastest way to get there?",
+      "expected_concepts": ["coverage metric question", "property-based testing is not a coverage tool", "not about invariant articulation or design quality"]
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "I want to find crash-inducing inputs for my JSON parser. It handles untrusted input from the internet and I want to make sure it doesn't panic or throw exceptions on malformed data.",
+      "expected_concepts": ["this is fuzz testing not property-based testing", "goal is finding crash-inducing inputs not verifying output invariants", "different concern: tolerance boundary vs invariant verification"]
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I have a function that validates, normalizes, and deduplicates a list of email addresses in one pass. I want to write property-based tests but I'm struggling to state what should always be true. Is this a function I should test with properties at all?",
+      "expected_concepts": ["struggle to state properties is a design signal worth naming", "the function has at least three responsibilities: validation, normalization, deduplication", "decompose first then each piece has clean testable properties", "could go either way depending on whether the developer wants design feedback or just test coverage"]
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "I wrote a property-based test for my encryption function. The property is: decrypt(encrypt(plaintext, key), key) == plaintext. Is this a good use of property-based testing or is it just testing one obvious round-trip property?",
+      "expected_concepts": ["round-trip property is a legitimate and valuable invariant", "it tests WHAT not HOW and survives implementation changes", "additional properties exist: ciphertext should not equal plaintext, same plaintext with different keys should produce different ciphertext", "whether more properties are warranted depends on the function's complexity and threat model"]
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "My colleague says property-based tests are basically the same as just running a lot of random example-based tests. Is that right?",
+      "expected_concepts": ["property-based tests require stating a universal invariant, not just more examples", "the articulation difficulty is the design-pressure mechanism — it does not exist in example-based testing", "shrinking finds minimal failing cases which random examples do not", "the distinction matters: properties specify contracts, examples specify behaviors"]
+    }
+  ]
+}

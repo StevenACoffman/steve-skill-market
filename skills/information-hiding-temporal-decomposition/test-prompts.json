@@ -1,0 +1,75 @@
+{
+  "skill_id": "information-hiding-temporal-decomposition",
+  "test_prompts": [
+    {
+      "id": "tp01",
+      "prompt": "I split my HTTP request handling into three classes: `RequestParser`, `RequestValidator`, and `RequestExecutor` because that's the order they run. Now they share a half-built request object that gets passed around. Was this the right split?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Textbook temporal decomposition: classes defined by execution order rather than by the information they hide. The symptom (shared mutable intermediate object) is the core signal."
+    },
+    {
+      "id": "tp02",
+      "prompt": "Our data pipeline has `FetchStage`, `TransformStage`, and `LoadStage` classes. Each knows about the file format because they all read or write it. Should these be separate classes?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Information leakage across temporal stages: the file format detail should be hidden in one place, not spread across three stage classes."
+    },
+    {
+      "id": "tp03",
+      "prompt": "I have a `CsvParser` and a `CsvWriter` as separate classes. They both need to know the CSV dialect settings. Should I combine them into one `CsvHandler` class?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Shared hidden information (dialect config) that leaks across two classes split by read/write phase — a direct information-hiding diagnosis question."
+    },
+    {
+      "id": "tp04",
+      "prompt": "My compiler is split into `Lexer`, `Parser`, `SemanticAnalyzer`, and `CodeGenerator`. Is that a reasonable design or is it temporal decomposition gone wrong?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Asks directly about whether a pipeline decomposition is temporal (bad) or information-hiding (acceptable). Requires nuanced evaluation."
+    },
+    {
+      "id": "tp05",
+      "prompt": "Should `processPayment()` be a public or private method on my `PaymentService`? I don't want external callers invoking it directly.",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Access control (public/private visibility) question, not about what information the module hides or how it was decomposed."
+    },
+    {
+      "id": "tp06",
+      "prompt": "We're versioning our REST API. Should we put the version in the URL path or in the Accept header?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "API versioning strategy question, not related to information hiding or temporal decomposition."
+    },
+    {
+      "id": "tp07",
+      "prompt": "Our users table has address fields. Should I normalize that into a separate addresses table?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Database normalization, not a module decomposition or information hiding question."
+    },
+    {
+      "id": "tp08",
+      "prompt": "We're building a microservices architecture and each service owns one step of the order workflow: placement, payment, fulfillment, notification. Is this a good service boundary design?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Microservice decomposition by workflow step is temporal decomposition at the architecture level. The principle applies, but microservices have additional constraints (deployment, team ownership) that complicate a pure information-hiding judgment."
+    },
+    {
+      "id": "tp09",
+      "prompt": "I have two modules that both deal with JSON serialization. Should I merge them into one?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Asks about combining modules that share hidden information — directly relevant, but the prompt is abstract enough that implementation details would change the answer."
+    },
+    {
+      "id": "tp10",
+      "prompt": "My authentication flow has `TokenGenerator` and `TokenVerifier` as separate classes. They both encode/decode the same JWT structure. Is that a problem?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Shared knowledge about JWT structure leaking across two classes. Boundary because it could also be answered as a DRY/reuse question without the information-hiding framing."
+    }
+  ]
+}

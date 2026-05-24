@@ -1,0 +1,76 @@
+{
+  "skill": "ephemeral-taskforce",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We need to roll out a new observability standard across 20 teams by end of quarter. Each team owns their own services and I can't just mandate changes to their systems. How do I staff and organize this rollout?",
+      "expected_behavior": "Invokes ephemeral-taskforce, confirms the cross-ownership threshold is met, recommends assembling a small selected group with knowledge and mandate from the relevant teams, defines a clear done condition (observability standard live in all 20 services), and distinguishes ETF from a working group by requiring real mandate from each member.",
+      "notes": "Positive scenario: platform-wide migration requiring distributed mandate across multiple team ownership boundaries."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We formed a working group six months ago to drive GDPR compliance across our engineering teams and nothing is getting done. Everyone shows up to meetings but nobody actually makes changes. What's the structural problem here and how do we fix it?",
+      "expected_behavior": "Invokes ephemeral-taskforce, diagnoses the working group as the Technical Committee anti-pattern (no delivery focus, volunteer-based, no mandate), recommends replacing it with an ETF composed of selected members who hold real mandate to change systems in their home teams, and defines what a clear done condition looks like for GDPR compliance.",
+      "notes": "Positive scenario: working group that has become a TC anti-pattern — the canonical ETF activation scenario."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "I need to migrate 400 services from our legacy software catalog to a new tool. No single engineer knows all the services, and the owners are spread across a dozen teams. How do I approach this?",
+      "expected_behavior": "Invokes ephemeral-taskforce, confirms the cross-team ownership requirement, recommends assembling an ETF with catalog expertise and mandate from each team cluster, references the 2-person ETF model from the book as a viable minimum, and recommends scale mechanisms (Slack bots, automation) to reach all owners without staffing for each.",
+      "notes": "Positive scenario: software catalog migration — a concrete past application from the book."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We have a new EU Accessibility Act compliance deadline and changes are needed in the frontend, backend, and content management systems owned by three different teams. I've been asked to lead this. What's the right organizational model?",
+      "expected_behavior": "Invokes ephemeral-taskforce, classifies this as a classic ETF scenario (regulatory compliance, cross-ownership, bounded end-state), walks through the ETF design: mission document, ownership slice mapping, selected (not volunteered) members, formal charter, and dissolution trigger when compliance is achieved.",
+      "notes": "Positive scenario: regulatory compliance initiative spanning three distinct team ownership domains."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Should we form a committee or a small delivery group to implement the new on-call rotation tool across all 15 product teams? The committee approach has failed us before.",
+      "expected_behavior": "Invokes ephemeral-taskforce, distinguishes committee (no end-state, volunteer-based, produces recommendations) from ETF (bounded deliverable, selected members with mandate, self-dissolves), recommends the ETF model with a specific done condition for the on-call tool rollout.",
+      "notes": "Positive scenario: explicit committee vs. delivery group decision — the core ETF selection question."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I run a more effective standup meeting with my team?",
+      "expected_behavior": "Team ritual and meeting effectiveness question — should provide general standup best practices without invoking ephemeral-taskforce, which addresses cross-org initiative delivery structure, not individual team meeting design.",
+      "notes": "Decoy: team ceremony question, no cross-team ownership or bounded deliverable context."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "My team has grown from 5 to 14 engineers over the past year and things are getting slower. Should I split the team?",
+      "expected_behavior": "Team size and splitting question — should use consumer-journey-org framing or general team topology guidance. Does not invoke ephemeral-taskforce because this is a permanent org structure question, not a temporary cross-team delivery instrument.",
+      "notes": "Decoy: permanent team structure question, not a temporary cross-org initiative."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Our product team wants to build a new feature and the work is entirely within our own service boundary. How should we plan the project?",
+      "expected_behavior": "Internal team project planning question — should not invoke ephemeral-taskforce because the work lives within one team's ownership boundary. The ETF threshold is not met.",
+      "notes": "Decoy: single-team project, no cross-ownership requirement — ETF is explicitly not needed here."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I want to roll out a new coding standard across all teams in our engineering org. There's no clear end point — we want this to be a permanent cultural practice, not a one-time change. Should I form an ETF?",
+      "expected_behavior": "Ambiguous: cross-org initiative but no clear end-state — fails one of the three ETF threshold criteria. The skill should advise against an ETF (no foreseeable end-state = drift into TC), and recommend either embedding the standard in platform tooling with a bounded rollout ETF, or making it a permanent team/platform function with explicit ownership.",
+      "notes": "Boundary: cross-org initiative that lacks a clear done condition — tests the ETF threshold criteria."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I'm a staff engineer and I think I can drive our new API versioning standard across all 12 teams myself if I get a few months of dedicated time. Do I need to form a group?",
+      "expected_behavior": "Ambiguous: the ask is whether one person with dedicated time is sufficient. The skill should evaluate whether a single person holds all the required knowledge and mandate for 12 team systems — if not, an ETF is needed. If yes (the person has sufficient relationships and informal mandate across all 12 teams), no ETF is needed. Should not reflexively recommend an ETF if the single-person threshold can be met.",
+      "notes": "Boundary: tests whether the 'single person cannot deliver it' threshold is genuinely met or whether the ETF model is being over-applied."
+    }
+  ]
+}

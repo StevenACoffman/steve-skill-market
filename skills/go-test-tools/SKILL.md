@@ -20,10 +20,10 @@ go install gotest.tools/gotestsum@latest
 
 ```bash
 # Plain go test (matches the pre-push hook)
-cd <module> && go test -count=1 -timeout 5m ./...
+cd MODULE && go test -count=1 -timeout 5m ./...
 
 # With gotestsum (preferred when installed)
-cd <module> && gotestsum -- -count=1 -timeout 5m ./...
+cd MODULE && gotestsum -- -count=1 -timeout 5m ./...
 ```
 
 `-count=1` disables Go's test result cache so tests always run fresh.
@@ -53,15 +53,15 @@ done
 With `go test`, add flags directly:
 
 ```bash
-cd <module> && go test -count=1 -timeout 5m -race ./...
-cd <module> && go test -count=1 -v -run TestMyFunction ./...
+cd MODULE && go test -count=1 -timeout 5m -race ./...
+cd MODULE && go test -count=1 -v -run TestMyFunction ./...
 ```
 
 With gotestsum, pass `go test` flags after `--`:
 
 ```bash
-cd <module> && gotestsum -- -count=1 -timeout 5m -race ./...
-cd <module> && gotestsum -- -count=1 -v -run TestMyFunction ./...
+cd MODULE && gotestsum -- -count=1 -timeout 5m -race ./...
+cd MODULE && gotestsum -- -count=1 -v -run TestMyFunction ./...
 ```
 
 | Flag            | Purpose                                   |
@@ -80,10 +80,10 @@ testify suites are registered as a single top-level `TestXxx` function. To targe
 
 ```bash
 # Run the whole suite
-cd <module> && go test -count=1 -run TestMyRepo ./...
+cd MODULE && go test -count=1 -run TestMyRepo ./...
 
 # Run one method inside the suite
-cd <module> && go test -count=1 -run TestMyRepo/TestCreateSomething ./...
+cd MODULE && go test -count=1 -run TestMyRepo/TestCreateSomething ./...
 ```
 
 ## Test Suite Pattern
@@ -246,17 +246,17 @@ Note: testify suite tests do **not** use `t.Parallel()` — the suite runner man
 ## Coverage
 
 ```bash
-cd <module> && go test -count=1 -coverprofile=coverage.out ./...
-go tool cover -func=coverage.out           # coverage per function
-go tool cover -html=coverage.out           # open in browser
+cd MODULE && go test -count=1 -coverprofile=coverage.out ./...
+go tool cover -func=coverage.out # coverage per function
+go tool cover -html=coverage.out # open in browser
 go tool cover -func=coverage.out | grep total
 ```
 
 ## Benchmarks
 
 ```bash
-cd <module> && go test -bench=. -benchmem ./...
-cd <module> && go test -bench=BenchmarkMyFunc -benchmem ./...
+cd MODULE && go test -bench=. -benchmem ./...
+cd MODULE && go test -bench=BenchmarkMyFunc -benchmem ./...
 ```
 
 ## Watch Mode (TDD)
@@ -264,39 +264,39 @@ cd <module> && go test -bench=BenchmarkMyFunc -benchmem ./...
 Requires gotestsum:
 
 ```bash
-cd <module> && gotestsum --watch -- ./...
-cd <module> && gotestsum --watch --format testdox -- ./...
+cd MODULE && gotestsum --watch -- ./...
+cd MODULE && gotestsum --watch --format testdox -- ./...
 ```
 
 ## Output Formats
 
 ```bash
-cd <module> && gotestsum --format testname -- ./...   # test names only
-cd <module> && gotestsum --format dots -- ./...        # . = pass, F = fail
-cd <module> && gotestsum --format pkgname -- ./...     # group by package
-cd <module> && gotestsum --format testdox -- ./...     # BDD-style output
+cd MODULE && gotestsum --format testname -- ./... # test names only
+cd MODULE && gotestsum --format dots -- ./...     # . = pass, F = fail
+cd MODULE && gotestsum --format pkgname -- ./...  # group by package
+cd MODULE && gotestsum --format testdox -- ./...  # BDD-style output
 ```
 
 ## Rerun Failed Tests
 
 ```bash
-cd <module> && gotestsum --rerun-fails -- -count=1 ./...
+cd MODULE && gotestsum --rerun-fails -- -count=1 ./...
 ```
 
 ## JUnit XML Output (CI)
 
 ```bash
-cd <module> && gotestsum --junitfile junit.xml -- -count=1 ./...
+cd MODULE && gotestsum --junitfile junit.xml -- -count=1 ./...
 ```
 
 ## Debugging a Failing Test
 
 ```bash
 # Verbose output to see t.Log lines
-cd <module> && go test -v -count=1 -run TestSpecificFunction ./...
+cd MODULE && go test -v -count=1 -run TestSpecificFunction ./...
 
 # Stop after first failure
-cd <module> && go test -count=1 -failfast ./...
+cd MODULE && go test -count=1 -failfast ./...
 
 # Delve debugger
 dlv test ./pkg/mypkg -- -test.run TestSpecificFunction

@@ -1,0 +1,52 @@
+{
+  "skill": "power-interest-grid-stakeholders",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "pig-t01",
+      "type": "should_trigger",
+      "prompt": "I'm kicking off a new data modeling initiative for our sales operations team. I don't know who I need to involve — there's the VP of Sales, the analytics team, IT, and a couple of power users who rely on the reports daily. How do I figure out who to engage and how?",
+      "expected": "trigger",
+      "rationale": "New initiative kickoff with named stakeholders across different roles. Explicitly asks 'who to engage and how' — the direct output of the power-interest grid. Matches language signal 'Who should I involve in this decision?'"
+    },
+    {
+      "id": "pig-t02",
+      "type": "should_trigger",
+      "prompt": "A senior VP is blocking my data modeling project. She hasn't responded to my last three emails, and when I did get a meeting she seemed disinterested. But I've heard she has the authority to kill the budget. How do I unblock this?",
+      "expected": "trigger",
+      "rationale": "Classic 'blocked project' scenario. The description maps to a high-power, low-interest stakeholder (Keep Satisfied) who was likely never briefed appropriately. The grid diagnoses this and prescribes engagement strategy."
+    },
+    {
+      "id": "pig-t03",
+      "type": "should_trigger",
+      "prompt": "Our CDO is technically sponsoring our data modeling project, but every time we need access to data in other departments, we hit a wall. The CDO tells us to 'just reach out to the department heads' but that never works. What's going on and how do we fix this?",
+      "expected": "trigger",
+      "rationale": "Matches the CDO warning in the skill — a CDO with nominal but not actual power. This is exactly the scenario where grid re-mapping is needed to identify the true Key Player above the CDO who has enforcement authority."
+    },
+    {
+      "id": "pig-d01",
+      "type": "should_not_trigger",
+      "prompt": "We have a meeting with the CFO next Tuesday to present our data platform consolidation proposal. What metrics should we lead with, and how should we frame this so it lands with a finance executive?",
+      "expected": "no_trigger",
+      "rationale": "The audience is already identified (CFO) and the question is about WHAT TO SAY, not who to engage or how. This is pitch framing for an already-known stakeholder — productland-vs-enterpriseland-selling, not the grid. The grid has already done its work."
+    },
+    {
+      "id": "pig-d02",
+      "type": "should_not_trigger",
+      "prompt": "We're getting ready to pitch our semantic layer project to a mixed committee of the VP of Engineering and the Head of Analytics. How do we frame the business case so both audiences see value in it?",
+      "expected": "no_trigger",
+      "rationale": "The stakeholders are already identified and placed. The question is about pitch framing for a dual audience — the multi-audience case described in productland-vs-enterpriseland-selling's boundary section. Not a stakeholder mapping question."
+    },
+    {
+      "id": "pig-e01",
+      "type": "edge_case",
+      "prompt": "We've already done our stakeholder mapping. The analytics team is low power, high interest. The CTO is high power, high interest. But now a data quality incident just went public and suddenly the CFO — who we had pegged as low interest — is very involved and wants weekly briefings. How should we handle this?",
+      "expected": "trigger",
+      "rationale": "Edge case: a grid re-mapping trigger (a data quality incident made visible to an executive, shifting their position) with a partially pre-done grid. The skill should still trigger because it directly covers this 're-assessment trigger' scenario — a CFO moving from Keep Satisfied to Key Player requires an updated engagement strategy. The grid is explicitly described as a living document requiring re-assessment at major events like this."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoys carefully distinguish between stakeholder mapping (this skill) and pitch framing (productland-vs-enterpriseland-selling) — both involve 'stakeholder' language but serve different purposes."
+}

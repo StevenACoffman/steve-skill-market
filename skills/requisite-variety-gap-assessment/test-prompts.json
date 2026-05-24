@@ -1,0 +1,66 @@
+{
+  "skill_id": "requisite-variety-gap-assessment",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "We have a large government IT program with a five-tier governance structure — program board, steering committee, PMO, integration management office, and workstream leads. We keep getting surprised by integration failures. Nobody on the program board saw them coming. The governance structure looks solid on paper. What's going on?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment. Identify this as a likely sensing and model variety deficit — the governance tiers may have adequate response authority but insufficient sensing reach into integration-layer states, and almost certainly no single party holds an integrated model of the whole system. Walk through the four-dimension audit and produce a deficit profile pointing at model variety as the most probable primary gap."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "A healthcare startup brought in a very experienced COO from a large established company to stabilize their operations. Six months later the startup looks more organized but it's still missing its targets and key engineers are leaving. The founders think the COO fixed the process problems but something still feels wrong. What should they be looking at?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment. Identify this as the Zenefits pattern — variety reduction disguised as stabilization. The COO's background likely equips them with governance tools suited to a lower-variety environment than a high-growth startup. The formalization effort reduced management variety at the moment environmental variety was high. Audit where the deficit sits (likely authority and model variety — experienced exec imposing mental models from a different environment type)."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "We're doing a post-mortem on a program that failed. The risk was in our risk register — it was categorized as 'medium likelihood, high impact.' It materialized and we didn't catch it in time to respond. Everyone had technically seen the risk. Why didn't the system catch it?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment. The risk register's presence doesn't mean the management system had the variety to detect the actual manifestation signal and respond. Apply the sensing and response variety audit: was the detection mechanism passive (registered but not monitored) or active? Was the response mode available matched to this risk class? This is a likely response variety or authority variety deficit — risk identified but system lacked distinct response pathway or authority was not at the level where the signal materialized."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_invoke",
+      "prompt": "Our PMO is rolling out a new standardized project governance framework across a 40-project portfolio. It's working well for about half the projects. The other half seem to be getting worse — more surprises, more escalations, slower decisions. What's likely happening with the second group?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment. The second group of projects likely has environments whose variety exceeds what the standardized framework can regulate — the framework reduces management variety to a uniform level that is appropriate for lower-complexity projects but constitutes a deficit for higher-complexity ones. Recommend applying the four-dimension audit to the failing projects to identify which variety dimension the standardized framework is most constraining."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "Our team's schedule variance has been worsening for the past six weeks and nobody is taking corrective action. The sponsor keeps saying we'll recover. How do I diagnose why we're not correcting?",
+      "expected_behavior": "Do NOT invoke requisite-variety-gap-assessment. This is a corrective pathway health question about EVM feedback loops — the sv-trend-diagnostic skill applies. The question is about why a known signal is not producing corrective action within a defined EVM control system, not about whether the management system's variety is structurally matched to its environment."
+    },
+    {
+      "id": "tp-06",
+      "category": "should_not_invoke",
+      "prompt": "We have a small 8-person team running a well-understood data migration project. The scope is fixed, the technology is familiar, and we've done this type of work many times. Should we adopt a more complex governance structure?",
+      "expected_behavior": "Do NOT invoke requisite-variety-gap-assessment (or invoke it only to conclude it does not apply). The skill boundary explicitly excludes simple, stable, low-variety environments. The answer is no — the management system's variety is likely already appropriate or even excessive for this environment. Adding governance complexity would introduce variety mismatch in the opposite direction."
+    },
+    {
+      "id": "tp-07",
+      "category": "should_not_invoke",
+      "prompt": "I've done the variety gap assessment and I know we have a model variety deficit — no one holds an integrated model of the system. What governance changes should we make to fix it?",
+      "expected_behavior": "Do NOT re-invoke requisite-variety-gap-assessment. The assessment is already complete. The question is now prescriptive: which governance levers close a model variety deficit at acceptable cost? This is the governance lever selection problem that the skill's boundary explicitly defers to SKILL-04. Acknowledge the diagnostic is done and redirect to the prescriptive follow-on."
+    },
+    {
+      "id": "tp-08",
+      "category": "blurred_boundary",
+      "prompt": "We have a highly experienced team with great informal communication. The formal governance structure is minimal — a weekly standup and a monthly steering committee. We keep getting told we need 'more governance.' Should we add more formal structure?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment with attention to the informal system boundary condition. Before recommending more formal governance, audit the actual regulatory variety — the informal system may be providing high variety through relationship-based information flows and implicit response options. The question is whether the informal system's variety is adequate for the environment's complexity, not whether the formal structure looks sufficient to an outside observer. Adding formalization may reduce total variety, not increase it."
+    },
+    {
+      "id": "tp-09",
+      "category": "blurred_boundary",
+      "prompt": "The FAA is reviewing how to modernize its aircraft certification process for AI-assisted flight systems. The current process was designed for conventional avionics. How should they think about whether their oversight capacity is adequate?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment. This is a sensing and model variety audit at a regulatory level — the domain (AI-assisted flight systems) has fundamentally different state space than conventional avionics: emergent failure modes, training data dependencies, software-defined behavior envelopes, distributional shift. The FAA's current framework was calibrated for a different variety of environment. The audit would likely find model variety deficits (regulatory staff lack models for ML failure modes) and sensing variety deficits (certification test suites designed for deterministic systems). However, the prescriptive question — what changes to make — is out of scope for this skill."
+    },
+    {
+      "id": "tp-10",
+      "category": "blurred_boundary",
+      "prompt": "We're considering decentralizing decision-making authority to workstream leads because decisions are too slow. Some people on the steering committee are worried this will reduce accountability and oversight. How do we evaluate whether this is the right move?",
+      "expected_behavior": "Invoke requisite-variety-gap-assessment specifically on the authority variety dimension. Slow decisions are a symptom of authority-information misalignment — authority is held above where the relevant information lives. The assessment should map where system state information is actually generated vs. where decision authority currently sits. If the information lives at the workstream level and authority sits two levels above, decentralization increases authority variety to match information distribution. The accountability concern is legitimate but addresses a different dimension — it should not be conflated with the regulatory capacity question. The assessment can clarify the tradeoff but the prescriptive choice remains with the leadership."
+    }
+  ]
+}

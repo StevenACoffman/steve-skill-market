@@ -644,8 +644,8 @@ gh repo autolink list
 
 # Add autolink
 gh repo autolink add \
-  --key-prefix JIRA- \
-  --url-template https://jira.example.com/browse/<num>
+	--key-prefix JIRA- \
+	--url-template "https://jira.example.com/browse/<num>"
 
 # Delete autolink
 gh repo autolink delete 12345

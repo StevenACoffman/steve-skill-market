@@ -1,0 +1,52 @@
+{
+  "skill": "four-types-of-time",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "ftt-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We have a `created_at` column on our orders table and we use it for two things: filtering orders placed in a date range, and figuring out what the order looked like on a specific past date. Sometimes rerunning the same historical report gives different numbers. Is `created_at` the right column for both of these?",
+      "expected": "trigger",
+      "rationale": "Classic event/ingestion conflation signal: a single 'created_at' column is being used for both 'when did this happen?' (event time) and 'what did the state look like on date X?' (valid time). The user also reports the canonical symptom of the mismatch — rerunning a historical query returns different results."
+    },
+    {
+      "id": "ftt-trigger-02",
+      "type": "should_trigger",
+      "prompt": "I'm designing a new `events` table for our analytics pipeline. I plan to add a `timestamp` column. What should that column actually represent? Should it be when the event happened on the client, when our ingestion service received it, or when our Spark job processed it?",
+      "expected": "trigger",
+      "rationale": "Directly asks which type of time a new 'timestamp' column should represent. The user has named all three candidates (event time, ingestion time, processing time) without realizing they are distinct concepts. This is the core identification use case for four-types-of-time."
+    },
+    {
+      "id": "ftt-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our RAG chatbot is answering customer questions about return policies, but it keeps citing a policy we updated eight months ago. The new policy document is in the corpus but the bot still surfaces the old one. What's going wrong?",
+      "expected": "trigger",
+      "rationale": "This is the RAG temporal staleness failure pattern (ce21) explicitly described in the skill's B section. The root cause is that the document corpus has no valid_from/valid_to metadata and retrieval does not filter on time. This is a valid-time identification problem — the skill needs to establish that documents have a valid-time range before any solution can be designed."
+    },
+    {
+      "id": "ftt-decoy-01",
+      "type": "should_not_trigger",
+      "prompt": "We've confirmed our orders table has both a `valid_from` / `valid_to` (business effective dates) and a `transaction_from` / `transaction_to` (when our system recorded each version). Now I need to decide: should we model our new customer_profiles entity the same way, or is SCD Type 2 good enough for that one?",
+      "expected": "no_trigger",
+      "rationale": "The user has already named and separated the time axes. The question is now about how many axes to track for a new entity — that is a temporal-depth-selection decision (SCD Type 2 vs. bitemporal), not a type identification task."
+    },
+    {
+      "id": "ftt-decoy-02",
+      "type": "should_not_trigger",
+      "prompt": "We're training a churn prediction model. Our training pipeline joins labels to a customer_features table on customer_id with no date filter. We're getting training AUC of 0.91 but production AUC drops to 0.63 immediately after deployment. How do we fix the training pipeline?",
+      "expected": "no_trigger",
+      "rationale": "This is a point-in-time-ml-feature-correctness trigger. The user has a concrete ML training leakage problem with a clear training/production AUC gap caused by a join with no temporal constraint. The fix is an AS OF join — not an upstream time-type identification exercise."
+    },
+    {
+      "id": "ftt-edge-01",
+      "type": "edge_case",
+      "prompt": "Our event log table is append-only and only ever used to answer 'when did event X occur?' We have a single `event_time` column that is set by the client at the moment of the event. No historical reconstruction, no corrections, no ML features. Do we need to separate out ingestion time and processing time into separate columns too?",
+      "expected": "trigger",
+      "rationale": "This is an edge case at the boundary of the skill. The B section explicitly says a pure append-only event log answering only 'when did X occur?' with no corrections or AS OF requirements may need only a single event_time column. However, the user asks a type-identification question ('do we need to separate ingestion time and processing time?'), which is within scope. The correct answer is nuanced: for this specific use case the single event_time may suffice, but only if the three conditions in the B section hold. The skill should activate to confirm those conditions explicitly rather than leaving the user with an unexamined assumption."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoys are drawn from the two adjacent skills: decoy-01 tests the boundary with temporal-depth-selection (axes already named, depth selection question), decoy-02 tests the boundary with point-in-time-ml-feature-correctness (concrete ML training leakage with AUC numbers). The edge case probes the B-section boundary: a pure append-only log where the four-type separation may not be needed."
+}

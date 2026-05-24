@@ -1,0 +1,50 @@
+{
+  "skill_id": "letsgo-form-validator",
+  "prompts": [
+    {
+      "id": "tp-f06-01",
+      "prompt": "How do I pass both validation errors and original input values back to a Go HTML template in a single struct?",
+      "tags": ["data-bundling", "template-data"]
+    },
+    {
+      "id": "tp-f06-02",
+      "prompt": "What is Go struct embedding and how does Edwards use it for form validation in the Snippetbox app?",
+      "tags": ["embedding", "promotion"]
+    },
+    {
+      "id": "tp-f06-03",
+      "prompt": "What HTTP status code should a Go handler return when form validation fails — 400 or 422? Why?",
+      "tags": ["status-codes", "422-vs-400"]
+    },
+    {
+      "id": "tp-f06-04",
+      "prompt": "My Go form handler stores validation errors in a map and re-reads input from r.PostForm for the template. What's wrong with this approach?",
+      "tags": ["anti-pattern", "refactoring"]
+    },
+    {
+      "id": "tp-f06-05",
+      "prompt": "How do I add a non-field-level error (like 'Email or password is incorrect') to a Go form struct that uses the embedded Validator pattern?",
+      "tags": ["non-field-errors", "login-form"]
+    },
+    {
+      "id": "tp-f06-06",
+      "prompt": "How do I reuse the same Validator struct across multiple form types (signup, login, create snippet) in a Go web app?",
+      "tags": ["reuse", "multiple-forms"]
+    },
+    {
+      "id": "tp-f06-07",
+      "prompt": "Should I use go-playground/validator or build my own validator struct for a Go web app? What are the tradeoffs?",
+      "tags": ["library-vs-custom", "explicit-rules"]
+    },
+    {
+      "id": "tp-f06-08",
+      "prompt": "How do I display per-field validation errors inline in a Go HTML template alongside the original user input?",
+      "tags": ["template-rendering", "per-field-errors"]
+    },
+    {
+      "id": "tp-f06-09",
+      "prompt": "Write a Validator struct for Go form validation with CheckField, AddNonFieldError, and Valid() methods.",
+      "tags": ["code-generation", "validator-struct"]
+    }
+  ]
+}

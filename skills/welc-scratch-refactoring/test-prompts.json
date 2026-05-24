@@ -1,0 +1,76 @@
+{
+  "skill": "welc-scratch-refactoring",
+  "description": "Use this skill when an engineer cannot understand legacy code well enough to change it safely, and needs to build a mental model by refactoring aggressively on a throwaway branch — then deleting the branch without checking in.",
+  "test_prompts": [
+    {
+      "id": "welc-scratch-refactoring-should-01",
+      "category": "should_invoke",
+      "prompt": "I've been reading this billing module for three hours and I still don't understand it. It's about 800 lines, no tests, and the methods all call each other in ways I can't follow. I need to add retry logic somewhere in here but I can't figure out where the retry decisions currently happen or what state is shared between the retry path and the success path. Where do I even start?",
+      "expected": "invoke",
+      "rationale": "Canonical trigger: explicit statement of hours spent reading without comprehension, no tests present, and a specific need to understand structure before making a change. 'I can't figure out where the retry decisions happen' is exactly the comprehension gap scratch refactoring addresses. The engineer needs a mental model before they can identify a seam or write a characterization test."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-02",
+      "category": "should_invoke",
+      "prompt": "I need to add a seam into this legacy class so I can test it, but I can't figure out where to put it. The class doesn't take any constructor parameters — everything is instantiated inline inside the methods. I don't understand this code well enough to know which dependencies matter and which don't. There are no tests anywhere near it.",
+      "expected": "invoke",
+      "rationale": "Direct language-signal match: 'I don't understand this code well enough.' The engineer cannot locate a seam because the dependencies are hidden by inline instantiation. Scratch refactoring (extract every inline instantiation into a separate method, even badly, just to name them) directly reveals all hidden dependencies. This is a pre-seam comprehension problem, not a seam-placement problem."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-03",
+      "category": "should_invoke",
+      "prompt": "This class is 600 lines of spaghetti — I genuinely can't follow the control flow. I've been staring at it for most of the day. I need to change some behavior in here and I'm nervous because I don't know what I might break. It has no unit tests. Is there a systematic way to understand what this thing actually does before I touch it?",
+      "expected": "invoke",
+      "rationale": "Three explicit trigger signals present: 'I can't follow the control flow', 'I've been staring at it for most of the day', no tests. The engineer is asking for a systematic comprehension technique before making a change — this is the precise use case scratch refactoring was designed for. The lack of tests rules out covered refactoring."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-04",
+      "category": "should_invoke",
+      "prompt": "I kind of understand this legacy module but I'm not fully confident. I think I know what it does but there are a few methods I'm glossing over because they're long and confusing. I'm about to add a new feature and I don't want to introduce a bug. The module has no tests. Should I just go ahead?",
+      "expected": "invoke",
+      "rationale": "Partial understanding with admitted gaps, no tests, about to make a change. 'Methods I'm glossing over because they're long and confusing' is an understated version of incomprehension. A 30-minute scratch refactoring on those specific methods would either confirm the engineer's model is correct (proceed with confidence) or reveal a surprise that would have become a production bug. The cost of not scratch-refactoring here is a latent defect."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "I need to refactor this payment service class to separate the retry logic from the success path. The class has good test coverage — there are unit tests for most of the public methods and a few integration tests covering the main paths. I want to extract a RetryPolicy interface. How should I approach the refactoring?",
+      "expected": "skip",
+      "rationale": "The code has tests. Scratch refactoring is a bootstrap technique for comprehension when no tests exist. With test coverage, the engineer should use covered refactoring — make the structural change under existing tests, verify green after each step. Scratch refactoring would be unnecessary waste: the tests already provide the safety net that scratch refactoring lacks."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "I did a scratch refactoring yesterday to understand the legacy billing module. It really helped — I now understand what the class does and where the dependencies are. The scratch code looks a lot cleaner than the original. My manager is asking if we can just ship the scratch branch instead of going through the characterization test process. Is that okay?",
+      "expected": "skip",
+      "rationale": "The engineer is asking whether to check in the scratch refactoring — which is the central failure mode the skill's boundary section explicitly prohibits. The answer is no: the scratch was made without tests and may contain accidental behavioral changes. The skill should not be invoked here because this is a boundary violation scenario, not a comprehension scenario. The right response is to apply the characterization test workflow to the original code, not ship the scratch."
+    },
+    {
+      "id": "welc-scratch-refactoring-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "I understand the legacy inventory module well enough — I've worked in it for years. I just need to add a new product type. I know exactly where to make the change and I've already identified two places where I'll need to add conditional logic. The module doesn't have tests though. What's the safest way to add this feature?",
+      "expected": "skip",
+      "rationale": "The engineer already has a sufficient mental model — they know exactly where to make the change. Scratch refactoring builds comprehension; comprehension already exists here. The actual need is to make a safe change to untested code, which is the legacy code change algorithm (identify change point, write characterization tests, make the change). Recommending scratch refactoring would be unnecessary work for a problem that doesn't exist."
+    },
+    {
+      "id": "welc-scratch-refactoring-boundary-01",
+      "category": "blurred_boundary",
+      "prompt": "I did a scratch refactoring on our order processor class and I now understand it well. But after two days of scratching and reorganizing, I've realized it could be genuinely improved — not just understood. The restructured version is cleaner and logically clearer. I want to keep working on it and get it to a state I could check in. How should I proceed?",
+      "expected": "skip",
+      "rationale": "The engineer has crossed from comprehension (the scratch's purpose) into wanting to produce a shippable refactoring. The scratch is done — its goal is achieved. The correct next step is to delete the scratch, return to the original, write characterization tests to verify current behavior, and then perform covered refactoring using the mental model gained from the scratch. The temptation to 'keep the improved version' is the attachment failure mode the boundary section warns about. Expected skip — this is now a characterization test and covered refactoring scenario, not a scratch refactoring scenario."
+    },
+    {
+      "id": "welc-scratch-refactoring-boundary-02",
+      "category": "blurred_boundary",
+      "prompt": "I've been looking at this legacy authentication module for a couple of hours and I'm starting to get a feel for it, but there are still a few pieces I don't fully understand. I was thinking I could just write some characterization tests to nail down the behavior I'm not sure about — would that be better than doing a scratch refactoring?",
+      "expected": "invoke",
+      "rationale": "The engineer is considering the right alternatives. The decision point is whether partial understanding is sufficient to write a useful characterization test, or whether structural comprehension is still needed. The guidance: if you know enough to assert what the output should be for a given input, write the characterization test — it's faster. If you cannot even formulate the test (don't know what to pass in or what to compare against), scratch refactoring first. Since the engineer says 'pieces I don't fully understand' without specifying that they're structural/dependency gaps, the skill should be invoked to help them choose — but lean toward suggesting characterization tests if they can write even a partial one, and scratch refactoring if they cannot."
+    },
+    {
+      "id": "welc-scratch-refactoring-boundary-03",
+      "category": "blurred_boundary",
+      "prompt": "I spent four hours doing scratch refactoring on a legacy reporting module yesterday. I learned a lot but I'm still confused about one subsystem — the way it caches intermediate results. I think I need to keep going. Should I continue the scratch refactoring or is there a better approach at this point?",
+      "expected": "invoke",
+      "rationale": "The engineer has spent four hours, which is at the boundary of where scratch refactoring becomes a time sink. The right response is to apply the time-box discipline: assess whether the mental model is sufficient to place a seam or write a characterization test for the parts that are understood, and then use characterization tests on the caching subsystem specifically (which may be faster than continued scratching). The skill is invoked to help redirect: partial understanding is enough to start the characterization test workflow on the comprehended parts; scratch refactoring on the remaining subsystem should be bounded to another 30 minutes. The boundary risk is 'open-ended exploration' as the failure mode."
+    }
+  ]
+}

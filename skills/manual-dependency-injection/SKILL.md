@@ -201,12 +201,15 @@ ______________________________________________________________________
 
      ```go
      type FakeDB struct{ data map[string]string }
-     func NewFakeDB() *FakeDB { return &FakeDB{data: map[string]string{}} }
+
+     func NewFakeDB() *FakeDB                        { return &FakeDB{data: map[string]string{}} }
      func (f *FakeDB) Get(id string) (string, error) { return f.data[id], nil }
      func (f *FakeDB) Save(id, value string) error   { f.data[id] = value; return nil }
 
-     // In the test:
-     svc := NewService(NewFakeDB(), NewFakeCache())
+     func TestExample(t *testing.T) {
+     	svc := NewService(NewFakeDB(), NewFakeCache())
+     	_ = svc
+     }
      ```
 
    - Completion criteria: no import of `mockery`, `gomock`, or any mock-generation library;
@@ -217,8 +220,8 @@ ______________________________________________________________________
    - Split by infrastructure concern, not by framework concept:
 
      ```go
-     func buildInfra(cfg *Config) (*DB, *FlagClient, error) { … }
-     func buildService(cfg *Config) (*Service, error)       { … }
+     func buildInfra(cfg *Config) (*DB, *FlagClient, error) { return nil, nil, nil }
+     func buildService(cfg *Config) (*Service, error)       { return nil, nil }
      ```
 
    - Completion criteria: each helper is a plain function that any Go developer can read
@@ -281,7 +284,7 @@ ______________________________________________________________________
 ## Related Skills
 
 - **depends-on** [`domain-driven-package-structure`](../domain-driven-package-structure/SKILL.md): Manual DI in `cmd/main.go` works elegantly because domain packages are already decoupled — technology packages import domain packages, never the reverse. Without this structural discipline, `main()` would need to resolve circular dependencies or import technology packages from domain packages, defeating the purpose of explicit wiring.
-- **composes-with** [`consumer-side-interface-segregation`](../consumer-side-interface-segregation/SKILL.md): CSI defines the interface shape at the injection boundary (narrow, consumer-owned, in the business package). Manual DI fulfills that boundary by wiring the concrete gateway at `cmd/main.go`. Together: define a `paymentGateway` interface in `order/`, implement it in `external/stripe/`, pass it via `order.NewService(stripeGW)` in `main.go`.
+- **composes-with** `consumer-side-interface-segregation`: CSI defines the interface shape at the injection boundary (narrow, consumer-owned, in the business package). Manual DI fulfills that boundary by wiring the concrete gateway at `cmd/main.go`. Together: define a `paymentGateway` interface in `order/`, implement it in `external/stripe/`, pass it via `order.NewService(stripeGW)` in `main.go`.
 - **composes-with** [`option-configuration-patterns`](../option-configuration-patterns/SKILL.md): Option patterns control how individual constructors expose their configuration knobs (timeouts, buffer sizes, retry counts). Manual DI connects those constructors to each other in dependency order. Options configure a single type at construction time; DI composes multiple configured types into a working service.
 
 ______________________________________________________________________

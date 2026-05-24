@@ -1,0 +1,66 @@
+{
+  "skill_id": "jagged-frontier-work-allocation",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "I've been using AI to help with project status reports and it's been great, but last week I asked it to recommend which program initiative to deprioritize given our capacity crunch, and it gave me a really confident answer that completely ignored the political reality of who owns what. How do I figure out which parts of my PM work I should actually be trusting AI with?",
+      "expected_behavior": "Invoke jagged-frontier-work-allocation. Apply the volume/variance split to distinguish synthesis/reporting tasks (AI-suitable) from judgment calls involving organizational dynamics, politics, or asymmetric-stakes decisions (human-owned). Flag the confidence-accuracy mismatch risk: AI produces confident answers in domains where its accuracy doesn't support that confidence."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "We're redesigning our sprint planning process and want to incorporate AI assistance. I need to map out which steps AI should handle versus which ones the team should own. What's the right way to think about this?",
+      "expected_behavior": "Invoke jagged-frontier-work-allocation. Walk through the task decomposition and volume/variance test for each sprint planning component. High-volume synthesis (backlog summarization, velocity analysis, capacity math) goes to AI. Prioritization decisions involving team morale, technical debt tradeoffs, and stakeholder commitments stay human. Help the user choose appropriate Centaur vs. Cyborg postures for AI-assisted components."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "I'm a senior PM and I've noticed my junior PM produces incredibly polished deliverables using AI — well-structured, clean, looks great. But when I push on the thinking behind recommendations, they can't explain it. I'm worried AI is making the decisions and the junior PM is just cleaning up the prose. Is this actually a problem?",
+      "expected_behavior": "Invoke jagged-frontier-work-allocation. This is the compression implication: AI is eliminating the information-translation layer, migrating value upward to problem framing and consequence ownership. The junior PM has outsourced the judgment function — polished presentation is not the same as authorship of a decision. Describe what healthy AI allocation looks like versus what AI-substituted judgment looks like, and how to diagnose which is happening."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_invoke",
+      "prompt": "Our team did a postmortem on a delivery failure last quarter and a pattern emerged: several bad calls were made in the last two weeks before go-live when everyone was under pressure and leaning heavily on AI to analyze options. The AI analysis looked solid. How do we prevent this from happening again?",
+      "expected_behavior": "Invoke jagged-frontier-work-allocation. Under pressure, people reduce metacognitive oversight and trust AI confidence signals more than they should — exactly when crunch situations produce the novel, high-variance edge cases that fall outside AI competency. Apply the override trigger concept: pre-define the conditions under which AI recommendations get escalated to human review rather than integrated. Connect to the -19pp finding: this is the pattern the BCG study documented."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "I want to set up AI tooling for my team — what model should we use for meeting transcription and action item extraction, and how do we integrate it with our project management system?",
+      "expected_behavior": "Do not invoke jagged-frontier-work-allocation. This is a tooling selection and integration question, not a work-allocation decision. The user is asking about implementation mechanics, not about which categories of work to delegate to AI versus retain for humans."
+    },
+    {
+      "id": "tp-06",
+      "category": "should_not_invoke",
+      "prompt": "Our PMO is putting together an AI governance policy for the entire program — what should be in it? We need something that covers acceptable use, data handling, and how teams should document AI-assisted decisions.",
+      "expected_behavior": "Do not invoke jagged-frontier-work-allocation. This is an organizational/institutional governance question, not an individual work-allocation framework. Jagged frontier is about individual PMs knowing when to trust the machine on specific tasks; it does not address PMO policy design, acceptable-use documentation, or institutional governance structures."
+    },
+    {
+      "id": "tp-07",
+      "category": "should_not_invoke",
+      "prompt": "How do I write a better prompt to get AI to produce a more useful risk register from our project documentation? The output keeps missing certain categories of risk.",
+      "expected_behavior": "Do not invoke jagged-frontier-work-allocation. This is a prompt engineering question about improving output quality within a task that has already been allocated to AI. The allocation decision has been made; the user needs prompt improvement guidance, not a framework for deciding whether to use AI at all."
+    },
+    {
+      "id": "tp-08",
+      "category": "blurred_boundary",
+      "prompt": "I use AI for almost everything in my PM work and I'm generally happy with the results. But my director has started asking me to justify my recommendations more rigorously in steering committee, and I'm realizing I sometimes struggle to explain why I'm recommending what I'm recommending — I know it's the right call but the AI-generated framing feels like someone else's logic. What's going on?",
+      "expected_behavior": "Likely invoke jagged-frontier-work-allocation, but this is also a coaching/self-awareness scenario. The Cyborg posture without adequate calibration is producing a diffusion of authorship — the user has lost the distinction between AI-generated logic and their own judgment. The compression implication applies: consequence ownership requires the human to have genuinely framed the problem and selected the tradeoff, not just edited the AI's framing. May also touch on professional development concerns outside the strict scope of the skill."
+    },
+    {
+      "id": "tp-09",
+      "category": "blurred_boundary",
+      "prompt": "We have a vendor down-select coming up — four vendors, complex scoring matrix, lots of stakeholder input. I'm thinking of using AI to synthesize all the evaluation notes and weight the scores. My concern is that the choice is politically sensitive and the scoring criteria were vague. Should I use AI for this?",
+      "expected_behavior": "Invoke jagged-frontier-work-allocation with nuance. The synthesis portion (consolidating evaluation notes, organizing scores) is volume track and AI-appropriate. The weighting and final recommendation is high-variance with politically asymmetric stakes — human-owned. The vague criteria are the specific danger: AI will apply its own implicit weighting and present it as objective, which is exactly the confidence-accuracy mismatch risk. Centaur posture: let AI produce the synthesis layer, human owns the selection and its rationale."
+    },
+    {
+      "id": "tp-10",
+      "category": "blurred_boundary",
+      "prompt": "I'm managing a program with ten parallel workstreams and using AI to help me track status, spot cross-stream dependencies, and flag risks. It's working pretty well for pattern recognition across the data. But last month the AI flagged a dependency I knew wasn't real, and failed to flag one that was obvious to me. How do I calibrate this?",
+      "expected_behavior": "Partially invoke jagged-frontier-work-allocation — the recalibration step applies directly. The pattern-recognition use is volume track and generally appropriate. The dependency identification failure points to a frontier edge: structural dependencies visible in data are AI-suitable; organizational/relational dependencies that require knowing context and history are not. But this also touches on program governance (interaction layer ownership) and could be a partial trigger for program-governance-ecological-design depending on the scale of the program and whether the real question is about governance architecture versus AI allocation."
+    }
+  ]
+}

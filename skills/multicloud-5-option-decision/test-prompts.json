@@ -1,0 +1,101 @@
+{
+  "skill": "multicloud-5-option-decision",
+  "prompts": [
+    {
+      "id": "mc-invoke-01",
+      "type": "should_invoke",
+      "prompt": "Our CTO says we need a multicloud strategy. I need to figure out what that actually means for us and what options we have.",
+      "reason": "Direct request for multicloud strategy — the 5-option framework is the primary tool"
+    },
+    {
+      "id": "mc-invoke-02",
+      "type": "should_invoke",
+      "prompt": "We're building an abstraction layer so our applications can run on AWS or GCP interchangeably. Is this a good architecture?",
+      "reason": "Portable option under consideration — Esperanto Effect risk assessment needed"
+    },
+    {
+      "id": "mc-invoke-03",
+      "type": "should_invoke",
+      "prompt": "We have three business units that have independently adopted AWS, Azure, and GCP respectively. How should we govern this?",
+      "reason": "Current-state is Arbitrary or Choice — needs diagnosis and option selection"
+    },
+    {
+      "id": "mc-invoke-04",
+      "type": "should_invoke",
+      "prompt": "We want to avoid AWS vendor lock-in by making our applications deployable to any major cloud at will. How complex is this really?",
+      "reason": "Portable option — needs full cost enumeration including Esperanto Effect"
+    },
+    {
+      "id": "mc-invoke-05",
+      "type": "should_invoke",
+      "prompt": "We want to use GCP for our BigQuery analytics workloads and AWS for our main application compute. Is this a legitimate multicloud strategy?",
+      "reason": "Segmented option — legitimate if governed by workload-to-cloud mapping rules"
+    },
+    {
+      "id": "mc-invoke-06",
+      "type": "should_invoke",
+      "prompt": "How do we get higher availability than what AWS alone can provide? Can we spread one application across two clouds?",
+      "reason": "Parallel option — requires evaluation of common-mode failure risks"
+    },
+    {
+      "id": "mc-invoke-07",
+      "type": "should_invoke",
+      "prompt": "Different engineering teams want to use different cloud providers based on what they know best. Should we let them?",
+      "reason": "Choice option consideration — needs mechanism (provisioning framework, billing governance) and cost analysis"
+    },
+    {
+      "id": "mc-invoke-08",
+      "type": "should_invoke",
+      "prompt": "We're evaluating a Kubernetes platform that promises to run on any cloud. The vendor says this gives us true cloud portability. What questions should I ask?",
+      "reason": "Abstraction-layer pitch — Esperanto Effect and new lock-in risks need to be surfaced"
+    },
+    {
+      "id": "mc-no-invoke-01",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure cross-region replication in AWS S3?",
+      "reason": "Single-provider operational configuration — no multicloud decision involved"
+    },
+    {
+      "id": "mc-no-invoke-02",
+      "type": "should_not_invoke",
+      "prompt": "What are the pricing differences between AWS EC2 and Azure VMs for a 32-core workload?",
+      "reason": "Cost comparison between providers for a specific workload — vendor evaluation, not multicloud strategy selection"
+    },
+    {
+      "id": "mc-no-invoke-03",
+      "type": "should_not_invoke",
+      "prompt": "How do I set up a CI/CD pipeline using GitHub Actions to deploy to AWS?",
+      "reason": "Deployment pipeline configuration — single provider, no multicloud dimension"
+    },
+    {
+      "id": "mc-no-invoke-04",
+      "type": "should_not_invoke",
+      "prompt": "What is the difference between AWS availability zones and regions?",
+      "reason": "Single-provider infrastructure concepts — not a multicloud strategy question"
+    },
+    {
+      "id": "mc-no-invoke-05",
+      "type": "should_not_invoke",
+      "prompt": "We're a startup with 10 engineers and everything runs on AWS. Should we consider multicloud?",
+      "reason": "Status quo is single-cloud with no identified driver for change — diagnostic answer is 'stay single-cloud' but this is not a 5-option framework application scenario"
+    },
+    {
+      "id": "mc-blur-01",
+      "type": "blurred_boundary",
+      "prompt": "We're migrating from an on-premises data center to AWS but we still have 30% of workloads on-premises. Is this multicloud?",
+      "reason": "Hybrid cloud (on-prem + cloud) vs. multicloud (multiple cloud providers) — boundary between two related but distinct frameworks; this is hybrid, not multicloud"
+    },
+    {
+      "id": "mc-blur-02",
+      "type": "blurred_boundary",
+      "prompt": "We want to use AWS for most things but use a specific GCP ML service for our recommendation engine. Does this count as multicloud and do we need a multicloud strategy?",
+      "reason": "Small-footprint Segmented use — legitimate and minimal-governance case; may not require a formal multicloud strategy, just a single workload-to-cloud mapping rule"
+    },
+    {
+      "id": "mc-blur-03",
+      "type": "blurred_boundary",
+      "prompt": "A regulation requires us to keep a copy of our production data in a different cloud provider than our primary cloud for disaster recovery. Which multicloud option is this?",
+      "reason": "Regulatory driver for multi-provider data storage — could be interpreted as Parallel (same app, multiple clouds) or Segmented (backup workload on different cloud); the driver is regulatory, not availability-maximization, which affects the option selection"
+    }
+  ]
+}

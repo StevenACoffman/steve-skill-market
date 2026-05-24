@@ -1,0 +1,62 @@
+{
+  "skill": "embedding-sre-ops-overload-recovery",
+  "description": "Use this skill when a team has slid into full ops mode — spending the majority of their time reacting to tickets, pages, and incidents with no capacity for project work — and standard approaches (add headcount, add process) have not resolved the situation.",
+  "test_prompts": [
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-01",
+      "category": "should_invoke",
+      "prompt": "Our SRE team has been in fire season for four months straight. We're running at about 75% ops, 25% project work. Two engineers quit last month and we're trying to backfill, but honestly even before they left we couldn't make progress on the reliability roadmap. The team lead keeps saying 'once things calm down' but they never do. What's the actual fix here?",
+      "expected": "invoke",
+      "rationale": "Classic chronic structural overload: 75% ops sustained for months, engineer attrition, no project capacity. The 'once things calm down' loop is the ops-mode trap the skill directly addresses. This is not a temporary spike."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-02",
+      "category": "should_invoke",
+      "prompt": "We've been trying to get our SRE team out of pure ops mode for over a year. We added two engineers six months ago and we're still at 80% operational work. Nobody on the team can tell you which alerts actually matter versus which ones we just acknowledge and close. We don't have SLOs for any of our services. Where do we even start?",
+      "expected": "invoke",
+      "rationale": "Direct match: headcount added without improvement, no SLOs, inability to distinguish meaningful alerts. All three are explicit language signals and trigger conditions for the embedding intervention. 'Where do we even start' maps to Phase 3 starting point."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-03",
+      "category": "should_invoke",
+      "prompt": "I'm about to join a struggling team as a senior SRE to help them recover. They're totally overwhelmed — every week is a different fire, no postmortem culture, and they've never written an SLO. My manager wants me to just help them close tickets faster. I think that's the wrong approach. What should I actually be doing in my first few weeks?",
+      "expected": "invoke",
+      "rationale": "This is the embedded SRE role from the inside. The engineer recognizes that clearing tickets is the wrong goal. The skill directly prescribes what to do in weeks 1–2 (Phase 1: shadow, observe, do not fix), and addresses the manager's misunderstanding of the model's purpose."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We have a major product launch in three weeks and our on-call team is going to be slammed. We're expecting 3x normal ticket volume for about a month. How should we staff up and prepare the rotation?",
+      "expected": "skip",
+      "rationale": "This is a temporary launch spike, explicitly excluded by the skill's boundary. The right skills are on-call-sustainability-model (rotation design for the surge) and incident-management-role-separation (handling high-volume incidents during the launch window)."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We need to classify which of our on-call tasks are actually toil versus necessary work. We have about 30 recurring task types and want a principled way to decide which ones to automate versus accept as part of the job.",
+      "expected": "skip",
+      "rationale": "This is a pure toil classification exercise. The right skill is toil-six-property-identification-test. The embedding model uses that skill internally (Phase 2), but the user is asking for the classification framework alone, not the multi-week team intervention."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "Our team is healthy overall — we're at about 45% ops work — but we just realized we have no SLOs defined for any of our services. Management wants us to write them. What's the right process for defining SLOs and getting sign-off from both engineering and product?",
+      "expected": "skip",
+      "rationale": "The team is not overloaded (45% ops, below the 50% cap). This is an SLO establishment question for a functioning team, not a recovery intervention. The right skill is sli-slo-sla-tier-framework."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-boundary-01",
+      "category": "boundary",
+      "prompt": "We're forming our first SRE team from scratch — currently five engineers pulled from different dev teams. We haven't taken on any services yet. Our leadership is worried we'll drift into pure ops mode from day one. Is there a way to set up the team's culture and practices proactively to prevent that from happening?",
+      "expected": "invoke",
+      "rationale": "The skill explicitly covers a preventive form: use Phases 1 and 3 before overload develops to build SLO culture and toil classification habits. This is Trigger Scenario 3 from A2. While the team is not yet overloaded, the embedding model's preventive application is the correct framework to cite."
+    },
+    {
+      "id": "embedding-sre-ops-overload-recovery-boundary-02",
+      "category": "boundary",
+      "prompt": "My SRE manager wants to send me and another senior SRE to a struggling team to help them recover from ops overload. The plan is for both of us to spend two months embedded with them. Does this approach make sense?",
+      "expected": "invoke",
+      "rationale": "The skill is directly relevant because it addresses exactly this scenario — and the explicit answer is that sending two embedded SREs violates the model's single-SRE constraint. Invoking the skill is the right call because it directly corrects the proposed approach. Expected: invoke, because the user is about to make the canonical failure-mode mistake."
+    }
+  ]
+}

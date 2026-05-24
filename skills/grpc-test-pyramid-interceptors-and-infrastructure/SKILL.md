@@ -209,9 +209,10 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 3. **Integration tier (interceptors) — start the server as `main.go` starts it.**
 
    ```go
-   integration
+   //go:build integration
 
    package p
+
    func TestAuthInterceptorRejectsUnauthenticated(t *testing.T) {
    	// Load TLS test credentials from testdata/
    	creds, _ := credentials.NewServerTLSFromFile("testdata/server.crt", "testdata/server.key")
@@ -232,45 +233,48 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
    ```go
    //go:build integration
 
+   package p
+
    var testAdapter *db.Adapter
    var testContainer testcontainers.Container
 
    func TestMain(m *testing.M) {
-       ctx := context.Background()
-       container, _ := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-           ContainerRequest: testcontainers.ContainerRequest{
-               Image:        "mysql:8.0.30",
-               ExposedPorts: []string{"3306/tcp"},
-               WaitingFor:   wait.ForSQL("orders", "mysql", dsn),
-           },
-           Started: true,
-       })
-       testContainer = container
-       port, _ := container.MappedPort(ctx, "3306/tcp")
-       testAdapter = db.NewAdapter(fmt.Sprintf("root:password@tcp(localhost:%s)/orders", port.Port()))
-       code := m.Run()
-       testContainer.Terminate(ctx)
-       os.Exit(code)
+   	ctx := context.Background()
+   	container, _ := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+   		ContainerRequest: testcontainers.ContainerRequest{
+   			Image:        "mysql:8.0.30",
+   			ExposedPorts: []string{"3306/tcp"},
+   			WaitingFor:   wait.ForSQL("orders", "mysql", dsn),
+   		},
+   		Started: true,
+   	})
+   	testContainer = container
+   	port, _ := container.MappedPort(ctx, "3306/tcp")
+   	testAdapter = db.NewAdapter(fmt.Sprintf("root:password@tcp(localhost:%s)/orders", port.Port()))
+   	code := m.Run()
+   	testContainer.Terminate(ctx)
+   	os.Exit(code)
    }
 
    func TestDBAdapter_Save(t *testing.T) {
-       // testAdapter is package-level; individual tests use t.Cleanup for
-       // any per-test state they set up (e.g., deleting inserted rows)
-       order := domain.NewOrder(...)
-       err := testAdapter.Save(order)
-       if err != nil {
-           t.Fatalf("Save: %v", err)
-       }
-       // assert retrieved state
+   	// testAdapter is package-level; individual tests use t.Cleanup for
+   	// any per-test state they set up (e.g., deleting inserted rows)
+   	order := domain.NewOrder()
+   	err := testAdapter.Save(order)
+   	if err != nil {
+   		t.Fatalf("Save: %v", err)
+   	}
+   	// assert retrieved state
    }
    ```
 
 5. **E2e tier — `LocalDockerCompose`.**
 
    ```go
-   e2e
+   //go:build e2e
 
    package p
+
    func (s *E2eSuite) SetupSuite() {
    	compose := testcontainers.NewLocalDockerCompose(
    		[]string{"docker-compose.yml"}, "e2e",
@@ -298,8 +302,8 @@ Instead of applying the tier-ownership principle (Go for Professionals) or the t
 7. **Use build tags to separate all tiers from `go test ./...`.**
 
    ```go
-   integration   // interceptor and infrastructure suites
-   //go:build e2e           // e2e suite
+   //go:build integration // interceptor and infrastructure suites
+   //go:build e2e         // e2e suite
 
    package p
    ```

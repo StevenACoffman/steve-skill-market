@@ -5,14 +5,14 @@ id: go-http-service-di-composition
 description: Invoke when wiring a Go HTTP service's dependency injection from the entrypoint down to handlers — specifically when choosing how to make startup logic testable, how to inject shared handler dependencies, and how to compose both concerns without globals.
 type: merged-skill
 source_skills:
-  - slug: lets-go/letsgo-application-struct-di
+  - slug: lets-go/go-http-service-di-composition
     book: Let's Go
     author: Alex Edwards
   - slug: matryer-http-services/matryer-run-function
     book: How I Write HTTP Services in Go After 13 Years
     author: Mat Ryer
 related_skills:
-  - slug: lets-go/letsgo-application-struct-di
+  - slug: lets-go/go-http-service-di-composition
     relation: supersedes
     note: Merged into go-http-service-di-composition; source covers the application struct pattern and newTestApplication(t) handler-level mocking.
   - slug: matryer-http-services/matryer-run-function
@@ -115,7 +115,8 @@ func main() {
 >
 > ```go
 > func handleFoo(logger *Logger, store *Store) http.Handler {
->     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { ... })
+> 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+> 	})
 > }
 > ```
 >
@@ -262,16 +263,18 @@ Assemble all shared dependencies — DB connections, template caches, session ma
 >
 > ```go
 > func handleHome(logger *slog.Logger, snippets SnippetModelInterface) http.Handler {
->     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { ... })
+> 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+> 	})
 > }
+>
 > // In addRoutes():
-> mux.Handle("GET /", handleHome(logger, snippets))
+> // mux.Handle("GET /", handleHome(logger, snippets))
 > ```
 >
 > **If using the Edwards pattern (this skill, not summary_rules.md):** Write handlers as methods on `*application`:
 >
 > ```go
-> func (app *application) home(w http.ResponseWriter, r *http.Request) { ... }
+> func (app *application) home(w http.ResponseWriter, r *http.Request) {}
 > ```
 >
 > No closure captures. No globals. All handler dependencies come through `app`.

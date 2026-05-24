@@ -1,0 +1,68 @@
+{
+  "skill_id": "terraform-for-each-over-count",
+  "book": "Terraform: Up and Running (3rd Edition)",
+  "author": "Yevgeniy Brikman",
+  "generated": "2026-05-05",
+  "prompts": [
+    {
+      "id": "fe-si-01",
+      "type": "should_invoke",
+      "prompt": "I have a Terraform variable that's a list of IAM user names and I'm using count to create them. If I remove one user from the middle of the list, what happens?",
+      "rationale": "Directly asks about the cascade destroy bug triggered by removing an element from a count-based list."
+    },
+    {
+      "id": "fe-si-02",
+      "type": "should_invoke",
+      "prompt": "My Terraform plan shows that removing one security group rule is also destroying and recreating two other security group rules that I didn't change. Why?",
+      "rationale": "Describes the exact symptom of an index-shift cascade destroy — unexpected destroy/create pairs on unchanged resources."
+    },
+    {
+      "id": "fe-si-03",
+      "type": "should_invoke",
+      "prompt": "Should I use for_each or count for creating S3 buckets where each bucket has a different name?",
+      "rationale": "Asks the identity-key decision directly — named resources with distinct identities should use for_each."
+    },
+    {
+      "id": "fe-si-04",
+      "type": "should_invoke",
+      "prompt": "I'm switching my IAM users from count to for_each. The resources are currently named aws_iam_user.example[0], aws_iam_user.example[1], etc. How do I do this without Terraform destroying and recreating all of them?",
+      "rationale": "State key migration when converting count to for_each — triggers both this skill and the moved block skill."
+    },
+    {
+      "id": "fe-sni-01",
+      "type": "should_not_invoke",
+      "prompt": "I need to create exactly 3 NAT gateways for my 3 availability zones. They're all identical. Should I use count or for_each?",
+      "rationale": "This is the valid count use case — N identical, interchangeable resources with no distinct identity. The skill's own boundary says count is fine here."
+    },
+    {
+      "id": "fe-sni-02",
+      "type": "should_not_invoke",
+      "prompt": "How do I reference a resource attribute from a different module in Terraform?",
+      "rationale": "Cross-module references are about terraform_remote_state or module outputs, not for_each vs count."
+    },
+    {
+      "id": "fe-sni-03",
+      "type": "should_not_invoke",
+      "prompt": "What's the difference between a Terraform resource and a Terraform data source?",
+      "rationale": "Fundamental Terraform concept question with no connection to the for_each/count distinction."
+    },
+    {
+      "id": "fe-bb-01",
+      "type": "blurred_boundary",
+      "prompt": "I want to create multiple EC2 instances using for_each, but the number of instances depends on the output of another resource that hasn't been created yet. Terraform says the for_each value is not known until apply time.",
+      "rationale": "This is the boundary case where for_each breaks and count with a known length or module restructuring is needed — not purely about cascade destroy."
+    },
+    {
+      "id": "fe-bb-02",
+      "type": "blurred_boundary",
+      "prompt": "I'm creating Route 53 records using count, and I've never removed any records. Is there any reason to switch to for_each?",
+      "rationale": "No current pain but the risk is latent — skill should explain the risk model even when the user hasn't hit the bug yet."
+    },
+    {
+      "id": "fe-bb-03",
+      "type": "blurred_boundary",
+      "prompt": "How do I loop over a list of objects in Terraform where each object has a name and a CIDR block, and create a subnet for each one?",
+      "rationale": "Multi-attribute loop — needs for_each with a map, but the question is about syntax rather than the destroy bug specifically."
+    }
+  ]
+}

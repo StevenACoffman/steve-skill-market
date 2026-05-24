@@ -1,0 +1,66 @@
+{
+  "skill_id": "project-complexity-source-diagnosis",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "We're running a national identity verification platform modernization — 14 government agencies, six vendors, a new biometric standard that's never been deployed at this scale, and policy objectives that keep shifting as the legislation gets amended. The program director wants to stand up a classic PMO with a WBS and weekly earned value reporting. I'm worried this is the wrong approach but I can't articulate why. Help me think through this.",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis. Run the 2-axis diagnostic: structural complexity is clearly high (14 agencies, six vendors, tightly coupled integration). Uncertainty is high on both goal (shifting policy objectives tied to amending legislation) and method (biometric standard never deployed at scale). Assign the compounded quadrant. Name the specific mismatch: EVM and WBS are Complicated-quadrant tools — they track known work toward known goals, but goals here are still emerging. Recommend explicit parallel governance design for both axes rather than a pure PMO approach."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "We had a very successful Agile transformation program last year — small product teams, two-week sprints, continuous delivery, the whole thing. Now we're being asked to run a multi-year enterprise resource planning implementation across 11 business units, 3 acquired companies with incompatible systems, and two regulatory jurisdictions. Our instinct is to use the same Agile approach. What's your read?",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis. The 2-axis diagnostic reveals that the previous program's success was in the Experimental quadrant (known methods, manageable structural complexity). The ERP program has high structural complexity (11 business units, 3 incompatible legacy systems, cross-jurisdictional regulatory requirements). Goal uncertainty depends on whether the ERP objectives are well-defined; if the ERP selection has not resolved scope, uncertainty may also be high. The Agile toolkit was designed for the Experimental quadrant and was not designed to coordinate this level of structural interdependence. Flag the quadrant shift as the core problem — this is a tool-domain mismatch, not a failure of Agile as a philosophy."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "I'm doing a post-mortem on a failed digital health platform rollout. The program ran three years, cost twice the original budget, and was eventually cancelled without delivering. Looking back at the records, the program had detailed WBS documentation, a critical path baseline, monthly steering committee reviews, and quarterly stage-gates. Everything looked controlled on paper. I'm trying to understand what actually went wrong.",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis as a retrospective diagnostic. Evaluate the structural complexity indicators (digital health platform implies regulatory complexity, clinical workflow integration, multi-organization stakeholders) and the uncertainty indicators (novel platform, clinical behavior is hard to specify in advance). If the compounded quadrant applies, surface the San Cristóbal finding: the program's governance apparatus was designed for the Complicated quadrant, which explains why everything looked controlled on paper while outcomes deteriorated. The WBS, critical path, and stage-gates were functioning as designed — they were designed for the wrong domain. This reframes the failure as a structural tool mismatch, not an execution or leadership failure."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_invoke",
+      "prompt": "We're kicking off a new program and the steering committee is split. Half want a strict waterfall approach with locked requirements and formal change control. The other half want full Agile — sprints, product owner, backlog. The debate has been going on for two months and is blocking program initiation. How do I break the deadlock?",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis. Reframe the debate: both positions presuppose a quadrant assignment without making it explicit. Run the 2-axis diagnostic on the actual program. If it is Complicated, the waterfall faction has the stronger case. If it is Experimental, the Agile faction is right. If it is compounded, neither approach is adequate and the debate itself reveals the governance design problem. The two-month deadlock is diagnostic: the program likely has genuine characteristics of both quadrants, which neither pure approach addresses. Use the axis scoring to move the conversation from values (waterfall vs. Agile) to evidence (where does this program actually sit?)."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "We need to upgrade our data center networking hardware across four office locations. We have a detailed project plan, a known vendor, and we've done similar upgrades before. We're three weeks in and behind schedule because the hardware delivery was delayed by the vendor. How do I recover the schedule?",
+      "expected_behavior": "Do NOT invoke project-complexity-source-diagnosis. This program is clearly in the Simple or Complicated quadrant — known goals, established methods, prior execution experience. The problem is a vendor delivery delay, which is a schedule recovery and vendor management question. The complexity source diagnostic would add overhead without value here. Address the specific recovery question directly: options analysis on delay impact, vendor escalation, schedule compression for the remaining work."
+    },
+    {
+      "id": "tp-06",
+      "category": "should_not_invoke",
+      "prompt": "My team is struggling to stay Agile as our product grows. We have 40 engineers now across five squads and the inter-team dependencies are getting messy. We're thinking about adopting SAFe. Should we?",
+      "expected_behavior": "Do NOT invoke project-complexity-source-diagnosis. This is a scaling question within an established product development context — not a program governance selection question. The question is about coordinating multiple Agile teams, which is the scaling problem SAFe and similar frameworks address. The 2-axis diagnostic is designed for program initiation governance decisions or governance failure diagnosis, not for Agile team topology design within a product organization."
+    },
+    {
+      "id": "tp-07",
+      "category": "should_not_invoke",
+      "prompt": "We have a risk on our risk register that hasn't been mitigated in four months. The risk owner keeps saying it's being worked but the mitigation plan never progresses. What's the best way to escalate this?",
+      "expected_behavior": "Do NOT invoke project-complexity-source-diagnosis. This is an escalation and risk governance question. The 2-axis complexity diagnostic is not relevant to a single stalled risk item or an escalation pathway problem. Address the specific governance and stakeholder navigation question directly — the issue is organizational accountability, not program complexity classification."
+    },
+    {
+      "id": "tp-08",
+      "category": "blurred_boundary",
+      "prompt": "We're building a new AI-enabled fraud detection system. The core ML components are highly experimental — we don't know which model architecture will work at production scale — but the surrounding infrastructure (data pipelines, alerting, reporting) is straightforward and well-understood. Should we treat this as a complex program?",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis but surface the split-quadrant condition. The program is not homogeneous: the ML components are in the Experimental quadrant (method uncertainty is the dominant challenge), while the infrastructure components are Complicated or Simple. This is the boundary condition Williams addresses — different workstreams in different quadrants. The recommendation is not to classify the whole program as compounded, but to design parallel governance tracks: standard engineering PM for the infrastructure components, and iterative/experimental governance with explicit unknowns tracking for the ML components. Flag the integration layer between them as the point where complexity risk concentrates."
+    },
+    {
+      "id": "tp-09",
+      "category": "blurred_boundary",
+      "prompt": "The program I'm inheriting has been running for 18 months with a traditional PMO. The original scope is mostly done, but the business has been adding capabilities throughout the program and the current backlog of added scope is larger than the original program. The PMO is struggling to manage both the original work and the expanding scope. What's the governance problem here?",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis as a mid-program diagnosis. The 18-month history suggests the program started in one quadrant and has been moving toward the compounded condition through scope expansion. The original scope may have been Complicated (manageable with traditional PMO); the accumulated capability additions represent increasing uncertainty about what the program is actually for. Distinguish between structural complexity growth (more components to coordinate) and uncertainty growth (the original goal definition is no longer adequate). If both have grown significantly, the program has moved quadrants since initiation, which means the traditional PMO governance that worked initially is now mismatched. The prescription is quadrant reassessment and possible governance redesign, not PMO augmentation."
+    },
+    {
+      "id": "tp-10",
+      "category": "blurred_boundary",
+      "prompt": "We have a large infrastructure program — a new hospital campus, 800,000 square feet, 14 specialty departments, five contractors. The scope is completely defined, the design is approved, and we have a fixed-price contract. Everyone agrees on what we're building. But the coordination complexity is enormous and I'm worried about cascade failures between contractors. Is this a complex program?",
+      "expected_behavior": "Invoke project-complexity-source-diagnosis and land in the Complicated quadrant, not compounded. Structural complexity is very high (five contractors, 14 departments, massive interdependence). But uncertainty is low: scope is defined, design is approved, methods are well-established in construction management, and goal clarity is high. This is the Complicated quadrant, which means expert analysis, decomposition, and coordination architecture are the right tools — and the concerns about contractor cascade failure are legitimate Complicated-quadrant risks. The appropriate response is coordination architecture and interface management, not a governance overhaul to address uncertainty. The skill applies and produces a useful classification, but the answer is not 'compounded.'"
+    }
+  ]
+}

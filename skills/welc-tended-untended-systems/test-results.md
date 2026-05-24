@@ -1,0 +1,33 @@
+# Test Results: Welc-Tended-Untended-Systems
+
+## Summary
+
+- Total prompts: 10
+- PASS: 9
+- FAIL: 1
+- Reworks performed: 1
+
+## Results
+
+| ID   | Category          | Verdict | Notes                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ---- | ----------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp01 | should_invoke     | PASS    | Skill classifies cloud SaaS as tended, provides component-risk calibration, and explicitly names production as a feedback mechanism. All must-includes covered.                                                                                                                                                                                                                                                                   |
+| tp02 | should_invoke     | PASS    | Skill directly addresses untended medical devices. Counter-example Case 3 and Step 1 untended indicators cover pacemaker firmware. Must-not-includes (adopt CD without qualification) are explicitly warned against.                                                                                                                                                                                                              |
+| tp03 | should_invoke     | PASS    | A2 trigger scenario #3 covers this exact case. Step 3 tended+transient quadrant explicitly calls out data corruption as the exception — test catastrophic paths even for transient code.                                                                                                                                                                                                                                          |
+| tp04 | should_invoke     | PASS    | A1 Case 3 is a direct match for this scenario. Skill names rollback+feature flags as tended indicators and identifies applying untended verification to tended systems as a named failure pattern.                                                                                                                                                                                                                                |
+| tp05 | should_not_invoke | PASS    | Boundary section explicitly excludes pure mechanics questions ("How do I write a table-driven test?"). Skill stays out.                                                                                                                                                                                                                                                                                                           |
+| tp06 | should_not_invoke | PASS    | Mocking is a test isolation mechanics question. Boundary excludes technique questions downstream of the strategy decision. Skill stays out.                                                                                                                                                                                                                                                                                       |
+| tp07 | should_not_invoke | PASS    | Test suite performance is mechanics. Boundary criteria are clear. Skill correctly does not invoke.                                                                                                                                                                                                                                                                                                                                |
+| tp08 | blurred_boundary  | PASS    | Step 1 execution lists "update delivery measured in days/weeks" as untended indicator, covering the 4–6 week OTA window. The completion criterion (describe the recovery path for a typical defect) surfaces the ambiguity. Guidance to lean toward untended is implicit but derivable. Thin on "distinguish defect classes by recovery tolerance" but not a genuine gap — Step 3 risk profile calibration covers it.             |
+| tp09 | blurred_boundary  | FAIL    | Skill's failure pattern said "if retirement not enforced, treat as long-lived" — correct but incomplete. For experiments with a conditional promotion path, the right answer is to treat core logic as long-lived and scaffolding as transient. Blanket "treat as long-lived" would cause over-investment in ephemeral scaffolding. Rework performed.                                                                             |
+| tp10 | blurred_boundary  | PASS    | Skill's binary tended/untended framework doesn't model dual-path systems (standard release = untended pressure, emergency path = tended lane) explicitly, but Step 1 completion criterion (describe recovery path for a typical defect) forces the team to examine both paths. The failure pattern "Assuming tended means untested is fine" guards against over-classifying as tended. Guidance is derivable though not explicit. |
+
+## Reworks
+
+### Rework 1: Tp09 — Conditional Long-Lived Path Not Handled
+
+**Gap**: The skill's "Treating transience as permanent" failure pattern correctly warned against assuming transience when retirement isn't enforced. However, it gave blanket guidance: "treat as long-lived." For experiments with a conditional promotion path, this over-applies: scaffolding (feature-flag wiring, A/B routing, experiment harness) is genuinely transient even if the core logic has a promotion path.
+
+**Fix**: Added a new failure pattern "Treating an experiment as uniformly transient when it has a conditional long-lived path" in the Boundary section. The new pattern provides the layer-specific guidance: ask which code survives promotion (treat as long-lived, test accordingly) and which code is deleted on either outcome (treat as transient). This preserves the original warning against false transience while adding the nuance for split-lifetime code.
+
+**Location**: `/Users/steve/Documents/agent-orange/books/welc/welc-tended-untended-systems/SKILL.md`, Boundary section, Failure patterns.

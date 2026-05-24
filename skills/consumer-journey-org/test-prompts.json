@@ -1,0 +1,76 @@
+{
+  "skill": "consumer-journey-org",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "Each of our teams is hitting their individual SLOs but our customers keep complaining about the end-to-end experience being broken. Incidents always seem to involve multiple teams and nobody is sure who owns what. What's the structural problem?",
+      "expected_behavior": "Invokes consumer-journey-org, diagnoses the kebab organization anti-pattern where team boundaries cut across consumer journeys, explains that incident handover points are the structural source of reliability failures, and prescribes aligning team boundaries to consumer journeys as the fix — not adding central QA or coordination teams.",
+      "notes": "Positive scenario: individual SLOs green but end-to-end broken — the canonical consumer-journey-org activation signal."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We're about to reorg our engineering organization. We're currently structured by technical function — frontend team, backend team, identity team, payments team. Each team has high quality but cross-team delivery is painfully slow. What's a better model?",
+      "expected_behavior": "Invokes consumer-journey-org, identifies the current structure as a kebab org (technical function silos), recommends restructuring toward a cake model (vertically-integrated teams aligned to consumer journeys), maps out how to identify the consumer journeys that should drive team boundaries, and warns about the J-curve during transition.",
+      "notes": "Positive scenario: explicit reorg with kebab structure — direct restructuring question."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "We added a central quality team, a central platform team, and a central UX team to fix our cross-team coordination problems, but delivery has gotten slower and incidents still fall between the cracks. Why isn't it working?",
+      "expected_behavior": "Invokes consumer-journey-org, diagnoses this as the headcount-as-reliability-fix anti-pattern (adding central babysitting teams creates new handover points without addressing the root cause), applies Brooks's Law reasoning, and prescribes consumer journey realignment instead of more central teams.",
+      "notes": "Positive scenario: adding central coordination teams that made things worse — the ce12 anti-pattern."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We've been through three reorganizations in two years and our reliability hasn't improved at all. In fact it seems to be getting worse. What are we doing wrong?",
+      "expected_behavior": "Invokes consumer-journey-org, diagnoses the constant reorg without J-curve awareness pattern (ce11), explains that reorgs that don't change the consumer-journey ownership model just rearrange the problem, identifies that each reorg is a J-curve the org enters at the bottom of the previous one, and asks whether any reorg has actually changed which team owns which consumer journey.",
+      "notes": "Positive scenario: serial failed reorgs — the constant reorg anti-pattern."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Our DORA metrics have improved significantly — deployment frequency is up, change failure rate is down. But our customer satisfaction score keeps dropping. How is that possible?",
+      "expected_behavior": "Invokes consumer-journey-org, identifies the micro-optimization trap (ce30) — individual team DORA metrics improving while end-to-end consumer experience degrades suggests the organizational architecture is the constraint, not individual team practices. Recommends mapping whether incidents are occurring at handover points between teams despite the team-level metrics looking good.",
+      "notes": "Positive scenario: DORA metrics improving but customer satisfaction declining — the micro-optimization trap signal."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I draw an org chart for my engineering team?",
+      "expected_behavior": "Tooling/diagramming question — should provide practical org chart guidance without invoking consumer-journey-org. The skill addresses organizational architecture principles and diagnosis, not how to draw a chart.",
+      "notes": "Decoy: tooling question about org chart creation, not an organizational design or reliability question."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What is Conway's Law?",
+      "expected_behavior": "Definition question — should explain Conway's Law concisely without invoking consumer-journey-org. The skill is the prescriptive application of Conway's Law (inverse Conway maneuver), but a pure definition question does not require the full framework.",
+      "notes": "Decoy: terminology definition question, not an organizational design or diagnosis question."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "We need to ship a cross-team initiative by end of quarter but we don't want to do a reorg. What's the fastest way to organize the delivery?",
+      "expected_behavior": "Temporary cross-team delivery question — should invoke ephemeral-taskforce, not consumer-journey-org. The explicit statement 'don't want to do a reorg' signals a temporary instrument is needed, not permanent structural change.",
+      "notes": "Decoy: temporary cross-team delivery question that belongs to ephemeral-taskforce, not consumer-journey-org."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We're a platform engineering team serving 200 internal teams with different needs. Can we align our team around a 'consumer journey' when our consumers are other engineering teams and their journeys vary widely?",
+      "expected_behavior": "Ambiguous: the consumer-journey-org skill acknowledges that platform teams serving hundreds of internal teams may not have cleanly definable journeys. The skill should probe whether platform capabilities can be organized around common developer journeys (deploy a service, set up monitoring, onboard a new team) and note the framework's limitation for large platform-level diversity.",
+      "notes": "Boundary: platform team with internal consumers — tests the framework's applicability at the platform level where consumer journeys are diverse."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "Our team of 4 is responsible for our entire product — frontend, backend, data pipeline, and customer support tooling. Should we split by consumer journey?",
+      "expected_behavior": "Ambiguous: a 4-person team covering the full stack is already a cake-structure team. The question is whether it should be split at all. The skill should apply the consumer journey lens to evaluate whether splitting would help (multiple distinct consumer journeys with enough volume) or hurt (too small, adding handovers without adding value). At early stage or small scale, a single full-stack team is usually appropriate.",
+      "notes": "Boundary: too-small team where consumer-journey splitting might add overhead rather than remove it."
+    }
+  ]
+}

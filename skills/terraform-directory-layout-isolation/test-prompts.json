@@ -1,0 +1,68 @@
+{
+  "skill_id": "terraform-directory-layout-isolation",
+  "book": "Terraform: Up and Running (3rd Edition)",
+  "author": "Yevgeniy Brikman",
+  "generated": "2026-05-05",
+  "prompts": [
+    {
+      "id": "dl-si-01",
+      "type": "should_invoke",
+      "prompt": "We're using Terraform workspaces to manage staging and production. Is that a good pattern?",
+      "rationale": "Direct question about workspace-based environment isolation — the core antipattern this skill addresses."
+    },
+    {
+      "id": "dl-si-02",
+      "type": "should_invoke",
+      "prompt": "Someone on my team accidentally ran terraform destroy against production when they meant to run it against staging. How do we prevent this from happening again?",
+      "rationale": "Describes the exact failure mode of workspace-based isolation — the structural barrier provided by file layout would prevent this."
+    },
+    {
+      "id": "dl-si-03",
+      "type": "should_invoke",
+      "prompt": "I want to make sure that the IAM credentials used for staging deployments cannot accidentally affect production resources. How do I enforce this in Terraform?",
+      "rationale": "Credential isolation per environment — workspaces cannot provide this, file layout + separate CI IAM roles can."
+    },
+    {
+      "id": "dl-si-04",
+      "type": "should_invoke",
+      "prompt": "What's the recommended Terraform directory structure for managing infrastructure across multiple AWS accounts and environments?",
+      "rationale": "Directly asks for the file layout recommendation that this skill provides."
+    },
+    {
+      "id": "dl-sni-01",
+      "type": "should_not_invoke",
+      "prompt": "I want to quickly test a Terraform change without affecting my main environment. Can I use a workspace for this?",
+      "rationale": "Ephemeral throwaway test environments are the valid workspace use case — the skill's own boundary section endorses this."
+    },
+    {
+      "id": "dl-sni-02",
+      "type": "should_not_invoke",
+      "prompt": "How do I pass output values from one Terraform module to another?",
+      "rationale": "Cross-module output passing is unrelated to environment isolation strategy."
+    },
+    {
+      "id": "dl-sni-03",
+      "type": "should_not_invoke",
+      "prompt": "What's the difference between Terraform Cloud workspaces and open-source Terraform workspaces?",
+      "rationale": "Platform comparison question — Terraform Cloud workspaces have proper RBAC and are a different product from OSS workspaces."
+    },
+    {
+      "id": "dl-bb-01",
+      "type": "blurred_boundary",
+      "prompt": "We're using Terraform Cloud and each environment is a separate workspace with its own variable set and execution mode. Is this equivalent to file layout isolation?",
+      "rationale": "Terraform Cloud workspaces with RBAC are meaningfully different from OSS workspaces — this is the boundary case the skill notes."
+    },
+    {
+      "id": "dl-bb-02",
+      "type": "blurred_boundary",
+      "prompt": "I have five environments (dev, test, staging, pre-prod, prod) and I don't want to copy-paste backend configuration into each directory. How do I avoid that duplication?",
+      "rationale": "File layout isolation creates backend config duplication — this bridges into the backend bootstrap problem skill and Terragrunt."
+    },
+    {
+      "id": "dl-bb-03",
+      "type": "blurred_boundary",
+      "prompt": "HashiCorp's documentation shows using workspaces for managing multiple environments. Why would I do something different?",
+      "rationale": "Directly challenges the skill's recommendation against official HashiCorp docs — the verified.md explicitly calls this out as the novel V2 question."
+    }
+  ]
+}

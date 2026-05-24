@@ -1,0 +1,62 @@
+{
+  "skill": "configuration-hermeticity-framework",
+  "description": "Use this skill when evaluating, designing, or debugging a configuration system — especially when rollbacks are failing, configs produce different outputs at different times, or the team is debating which configuration language or tooling to adopt.",
+  "test_prompts": [
+    {
+      "id": "configuration-hermeticity-framework-should-01",
+      "category": "should_invoke",
+      "prompt": "We rolled back our Helm chart to last week's version after a bad deploy, but the rollback produced different Kubernetes manifests than what was originally applied. Our secrets are injected from Vault at helm template time. The rollback is making things worse, not better. What's going wrong?",
+      "expected": "invoke",
+      "rationale": "This is the canonical hermeticity violation symptom described in the skill: 'The rollback produced different rendered output than the original deploy.' The Vault injection at render time is an external read during evaluation, making the config non-hermetic. The skill directly prescribes the fix: render once, store the artifact, apply the stored artifact on rollback."
+    },
+    {
+      "id": "configuration-hermeticity-framework-should-02",
+      "category": "should_invoke",
+      "prompt": "Our Ansible playbooks work fine on my laptop but generate different results in CI. The playbook calls an EC2 metadata API during the run to get the current region. I think that might be the issue but our infra lead says 'just set the env var in CI.' Is there a deeper design problem here?",
+      "expected": "invoke",
+      "rationale": "The 'works on my machine but not in CI' pattern is Trigger Scenario 2 in the skill. Reading EC2 metadata at evaluation time is an environmental dependency violation — the config is not hermetic. The infra lead's workaround (setting an env var in CI) doesn't fix the underlying design flaw; it just masks one instance of it."
+    },
+    {
+      "id": "configuration-hermeticity-framework-should-03",
+      "category": "should_invoke",
+      "prompt": "We're evaluating CUE vs. Dhall vs. Helm for our new Kubernetes configuration system. We've had rollback reliability issues in the past with our current Python scripts. What properties should we be testing each tool against?",
+      "expected": "invoke",
+      "rationale": "Config tool evaluation is explicitly listed as a trigger: 'evaluating whether a proposed config tool (Helm, Jinja2, Ansible, CUE, Dhall) is safe for use in a reliability-sensitive deployment pipeline.' The skill provides the three-property checklist (tooling, hermetic evaluation, separation of config from data) and five pitfalls to apply systematically."
+    },
+    {
+      "id": "configuration-hermeticity-framework-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We pushed a config change that set our connection pool size to 10 instead of 100. This caused a cascading timeout failure across three services. The rollback worked fine and restored the correct value. How do we prevent this kind of misconfiguration from getting through?",
+      "expected": "skip",
+      "rationale": "This is a data error (wrong configuration value), not a configuration system design flaw — explicitly called out in the boundary section: 'The problem is a wrong configuration value (a data error), not a configuration system design flaw.' The rollback worked, which means the config system IS hermetic. The right response is config validation (schema enforcement, pre-apply checks, change review), not the hermeticity framework."
+    },
+    {
+      "id": "configuration-hermeticity-framework-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "We use LaunchDarkly for feature flags. The flags are read from their SDK at runtime — the service fetches the current flag value on each request. Sometimes different servers see different flag states during a flag rollout. Is this a hermeticity problem?",
+      "expected": "skip",
+      "rationale": "Runtime feature flag reads are explicitly excluded: 'configuration system is read-only and stateless by design (e.g., feature flags read from a database at runtime) — hermeticity applies to the evaluation pipeline, not to runtime feature flag reads.' Different servers seeing different flag states during rollout is intentional LaunchDarkly behavior, not a hermeticity violation. The right response is understanding LaunchDarkly's consistency model."
+    },
+    {
+      "id": "configuration-hermeticity-framework-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We want to move to GitOps with Argo CD. Our current workflow is manual kubectl apply. How should we structure our Git repository to follow GitOps best practices — should we have a separate repo for manifests or keep everything in the application repo?",
+      "expected": "skip",
+      "rationale": "This is a GitOps repository structure and workflow design question, not a hermeticity evaluation. The skill's boundary section explicitly distinguishes: 'GitOps is a deployment pattern; hermeticity is a property of the config evaluation step within a GitOps pipeline, not of GitOps itself.' The right response is GitOps organizational patterns (mono-repo vs. split repo, environment promotion strategy)."
+    },
+    {
+      "id": "configuration-hermeticity-framework-boundary-01",
+      "category": "boundary",
+      "prompt": "We use Consul-template to generate nginx configuration files. The template reads service discovery data from Consul at render time and regenerates the config every 30 seconds as services come up and down. When we 'roll back' the template version, the rendered output is always different because Consul's state changes. Is this a hermeticity violation we need to fix?",
+      "expected": "skip",
+      "rationale": "The skill's author blind spot section directly addresses this: 'The framework does not account for config systems that are intentionally dynamic (e.g., Consul-template, which is designed to produce different outputs at different times). For intentionally dynamic config, hermeticity is not the goal — auditability of changes is.' Consul-template is working as designed; the team should focus on change auditability, not hermeticity."
+    },
+    {
+      "id": "configuration-hermeticity-framework-boundary-02",
+      "category": "boundary",
+      "prompt": "Our Terraform state is stored in S3 with DynamoDB locking. When we run terraform plan, it reads current AWS resource state from the API to compute the diff. Two engineers running plan at the same time sometimes see different diffs because AWS resources changed between the runs. Does this violate the hermeticity principle and how do we fix it?",
+      "expected": "invoke",
+      "rationale": "While Terraform's remote state reads are partly intentional, the symptom (same plan version produces different output at different times) is the hermeticity violation pattern. The relevant diagnostic is whether the external reads (AWS API state) are resolved once at a defined snapshot time or re-read on every evaluation. The skill applies: the team should understand which external reads are necessary and which create evaluation variance they don't want. The evaluate → inspect → apply sequence and pinning external state are relevant here."
+    }
+  ]
+}

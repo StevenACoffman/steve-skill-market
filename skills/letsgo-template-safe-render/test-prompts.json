@@ -1,0 +1,45 @@
+{
+  "skill_id": "letsgo-template-safe-render",
+  "prompts": [
+    {
+      "id": "tp-f05-01",
+      "prompt": "My Go web app sometimes returns a 200 OK with truncated HTML when a template has a bug. How do I fix this?",
+      "tags": ["partial-write", "200-ok-bug"]
+    },
+    {
+      "id": "tp-f05-02",
+      "prompt": "Why can't I just call ts.Execute(w, data) in my Go handler and then handle the error after?",
+      "tags": ["streaming-write", "headers-already-sent"]
+    },
+    {
+      "id": "tp-f05-03",
+      "prompt": "What is the two-stage render pattern in Go HTTP handlers and when should I use it?",
+      "tags": ["two-stage-render", "bytes-buffer"]
+    },
+    {
+      "id": "tp-f05-04",
+      "prompt": "When does http.ResponseWriter implicitly send a 200 OK status in Go?",
+      "tags": ["implicit-200", "response-writer-internals"]
+    },
+    {
+      "id": "tp-f05-05",
+      "prompt": "Should I parse Go HTML templates on every request or build a cache at startup? What are the tradeoffs?",
+      "tags": ["template-cache", "startup-validation"]
+    },
+    {
+      "id": "tp-f05-06",
+      "prompt": "How do I make template parse errors fail at startup instead of surfacing on the first user request?",
+      "tags": ["startup-failure", "fail-fast"]
+    },
+    {
+      "id": "tp-f05-07",
+      "prompt": "Write me a safe render() helper for a Go net/http handler that prevents partial 200 responses on template errors.",
+      "tags": ["code-generation", "render-helper"]
+    },
+    {
+      "id": "tp-f05-08",
+      "prompt": "How do I support template hot-reloading in development while using a startup cache in production?",
+      "tags": ["dev-mode", "cache-bypass"]
+    }
+  ]
+}

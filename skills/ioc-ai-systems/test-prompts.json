@@ -1,0 +1,76 @@
+{
+  "skill": "ioc-ai-systems",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We're building an AI agent for customer support that can look up order status, initiate returns, and escalate to humans. We're thinking of letting the LLM decide which action to take based on the conversation. Is that the right approach?",
+      "expected_behavior": "Invokes ioc-ai-systems, identifies the proposed approach as giving the LLM workflow control (agentic anti-pattern), recommends IOC architecture where deterministic code drives the state machine (which action to take next), and the LLM handles only intent classification and natural language response generation. Adds validation gates before destructive actions like initiating returns.",
+      "notes": "Positive scenario: AI agent with workflow control question — classic IOC trigger."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We gave our AI coding assistant full control to plan and execute a multi-step task and it deleted some important files it shouldn't have. How do we prevent this kind of thing?",
+      "expected_behavior": "Invokes ioc-ai-systems, diagnoses this as the agentic architecture failure mode (LLM controlling the workflow state machine including destructive operations), prescribes IOC: LLM generates proposals, deterministic code validates against constraint set (is this destructive? does it require confirmation?), adds deterministic guards before any delete/overwrite operations.",
+      "notes": "Positive scenario: AI agent taking unauthorized destructive action — direct parallel to the book's database deletion incident."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our AI system works great in demos with typical inputs, but keeps failing in unpredictable ways in production. We've tried better prompting but it doesn't help consistently. What's the root cause?",
+      "expected_behavior": "Invokes ioc-ai-systems, diagnoses the demo-to-production gap as characteristic of LLM-controlled branching decisions without deterministic validation checkpoints (strongly emergent behavior only appears under edge-case and adversarial inputs). Prescribes adding deterministic validation at every LLM output boundary and moving workflow control decisions to deterministic code.",
+      "notes": "Positive scenario: demo-works-production-fails pattern — the canonical IOC architectural failure signal."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We're designing an AI-powered data migration tool. The plan is to have the LLM write and then execute the migration scripts. Someone on our team says we should have a human review step. How should we architect this?",
+      "expected_behavior": "Invokes ioc-ai-systems, endorses the human review suggestion but frames it architecturally: LLM generates the script (generation task), deterministic code validates schema and checks for destructive operations, human confirmation is a deterministic gate before execution. The LLM never decides whether to execute; it only generates the artifact that deterministic code decides whether to execute.",
+      "notes": "Positive scenario: LLM-generated code execution — IOC for AI-generated scripts with deterministic execution gates."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Should we let the LLM control the entire workflow of our AI-powered document processing pipeline, or should we write explicit code for each step?",
+      "expected_behavior": "Invokes ioc-ai-systems, answers directly: deterministic code should own the workflow (what step is next, what constitutes success, when to retry or escalate). LLM is invoked for bounded generation tasks within each step (parse NL input, extract structure, generate summary). Explains that 'letting the LLM figure it out' produces systems that are not debuggable or reliably testable.",
+      "notes": "Positive scenario: explicit 'should the LLM control the flow?' question — the core IOC design decision."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I write better system prompts to get my LLM to follow instructions more reliably?",
+      "expected_behavior": "Prompt engineering question — should provide prompting best practices without invoking ioc-ai-systems. The IOC principle is an architectural prescription, not a prompting technique. The book explicitly notes that prompting alone cannot substitute for structural constraints.",
+      "notes": "Decoy: prompting technique question, not an architectural design question."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What is an AI agent and how is it different from a regular LLM call?",
+      "expected_behavior": "Definitional question — should explain what an AI agent is (multi-step, tool-using, goal-directed) without invoking ioc-ai-systems. The skill applies when designing or reviewing agent architecture, not for explaining basic AI concepts.",
+      "notes": "Decoy: definition request about AI agents, not an architectural design or review question."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "We need to choose between three LLMs for our application. How do we evaluate which one is most reliable?",
+      "expected_behavior": "Model selection and evaluation question — should discuss evaluation approaches (evals, benchmarks, cost) without invoking ioc-ai-systems. The IOC principle applies regardless of which LLM is chosen; this is a procurement/evaluation question.",
+      "notes": "Decoy: model selection question, not an architectural design question about control flow."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We're building a fully autonomous research agent that needs to plan its own steps because we can't know in advance what research path will be needed. IOC seems impossible here — can it still apply?",
+      "expected_behavior": "Ambiguous: open-ended planning tasks are the hardest case for IOC. The skill should acknowledge the difficulty while finding the applicable IOC boundaries: even in an autonomous agent, deterministic code can own the termination condition, the resource limits, the output validation, and the escalation path when the agent goes out of bounds. Full workflow IOC may not be achievable, but blast-radius containment (no destructive operations without confirmation, output sanitization) always applies.",
+      "notes": "Boundary: truly open-ended planning where the workflow cannot be pre-specified — tests whether IOC can be partially applied rather than all-or-nothing."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "Our AI system uses function calling so the LLM can invoke our APIs. Doesn't function calling already give us the control we need?",
+      "expected_behavior": "Ambiguous: function calling is a mechanism, not a safety guarantee. The skill should explain that function calling without IOC still gives the LLM the authority to trigger arbitrary tool calls. IOC applied to function calling means the deterministic caller intercepts the LLM's tool call request, validates it against a constraint set, and decides whether to execute it. Function calling + IOC is safe; function calling without IOC is the same risk as full agentic control.",
+      "notes": "Boundary: function calling misconception — tests whether function calling alone satisfies the IOC requirement."
+    }
+  ]
+}

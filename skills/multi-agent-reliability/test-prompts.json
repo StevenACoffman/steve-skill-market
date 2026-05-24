@@ -1,0 +1,76 @@
+{
+  "skill": "multi-agent-reliability",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We're building a multi-step AI pipeline: one agent researches, one summarizes, and one writes recommendations. The single-agent version produces inconsistent summaries — each run gives different results. How do we make this pipeline more reliable?",
+      "expected_behavior": "Invokes multi-agent-reliability, identifies the failure mode (random error / inconsistency), evaluates hierarchy pattern (planner-workers-validator) as most appropriate for multi-step tasks with separable context domains, explains that the dependency graph forces correctness rather than hoping for it.",
+      "notes": "Positive scenario: multi-step AI pipeline with inconsistency — hierarchy pattern selection."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We're using an LLM to classify customer support tickets and route them. The single model has about a 15% error rate, which is too high for our SLO. We don't want to retrain the model — is there an architectural fix?",
+      "expected_behavior": "Invokes multi-agent-reliability, identifies the failure mode (random hallucination / classification error), selects consensus voting pattern, calculates that three independent agents at 15% individual error rate reduces the combined error rate to ~0.34% (0.15^3), quantifies the cost trade-off (3× tokens).",
+      "notes": "Positive scenario: classification accuracy problem — consensus voting pattern with probability calculation."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "We're adding AI-assisted code review to our security-sensitive CI pipeline. The concern is that the model consistently misses certain categories of vulnerability because it's biased toward producing agreeable output. What architecture prevents that?",
+      "expected_behavior": "Invokes multi-agent-reliability, identifies the failure mode (systematic bias / sycophancy), selects adversarial debate pattern (generator + critic + judge), explains that the critic is mandated to find flaws, warns about the loop termination requirement, and recommends using different models for each role to reduce correlated bias.",
+      "notes": "Positive scenario: systematic bias in security-sensitive context — adversarial debate pattern selection."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We're deciding between having three independent LLMs vote on a decision vs. having one LLM review another's work. Which approach is actually more reliable for our high-stakes decision pipeline?",
+      "expected_behavior": "Invokes multi-agent-reliability, distinguishes consensus voting (random error reduction, requires independence) from adversarial critique (systematic bias reduction), notes that voting agents must run as blind experiments or the statistical independence assumption breaks. The answer depends on whether the failure mode is random error (consensus) or systematic bias (adversarial).",
+      "notes": "Positive scenario: explicit pattern selection question between consensus and adversarial approaches."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Our multi-agent system uses three agents but they each see each other's responses before giving their final answer. We were expecting this to reduce errors but it's not helping. What are we doing wrong?",
+      "expected_behavior": "Invokes multi-agent-reliability, diagnoses the LLM sycophancy / groupthink vulnerability — agents reading each other's partial outputs before voting destroys statistical independence and creates anchor bias. The fix is to ensure agents run as blind experiments with no access to each other's outputs before voting.",
+      "notes": "Positive scenario: consensus pattern implemented incorrectly — independence assumption violation."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "I want to build a chatbot for our customer service team. What's the best way to get started?",
+      "expected_behavior": "General chatbot implementation question — should provide introductory guidance on building a single-agent chatbot without invoking multi-agent-reliability, which is specifically for multi-agent coordination patterns. No reliability concern or multi-agent topology is indicated.",
+      "notes": "Decoy: general AI chatbot question with no multi-agent or reliability dimension."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What is RAG and when should I use it?",
+      "expected_behavior": "Definitional question about Retrieval-Augmented Generation — should explain RAG architecture without invoking multi-agent-reliability. RAG is an AI architecture pattern; multi-agent-reliability addresses coordination topology for multiple agents.",
+      "notes": "Decoy: AI architecture definition question, not a multi-agent reliability design question."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "How should I write better prompts to get more consistent output from my LLM?",
+      "expected_behavior": "Prompt engineering question — should provide prompting best practices without invoking multi-agent-reliability, which is an architectural solution. If inconsistency is the problem, multi-agent patterns are one approach, but the question is specifically about prompting, not agent coordination.",
+      "notes": "Decoy: prompting technique question, not an architectural reliability pattern question."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We want to use a tree-of-thoughts approach in production to serve real users — generate 10 candidate answers and pick the best one. Is that a good idea?",
+      "expected_behavior": "Ambiguous: the skill should flag that tree-of-thoughts / knock-out is primarily a development-time tool. In production under real user load, generating 10 candidates and evaluating them requires a fast deterministic validator — if human review is required for each branch, it is impractical at scale. The skill should assess whether a deterministic validator exists and whether the latency cost is acceptable, rather than simply endorsing or rejecting the approach.",
+      "notes": "Boundary: tree-of-thoughts in production vs. development context — tests the production applicability caveat."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "Should I use the same model for the generator and the critic in my adversarial review setup, or does it matter?",
+      "expected_behavior": "Nuanced pattern design question — the skill should recommend using different models for generator, critic, and judge to reduce correlated bias (the same model may have the same systematic blindspots). If only one model is available, it is still better than no adversarial structure, but the independence benefit is reduced. The answer should distinguish the goal (reducing correlated bias) from the mechanism (different models).",
+      "notes": "Boundary: implementation nuance of the adversarial debate pattern — model independence recommendation."
+    }
+  ]
+}

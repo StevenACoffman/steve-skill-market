@@ -1,0 +1,65 @@
+{
+  "skill": "matryer-waitfor-ready",
+  "prompts": [
+    {
+      "id": "si-1",
+      "category": "should_invoke",
+      "prompt": "My test starts the server with `go run(ctx)` and immediately sends a request, but I keep getting `connection refused` errors in CI. How do I fix this?",
+      "why": "Canonical trigger: goroutine race between test code and server startup, exactly the problem this skill solves."
+    },
+    {
+      "id": "si-2",
+      "category": "should_invoke",
+      "prompt": "Someone added `time.Sleep(200 * time.Millisecond)` in our test setup to wait for the server to start. Tests still flake occasionally. What's the right approach?",
+      "why": "Sleep-based waiting is the anti-pattern; the skill provides the correct alternative."
+    },
+    {
+      "id": "si-3",
+      "category": "should_invoke",
+      "prompt": "How do I write a `waitForReady` function in Go that polls a health endpoint until the server accepts requests or a timeout is reached?",
+      "why": "Direct request for the `waitForReady` implementation pattern."
+    },
+    {
+      "id": "si-4",
+      "category": "should_invoke",
+      "prompt": "I'm writing end-to-end tests for a Go HTTP service. Should I add a `/healthz` endpoint, and how would I use it in tests?",
+      "why": "Asks about both the health endpoint and its role in test synchronisation — the dual production+test purpose is the core insight."
+    },
+    {
+      "id": "sni-1",
+      "category": "should_not_invoke",
+      "prompt": "How do I implement graceful shutdown in a Go HTTP server when a SIGTERM is received?",
+      "why": "Graceful shutdown relates to context cancellation and `server.Shutdown`, not server readiness or health polling."
+    },
+    {
+      "id": "sni-2",
+      "category": "should_not_invoke",
+      "prompt": "What is the best way to structure middleware in a Go HTTP service?",
+      "why": "Middleware construction is a separate topic (matryer-middleware-constructor skill); no readiness or health-check concern."
+    },
+    {
+      "id": "sni-3",
+      "category": "should_not_invoke",
+      "prompt": "How do I parse environment variables and flags for my Go service configuration?",
+      "why": "Configuration injection via `getenv` or `flag` is a distinct skill; unrelated to server readiness."
+    },
+    {
+      "id": "bb-1",
+      "category": "blurred_boundary",
+      "prompt": "My Kubernetes deployment is being killed by liveness probes before the server finishes startup. Should I add a `/healthz` endpoint?",
+      "why": "Directly involves `/healthz` and Kubernetes probes — a production concern this skill addresses — but the primary framing is ops/deployment rather than test synchronisation. Both the health-endpoint step and the production wiring section apply."
+    },
+    {
+      "id": "bb-2",
+      "category": "blurred_boundary",
+      "prompt": "I'm writing a helper that waits for a third-party service (like a database or Redis) to be reachable before running integration tests. How should I structure it?",
+      "why": "The `waitForReady` polling pattern applies directly, but the target is not the server under test — it's a dependency. The loop structure and context/timeout handling are identical; the endpoint path and protocol may differ."
+    },
+    {
+      "id": "bb-3",
+      "category": "blurred_boundary",
+      "prompt": "How do I run multiple independent test instances of my Go server in parallel without port conflicts?",
+      "why": "Parallel test isolation requires random port binding (`:0`), which is mentioned in the Boundaries section as a prerequisite for `waitForReady` to work correctly. The skill is partially relevant but the main answer involves `net.Listen` and passing addresses — adjacent territory."
+    }
+  ]
+}

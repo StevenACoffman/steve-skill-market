@@ -1,0 +1,66 @@
+{
+  "skill_id": "governance-model-adequacy-test",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "I'm the program director for a large federal IT modernization. We have a steering committee that meets monthly and approves our go/no-go decisions. The committee is made up of SES officials from five agencies, and we brief them with a deck prepared by my team. Last week someone asked me privately whether the committee actually understands the technical integration risks, and I honestly couldn't say yes. They've approved every milestone we've put in front of them, but I don't think they could describe our architecture dependencies if asked. Is this a governance problem?",
+      "expected_behavior": "Invoke governance-model-adequacy-test. Diagnose this as a potential model-capture failure — the governing body is making decisions against the program team's representation, not its own model. Walk through the three diagnostic questions. The committee's approval rate and authority are not evidence of governance adequacy; the test is whether the committee holds an independent working model of the integration risks."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "Our board gets a RAG status dashboard every two weeks. Everything has been green for six months. Then last Tuesday a critical dependency between two subsystems that we'd had on amber for ages internally just blew up into a full integration failure. The board is asking why they weren't warned. I'm looking at our governance reporting structure trying to understand what happened — the signals were there, they just never made it up.",
+      "expected_behavior": "Invoke governance-model-adequacy-test. This is a model-staleness or model-absence failure combined with potential model-capture: the governance body's model of program state was not being updated at the rate the program was changing, and the information pathway from working-level signals to governance-level model did not exist. Apply the three diagnostic questions retrospectively to identify which failure mode caused the gap."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "I've been asked to review the governance structure for a major public health data platform — multi-agency, 8 contractors, 3-year build. The current setup has an executive board with formal sign-off authority, a PMO that runs the vendor management, and a technical steering group that advises but has no decision authority. I'm trying to figure out whether this structure can actually govern the program or whether it just looks like it can.",
+      "expected_behavior": "Invoke governance-model-adequacy-test. This is exactly the prospective application of the diagnostic — assessing structural adequacy before failure. Apply all three diagnostic questions: locate where the integrated model of the 8-contractor system is held, assess whether the update cadence is calibrated to program change rate, and identify whether the decision-making board has independent access to program reality or whether all information flows through the PMO and vendor reports."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_invoke",
+      "prompt": "We have a regulatory body overseeing our product certification program. Their technical review process relies heavily on documentation submitted by us — the manufacturer — because they don't have the internal staff to do independent technical assessment. They ask questions about our submissions, but the answers come from our technical team. I'm trying to understand the risk profile of this arrangement for both sides.",
+      "expected_behavior": "Invoke governance-model-adequacy-test. This is a textbook model-capture scenario structurally identical to the Boeing/FAA case. The regulatory body has formal authority but its decision model is built from the manufacturer's representation. Apply the third diagnostic question and flag this as a high-severity model-capture failure. Note the Boeing 737 MAX case as the canonical failure mode for this exact arrangement."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "Our sponsor keeps changing priorities mid-sprint. Last week it was the reporting dashboard, this week it's the integration API. The team is losing confidence because nothing gets finished. How do I get the sponsor to commit to a stable backlog?",
+      "expected_behavior": "Do not invoke governance-model-adequacy-test. This is a stakeholder management and scope governance problem, not a model adequacy failure. The sponsor's changing priorities may indicate other issues (unclear strategy, reactive management style, missing product vision) but there is no indication that the governance structure lacks a model of the system it is overseeing. Route to stakeholder alignment or scope management practices."
+    },
+    {
+      "id": "tp-06",
+      "category": "should_not_invoke",
+      "prompt": "We're trying to decide between a phased rollout and a big-bang launch for our platform replacement. The vendor is pushing for big-bang because it's cleaner technically. My instinct is phased, but I don't have a strong analytical framework to push back with.",
+      "expected_behavior": "Do not invoke governance-model-adequacy-test. This is a rollout strategy decision involving variety management (phased launch as a variety-attenuation technique), which is closer to the requisite-variety-gap-assessment and governance-variety-lever-selection skills. Model adequacy is not the central question here — the question is about managing environmental complexity during deployment, not about whether a governance body holds an adequate model of the system it oversees."
+    },
+    {
+      "id": "tp-07",
+      "category": "should_not_invoke",
+      "prompt": "My project is six weeks behind schedule. SPI is 0.82 and trending down. I need to put together a recovery plan for the steering committee next Thursday. What should the plan include?",
+      "expected_behavior": "Do not invoke governance-model-adequacy-test. This is a schedule recovery and EVM analysis problem. The steering committee meeting suggests a functioning governance structure with active reporting — the opposite of the conditions that trigger this diagnostic. Route to schedule variance analysis and recovery planning practices."
+    },
+    {
+      "id": "tp-08",
+      "category": "blurred_boundary",
+      "prompt": "Our PMO runs monthly portfolio reviews. Program managers present status to the portfolio board, and the board allocates next-quarter resources based on those presentations. We've had two programs blow up in the last 18 months that had green status in the month before failure. I think something is structurally wrong but I'm not sure if it's a reporting problem, a risk management problem, or something deeper.",
+      "expected_behavior": "This sits at the boundary between governance model adequacy and reporting structure problems. Governance-model-adequacy-test is likely relevant — the 'green before failure' pattern is a classic indicator of model-capture, where the governance body's model of program state is built from program team representations and therefore doesn't surface signals that the programs themselves are not surfacing. However, it could also reflect inadequate risk identification practices at the program level. Invoke the skill, apply the third diagnostic question (whose model is the board governing against?), and acknowledge that a full diagnosis may also require examining risk management practices at the program level."
+    },
+    {
+      "id": "tp-09",
+      "category": "blurred_boundary",
+      "prompt": "I've been asked to assess whether our governance structure is 'mature enough' for a program that's about to scale from 3 contractors to 11. Someone used the term 'governance maturity' but I don't think that framing is right. The complexity is going up substantially and I want to make sure we're actually equipped to manage it, not just that we're ticking governance process boxes.",
+      "expected_behavior": "This is boundary territory between governance-model-adequacy-test and requisite-variety-gap-assessment. The instinct that 'governance maturity' is the wrong framing is correct — Williams' framework would reframe this as a structural capacity question. Governance-model-adequacy-test addresses one dimension (does the governance structure hold an adequate model of the 11-contractor system?); requisite-variety-gap-assessment addresses the broader variety capacity question. Both skills are potentially relevant; the model adequacy diagnostic should be applied first since model absence is the most immediately disabling failure mode."
+    },
+    {
+      "id": "tp-10",
+      "category": "blurred_boundary",
+      "prompt": "We have an independent quality assurance contractor reviewing our program monthly. They produce a detailed report for the sponsor. But I've noticed that the IQA team mostly reviews artifacts and attends status meetings — they don't have access to the technical working groups where the real decisions get made, and they don't interview individual engineers. Is our IQA setup actually providing governance value?",
+      "expected_behavior": "This is a model-adequacy question about whether the IQA function is building an adequate independent model or simply processing the same managed representation that the program team is surfacing. The skill is relevant — the third diagnostic question directly addresses whether the governance information pathway is independent of the program team's curation. However, this is also partly an IQA scope-of-work question. Invoke the skill to assess whether the IQA arrangement constitutes genuine independent model-building or artifact-level review that leaves the governance body's model dependent on program team curation."
+    }
+  ]
+}

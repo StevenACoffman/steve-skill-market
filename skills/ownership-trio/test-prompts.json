@@ -1,0 +1,69 @@
+{
+  "skill": "ownership-trio",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "Our mobile team keeps getting blamed every time latency is bad, but the actual slowness is coming from the backend service they call. They have no ability to fix the backend — that's a completely different team. How do we stop this cycle?",
+      "expected_behavior": "Invokes ownership-trio, diagnoses the missing mandate element: the mobile team has responsibility and knowledge of the symptom but lacks the mandate to fix the root cause. Prescribes realigning accountability to the team that controls the backend variables.",
+      "notes": "Positive scenario: classic responsibility-without-mandate mismatch described in the book's front-end latency case."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We have an SRE team that handles all production incidents. But every time they get paged, they have to escalate to the dev team to actually fix anything because SREs don't have access to the codebase or the deployment pipeline. The dev team considers on-call someone else's problem. How do I fix this?",
+      "expected_behavior": "Invokes ownership-trio, identifies that the SRE team has responsibility but lacks knowledge (of the system they didn't build) and mandate (no deploy access). Dev team has knowledge and mandate but no responsibility. Neither entity has the full trio. Recommends 'you build it you own it' restructuring.",
+      "notes": "Positive scenario: split-responsibility anti-pattern between SRE and dev; classic 'you build it you run it' vs 'you build it you own it' framing."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our architect makes all the major technical decisions — which databases to use, how services should communicate, what the SLAs should be. But the architect is never on-call and doesn't work with the teams day-to-day. The engineers on the ground know the system is fragile in ways the architect doesn't, but they can't override the architecture choices. We keep having incidents.",
+      "expected_behavior": "Invokes ownership-trio, identifies the architect as having mandate without knowledge (no operational exposure) and without responsibility (not on-call). Engineers have knowledge and responsibility but lack mandate. Full ownership trio is split across two parties with neither having all three.",
+      "notes": "Positive scenario: architect-as-Teenager archetype setup; leads naturally into broken-ownership-archetypes but the initial diagnosis starts with ownership-trio."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We're moving to a 'you build it you run it' model where dev teams own their services in production. But my VP keeps saying that's the same as what we already do. What's the difference between 'you build it you run it' and 'you build it you own it'? Does the distinction matter?",
+      "expected_behavior": "Invokes ownership-trio, explains that 'you build it you run it' addresses only the responsibility element, whereas 'you build it you own it' requires all three: knowledge, mandate, and responsibility. Responsibility alone without mandate to change the system produces foot-soldier or baby-parent failure modes.",
+      "notes": "Positive scenario: direct conceptual question about the core framing in the skill; user is trying to understand the model, not just a symptom."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "Engineers on my team say being on-call feels like punishment, not ownership. They get paged for things they can't fix — they can't change the infra configuration, can't modify the dependent services, and can't push a hotfix without a 3-day review process. I want to turn this around. Where do I start?",
+      "expected_behavior": "Invokes ownership-trio, identifies on-call-as-punishment as a symptom of responsibility without mandate. The engineers bear the 3 AM consequence (responsibility) but cannot act (mandate blocked by review process and infra access restrictions). Recommends diagnosing and restoring mandate alongside responsibility.",
+      "notes": "Positive scenario: the 'on-call as punishment not ownership' signal explicitly called out in the skill's WHEN TO CALL section."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "Can you explain what RACI stands for and how to use it for a project I'm managing?",
+      "expected_behavior": "Pure information query about a different accountability framework (Responsible, Accountable, Consulted, Informed). Should not invoke ownership-trio; answer directly with a RACI explanation.",
+      "notes": "Decoy: RACI is a different accountability taxonomy; no ownership dysfunction is described."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I set up PagerDuty schedules for my team? We have 8 engineers and want to rotate weekly with a secondary on-call.",
+      "expected_behavior": "Operational tooling question about on-call scheduling mechanics. Should not invoke ownership-trio; answer directly with PagerDuty setup guidance.",
+      "notes": "Decoy: mentions on-call but is purely operational/tooling, not an ownership diagnosis question."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We want to adopt a DevOps model where developers deploy their own services. Some people are calling it 'platform engineering' and others are calling it 'you build it you own it.' The debate is getting political. Is there a principled way to settle this?",
+      "expected_behavior": "Likely invokes ownership-trio to provide the principled definition: 'you build it you own it' requires knowledge + mandate + responsibility in the same entity. Platform engineering can support or undermine this depending on whether it enables or abstracts mandate. The framing debate should be resolved by testing for all three elements rather than the label.",
+      "notes": "Boundary: user is debating terminology and org model, not describing a clear dysfunction. Could be fit-practice territory but the question is fundamentally about what full ownership means."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I'm a product manager and I'm trying to understand why our feature velocity is so slow. Engineers say they can build features but then have to wait weeks for infrastructure changes to be approved and deployed by a central ops team. Is this an ownership problem or a process problem?",
+      "expected_behavior": "Likely invokes ownership-trio: the framing as 'process problem' is a symptom of the real issue — a mandate gap. Dev teams have knowledge (of what they want to build) and responsibility (for feature outcomes) but lack mandate over deployment. The 'process problem' framing is how mandate gaps often present. Could also connect to broken-ownership-archetypes (foot-soldier pattern).",
+      "notes": "Boundary: user frames it as a process question, not an ownership question. The correct diagnosis requires recognizing that process constraints are often mandate constraints in disguise."
+    }
+  ]
+}

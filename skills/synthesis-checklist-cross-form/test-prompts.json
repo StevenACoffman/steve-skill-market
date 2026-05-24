@@ -1,0 +1,52 @@
+{
+  "skill": "synthesis-checklist-cross-form",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "sc-t01",
+      "type": "should_trigger",
+      "prompt": "We need to combine our Postgres CRM database with our ML feature store and the raw support chat logs in S3. All three teams are getting different churn rates from what should be the same customer data. Where do we start?",
+      "expected": "trigger",
+      "rationale": "Classic multi-form integration scenario: structured (Postgres CRM), ML artifacts (feature store), and semi-structured/unstructured (S3 chat logs). Also matches 'different numbers from the same data' signal."
+    },
+    {
+      "id": "sc-t02",
+      "type": "should_trigger",
+      "prompt": "We're building a Customer 360 view that needs to pull from our relational order database, our JSON event stream, and our NLP sentiment scores from support transcripts. We're stuck on how to structure this — what questions should we be answering before we pick a technology?",
+      "expected": "trigger",
+      "rationale": "Explicitly named Customer 360, three distinct data forms (structured, semi-structured, ML/AI artifact), and the user is asking how to approach design before choosing a platform — direct match for the synthesis checklist."
+    },
+    {
+      "id": "sc-t03",
+      "type": "should_trigger",
+      "prompt": "Three different teams are all building their own version of our product catalog model. The analytics team, the ML team, and the data engineering team each have a different schema and they can't reconcile the numbers. We need a unified model. How do we coordinate this?",
+      "expected": "trigger",
+      "rationale": "The three-teams failure pattern described in case c03. Multiple teams with independent implementations of the same cross-form data need cross-team coordination — the canonical synthesis checklist use case."
+    },
+    {
+      "id": "sc-d01",
+      "type": "should_not_trigger",
+      "prompt": "I'm designing a new relational table to track order line items. What grain should this table be at? I need to make sure I'm declaring it correctly before I build out the schema.",
+      "expected": "no_trigger",
+      "rationale": "Single-form design (one relational table). The skill's boundary section explicitly says to use grain-decision-four-questions for single-form cases. No multi-form integration is present."
+    },
+    {
+      "id": "sc-d02",
+      "type": "should_not_trigger",
+      "prompt": "We have a single Snowflake fact table for transactions. What should the grain of this table be — one row per transaction, or one row per line item? I want to make sure I can answer all the analytical questions the business needs.",
+      "expected": "no_trigger",
+      "rationale": "Single-form grain decision for a single fact table. No cross-form integration involved. This is precisely the grain-decision-four-questions scenario, not the synthesis checklist."
+    },
+    {
+      "id": "sc-e01",
+      "type": "edge_case",
+      "prompt": "We have data in two systems — a relational database and a JSON document store — but they both represent the same entity (orders) and use the same order_id. We're debating whether to use a lakehouse or keep them separate. What should we do?",
+      "expected": "trigger",
+      "rationale": "Edge case: two forms but the entity convergence question (Q3) appears already answered (shared order_id). The skill should still trigger because the implementation debate (lakehouse vs. separate) is happening before Q1-Q6 are formally answered — this matches the 'implementation-first anti-pattern' and the signal 'We'll use a [specific technology]' before Q1-Q6 are answered. The synthesis checklist resolves what constraints should determine the choice."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoys target single-form grain decisions that belong to grain-decision-four-questions, not multi-form synthesis."
+}

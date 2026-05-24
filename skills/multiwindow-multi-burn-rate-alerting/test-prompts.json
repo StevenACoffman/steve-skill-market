@@ -1,0 +1,62 @@
+{
+  "skill": "multiwindow-multi-burn-rate-alerting",
+  "description": "Use this skill when configuring SLO-based alerting for any production service — especially when existing alerts have precision or recall failures (false positives, missed slow burns).",
+  "test_prompts": [
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-01",
+      "category": "should_invoke",
+      "prompt": "Our on-call engineer gets paged at 3am, checks the dashboard, everything looks green. This happens about twice a week. We're using a Prometheus alert that fires when error_rate > 0.1% for 5 minutes. The on-call is burning out and threatening to quit. How do we fix our alerting?",
+      "expected": "invoke",
+      "rationale": "Classic false positive symptom from the skill's A2 Scenario 1: alert fires but problem has resolved by the time the engineer looks. The 'error_rate > threshold for N minutes' duration clause pattern is Iteration 2 in the skill — structurally broken because a metric oscillating across the threshold resets the timer. The multiwindow approach with a short-window confirmation gate directly solves this."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-02",
+      "category": "should_invoke",
+      "prompt": "We had an incident last month where we lost 40% of our monthly error budget over three days from intermittent errors that never crossed our alerting threshold. Nobody noticed until a customer complained. Our alert fires when error rate exceeds 0.2% — our SLO is 99.9%. What should our alerting have caught?",
+      "expected": "invoke",
+      "rationale": "This is the slow-burn false negative scenario from A2 Scenario 2: 'The service was bleeding errors for two days before we noticed.' A single threshold alert misses slow burns below the threshold. The skill prescribes a 1× burn rate ticket-level alert at 3-day/6-hour window specifically to catch this pattern before it becomes a budget crisis."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-03",
+      "category": "should_invoke",
+      "prompt": "We're setting up SLO alerting in Datadog for a new service with a 99.5% SLO over a 28-day window. I've seen the Google SRE Workbook's Table 5-8 with the 14.4x burn rate but I'm not sure if those numbers apply to us. How do I derive the right burn rates for our SLO?",
+      "expected": "invoke",
+      "rationale": "This is Trigger Scenario 3 from the skill's A2 section — a team asking how to configure SLO alerts for a specific non-Google SLO. The skill explicitly warns against copying Google's parameters without derivation, and provides the exact arithmetic to derive burn rates for any SLO percentage and time window. The team has the right instinct (question applicability) and needs the derivation method."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "Our Kubernetes nodes are running at 92% CPU and our memory pressure is causing OOM kills intermittently. We need an alert that pages us before we completely run out of resources. How should we set up resource saturation alerting?",
+      "expected": "skip",
+      "rationale": "Resource saturation alerting (CPU, memory, disk) is explicitly excluded from this skill's scope: 'You need to alert on resource saturation (CPU, disk, memory). This framework is SLI-driven, not system-health-driven. Saturation alerts require a separate mechanism.' Burn-rate alerting detects SLI budget consumption, not resource exhaustion. The right approach is capacity-based threshold alerting with forecasting."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our SLO alerting is working correctly — we're getting paged at the right times. But after a page fires and the on-call engineer checks the SLO dashboard, they're not sure whether to roll back the latest release, throttle incoming traffic, or wait and see. What decision framework should they follow?",
+      "expected": "skip",
+      "rationale": "This is post-alert decision-making, which the skill explicitly distinguishes from its own scope: 'multiwindow-multi-burn-rate-alerting governs the alert configuration mechanism... This skill answers when do we page?; the decision matrix answers what do we do after the page fires.' The right skill is the slo-decision-matrix for what action to take given SLO state."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We run a batch job every night that processes data for internal analytics. It sometimes fails, but since it's internal tooling with no SLA we haven't worried about it. Should we set up burn-rate alerts for it?",
+      "expected": "skip",
+      "rationale": "No SLO means burn rate is undefined and meaningless — explicitly stated in the boundary: 'The team has no SLO defined. The entire arithmetic depends on a defined SLO percentage and window.' For an internal tool with no defined reliability target, the right first step is deciding whether an SLO is warranted at all, then defining it. Burn-rate alerting is a downstream decision."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-boundary-01",
+      "category": "boundary",
+      "prompt": "Our internal developer portal gets about 80 requests per hour during business hours, essentially zero at night and weekends. We have a 99.5% SLO on it. We want to set up burn-rate alerting. At 80 RPS with a 14x burn rate alert, a single failed request would produce a 1250x burn rate. Is the multiwindow approach still worth applying here?",
+      "expected": "skip",
+      "rationale": "The skill's boundary section explicitly addresses this: 'The service receives fewer than ~100 requests per hour. At low traffic rates, single failed requests produce extreme burn rates... Use a distinct low-traffic strategy: ticket on absolute error counts, not rates.' 80 requests/hour puts this squarely in the low-traffic exception. The multiwindow arithmetic is inapplicable here and would produce misleading thresholds."
+    },
+    {
+      "id": "multiwindow-multi-burn-rate-alerting-boundary-02",
+      "category": "boundary",
+      "prompt": "We have burn-rate alerting working well for our main API. We also have dependency health checks on our upstream services — if our payment gateway's error rate goes above 5% we want to know immediately, even if our own SLO budget isn't being consumed yet (because we're circuit-breaking the calls). Should we configure burn-rate alerts for the dependency too?",
+      "expected": "skip",
+      "rationale": "Alerting on dependency health (upstream service error rate, independent of your own SLO budget consumption) is symptom-based alerting, which the skill distinguishes as a separate concern: 'Do not use as a replacement for symptom-based alerting on non-SLO signals (saturation, dependency health).' The burn-rate framework applies to your own SLO budget. Dependency health monitoring belongs in a separate mechanism (synthetic probes, dependency SLO monitoring with separate burn rates)."
+    }
+  ]
+}

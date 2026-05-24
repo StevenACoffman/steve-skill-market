@@ -101,7 +101,9 @@ var wg sync.WaitGroup
 // Good
 g := tracegroup.New(ctx) // from pkg/external/opentelemetry/tracegroup
 g.Go(func(ctx context.Context) error { return doWork(ctx) })
-if err := g.Wait(); err != nil { ... }
+if err := g.Wait(); err != nil {
+	return err
+}
 ```
 
 **What general Go advice says:** `sync.WaitGroup` is idiomatic for coordinating

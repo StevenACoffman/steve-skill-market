@@ -1,0 +1,69 @@
+{
+  "skill": "3ts-premature-optimization",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "Our team wants to rewrite our Python service in Go for performance reasons. They say Python is too slow. We haven't actually profiled the service to see where the time goes — we just know Go is faster than Python in benchmarks. Should we do the rewrite?",
+      "expected_behavior": "Invokes 3ts-premature-optimization, applies T1 (Thing): the bottleneck has not been measured. The belief that the Python service is the constraint is an assumption, not a fact. Without profiling, the actual bottleneck could be database queries, network calls, or external dependencies — none of which a language change would fix. Prescribes measuring before committing to the rewrite.",
+      "notes": "Positive scenario: language rewrite proposed on benchmark belief rather than measured bottleneck; exact T1 failure mode from the Rust rewrite case."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We're an early-stage startup with 50 users. Our CTO wants to build multi-region active-active infrastructure now so we're ready to scale. We haven't validated our product yet. The CTO argues it's better to build it right from the start. Should we?",
+      "expected_behavior": "Invokes 3ts-premature-optimization, applies T2 (Time): the problem being solved (scale) is theoretical — the current 50-user load does not require multi-region infrastructure. The startup has not validated product-market fit. Building Google-scale infrastructure before PMF is the exact T2 case from the book: first make it work, then make it fast, then make it scale.",
+      "notes": "Positive scenario: over-engineering before product-market fit; exact T2 failure mode from the startup infrastructure case."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Leadership wants to switch from our current observability vendor to a cheaper one to save $200K per year. The migration would probably take 3-4 months of engineering time. Is this worth doing?",
+      "expected_behavior": "Invokes 3ts-premature-optimization, applies T3 (Trade-offs): the visible benefit ($200K/year savings) is real, but the full trade-off requires counting: 3-4 months of engineering time at fully-loaded cost, re-instrumentation effort, learning curve, data quality risk during transition, and the risk of a worse product post-migration. This is the exact observability provider switching case from the book. Prescribes an explicit cost-benefit that includes migration cost and quality risk.",
+      "notes": "Positive scenario: optimization with obvious upside and uncounted hidden costs; exact T3 failure mode from the observability provider case."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "Our system handles 10,000 requests per second at peak. Someone proposed adding a caching layer to reduce load on the database. Our database CPU is running at 30% and p99 query latency is 50ms. The application seems fine. Is adding the cache a good idea?",
+      "expected_behavior": "Invokes 3ts-premature-optimization, applies T1 (Thing): the database is not demonstrating constraint behavior (30% CPU, 50ms latency at p99 — both are well within normal range). The proposed optimization targets something that is not the bottleneck by any measurable evidence. Adding a cache has T3 costs too (cache invalidation complexity, cache-consistency bugs, operational overhead). Prescribes not optimizing until the database shows constraint behavior.",
+      "notes": "Positive scenario: optimization proposed when the system is not under stress; no measured bottleneck evidence."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "We completed a microservices migration 6 months ago to improve scalability. Our deploys are actually slower now, incidents are harder to debug because traces span 20 services, and the team says they spend more time on service communication than on features. We thought this would make things better. What went wrong?",
+      "expected_behavior": "Invokes 3ts-premature-optimization retrospectively. T1: was the monolith the bottleneck for the outcomes desired? T2: was the team ready for the operational complexity of microservices? T3: the hidden costs (debugging complexity, service mesh overhead, cross-service traces) were not accounted for in the original decision. The current outcome is a T3 failure — the costs of the migration exceeded its benefits because they were invisible at decision time.",
+      "notes": "Positive scenario: post-hoc diagnosis of a completed optimization that produced a net negative outcome."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I profile a Node.js application to find performance bottlenecks?",
+      "expected_behavior": "Tooling question about profiling methodology. Should not invoke 3ts-premature-optimization; answer with Node.js profiling guidance (clinic.js, --prof flag, async_hooks, etc.).",
+      "notes": "Decoy: tooling question about how to measure, not a question about whether an optimization is premature."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "Is microservices architecture always better than a monolith?",
+      "expected_behavior": "Architecture philosophy question. Should not invoke 3ts-premature-optimization; provide a balanced comparison of monolith vs. microservices with contextual trade-offs. This is a general architecture question, not an optimization proposal being evaluated.",
+      "notes": "Decoy: general architecture advice question with no specific optimization being proposed or evaluated."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We know our search index is the bottleneck — we've measured it and it's clear. We want to replace it with Elasticsearch, which is proven at scale. But we're in the middle of a major product launch in 6 weeks. Should we do it now?",
+      "expected_behavior": "Likely invokes 3ts-premature-optimization: T1 passes (Thing is the confirmed bottleneck). T2 question: is now the right time? A major migration 6 weeks before a product launch is a T2 failure — the disruption cost (migration instability, team attention split) at a high-stakes moment makes the timing wrong even if the Thing is right and the Trade-offs are acceptable. Prescribes doing it after the launch.",
+      "notes": "Boundary: T1 passes (bottleneck confirmed), but T2 fails (wrong timing). The user might expect a clear yes/no; the 3T model produces a nuanced answer."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "We want to add retry logic to our API client. There's no measured need for it right now, but retries are considered a reliability best practice. Is this premature optimization?",
+      "expected_behavior": "Likely invokes 3ts-premature-optimization with a nuanced answer. Retries are low-cost (T3: small implementation overhead), address a known class of transient failure (T1: the 'thing' is a real class of failure even if not currently measured), and are appropriate at most stages (T2). A minimal retry with exponential backoff is not premature optimization — it's defensive coding. The 3T framework should distinguish between defensive patterns (low cost, broadly applicable) and speculative performance optimization (high cost, theory-based).",
+      "notes": "Boundary: not all optimization is premature. Low-cost defensive patterns pass the 3T test; the model should not be applied as a universal prohibition on improvement."
+    }
+  ]
+}

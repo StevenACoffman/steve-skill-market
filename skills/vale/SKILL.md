@@ -46,7 +46,7 @@ fi
 Run with `--minAlertLevel=error` first to find blocking issues:
 
 ```bash
-vale --config=.vale/.vale.ini --no-global --minAlertLevel=error <files>
+vale --config=.vale/.vale.ini --no-global --minAlertLevel=error FILES
 ```
 
 If no files are specified, run on all markdown files in the repo:

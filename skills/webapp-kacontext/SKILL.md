@@ -1,6 +1,6 @@
 ---
 name: webapp-kacontext
-description: Use when writing or reviewing any Go code in github.com/Khan/webapp that touches context. Covers sub-interface selection, Upgrade() entry points, logging, time, HTTP, web request data, lifecycle methods, and test contexts. ONLY applies to github.com/Khan/webapp — do not apply to any other repository.
+description: Use when writing or reviewing any Go code in github.com/Khan/webapp that touches context. Covers KAContext sub-interface selection, Upgrade() entry points, logging, time, HTTP, web request data, lifecycle methods, and test contexts. ONLY applies to github.com/Khan/webapp — do not apply to any other repository.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -542,6 +542,12 @@ type MyContext interface {
 }
 ```
 
+**Test-complexity signal:** In tests, each sub-interface that the function uses
+requires a fake client to be wired up or cast from the KAContext. If a test
+requires casting to five or six different fakes just to call a single function,
+the context interface is a sign that the function has too many responsibilities.
+Consider splitting it into smaller functions, each with a narrower interface.
+
 ### Calling `Upgrade` Outside an Entry Point
 
 ```go
@@ -566,12 +572,15 @@ func doWork(ctx interface {
 ```go
 // Bad (ka-context linter violation in non-test code)
 func newDetachedOp() {
-    ctx := context.Background()  // WRONG outside init/main
+	ctx := context.Background() // WRONG outside init/main
 }
 
 // Good — use Detach() from an existing KAContext
-detachedCtx, cancel := ctx.Detach(time.Minute)
-defer cancel()
+func doWorkDetached(ctx kacontext.Base) {
+	detachedCtx, cancel := ctx.Detach(time.Minute)
+	defer cancel()
+	_ = detachedCtx
+}
 ```
 
 `context.Background()` is allowed in test files.
@@ -622,20 +631,22 @@ to the compiler.
 ```go
 // Bad — compile error: ktx doesn't satisfy context.Context
 var ktx interface {
-    kacontext.Base
-    log.KAContext
-    web.AuthedUserContext
+	kacontext.Base
+	log.KAContext
+	web.AuthedUserContext
 } = kacontext.Upgrade(ctx)
-genqlient.MakeRequest(ktx, ...)  // cannot use ktx as context.Context
+
+// genqlient.MakeRequest(ktx, query) — compile error: cannot use ktx as context.Context
 
 // Good — embed context.Context when passing to gqlgen-generated or stdlib code
-var ktx interface {
-    kacontext.Base
-    context.Context
-    log.KAContext
-    web.AuthedUserContext
+var ktx2 interface {
+	kacontext.Base
+	context.Context
+	log.KAContext
+	web.AuthedUserContext
 } = kacontext.Upgrade(ctx)
-genqlient.MakeRequest(ktx, ...)  // ok
+
+// genqlient.MakeRequest(ktx2, query) — ok
 ```
 
 Embed `context.Context` only when `ktx` needs to be passed to code that accepts

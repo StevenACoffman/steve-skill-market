@@ -1,0 +1,68 @@
+{
+  "skill_id": "terraform-module-size-smell",
+  "book": "Terraform: Up and Running (3rd Edition)",
+  "author": "Yevgeniy Brikman",
+  "generated": "2026-05-05",
+  "prompts": [
+    {
+      "id": "ms-si-01",
+      "type": "should_invoke",
+      "prompt": "Our terraform plan takes 8 minutes to run. The module has about 250 resources in it. Is there a way to make it faster?",
+      "rationale": "Slow plan is harm #1 from large modules — the direct symptom that this skill diagnoses."
+    },
+    {
+      "id": "ms-si-02",
+      "type": "should_invoke",
+      "prompt": "Every time I make a small Terraform change, I'm nervous about applying it because the plan shows potential changes to dozens of unrelated resources. How do I reduce this risk?",
+      "rationale": "Describes blast radius anxiety — harm #2 of large modules."
+    },
+    {
+      "id": "ms-si-03",
+      "type": "should_invoke",
+      "prompt": "We're trying to write Terratest tests for our Terraform module but each test takes 25 minutes and costs $50 in AWS resources. Is this normal?",
+      "rationale": "Testability harm — the 20-30 minute test cycle that makes tests impractical is a named harm of large modules."
+    },
+    {
+      "id": "ms-si-04",
+      "type": "should_invoke",
+      "prompt": "When should I extract a Terraform resource or group of resources into its own module?",
+      "rationale": "Direct module extraction decision question — the core question this skill answers."
+    },
+    {
+      "id": "ms-sni-01",
+      "type": "should_not_invoke",
+      "prompt": "How do I publish a Terraform module to the Terraform Registry?",
+      "rationale": "Module publishing and versioning — unrelated to module size and decomposition."
+    },
+    {
+      "id": "ms-sni-02",
+      "type": "should_not_invoke",
+      "prompt": "What's the difference between a root module and a child module in Terraform?",
+      "rationale": "Basic Terraform module terminology — not about module size or the six harms."
+    },
+    {
+      "id": "ms-sni-03",
+      "type": "should_not_invoke",
+      "prompt": "How do I pass a list of objects as a variable to a Terraform module?",
+      "rationale": "Module variable type syntax — unrelated to module size."
+    },
+    {
+      "id": "ms-bb-01",
+      "type": "blurred_boundary",
+      "prompt": "Our team is just getting started with Terraform and we have a single main.tf with 20 resources for our entire application. Should we split it into modules now or wait?",
+      "rationale": "Early-stage single-module question — the skill's boundary acknowledges that small modules may be premature; judgment about when pain appears."
+    },
+    {
+      "id": "ms-bb-02",
+      "type": "blurred_boundary",
+      "prompt": "If I split my large Terraform module into smaller modules, won't I have to apply them in the right order and manage dependencies between them? That seems harder than one big apply.",
+      "rationale": "Coordination overhead of decomposition — the skill's boundary notes this tradeoff explicitly."
+    },
+    {
+      "id": "ms-bb-03",
+      "type": "blurred_boundary",
+      "prompt": "Another team wants to reuse part of my Terraform module — just the networking resources. Can they just call my module and ignore the compute and database resources?",
+      "rationale": "Partial reuse harm — the questioner is experiencing harm #6 directly; the answer leads to module extraction."
+    }
+  ]
+}

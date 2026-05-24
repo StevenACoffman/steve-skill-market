@@ -1,0 +1,77 @@
+{
+  "skill": "principles-quality-checklist",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "Our architecture team came up with five cloud principles: 'We value security', 'We want to delight customers', 'We adopt cloud-native technologies', 'We embrace DevOps', and 'We reduce costs'. Are these good principles?",
+      "reason": "Every one of these likely fails the opposite test or contains a buzzword. The skill provides the exact evaluation framework needed to assess this list."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "We're drafting our technology strategy document. Someone suggested we add 'We use AWS' as a guiding principle. Should we?",
+      "reason": "This is a product-name principle — a decision elevated to principle status. The checklist directly addresses this failure mode."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "We have 20 architecture principles. Our new CTO says that's too many. How do we decide which to keep?",
+      "reason": "Count is one of the six checklist criteria. The skill provides the framework: run each through the six tests, eliminate those that don't pass, prioritize for memorability."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "Our architecture board adopted its principles with unanimous agreement and zero debate. Is that a good sign?",
+      "reason": "Unanimous adoption with no debate is a red flag that the principles are platitudes — they pass the opposite test only if someone could argue against them. The skill explicitly identifies debate as a health signal."
+    },
+    {
+      "id": "tp05",
+      "type": "should_invoke",
+      "prompt": "A project proposal starts with a slide about digital transformation goals, then has a complex architecture diagram no one understands, then asks for $5M in headcount. How do I explain what's wrong with this structure?",
+      "reason": "This is the hourglass anti-pattern that the principles skill diagnoses. The middle is missing: there are no principles connecting the strategic top to the specific bottom-half request."
+    },
+    {
+      "id": "tp06",
+      "type": "should_invoke",
+      "prompt": "How do I know if our cloud principles are actually influencing day-to-day decisions or just sitting in a document nobody reads?",
+      "reason": "Memorability and traceability are explicit tests in the checklist. The skill provides the memorability test (ask team members to recall principles unprompted) and the decision-trace test."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "We have three cloud providers and want to decide which workloads go where. Is there a framework for this?",
+      "reason": "This is the multicloud 5-option decision skill, not a principles quality question."
+    },
+    {
+      "id": "tp08",
+      "type": "should_not_invoke",
+      "prompt": "Our engineers are debating whether to build our own Kubernetes cluster or use EKS. How do we frame this decision?",
+      "reason": "This is a lock-in / managed-service trade-off question, not a principles evaluation question."
+    },
+    {
+      "id": "tp09",
+      "type": "should_not_invoke",
+      "prompt": "Our cloud migration is 70% complete but the board says they don't see value. What's happening?",
+      "reason": "This is the value-gap / proxy-metrics skill. Not a principles quality problem."
+    },
+    {
+      "id": "tp10",
+      "type": "should_not_invoke",
+      "prompt": "How do I write a good OKR for our platform engineering team?",
+      "reason": "OKR construction is outside the scope of this skill, which is specifically about the quality of guiding principles in a technology strategy context."
+    },
+    {
+      "id": "tp11",
+      "type": "blurred_boundary",
+      "prompt": "Someone on our team says our principle 'security first' is a great principle because it resolves tie-breakers. Someone else says it's too vague. Who is right?",
+      "reason": "This is genuinely at the boundary. 'Security first' might pass the opposite test (an organization optimizing for speed over security exists), but it might be too vague to be actionable in a specific decision. The skill's opposite test and memorability tests both apply, but the answer requires judgment about organizational context."
+    },
+    {
+      "id": "tp12",
+      "type": "blurred_boundary",
+      "prompt": "Our new CTO wants to review our enterprise architecture principles before presenting the technology strategy to the board. What should she look for?",
+      "reason": "This is primarily a principles quality question (use the checklist), but it also touches the hourglass anti-pattern at the board presentation level and the architecture chain (Strategy → Principles → Decisions → Architecture). Both the checklist and the chain framing are relevant."
+    }
+  ]
+}

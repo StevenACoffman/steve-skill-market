@@ -357,9 +357,10 @@ ______________________________________________________________________
 
    ```go
    type XxxMock struct {
-       XxxFn  func(...) (...)
-       Calls  []XxxCall
+   	XxxFn func(context.Context, string) (string, error)
+   	Calls []XxxCall
    }
+
    // implement the interface methods on XxxMock
    ```
 
@@ -386,7 +387,7 @@ ______________________________________________________________________
 7. **Optionally guard with a build tag for size-sensitive packages.**
 
    ```go
-   !production
+   //go:build !production
 
    package p
    ```

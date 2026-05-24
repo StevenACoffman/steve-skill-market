@@ -1,0 +1,27 @@
+# Test Results: Welc-Legacy-Code-Change-Algorithm
+
+## Summary
+
+- Total prompts: 10
+- PASS: 10
+- FAIL: 0
+- Reworks performed: 0
+
+## Results
+
+| ID                   | Category          | Verdict | Notes                                                                                                                                                                                                                                                                                                                                                                                       |
+| -------------------- | ----------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| should-invoke-01     | should_invoke     | PASS    | Canonical positive case (PaymentProcessor). Skill maps directly: A1 Case 2 (InvoiceUpdateResponder) is structurally identical. E section guides the user through all five steps in order; Step 3 is correctly scoped to the test points from Step 2, not the whole class. No rewrite recommended.                                                                                           |
+| should-invoke-02     | should_invoke     | PASS    | Bug fix in untested OrderRouter. A2 scenario 2 and E section cover this. Crucially, the B section explicitly flags the "characterization tests may accidentally pin the buggy behavior" trap, which the expected behavior requires be surfaced.                                                                                                                                             |
+| should-invoke-03     | should_invoke     | PASS    | Inherited monolith with 20 slow integration tests mirrors A1 Case 1 (financial industry team) exactly. B section "Skipping Steps 1–2" failure pattern directly counters the "cover the whole monolith first" impulse. Scoping to the specific reporting feature is the correct instruction.                                                                                                 |
+| should-invoke-04     | should_invoke     | PASS    | Refactoring without tests. A2 scenario 3 and B section ("Skipping Steps 3–4 / Edit and Pray") both apply. Skill correctly frames Step 4 characterization tests as the enabling condition for safe structural change — not optional due diligence.                                                                                                                                           |
+| should-not-invoke-01 | should_not_invoke | PASS    | Greenfield microservice. B section and description's WHEN NOT TO CALL both explicitly exclude new code from scratch. No legacy code exists; the algorithm's dependency-breaking and characterization phases are irrelevant.                                                                                                                                                                 |
+| should-not-invoke-02 | should_not_invoke | PASS    | Well-tested function. WHEN NOT TO CALL explicitly says: if the code already has comprehensive tests around the change area, skip the algorithm and use TDD directly. Skill correctly stays out of the way.                                                                                                                                                                                  |
+| should-not-invoke-03 | should_not_invoke | PASS    | User is already inside Step 3, asking how to break a specific DB dependency. WHEN NOT TO CALL says: if the question is specifically about HOW to break a particular dependency, use welc-seam-model or welc-sensing-vs-separation instead. Algorithm's sequencing guidance is unnecessary here.                                                                                             |
+| blurred-boundary-01  | blurred_boundary  | PASS    | Permanent sprout anti-pattern. B section has a dedicated subsection ("Permanent Sprout / Wrap: the deferred completion anti-pattern") that exactly describes this situation. Skill invokes, explains that sprouting is valid per-episode but not as a permanent architecture, and routes to the algorithm for incrementally getting the original class body under test.                     |
+| blurred-boundary-02  | blurred_boundary  | PASS    | "Cover the whole codebase before any changes this quarter" plan. B section "Skipping Steps 1–2" failure pattern is the precise counter-argument. Skill correctly explains that the algorithm is applied change-by-change, not as a blanket pre-coverage project, and that coverage accumulates most valuably in the highest-churn areas.                                                    |
+| blurred-boundary-03  | blurred_boundary  | PASS    | Cannot identify change points because the code is not understood. E section Step 1 explicitly routes to welc-scratch-refactoring when change points cannot be identified: "apply welc-scratch-refactoring first to build understanding, then return here." B section "Author's blind spots" acknowledges this as a Step 1 precondition. Skill handles this as a prerequisite, not a detour. |
+
+## Reworks
+
+None

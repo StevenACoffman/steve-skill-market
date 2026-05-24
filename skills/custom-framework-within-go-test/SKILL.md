@@ -160,43 +160,43 @@ A new backend author writes:
 ```go
 // backend/aws/aws_test.go
 func TestBackend_CredentialRead(t *testing.T) {
-    b, err := Factory(logical.TestBackendConfig())
-    if err != nil {
-        t.Fatalf("factory: %s", err)
-    }
-    logicaltest.Test(t, logicaltest.TestCase{
-        PreCheck: func() {
-            if os.Getenv("AWS_ACCESS_KEY_ID") == "" {
-                t.Skip("AWS credentials not configured")
-            }
-        },
-        Backend: b,
-        Steps: []logicaltest.TestStep{
-            {
-                Description: "configure AWS root credentials",
-                Operation:   logical.UpdateOperation,
-                Path:        "config/root",
-                Data:        map[string]interface{}{"access_key": os.Getenv("AWS_ACCESS_KEY_ID"), ...},
-            },
-            {
-                Description: "create role",
-                Operation:   logical.UpdateOperation,
-                Path:        "roles/deploy",
-                Data:        map[string]interface{}{"arn": "arn:aws:iam::..."},
-            },
-            {
-                Description: "read credentials",
-                Operation:   logical.ReadOperation,
-                Path:        "creds/deploy",
-                Check: func(resp *logical.Response) error {
-                    if resp.Data["access_key"] == "" {
-                        return fmt.Errorf("empty access_key")
-                    }
-                    return nil
-                },
-            },
-        },
-    })
+	b, err := Factory(logical.TestBackendConfig())
+	if err != nil {
+		t.Fatalf("factory: %s", err)
+	}
+	logicaltest.Test(t, logicaltest.TestCase{
+		PreCheck: func() {
+			if os.Getenv("AWS_ACCESS_KEY_ID") == "" {
+				t.Skip("AWS credentials not configured")
+			}
+		},
+		Backend: b,
+		Steps: []logicaltest.TestStep{
+			{
+				Description: "configure AWS root credentials",
+				Operation:   logical.UpdateOperation,
+				Path:        "config/root",
+				Data:        map[string]interface{}{"access_key": os.Getenv("AWS_ACCESS_KEY_ID")},
+			},
+			{
+				Description: "create role",
+				Operation:   logical.UpdateOperation,
+				Path:        "roles/deploy",
+				Data:        map[string]interface{}{"arn": "arn:aws:iam::..."},
+			},
+			{
+				Description: "read credentials",
+				Operation:   logical.ReadOperation,
+				Path:        "creds/deploy",
+				Check: func(resp *logical.Response) error {
+					if resp.Data["access_key"] == "" {
+						return fmt.Errorf("empty access_key")
+					}
+					return nil
+				},
+			},
+		},
+	})
 }
 ```
 
@@ -310,11 +310,13 @@ ______________________________________________________________________
 5. **Gate acceptance runs in PreCheck:**
 
    ```go
-   PreCheck: func() {
-       if os.Getenv("MY_PLUGIN_TEST_TOKEN") == "" {
-           t.Skip("MY_PLUGIN_TEST_TOKEN not set; skipping acceptance test")
-       }
-   },
+   func preCheck(t *testing.T) func() {
+   	return func() {
+   		if os.Getenv("MY_PLUGIN_TEST_TOKEN") == "" {
+   			t.Skip("MY_PLUGIN_TEST_TOKEN not set; skipping acceptance test")
+   		}
+   	}
+   }
    ```
 
    Alternatively, use a build tag (`//go:build acceptance`) on the test file.
@@ -324,14 +326,14 @@ ______________________________________________________________________
 
    ```go
    func TestMyPlugin(t *testing.T) {
-       mylib.Test(t, mylib.TestCase{
-           Backend: NewMyPlugin(),
-           Steps: []mylib.TestStep{
-               {Description: "configure", ...},
-               {Description: "create resource", ...},
-               {Description: "read and verify", Check: func(resp Response) error { ... }},
-           },
-       })
+   	mylib.Test(t, mylib.TestCase{
+   		Backend: NewMyPlugin(),
+   		Steps: []mylib.TestStep{
+   			{Description: "configure"},
+   			{Description: "create resource"},
+   			{Description: "read and verify", Check: func(resp Response) error { return nil }},
+   		},
+   	})
    }
    ```
 
@@ -368,10 +370,11 @@ a custom harness:
 
 ```go
 func TestMyBackend(t *testing.T) {
-    b := setupBackend(t)
-    t.Run("configure", func(t *testing.T) { ... })
-    t.Run("create role", func(t *testing.T) { ... })
-    t.Run("read credentials", func(t *testing.T) { ... })
+	b := setupBackend(t)
+	_ = b
+	t.Run("configure", func(t *testing.T) {})
+	t.Run("create role", func(t *testing.T) {})
+	t.Run("read credentials", func(t *testing.T) {})
 }
 ```
 

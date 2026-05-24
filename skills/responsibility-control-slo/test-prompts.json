@@ -1,0 +1,69 @@
+{
+  "skill": "responsibility-control-slo",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We have a 500ms end-to-end latency SLO that's assigned to the frontend team. But we've measured that 130ms of that is pure network time that nobody controls, and another 200ms comes from a backend service that's owned by a completely different team. The frontend team is being held to a 500ms budget they can only influence by about 170ms. How do we fix this?",
+      "expected_behavior": "Invokes responsibility-control-slo, applies the latency decomposition pattern: subtract uncontrollable network (130ms), identify the backend team's portion (200ms), and scope the frontend SLO to the controllable residual (170ms). Produces a per-team budget allocation with three options for splitting the 370ms controllable portion.",
+      "notes": "Positive scenario: exact pattern from the book's mobile/backend/database case; multi-team latency decomposition."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We're running an SLO workshop and trying to figure out which team should own the availability SLO for our checkout flow. The checkout calls five microservices owned by four different teams. If we assign the SLO to the checkout team, they'll be paged for outages in services they don't control. What's the right approach?",
+      "expected_behavior": "Invokes responsibility-control-slo, prescribes decomposing the composite availability SLO into per-service SLOs owned by the teams that control each service. The checkout team should own only the availability contribution of their own code. Raises the option of rethinking boundaries if dependencies are too entangled.",
+      "notes": "Positive scenario: composite availability SLO spanning multiple teams; classic SLO workshop scenario."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our payment service team keeps getting paged when the third-party payment processor goes down. We don't control that — it's an external vendor. But the end-to-end payment success rate SLO is assigned to our team. How do we handle this?",
+      "expected_behavior": "Invokes responsibility-control-slo, applies the valid denominator approach: exclude events caused by the uncontrollable third-party from the SLI denominator (good/valid rather than good/total). Only requests where the external vendor was available should count toward the team's SLO. The team is then measured only on what they can actually improve.",
+      "notes": "Positive scenario: external dependency exclusion via valid denominator; classic third-party SLO scoping problem."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We have an SLO on our data pipeline that covers end-to-end freshness. But freshness depends on the upstream data source team delivering data on time, our processing time, and the downstream serving layer owned by yet another team. My team only controls the processing step. Who should own this SLO?",
+      "expected_behavior": "Invokes responsibility-control-slo, applies the decomposition model: each team (upstream source, processing, downstream serving) should own an SLO for their contribution. End-to-end SLO can be composite across the three teams. The current team should own only the processing latency budget, with the upstream and downstream teams owning theirs.",
+      "notes": "Positive scenario: pipeline freshness SLO decomposition across three teams with sequential dependencies."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I calculate how many minutes of downtime I'm allowed under a 99.9% SLO for a 30-day month?",
+      "expected_behavior": "Pure arithmetic question. Should not invoke responsibility-control-slo; compute directly: 0.1% of 43,200 minutes = 43.2 minutes.",
+      "notes": "Decoy: SLO compliance calculation, not decomposition or team assignment."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What's the difference between SLI and SLO? I'm new to site reliability engineering and trying to understand the terminology.",
+      "expected_behavior": "Definitional onboarding question. Should not invoke responsibility-control-slo; answer with a clear definition of SLI vs SLO.",
+      "notes": "Decoy: terminology question, no team assignment or control-boundary problem present."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Should we merge our platform team and our product engineering team into one org to reduce handoff friction?",
+      "expected_behavior": "Organizational restructuring question. Should not invoke responsibility-control-slo directly; this is primarily an ownership-trio / organizational design question. The SLO decomposition skill is relevant only if the merge is being considered specifically to resolve an SLO control mismatch.",
+      "notes": "Decoy: org design question; responsibility-control-slo is triggered by SLO assignment problems, not general org structure decisions."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "Our team is responsible for both building and operating a shared platform that 12 product teams use. Each product team's reliability depends heavily on our platform. Should we have one SLO that covers everything, or separate SLOs per consumer?",
+      "expected_behavior": "Likely invokes responsibility-control-slo and possibly service-level-topology. The answer involves decomposing by consumer journey and by what the platform team controls vs. what each product team controls. Per-consumer SLOs are appropriate when consumer needs differ; the platform team should own only the platform contribution.",
+      "notes": "Boundary: could be responsibility-control-slo (which team owns what) or service-level-topology (how to derive SLIs). The control-boundary framing suggests responsibility-control-slo is the primary fit."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "We've identified that a dependency we call is slow, and it's dragging down our latency SLO. We don't own that service. Should we set our SLO to exclude that latency, or should we push the other team to fix their service?",
+      "expected_behavior": "Likely invokes responsibility-control-slo. The valid denominator approach (exclude uncontrollable latency) is the SLO scoping answer; the organizational remedy (push the dependency team to own their own SLO) is the structural answer. Both answers are correct and complementary — the SLO scoping is immediate; the structural fix takes longer.",
+      "notes": "Boundary: ambiguous between 'scope the SLO' and 'fix the org structure.' The correct answer involves both, with the decomposition as the bridge between them."
+    }
+  ]
+}

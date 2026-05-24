@@ -566,12 +566,16 @@ func doWork(ctx interface {
 ```go
 // Bad (ka-context linter violation in non-test code)
 func newDetachedOp() {
-    ctx := context.Background()  // WRONG outside init/main
+	ctx := context.Background() // WRONG outside init/main
+	_ = ctx
 }
 
 // Good — use Detach() from an existing KAContext
-detachedCtx, cancel := ctx.Detach(time.Minute)
-defer cancel()
+func doWorkDetached(ctx kacontext.Base) {
+	detachedCtx, cancel := ctx.Detach(time.Minute)
+	defer cancel()
+	_ = detachedCtx
+}
 ```
 
 `context.Background()` is allowed in test files.
@@ -622,20 +626,22 @@ to the compiler.
 ```go
 // Bad — compile error: ktx doesn't satisfy context.Context
 var ktx interface {
-    kacontext.Base
-    log.KAContext
-    web.AuthedUserContext
+	kacontext.Base
+	log.KAContext
+	web.AuthedUserContext
 } = kacontext.Upgrade(ctx)
-genqlient.MakeRequest(ktx, ...)  // cannot use ktx as context.Context
+
+// genqlient.MakeRequest(ktx, query) — compile error: cannot use ktx as context.Context
 
 // Good — embed context.Context when passing to gqlgen-generated or stdlib code
-var ktx interface {
-    kacontext.Base
-    context.Context
-    log.KAContext
-    web.AuthedUserContext
+var ktx2 interface {
+	kacontext.Base
+	context.Context
+	log.KAContext
+	web.AuthedUserContext
 } = kacontext.Upgrade(ctx)
-genqlient.MakeRequest(ktx, ...)  // ok
+
+// genqlient.MakeRequest(ktx2, query) — ok
 ```
 
 Embed `context.Context` only when `ktx` needs to be passed to code that accepts

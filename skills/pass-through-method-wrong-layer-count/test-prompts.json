@@ -1,0 +1,75 @@
+{
+  "skill_id": "pass-through-method-wrong-layer-count",
+  "test_prompts": [
+    {
+      "id": "tp01",
+      "prompt": "My `UserService.getById()` just calls `userRepository.getById()` and returns the result with no transformation. Is there any point in having a service layer here?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Textbook pass-through method: service layer adds zero value. Directly asks whether the layer should exist."
+    },
+    {
+      "id": "tp02",
+      "prompt": "Half our service methods are one-liners that just delegate to the repository. We added the service layer because we heard it was best practice. Was that a mistake?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Describes a layer added for orthodoxy rather than function — classic wrong-layer-count scenario. The skill directly addresses whether layers must earn their place."
+    },
+    {
+      "id": "tp03",
+      "prompt": "I added a `NotificationDecorator` that wraps my `EmailSender`. The decorator's `send()` method just calls `emailSender.send()` with the same arguments — it doesn't add any behavior yet. Should I keep it?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "A decorator with no behavior is a pass-through by another name. The question of whether it earns its abstraction is exactly what this skill addresses."
+    },
+    {
+      "id": "tp04",
+      "prompt": "We have a `DataAccessLayer` that wraps our ORM. Every method on it just calls the corresponding ORM method. We added it for 'future flexibility'. Is that justified?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Speculative wrapping with no current behavioral value — a pass-through layer rationalized by YAGNI-violating flexibility arguments."
+    },
+    {
+      "id": "tp05",
+      "prompt": "I want to extract a `calculateTax()` method from inside `processOrder()` so the logic is easier to test. Is that a good idea?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Method extraction for testability and readability. This adds value by naming and isolating logic — not a pass-through situation."
+    },
+    {
+      "id": "tp06",
+      "prompt": "I need a Facade over our legacy payment processor to give it a cleaner interface for new code. How should I design the Facade?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Facade pattern with an explicit purpose: simplifying a complex legacy interface. This is a legitimate abstraction, not a pass-through layer."
+    },
+    {
+      "id": "tp07",
+      "prompt": "We're integrating with a third-party shipping API. I want to wrap it in our own interface so we can swap providers later. Is that over-engineering?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Adapter pattern for a third-party dependency with a clear motivation (swappability). The wrapper adds insulation value even if it currently delegates wholesale."
+    },
+    {
+      "id": "tp08",
+      "prompt": "Should I add a service layer between my HTTP handlers and the database, or just query from the handlers directly?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Whether to add a layer at all — directly related to wrong-layer-count. If the service would only pass through, adding it is the mistake. But context determines whether it would add value."
+    },
+    {
+      "id": "tp09",
+      "prompt": "I'm wrapping my dependencies in thin interfaces for unit testing. The wrapper just implements the interface and forwards all calls. Is that acceptable?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Interface wrapper for testability — a legitimate reason to have a thin delegating layer, but it sits at the boundary of pass-through. The skill should help evaluate whether the indirection is justified."
+    },
+    {
+      "id": "tp10",
+      "prompt": "We have five layers in our architecture: controller, facade, service, manager, repository. Every team adds a new layer when they're unsure where logic belongs. How do we decide the right number of layers?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Wrong-layer-count at the architectural level. Directly relevant, but broader than a single pass-through method — also touches architectural governance."
+    }
+  ]
+}

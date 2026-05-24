@@ -1,0 +1,50 @@
+{
+  "skill_id": "letsgo-session-token-renewal",
+  "prompts": [
+    {
+      "id": "tp-f07-01",
+      "prompt": "Is renewing the session token only on login sufficient to prevent session fixation attacks in a Go web app?",
+      "tags": ["session-fixation", "two-windows"]
+    },
+    {
+      "id": "tp-f07-02",
+      "prompt": "What specific attack does NOT renewing the session token on logout enable?",
+      "tags": ["logout-renewal", "second-window-attack"]
+    },
+    {
+      "id": "tp-f07-03",
+      "prompt": "When exactly in the login handler should I call RenewToken — before or after setting the authenticatedUserID session value?",
+      "tags": ["ordering", "renewtoken-timing"]
+    },
+    {
+      "id": "tp-f07-04",
+      "prompt": "Why should session LoadAndSave middleware be on the dynamic chain and not the standard chain in a Go web app?",
+      "tags": ["middleware-chains", "static-files"]
+    },
+    {
+      "id": "tp-f07-05",
+      "prompt": "Does RenewToken destroy the session data (flash messages, form state) or just generate a new session ID?",
+      "tags": ["renewtoken-behavior", "session-data"]
+    },
+    {
+      "id": "tp-f07-06",
+      "prompt": "How do I implement flash messages in Go using alexedwards/scs that survive a redirect and are automatically deleted after being read?",
+      "tags": ["flash-messages", "popstring"]
+    },
+    {
+      "id": "tp-f07-07",
+      "prompt": "How do I verify that the authenticated user still exists in the database on every request without hitting the DB in every handler?",
+      "tags": ["authenticate-middleware", "user-exists"]
+    },
+    {
+      "id": "tp-f07-08",
+      "prompt": "What session cookie settings are required for a production Go web app to prevent session hijacking?",
+      "tags": ["cookie-security", "https", "secure-flag"]
+    },
+    {
+      "id": "tp-f07-09",
+      "prompt": "I'm implementing privilege escalation (sudo mode) in a Go web app. Do I need to call RenewToken for this too?",
+      "tags": ["privilege-escalation", "renewtoken-generalization"]
+    }
+  ]
+}

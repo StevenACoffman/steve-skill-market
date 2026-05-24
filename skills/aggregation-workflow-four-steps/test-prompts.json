@@ -1,0 +1,54 @@
+{
+  "skill": "aggregation-workflow-four-steps",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "tc-01",
+      "type": "should_trigger",
+      "prompt": "I need to build a weekly active users metric for our dashboard. Users log events — one row per event — and I need to roll that up to distinct users per week. How do I set this up before I write the SQL?",
+      "expected": "trigger",
+      "rationale": "Explicit pre-SQL aggregation design request. The user has a business question (weekly active users), knows the source grain (one row per event), wants to write an aggregation, and has not yet written any code. This matches trigger signal 'Any aggregation design request before SQL is written' and A2 scenario 1 (new aggregation design)."
+    },
+    {
+      "id": "tc-02",
+      "type": "should_trigger",
+      "prompt": "We're designing a multi-tier revenue rollup: store-level daily sales → regional monthly totals → company-wide quarterly totals. What do I need to nail down at each tier before building the pipeline?",
+      "expected": "trigger",
+      "rationale": "Rollup architecture design before building the pipeline — matches A2 scenario 3 explicitly. The user is in design mode, no code exists. The prompt signals multi-tier aggregation design and maps directly to the language signal 'How do I roll this up to the company level?'"
+    },
+    {
+      "id": "tc-03",
+      "type": "should_trigger",
+      "prompt": "The numbers from our category rollup don't add up — category totals are higher than our overall company revenue. We haven't changed the query in months. How do I figure out what went wrong?",
+      "expected": "trigger",
+      "rationale": "Matches the explicit language signal 'The numbers from the rollup don't add up' and A2 scenario 6 (diagnostic use). The skill BOUNDARY section explicitly states this is valid retroactive use: 'If applied retroactively, work through each step and identify which step was not answered.' The user needs to diagnose which step was skipped — this is Step 2 disjointness failure (category fan-out), diagnosed by working through the workflow."
+    },
+    {
+      "id": "tc-04",
+      "type": "should_not_trigger",
+      "prompt": "We built an average order value metric last quarter — SUM(order_value) / COUNT(orders) per store, then rolled up to company level by averaging the store averages. The metric is going live next Monday. Is it structurally safe to ship?",
+      "expected": "no_trigger",
+      "rationale": "DECOY for six-aggregation-properties. The aggregation is already designed and built. The user is explicitly asking whether it is safe to ship — this is the post-design validation moment. The correct skill is six-aggregation-properties (which will catch the Decomposability/Additivity violation — AVG of AVGs). This prompt must NOT trigger aggregation-workflow-four-steps.",
+      "correct_skill": "six-aggregation-properties"
+    },
+    {
+      "id": "tc-05",
+      "type": "should_not_trigger",
+      "prompt": "We have a table called orders_raw. Some rows have order_type='header' and others have order_type='line_item'. What should the grain of this table be?",
+      "expected": "no_trigger",
+      "rationale": "DECOY for grain-decision-four-questions. The user has a mixed-grain table and no aggregation exists. This is a grain design question, not an aggregation design question. The BOUNDARY section explicitly states: 'When grain is genuinely undefined... stop and apply grain-decision-four-questions before returning here.' This prompt must NOT trigger aggregation-workflow-four-steps.",
+      "correct_skill": "grain-decision-four-questions"
+    },
+    {
+      "id": "tc-06",
+      "type": "edge_case",
+      "prompt": "I want to compute conversion rate by product category for an A/B test — users who viewed a product and then purchased. Users can view multiple products in multiple categories. What aggregation function do I use?",
+      "expected": "trigger",
+      "rationale": "EDGE CASE: The user's surface question is 'what aggregation function?' (Step 3), but to answer that correctly the full four-step workflow must be applied. The prompt has several embedded landmines: (1) users can appear in multiple categories — Step 2 disjointness check required; (2) conversion rate is a ratio — Step 3 non-additivity check required; (3) the A/B test implies a time and cohort bound — Step 4 required. A correct response cannot answer 'what function?' without first settling grain and disjointness. This is ambiguously trigger vs. syntax-only — but the embedded structural complexity (overlapping groups, non-additive measure) means the full workflow applies. Expected: trigger. Risk of false no-trigger if Claude reads it as a pure 'what function to use' syntax question."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. All should_not_triggers must pass (decoy tolerance is 0). tc-04 targets the design/validate boundary — a built metric going to production must route to six-aggregation-properties. tc-05 targets the grain-not-yet-settled boundary — must route to grain-decision-four-questions. tc-06 is a stress case: a surface-level 'what function?' question that embeds overlapping groups and a ratio metric, meaning the workflow is required to answer correctly."
+}

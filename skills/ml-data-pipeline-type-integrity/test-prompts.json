@@ -1,0 +1,59 @@
+{
+  "skill_id": "ml-data-pipeline-type-integrity",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "What specific data integrity advantage does Go's static type system provide for ML data pipelines compared to Python/pandas?",
+      "expected_concepts": ["pandas silently coerces integers to float when value missing", "Go strconv.Atoi returns explicit error on bad input", "silent wrong answer vs. loud failure at parse time"]
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "My ML model's predictions silently changed after a data source changed its schema. How do I prevent this class of failure?",
+      "expected_concepts": ["type enforcement at parse time", "standardized ingress detects schema changes explicitly", "data versioning links model artifacts to exact input version"]
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "What three non-negotiable properties must a production ML data pipeline have, and what does each one prevent?",
+      "expected_concepts": ["type enforcement: prevents silent coercion", "standardized ingress/egress: prevents inconsistent edge case handling", "data versioning: enables audit, reproduction, compliance"]
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "A compliance audit requires the exact training data used by a model deployed six months ago. How should we have structured our pipeline to make this possible?",
+      "expected_concepts": ["immutable versioned dataset snapshots", "model artifact metadata includes dataset version", "DVC/MLflow/object storage versioning tied to code commits"]
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I normalize feature values for a machine learning model in Go?",
+      "expected_concepts": ["feature scaling/normalization", "not about pipeline integrity or type enforcement"]
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "What's the best way to handle imbalanced classes in a classification problem?",
+      "expected_concepts": ["oversampling, SMOTE, class weights", "not related to type enforcement or data pipeline integrity"]
+    },
+    {
+      "id": "tp07",
+      "type": "blurred_boundary",
+      "prompt": "Should I validate types in my feature engineering step or at the data ingestion boundary?",
+      "expected_concepts": ["ingestion boundary — earliest possible point", "feature engineering should receive already-validated typed data", "catching at ingestion produces clearer error attribution"]
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "We're using pandas in Python. Can we still enforce parse-time type integrity even without Go's static typing?",
+      "expected_concepts": ["yes — explicit pd.to_numeric(errors='raise') instead of 'coerce'", "pandas.read_csv dtype parameter", "the principle is language-agnostic — Go makes it structural, Python requires discipline"]
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "Is Git sufficient for data versioning, or do we need a dedicated tool?",
+      "expected_concepts": ["Git is insufficient for large binary data", "Git LFS, DVC, MLflow artifacts, or object storage with versioned keys", "principle is immutability and provenance — implementation varies"]
+    }
+  ]
+}

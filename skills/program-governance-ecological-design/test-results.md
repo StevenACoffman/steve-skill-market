@@ -1,0 +1,49 @@
+# Test Results: Program Governance as Ecological Design
+
+**Date:** 2026-05-05
+**Status:** PASS
+
+## Invocation Boundary Analysis
+
+The description targets two overlapping trigger conditions: (1) diagnosing why a program produces strong project reporting but weak benefits realization, and (2) designing governance for a new program where interaction-layer ownership is needed. The "strong components / weak outcomes" signature is specific and recognizable — it is the same diagnostic signal used in emergence-conditions-audit, and the two skills share conceptual territory. The distinction is that emergence-conditions-audit focuses on whether the four emergence conditions are present, while program-governance-ecological-design focuses on the governance architecture question: does a designated function own the interaction layer with the right authority and pathways?
+
+In practice, the overlap between these two skills is significant. Both can be invoked on the same scenario (tp-08 in emergence-conditions-audit, tp-01/tp-02 here both fit either skill). The A2 triggers for this skill lean toward governance design and redesign questions, while emergence-conditions-audit's A2 leans toward the audit-and-diagnosis framing. This distinction is functional but would benefit from being made explicit in the description or Related Skills section.
+
+The skill correctly excludes: individual PM performance issues, single-project governance design, and stakeholder accountability problems. The B section correctly notes that "ecological framing can be misread as permission for unstructured programs" and explicitly guards against this.
+
+## Prompt-by-Prompt Results
+
+### Should_invoke
+
+| ID    | Prompt summary                                                                                                                                                                   | Result | Notes                                                                                                                                                                                             |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp-01 | Large transformation, 6 workstreams, 18 months in, all green/amber, benefits nowhere close to materializing; steering committee wants tighter milestone tracking                 | PASS   | Canonical trigger; tighter oversight of components is the oversight model applied more rigorously to the wrong layer; interaction layer audit is the diagnostic; Step 2-3 directly apply          |
+| tp-02 | Setting up governance for 5-department enterprise platform program; PMO template is steering committee + weekly status reports                                                   | PASS   | Governance design question with clear gap; three design questions (who owns interaction layer? weak signals reaching decision-makers? do workstreams have slack?) apply before the program starts |
+| tp-03 | Integration issues always surface as crises; workstream leads say on track; dependencies flagged in workstream meetings but never reach steering committee until forced decision | PASS   | Weak signal pathway failure; signals reaching wrong level (workstream) not reaching authority level (steering committee); Step 6 (build weak signal pathways) directly addresses this             |
+| tp-04 | Governance review: artifacts look well-organized, but important conversations happen in hallways and Slack, not governance forums; program behind on benefits                    | PASS   | Measurement theater pattern (c15); formal governance is performing the oversight function while the real program happens elsewhere; interaction layer audit and pathway creation is the response  |
+
+### Should_not_invoke (Decoys)
+
+| ID    | Prompt summary                                                                                                | Result | Notes                                                                                                                                                                      |
+| ----- | ------------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tp-05 | PM consistently late with status reports, milestone tracking unreliable                                       | PASS   | Individual PM performance issue; component-level accountability, not governance architecture; description requires governance architecture diagnosis                       |
+| tp-06 | Governance model for single large infrastructure project: RACI, steering committee structure, escalation path | PASS   | Single-project governance design; B section explicitly requires multi-project programs with interaction-dependent outcomes                                                 |
+| tp-07 | Benefits realization framework exists on paper but business units aren't tracking or reporting benefits       | PASS   | Stakeholder engagement and accountability problem; question is about getting people to perform assigned roles, not about diagnosing or redesigning governance architecture |
+
+### Blurred_boundary
+
+| ID    | Prompt summary                                                                                                                                                                                                           | Result | Notes                                                                                                                                                                                                                                                                                            |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| tp-08 | PMO director for regulatory compliance program with strong EVM; CISO says compliance artifacts exist but risk exposure unchanged                                                                                         | PASS   | EVM measurement theater pattern (c15) applied to compliance; interaction layer between compliance activities and operational behavior change is unowned; governance-ecological-design addresses the architecture question; organizational change management is an adjacent but separate question |
+| tp-09 | 9 months into digital transformation; 3 workstreams have significant scope changes from emerging requirements; governance keeps flagging as variance from baseline                                                       | PASS   | Slack for recombination and disequilibrium reframe; governance is treating emergent learning as variance to correct rather than information to integrate; B section's caution (not every deviation is productive) is relevant here                                                               |
+| tp-10 | Setting up governance for AI implementation program: 5 workstreams (data infrastructure, model development, change management, policy/compliance, business process redesign); outcomes require all five to come together | PASS   | Well-posed ecological design scenario; three design questions apply directly; AI context adds specificity to integration points; jagged-frontier-work-allocation is noted as potentially relevant for a different question (what PM work to run through AI) — correctly distinguished            |
+
+## Issues Found
+
+The primary issue is the unacknowledged overlap with emergence-conditions-audit. Both skills share the "strong components / weak outcomes" trigger, both address the interaction layer, and both invoke on scenarios like tp-01 and tp-02. The two skills are genuinely distinct — ecological-design is governance architecture focused while emergence-conditions-audit is emergence-conditions focused — but an agent without both skills in context could invoke either one and get a different but both valid analysis. The Related Skills section is empty, which means an agent using one skill won't be guided to consider the other. This is the most significant gap across the skill pair.
+
+This is not a FAIL condition because each skill, invoked independently, produces useful and correct output. But the absence of cross-referencing in Related Skills means practitioners may systematically apply only one frame when both are relevant. This should be addressed in a revision by populating the Related Skills section of both skills with cross-references.
+
+## Verdict
+
+PASS — The interaction layer ownership concept and three audit questions (who owns it, can weak signals reach decision-makers, do workstreams have slack) provide a concrete and actionable diagnostic; the Healthcare.gov repair and EVM measurement theater cases anchor the framework empirically; invocation boundary correctly excludes individual performance, single-project, and stakeholder accountability questions. Cross-referencing with emergence-conditions-audit in Related Skills would strengthen the skill's usability without requiring content changes.

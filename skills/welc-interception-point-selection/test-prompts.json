@@ -1,0 +1,111 @@
+{
+  "skill_id": "welc-interception-point-selection",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "I need to change the shipping cost calculation inside Invoice.getValue(). The result flows up through BillingStatement.makeStatement(). Should I write my tests against getValue or makeStatement?",
+      "expected_concepts": [
+        "getValue is closer to the change point — fewer logical inference steps",
+        "makeStatement is a valid interception point but each extra hop makes it harder to know the test is actually catching the right thing",
+        "prefer closest accessible public method on the class being changed",
+        "makeStatement is appropriate only if getValue itself is hard to reach from tests"
+      ]
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "I have to make changes in three related classes — OrderProcessor, TaxCalculator, and ShippingEstimator — and none of them have tests. Do I really need to break dependencies on all three separately before I can test?",
+      "expected_concepts": [
+        "draw an effect sketch from all three change points",
+        "look for a pinch point — a single place where all three effect chains converge",
+        "if a pinch point exists, one test suite covers all three changes",
+        "only need to break dependencies to reach the pinch point, not each class individually"
+      ]
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "I changed a private helper method deep inside a reporting class. I have a test that calls the top-level generateReport() method and it still passes. Can I trust that the test is actually covering my change?",
+      "expected_concepts": [
+        "each step between change point and interception point is a logical inference",
+        "more steps means more ways the test can pass for the wrong reason",
+        "verify sensitivity: make a small deliberate break at the change point and confirm the test fails",
+        "closer interception point (nearer the private method, via a public method that calls it) would be more reliable"
+      ]
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "I'm tracing effects from a change point in UserProfile.updatePreferences() and I can see it affects NotificationService.send(), AuditLog.record(), and RecommendationEngine.recompute(). Is there a systematic way to decide how many test locations I need?",
+      "expected_concepts": [
+        "draw the effect sketch from the change point across all three downstream methods",
+        "look for a node reachable from all three — that is the pinch point",
+        "if all three share a common caller or pass through a shared method, test there",
+        "if no convergence exists, test at each of the three methods as close to the change as possible"
+      ]
+    },
+    {
+      "id": "tp05",
+      "type": "should_not_invoke",
+      "prompt": "How do I write a characterization test for a method that reads from a database?",
+      "expected_concepts": [
+        "this is about characterization test technique and dependency breaking, not interception point selection",
+        "welc-characterization-test or welc-seam-model are more relevant"
+      ]
+    },
+    {
+      "id": "tp06",
+      "type": "should_not_invoke",
+      "prompt": "I need to add new audit logging to a legacy class but I can't test it. Should I use Sprout Method or Wrap Method?",
+      "expected_concepts": [
+        "this is a sprout vs wrap decision for adding new behavior to untested code",
+        "welc-sprout-wrap-decision is the relevant skill",
+        "interception point selection is not the question here — the question is how to add behavior safely"
+      ]
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "My class has a tight coupling to a third-party HTTP client and I can't instantiate it in a test harness. How do I break this dependency?",
+      "expected_concepts": [
+        "this is a separation problem — the class cannot be instantiated",
+        "welc-seam-model and welc-sensing-vs-separation are relevant",
+        "interception point selection presupposes the class can already be reached from test code"
+      ]
+    },
+    {
+      "id": "tp08",
+      "type": "blurred_boundary",
+      "prompt": "I found what I think is a pinch point at BillingStatement.makeStatement that covers all my change points. But makeStatement has complex dependencies of its own. Should I still use it as my interception point?",
+      "expected_concepts": [
+        "a pinch point is only useful if it is accessible — complex dependencies may mean significant dependency-breaking work just to reach it",
+        "evaluate whether breaking dependencies at the pinch point is less effort than testing each change point individually",
+        "if pinch point is too costly, fall back to testing each change point at its nearest accessible interception point",
+        "seam work (welc-seam-model) may be needed before the pinch point can be used"
+      ]
+    },
+    {
+      "id": "tp09",
+      "type": "blurred_boundary",
+      "prompt": "My effect sketch shows that a change in one method affects twenty different downstream methods. I can't find a single pinch point. What do I do?",
+      "expected_concepts": [
+        "when the effect sketch fans out widely with no convergence, the change set is probably too large",
+        "narrow scope: find pinch points for subsets of one or two changes at a time",
+        "if still no pinch point, test individual changes as close to each change point as possible",
+        "a wide tangled effect sketch is also a design signal — the code likely has poor encapsulation"
+      ]
+    },
+    {
+      "id": "tp10",
+      "type": "blurred_boundary",
+      "prompt": "I want to use integration tests against our REST API to cover a set of changes I'm making in the domain layer. Is that a valid interception point strategy?",
+      "expected_concepts": [
+        "the REST endpoint is a valid interception point — all effects will eventually reach the API response",
+        "but it is a very distant interception point: each logical step between domain change and HTTP response is an inference that can fail silently",
+        "test failures at this distance are hard to diagnose and the test may pass for unrelated reasons",
+        "better approach: use the API test as a coarse pinch point to start, then add closer tests at the class collaboration boundary once dependencies are broken"
+      ]
+    }
+  ]
+}

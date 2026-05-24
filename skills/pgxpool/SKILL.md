@@ -11,20 +11,21 @@ This repo uses [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v5/pgxpool) for
 ## Entry Point
 
 ```go
-import "github.com/Khan/districts-jobs/pkg/sqldb"
-
-pool, cleanup, err := sqldb.ConfigureConnectionPool(
-    ctx,
-    logger,
-    dbInfo,
-    useProdDialer,      // true in production (AlloyDB), false for local/tests
-    configCustomizer,   // func(*pgxpool.Config) or nil
-)
-if err != nil {
-    return err
+func setup(ctx context.Context, logger *slog.Logger, dbInfo *sqldb.DBInfo, useProdDialer bool, configCustomizer func(*pgxpool.Config)) (*pgxpool.Pool, error) {
+	pool, cleanup, err := sqldb.ConfigureConnectionPool(
+		ctx,
+		logger,
+		dbInfo,
+		useProdDialer,    // true in production (AlloyDB), false for local/tests
+		configCustomizer, // func(*pgxpool.Config) or nil
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer cleanup()
+	defer pool.Close()
+	return pool, nil
 }
-defer cleanup()
-defer pool.Close()
 ```
 
 `ConfigureConnectionPool` pings the database before returning, so a successful return guarantees the pool is ready.
@@ -101,13 +102,10 @@ type DBTX interface {
 Pass the pool to any generated query package:
 
 ```go
-import (
-    "github.com/Khan/districts-jobs/pkg/generated/districtsql"
-    "github.com/Khan/districts-jobs/pkg/sqldb"
-)
-
-q := districtsql.New(pool)
-result, err := q.GetDistrict(ctx, sqldb.ToUUID(districtID))
+func queryDistrict(ctx context.Context, pool *pgxpool.Pool, districtID string) (*districtsql.District, error) {
+	q := districtsql.New(pool)
+	return q.GetDistrict(ctx, sqldb.ToUUID(districtID))
+}
 ```
 
 ## Transactions
@@ -135,22 +133,24 @@ Do not use `database/sql`-style transactions (`*sql.Tx`). `pgx.Tx` carries the t
 `pkg/sqldb/params.go` converts Go values to the PostgreSQL types that generated queries expect. Use these instead of constructing `pgtype.*` values directly:
 
 ```go
-import "github.com/Khan/districts-jobs/pkg/sqldb"
+func buildParams(req *Request) Params {
+	// String → uuid.NullUUID
+	id := sqldb.ToUUID(req.DistrictID)
 
-// String → uuid.NullUUID
-id := sqldb.ToUUID(req.DistrictID)
+	// String → pgtype.Text (always valid)
+	name := sqldb.ToText(req.Name)
 
-// String → pgtype.Text (always valid)
-name := sqldb.ToText(req.Name)
+	// String → pgtype.Text (empty string becomes NULL)
+	desc := sqldb.ToNullableText(req.Description)
 
-// String → pgtype.Text (empty string becomes NULL)
-desc := sqldb.ToNullableText(req.Description)
+	// bool → pgtype.Bool
+	active := sqldb.ToBool(req.Active)
 
-// bool → pgtype.Bool
-active := sqldb.ToBool(req.Active)
+	// []string → []uuid.NullUUID
+	ids := sqldb.ToUUIDs(req.DistrictIDs)
 
-// []string → []uuid.NullUUID
-ids := sqldb.ToUUIDs(req.DistrictIDs)
+	return Params{id, name, desc, active, ids}
+}
 ```
 
 ## Observability
@@ -194,31 +194,27 @@ The span name becomes `"query -- name: GetDistrict :one\nSELECT id, name FROM di
 To use the sqlc query name (`GetDistrict`) as the span name, override the tracer in `configCustomizer`:
 
 ```go
-import (
-    "regexp"
-    "strings"
-    "github.com/exaring/otelpgx"
-)
-
 var sqlcNameRe = regexp.MustCompile(`^(?:--|/\*)\s*name:\s*(\w+)`)
 
-pool, cleanup, err := sqldb.ConfigureConnectionPool(
-    ctx, logger, dbInfo, useProdDialer,
-    func(cfg *pgxpool.Config) {
-        cfg.ConnConfig.Tracer = otelpgx.NewTracer(
-            otelpgx.WithSpanNameCtxFunc(func(_ context.Context, stmt string) string {
-                if m := sqlcNameRe.FindStringSubmatch(stmt); len(m) > 1 {
-                    return m[1]
-                }
-                if fields := strings.Fields(stmt); len(fields) > 0 {
-                    return fields[0]
-                }
-                return "query"
-            }),
-            otelpgx.WithDisableSQLStatementInAttributes(), // omit raw SQL from span attributes in prod
-        )
-    },
-)
+func setupWithNamedSpans(ctx context.Context, logger *slog.Logger, dbInfo *sqldb.DBInfo, useProdDialer bool) (*pgxpool.Pool, func(), error) {
+	return sqldb.ConfigureConnectionPool(
+		ctx, logger, dbInfo, useProdDialer,
+		func(cfg *pgxpool.Config) {
+			cfg.ConnConfig.Tracer = otelpgx.NewTracer(
+				otelpgx.WithSpanNameCtxFunc(func(_ context.Context, stmt string) string {
+					if m := sqlcNameRe.FindStringSubmatch(stmt); len(m) > 1 {
+						return m[1]
+					}
+					if fields := strings.Fields(stmt); len(fields) > 0 {
+						return fields[0]
+					}
+					return "query"
+				}),
+				otelpgx.WithDisableSQLStatementInAttributes(), // omit raw SQL from span attributes in prod
+			)
+		},
+	)
+}
 ```
 
 This produces span names like `GetDistrict`, `ListTeachers`, `UpsertCurrentYear`.
@@ -226,17 +222,18 @@ This produces span names like `GetDistrict`, `ListTeachers`, `UpsertCurrentYear`
 ### Other Useful Options
 
 ```go
-// Include connection host/port in span attributes (on by default, disable to reduce cardinality)
-otelpgx.WithDisableConnectionDetailsInAttributes()
-
-// Include the SQL statement text as a span attribute (on by default)
-otelpgx.WithDisableSQLStatementInAttributes()
-
-// Include bound parameter values (off by default — avoid in prod: exposes PII)
-otelpgx.WithIncludeQueryParameters()
-
-// Use only the first SQL keyword as span name (SELECT, INSERT, etc.)
-otelpgx.WithTrimSQLInSpanName()
+func tracerOptions() []otelpgx.Option {
+	return []otelpgx.Option{
+		// Include connection host/port in span attributes (on by default, disable to reduce cardinality)
+		otelpgx.WithDisableConnectionDetailsInAttributes(),
+		// Include the SQL statement text as a span attribute (on by default)
+		otelpgx.WithDisableSQLStatementInAttributes(),
+		// Include bound parameter values (off by default — avoid in prod: exposes PII)
+		otelpgx.WithIncludeQueryParameters(),
+		// Use only the first SQL keyword as span name (SELECT, INSERT, etc.)
+		otelpgx.WithTrimSQLInSpanName(),
+	}
+}
 ```
 
 ### Pool-Level Metrics
@@ -244,6 +241,9 @@ otelpgx.WithTrimSQLInSpanName()
 To get connection pool stats (useful in health checks or dashboards):
 
 ```go
-stats := pool.Stat()
-// stats.TotalConns(), stats.IdleConns(), stats.AcquiredConns()
+func logPoolStats(pool *pgxpool.Pool) {
+	stats := pool.Stat()
+	// stats.TotalConns(), stats.IdleConns(), stats.AcquiredConns()
+	_ = stats
+}
 ```

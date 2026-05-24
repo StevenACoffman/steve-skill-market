@@ -23,6 +23,14 @@ Install mdformat with all plugins into a shared `uv` tool environment:
 uv tool install --with mdformat-gfm --with mdformat-shfmt --with mdformat-toc --with mdformat-config --with mdformat-gofmt --with mdformat-front-matters mdformat
 ```
 
+Before formatting or checking files, always reinstall to pull the latest plugin dependencies:
+
+```bash
+uv tool upgrade --reinstall mdformat
+```
+
+`uv tool upgrade mdformat` alone reports "Nothing to upgrade" when mdformat itself is current, but plugin dependencies (e.g. `ruamel-yaml`, `markdown-it-py`, `taplo`) can update independently and change formatter output. `--reinstall` forces a full dependency refresh. If you format files without reinstalling first and then a colleague installs fresh, the same files will fail `--check`.
+
 All plugins must be installed into the **same** `uv tool install` invocation. Installing them separately creates isolated environments that do not share the mdformat entry point, so plugins installed separately will not be loaded.
 
 After installation, `mdformat` is available directly on `PATH` (via `~/.local/bin`). `uvx mdformat` also works and ensures the uv-managed environment is used regardless of `PATH` ordering.

@@ -1,0 +1,87 @@
+{
+  "skill": "fcis-shell-exploration-cadence",
+  "version": "0.1.0",
+  "source_book": "Functional Core, Imperative Shell — Gary Bernhardt",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I'm integrating Stripe's payment API for the first time. Should I write tests before I write the integration code?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. Apply the exploration phase principle: when you don't know the library API yet, write the integration directly in the shell/main layer without tests first. Discover what Stripe returns, what the data shapes are, what errors look like. Once you understand what the code needs to do, extract the pure business logic (price calculation, order state, validation) via TDD into functional core classes. Delete the exploratory shell code. The Stripe API calls stay in the shell.",
+      "notes": "Classic new-library integration — primary trigger for this skill."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "My main.go file has grown to 400 lines and it's getting messy. When should I refactor it and how?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. This is the extraction signal: the shell has bloated with exploratory code. The cadence requires identifying stable units of behavior within the bloat — code that takes data in and returns data out with no I/O needed — and TDD-extracting each into its own functional class. For each unit: create a new file, write tests first using the shell code as a reference, TDD the new class, replace the shell code with a call to the new class, delete the original. The shell shrinks; the tested core grows.",
+      "notes": "Bloated main/shell file — the extraction signal scenario."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "I'm building a new feature and I'm not sure what the design should look like yet. I keep rewriting my tests as the design evolves. How do I stop this cycle?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. The problem is premature test commitment: you're paying the TDD cost before the design has stabilized. The fix: stop writing tests during the exploration phase. Write rough code in the shell/outermost layer to discover the design. Once you can describe what the extracted unit does in one sentence — what data it takes, what it returns — that's the signal to TDD-extract. The tests are written at the moment of extraction, when the design is known. Rewriting stops because you only commit to tests on stable behavior.",
+      "notes": "Test-rewriting cycle — caused by premature test commitment, resolved by exploration-then-extraction."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "I have a prototype that works — messy code in a single file that does everything. Now I need to make it production-ready and tested. How should I approach this?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. The prototype is the exploration phase artifact — it already exists. Now apply the extraction cadence: scan the prototype for stable units of behavior that don't require I/O. For each: create a new tested file, TDD the class using the prototype as a reference (don't copy-paste — let TDD apply design pressure for a cleaner interface), then replace the prototype code with a call to the new class. Delete incrementally. The prototype shrinks as the tested core grows. The remaining prototype code becomes the shell.",
+      "notes": "Prototype to production — extraction cadence applies directly."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "How do I do TDD when I'm working on something I've never built before and I don't know what the right abstraction is yet?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. Standard TDD assumes you know what you're building. When you don't, Bernhardt's answer is: don't do TDD in the exploration phase. Write rough code in the shell without tests to discover what you're building. Once the design stabilizes — you can name the abstraction, describe its inputs and outputs — then TDD it into existence as a functional core class. The test-first discipline applies at the extraction step, not the exploration step. This is not an excuse to skip tests indefinitely: the extraction must happen.",
+      "notes": "TDD with design uncertainty — the core use case for this skill."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "I'm adding a new validation rule to our existing user registration flow. The flow is well-tested and the design is clear. Should I write the test first?",
+      "expected_behavior": "Do not invoke fcis-shell-exploration-cadence. The design is known, the code is well-tested, and the context is a bug-fix/extension on existing code — not exploratory work. Standard TDD applies: write the test for the new validation rule first, then implement it. The exploration phase is for genuine design uncertainty; it is not a blanket alternative to TDD.",
+      "notes": "Known design, existing tested code — standard TDD, not exploration cadence."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "I found a bug where our order total is calculated incorrectly when discount codes are applied. How do I fix it?",
+      "expected_behavior": "Do not invoke fcis-shell-exploration-cadence. This is a bug fix in existing tested code. The correct approach is standard TDD: write a failing test that reproduces the bug, then fix the implementation to make it pass. The exploration cadence is for new, uncertain designs — not for fixing known problems in existing code.",
+      "notes": "Bug fix — standard TDD, not exploration cadence."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "What is the difference between unit tests, integration tests, and end-to-end tests?",
+      "expected_behavior": "Do not invoke fcis-shell-exploration-cadence. This is a conceptual question about test taxonomy, not a question about development workflow or when to write tests. The exploration cadence is a prescriptive workflow for new code under design uncertainty — it doesn't apply to explaining testing terminology.",
+      "notes": "Testing concepts question — not a workflow design problem."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I've had exploratory code in my main file for six months. I keep saying I'll refactor it but I never do. Is it okay to leave it there?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence and flag the failure pattern. Bernhardt explicitly warns: the shell is a *temporary* home. Exploration code that never gets extracted permanently degrades the architecture. Six months without extraction means the design has almost certainly stabilized — 'still exploring' cannot be an indefinite justification. The cadence requires the extraction step. Practical recommendation: identify one stable behavior unit in the current code, TDD-extract it this week, and establish the extraction habit before the debt compounds further.",
+      "notes": "Indefinite exploration — ce04 failure pattern from the book."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "My team uses TDD religiously and requires tests for every commit. Can I still use the exploration-first approach?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence with team-context caveat. Bernhardt's cadence was designed for a solo developer controlling his own shell. In a team context, the 'exploration code in the shell without tests' phase requires explicit agreement: the shell/main layer is designated as a no-coverage zone, and extraction is a required follow-up step before the feature is considered done. Teams need an explicit extraction trigger (e.g., a line-count threshold, a PR review checkpoint) rather than relying on the developer's subjective 'fear' signal. The pattern can work in teams but requires more structure.",
+      "notes": "Team TDD context — the solo-developer blind spot from the book."
+    },
+    {
+      "id": "edge-03",
+      "type": "edge_case",
+      "prompt": "I'm exploring a new library but I also want to understand it with tests — like learning-test style. Is that compatible with this approach?",
+      "expected_behavior": "Invoke fcis-shell-exploration-cadence. Learning tests (writing tests to understand a library API) are a legitimate technique but they test the library's behavior, not your application code. They can coexist with the exploration cadence: write learning tests to understand what the library does, write exploratory shell code to understand how your application uses the library, then TDD-extract the application logic that builds on what you've learned. The distinction: learning tests are about the external library; the extraction cadence is about your application logic. Don't conflate the two.",
+      "notes": "Learning tests vs. exploration cadence — compatible but distinct."
+    }
+  ],
+  "minimum_pass_rate": 0.85,
+  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
+}

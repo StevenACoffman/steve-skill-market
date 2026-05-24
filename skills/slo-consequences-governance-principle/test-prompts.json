@@ -1,0 +1,62 @@
+{
+  "skill": "slo-consequences-governance-principle",
+  "description": "Use this skill when diagnosing why an SLO is not improving reliability behavior, when establishing whether an organization has real SRE practice or just SRE vocabulary, or when designing the organizational commitment structure required to make SLOs function as a governance instrument rather than a reporting metric.",
+  "test_prompts": [
+    {
+      "id": "slo-consequences-governance-principle-should-01",
+      "category": "should_invoke",
+      "prompt": "We've had SLOs in place for over a year. The dashboards look fine most of the time but we keep having outages at the same rate we did before. Leadership is asking why the SLO program isn't making us more reliable. I honestly don't have a good answer.",
+      "expected": "invoke",
+      "rationale": "Classic 'SLOs but no behavior change' trigger: SLOs exist, outage frequency unchanged after a year. The skill's Scenario 1 directly addresses this — the diagnosis is a missing or unenforced error budget policy, not a problem with the SLO number itself."
+    },
+    {
+      "id": "slo-consequences-governance-principle-should-02",
+      "category": "should_invoke",
+      "prompt": "Last month our error budget ran out. The SRE team recommended a feature freeze per our policy, but the VP of Product overrode it because we had a major customer launch. Now the policy is basically a joke — engineers openly say 'we'll freeze releases unless there's a business reason not to.' How did we get here and what do we fix?",
+      "expected": "invoke",
+      "rationale": "This is the post-hoc negotiation failure mode with the first-exception-sets-precedent pattern. The skill explicitly diagnoses this: conditional leadership endorsement ('I support the freeze unless there's a major business reason') is not endorsement. The fix is the organizational commitment structure, not the SLO number."
+    },
+    {
+      "id": "slo-consequences-governance-principle-should-03",
+      "category": "should_invoke",
+      "prompt": "We're a startup, no dedicated SRE team, just five backend engineers doing everything. We've started measuring our API availability and it's around 99.6%. Someone suggested we formalize this as an SLO. We're nervous about committing to consequences before we understand our system well enough. Should we just track it for now and figure out the policy later?",
+      "expected": "invoke",
+      "rationale": "Matches the 'just track it for now' anti-pattern the skill explicitly names. The skill applies here — the team doesn't need dedicated SREs to implement the principle. Deferred consequences mean deferred behavior change. The skill addresses this exact hesitation and prescribes writing a minimal policy before going live with the measurement."
+    },
+    {
+      "id": "slo-consequences-governance-principle-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "Our error budget is at 12% remaining for the month and we have a major deployment scheduled Friday. Our policy says we freeze releases when budget is exhausted but we're not there yet. How do we decide whether to proceed with the deployment?",
+      "expected": "skip",
+      "rationale": "The error budget policy is ratified and the question is about applying it to an active situation, not about whether the policy has organizational teeth. This is the error-budget-policy-framework skill — the governance structure is already in place, the team needs guidance on executing the policy's decision criteria, not on establishing consequences."
+    },
+    {
+      "id": "slo-consequences-governance-principle-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our 99.9% availability SLO has been ratified and the error budget policy is signed by all three parties. But we keep getting paged for latency issues that don't affect availability. Users are complaining but our SLO is green. Should we tighten the SLO?",
+      "expected": "skip",
+      "rationale": "The SLO governance structure exists and is functioning. The question is whether the SLO is measuring the right thing (availability without latency). The slo-decision-matrix applies here — the Met/Low/Low cell diagnosis points to a wrong SLI. This is a calibration question, not a governance/consequences question."
+    },
+    {
+      "id": "slo-consequences-governance-principle-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "Product management wants a 99.99% SLO for our checkout service. The SRE team says we can't hit that without adding significant on-call toil. Development says they'd never be able to release if we freeze for budget exhaustion at that target. We're at an impasse. How do we get everyone to agree?",
+      "expected": "skip",
+      "rationale": "This is a tripartite SLO negotiation with each party exercising their appropriate veto. The slo-stakeholder-negotiation-gate skill applies — the mechanism for iterating on the SLO target until all parties can sign is the negotiation gate. The consequences principle is the motivation for why this matters; the gate is the how."
+    },
+    {
+      "id": "slo-consequences-governance-principle-boundary-01",
+      "category": "boundary",
+      "prompt": "Our CTO verbally endorsed our error budget policy in an all-hands, but we never got anything in writing. Six months later, when we tried to invoke the policy and freeze a release, the product team said the CTO hadn't formally committed to anything. Was the verbal endorsement sufficient, and how do we fix this going forward?",
+      "expected": "invoke",
+      "rationale": "Resolved as invoke because this is a governance structure failure — conditional or informal endorsement is the specific failure pattern this skill names. The diagnosis is that leadership commitment was not formalized into organizational authority. The fix is to re-establish the policy with explicit documented endorsement before the next enforcement attempt."
+    },
+    {
+      "id": "slo-consequences-governance-principle-boundary-02",
+      "category": "boundary",
+      "prompt": "We want to start implementing SRE practices but we don't have any SLOs yet. Where do we begin — do we start by defining SLIs and SLOs, or do we start with the error budget policy?",
+      "expected": "skip",
+      "rationale": "Resolved as skip because the team has no SLOs yet — the boundary section explicitly excludes this case. The correct starting path is SLI specification and SLO document structure first, then use the negotiation gate, then apply this principle to ensure consequences are built in from the start. Invoking the consequences principle without any SLO to anchor it produces abstract advice with no actionable target."
+    }
+  ]
+}

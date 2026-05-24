@@ -1,0 +1,101 @@
+{
+  "skill": "robustness-resilience-antifragility",
+  "prompts": [
+    {
+      "id": "rra-invoke-01",
+      "type": "should_invoke",
+      "prompt": "Our team wants to start using Chaos Engineering. We have two servers in active-passive failover but recovery is manual — an on-call engineer has to restart services. Are we ready?",
+      "reason": "Prerequisite rule — manual recovery means not yet Resilient; chaos injection would cause incidents, not learning"
+    },
+    {
+      "id": "rra-invoke-02",
+      "type": "should_invoke",
+      "prompt": "We're debating whether to run two identical servers in active-passive mode versus automating our deployment so we can respawn a failed server in under 5 minutes. Which is better for our 99.9% uptime SLA?",
+      "reason": "Robust (warm standby) vs. Resilient (automated respawn) cost/availability trade-off — needs U-curve and MTTR budget calculation"
+    },
+    {
+      "id": "rra-invoke-03",
+      "type": "should_invoke",
+      "prompt": "Our postmortem showed we had an outage because our team hadn't practiced the recovery procedure in 18 months and made mistakes under pressure. How do we fix this?",
+      "reason": "Trebuchet problem — rare failures produce unpolished repair skills; classic Robust-stage limitation; move toward Resilient"
+    },
+    {
+      "id": "rra-invoke-04",
+      "type": "should_invoke",
+      "prompt": "What is antifragility in the context of software systems and how is it different from resilience?",
+      "reason": "Direct conceptual question about the three-stage model"
+    },
+    {
+      "id": "rra-invoke-05",
+      "type": "should_invoke",
+      "prompt": "We have excellent automated recovery, orchestration, and observability. We recover from failures in seconds without human intervention. What's the next step in improving our reliability posture?",
+      "reason": "Already Resilient — next stage is Antifragile; needs outer feedback loop and chaos injection design"
+    },
+    {
+      "id": "rra-invoke-06",
+      "type": "should_invoke",
+      "prompt": "Our SRE team is arguing about whether MTBF or MTTR is the more important reliability metric. How do I frame this decision?",
+      "reason": "MTBF vs. MTTR debate — maps directly to Robust vs. Resilient posture and the availability formula"
+    },
+    {
+      "id": "rra-invoke-07",
+      "type": "should_invoke",
+      "prompt": "Google Chubby deliberately forced outages even though their service had 99.99958% availability. Why would anyone do this?",
+      "reason": "Direct question about the canonical antifragility case — outer feedback loop rationale"
+    },
+    {
+      "id": "rra-invoke-08",
+      "type": "should_invoke",
+      "prompt": "We want to characterize where our system sits: are we robust, resilient, or antifragile? What questions should we ask?",
+      "reason": "Stage classification request — direct application of the three-stage diagnostic"
+    },
+    {
+      "id": "rra-no-invoke-01",
+      "type": "should_not_invoke",
+      "prompt": "How do I configure AWS Auto Scaling to replace unhealthy EC2 instances?",
+      "reason": "Operational configuration task — implementing a resilience mechanism, but the question is procedural not conceptual"
+    },
+    {
+      "id": "rra-no-invoke-02",
+      "type": "should_not_invoke",
+      "prompt": "What is Nassim Taleb's definition of antifragility in his book?",
+      "reason": "Book reference question — informational, not an architectural decision situation"
+    },
+    {
+      "id": "rra-no-invoke-03",
+      "type": "should_not_invoke",
+      "prompt": "How do I set up a load balancer in front of three web servers?",
+      "reason": "Infrastructure configuration — redundancy pattern implementation, not failure philosophy decision"
+    },
+    {
+      "id": "rra-no-invoke-04",
+      "type": "should_not_invoke",
+      "prompt": "What is the SLA for AWS EC2 and how do I calculate my expected annual downtime?",
+      "reason": "Vendor SLA lookup and calculation — not a robustness/resilience/antifragility stage decision"
+    },
+    {
+      "id": "rra-no-invoke-05",
+      "type": "should_not_invoke",
+      "prompt": "Our application crashed because of a memory leak. How do I find and fix the memory leak?",
+      "reason": "Bug diagnosis and fix — not a failure philosophy or reliability posture question"
+    },
+    {
+      "id": "rra-blur-01",
+      "type": "blurred_boundary",
+      "prompt": "We run a pacemaker controller for a medical device. Should we adopt resilience thinking and automate recovery from failures?",
+      "reason": "Safety-critical system boundary — for medical/safety-critical systems, automated recovery may be unsafe or impermissible; the Robust model may be correct despite the framework's general direction toward Resilient"
+    },
+    {
+      "id": "rra-blur-02",
+      "type": "blurred_boundary",
+      "prompt": "We have automated recovery but it's only been tested in staging. We want to start running Chaos Engineering in production. Is our staging validation sufficient?",
+      "reason": "Staging vs. production resilience gap — the prerequisite rule requires the inner loop to work, but staging validation may not capture production-specific failure modes; judgment call on whether the prerequisite is met"
+    },
+    {
+      "id": "rra-blur-03",
+      "type": "blurred_boundary",
+      "prompt": "We had 12 production incidents last month. Our CTO says we should adopt chaos engineering to improve reliability. Our SRE team says we need to fix existing reliability issues first. Who is right?",
+      "reason": "Active incident load vs. chaos readiness — the prerequisite rule says fix reliability first, but also chaos injection could identify root causes; the question is whether the existing incident load means the inner loop is unproven or simply stressed"
+    }
+  ]
+}

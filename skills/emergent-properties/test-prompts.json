@@ -1,0 +1,76 @@
+{
+  "skill": "emergent-properties",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We had a major incident last week. Three things went wrong at once: a retry storm, an autoscaler that hit its hard limit, and an MCP integration that started returning stale data. No single one of these would have caused an outage. Our postmortem keeps trying to identify the root cause and we're going in circles. How should we frame this?",
+      "expected_behavior": "Invokes emergent-properties, classifies the incident as weakly emergent (multiple interacting components, no single root cause, discoverable contributing factors), recommends 'contributing factors' framing instead of root cause, and suggests resilience patterns targeting the interactions (circuit breaker, backpressure, retry limits).",
+      "notes": "Positive scenario: multi-factor incident with no single root cause — the canonical weak emergence pattern."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "Our AI system occasionally produces completely unexpected outputs — not just wrong answers, but behaviors that we never anticipated and can't trace back to anything in the training data or our configuration. How do we think about this class of failure?",
+      "expected_behavior": "Invokes emergent-properties, classifies AI alignment failures as strongly emergent (cannot close the causal chain, cannot reliably replicate), explains that the appropriate engineering response is containment (IOC, guardrails, sandboxing, human-in-the-loop) rather than root cause elimination, and distinguishes this from testable failures.",
+      "notes": "Positive scenario: AI system with unpredictable, unreplicable failures — the strong emergence pattern."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "We changed a single DNS configuration parameter and it caused a cascading outage that took down six dependent services. The change itself was tiny. How do we reason about why a small change caused such a large blast radius?",
+      "expected_behavior": "Invokes emergent-properties, identifies the non-linearity signal (small input, disproportionate output), classifies this as weakly emergent behavior arising from the serial dependency graph, explains that proportional-risk models fail for systems with emergent properties, and recommends composite SLO modeling and resilience architecture as the response.",
+      "notes": "Positive scenario: non-linear cascade from a small configuration change — direct parallel to the AWS S3 DNS incident."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We're designing a system where our service integrates with five other independently-operated services, some of which have their own integrations to more services. None of us fully understand all the interaction modes. How should we think about reliability for a system like this?",
+      "expected_behavior": "Invokes emergent-properties, applies the five diagnostic signals to identify the system as likely to have emergent properties (decentralized control, feedback loops, multi-scale order, openness), recommends designing for resilience and containment rather than trying to predict all failure modes, and suggests the IOC pattern for AI components.",
+      "notes": "Positive scenario: system-of-systems design with unknown interactions — proactive emergent property assessment."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "We fixed the root cause of an incident three hours ago but the system still hasn't recovered. Traffic is back, errors are reduced, but some downstream services are still behaving strangely. Why doesn't fixing the root cause immediately fix the system?",
+      "expected_behavior": "Invokes emergent-properties, explains the temporal propagation characteristic of weakly emergent systems (error state has propagated to other components and they don't snap back immediately), distinguishes this from resultant failures where fixing the component restores the system instantly, and recommends monitoring for propagated state recovery.",
+      "notes": "Positive scenario: post-incident slow recovery — the temporal aspect of emergent properties."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "What is chaos engineering and how does it work? Should we be doing it?",
+      "expected_behavior": "General chaos engineering question — should explain the concept and when to use it without invoking emergent-properties. Chaos engineering is a tool for surfacing weaknesses; emergent-properties is a classification framework for understanding failure types.",
+      "notes": "Decoy: tooling question about chaos engineering, not a failure classification or system behavior analysis."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "How do I write a good postmortem for a production incident?",
+      "expected_behavior": "Process and documentation question — should provide postmortem structure guidance without invoking emergent-properties. The skill affects how contributing factors vs. root causes are framed, but the trigger here is format/process, not behavioral classification.",
+      "notes": "Decoy: postmortem format question, not an incident classification or behavioral analysis question."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Our database query is slow. I profiled it and found a missing index. How do I fix it?",
+      "expected_behavior": "Single isolated cause with a clear fix — this is a resultant property (direct cause-effect, contained blast radius, identifiable fix). Standard root-cause analysis applies. Does not invoke emergent-properties.",
+      "notes": "Decoy: classic resultant failure with a single root cause — emergent-properties explicitly does not apply."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We want to unit test our way to confidence in our new LLM-powered feature. We're planning to write 500 unit tests covering edge cases. Is that enough?",
+      "expected_behavior": "Ambiguous: if the LLM behavior in question is resultant (deterministic, classifiable), unit tests may be sufficient. The skill should probe whether the behavior is strongly emergent (unit tests cannot catch what cannot be anticipated or replicated) and recommend containment architecture for strongly emergent aspects, while acknowledging that some bounded LLM behaviors (schema validation, output format) are testable.",
+      "notes": "Boundary: testing strategy for LLM features — tests whether the skill distinguishes weakly emergent (testable via interaction simulation) from strongly emergent (not testable away)."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "We had an incident and we're pretty sure it was caused by two things happening simultaneously: a code deployment and a traffic spike. Can we just fix both issues separately and call it resolved?",
+      "expected_behavior": "Ambiguous: could be weakly emergent (the interaction between deployment and traffic spike is the failure, not either alone) or resultant (if deployment introduced a bug that was simply exposed by traffic). The skill should prompt classification: were the contributing factors interacting or merely coincident? If interacting (weakly emergent), fixing both separately may not prevent recurrence because it is the interaction pattern that is the risk, not each factor alone.",
+      "notes": "Boundary: simultaneous factors — tests whether the skill can distinguish coincident resultant failures from weakly emergent interaction failures."
+    }
+  ]
+}

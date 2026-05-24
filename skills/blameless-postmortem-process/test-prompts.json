@@ -1,0 +1,62 @@
+{
+  "skill": "blameless-postmortem-process",
+  "description": "Use this skill after any significant incident to convert the event into organizational learning that prevents recurrence.",
+  "test_prompts": [
+    {
+      "id": "blameless-postmortem-process-should-01",
+      "category": "should_invoke",
+      "prompt": "We had a 90-minute database outage last week that affected all paying customers. The team did a 30-minute call right after to debrief, everyone knows what happened, and now we've moved on. My manager is asking if we need to write a postmortem and I'm not sure it's worth the time at this point.",
+      "expected": "invoke",
+      "rationale": "Classic verbal-only debrief scenario. Meets multiple postmortem trigger criteria: user-visible downtime well above any threshold, and on-call intervention. The 'everyone knows what happened' reasoning is exactly the failure pattern the skill identifies."
+    },
+    {
+      "id": "blameless-postmortem-process-should-02",
+      "category": "should_invoke",
+      "prompt": "After our incident last month, we wrote a postmortem with 14 action items. Three months later, exactly zero of them have been completed. The same root cause just triggered another outage. How do I fix this?",
+      "expected": "invoke",
+      "rationale": "This is the 'unreviewed postmortem' / 'action items without owners' failure pattern. The skill's execution steps directly address assigning owners, deadlines, and bug tracker entries to every action item."
+    },
+    {
+      "id": "blameless-postmortem-process-should-03",
+      "category": "should_invoke",
+      "prompt": "We had a bad deploy on Friday. Our postmortem identifies the engineer who wrote the config change as the root cause — the document literally says 'Root cause: [Name] pushed an incorrect config without peer review.' My skip-level wants to use this postmortem in the engineer's performance review. Is that appropriate?",
+      "expected": "invoke",
+      "rationale": "Two critical failures in one scenario: naming an individual as root cause (violates blameless property) and using the postmortem for performance management (explicitly prohibited by the boundary). The skill's reframing guidance — systemic questions over individual blame — directly addresses this."
+    },
+    {
+      "id": "blameless-postmortem-process-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We're in the middle of an active incident right now. Our payment service is down. I'm the incident commander — what's the right process for coordinating the response across three on-call teams?",
+      "expected": "skip",
+      "rationale": "This is an active incident, not a post-incident learning scenario. The right skill is incident-management-role-separation, which governs coordination during live incidents. Postmortem process applies after resolution."
+    },
+    {
+      "id": "blameless-postmortem-process-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our API latency spiked for about 8 minutes yesterday during off-hours. No alerts fired — we only found out because a developer noticed the anomaly in Grafana this morning while debugging something else. How do I track down the cause?",
+      "expected": "skip",
+      "rationale": "This is a diagnostic question about an anomaly, not a request for how to run a postmortem process. The right approach is the hypothetico-deductive troubleshooting loop to determine whether this was even a real incident and what caused it. A postmortem may follow, but that's not what's being asked."
+    },
+    {
+      "id": "blameless-postmortem-process-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "Our team has a recurring problem with alert fatigue — we're getting paged constantly for things that don't require immediate action, and real incidents are getting buried in the noise. What's the right way to fix our alerting strategy?",
+      "expected": "skip",
+      "rationale": "This is an alerting design and toil-reduction problem. The right skills are four-golden-signals-monitoring and fifty-percent-engineering-time-cap (alert fatigue is a toil problem). A postmortem process doesn't address the alerting architecture question."
+    },
+    {
+      "id": "blameless-postmortem-process-boundary-01",
+      "category": "boundary",
+      "prompt": "A junior engineer on my team accidentally sent a test email to 200 real customers. No service degradation, no data loss, no on-call involvement — we just had to send an apology email. Should we write a postmortem?",
+      "expected": "skip",
+      "rationale": "This is a genuine boundary case. The skill's trigger criteria require user-visible downtime or degradation beyond threshold, data loss, on-call intervention, or monitoring failure. A misdirected test email is embarrassing but doesn't meet any of these criteria. Writing a postmortem for this would 'dilute attention and create overhead that undermines the process for genuinely significant incidents' (B section). A brief internal process review is appropriate; a formal postmortem is not."
+    },
+    {
+      "id": "blameless-postmortem-process-boundary-02",
+      "category": "boundary",
+      "prompt": "We've already written 11 postmortems this quarter but the action items from the first 8 are still open. My team wants to write another one for last week's incident. Should we?",
+      "expected": "skip",
+      "rationale": "The skill's boundary explicitly states: 'If action items from previous postmortems are not being completed, fix the follow-through problem first; writing more postmortems into a broken system adds documentation overhead without producing improvement.' The boundary call here is skip — not because postmortems are wrong, but because the prerequisite (a functioning review-and-action system) is broken and must be fixed first."
+    }
+  ]
+}

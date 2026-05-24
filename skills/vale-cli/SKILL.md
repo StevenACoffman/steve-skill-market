@@ -86,10 +86,10 @@ Start with `--minAlertLevel=error` to surface only blocking issues:
 
 ```bash
 # Global config
-vale --minAlertLevel=error <files>
+vale --minAlertLevel=error FILES
 
 # Project-local config — pass --config and --no-global on every lint invocation
-vale --config=.vale/.vale.ini --no-global --minAlertLevel=error <files>
+vale --config=.vale/.vale.ini --no-global --minAlertLevel=error FILES
 
 # Project-local: scan all Markdown, exclude the styles directory itself
 find . -name "*.md" -not -path "./.vale/*" | xargs vale --config=.vale/.vale.ini --no-global --minAlertLevel=error
@@ -130,7 +130,7 @@ echo "(?i)apifield" >>styles/config/vocabularies/MyVocab/accept.txt
 Re-run at error level and confirm zero alerts before proceeding:
 
 ```bash
-vale --minAlertLevel=error <files>
+vale --minAlertLevel=error FILES
 ```
 
 ### 5. Widen the Net

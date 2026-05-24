@@ -1,0 +1,77 @@
+{
+  "skill": "enterprise-non-cloud-diagnostic",
+  "prompts": [
+    {
+      "id": "tp01",
+      "type": "should_invoke",
+      "prompt": "Our company moved to AWS two years ago but developers still say it feels like the old data center. What might be going wrong?",
+      "reason": "This is the canonical Enterprise Non-Cloud symptom. The skill provides the NIST diagnostic to identify which characteristics have been violated by enterprise controls."
+    },
+    {
+      "id": "tp02",
+      "type": "should_invoke",
+      "prompt": "Our cloud provisioning process takes three weeks because every new environment needs security approval. Is this normal?",
+      "reason": "Manual approval gates directly violate on-demand self-service. The skill identifies this as one of the five Enterprise Non-Cloud failure modes and provides the cloud operating model alternative."
+    },
+    {
+      "id": "tp03",
+      "type": "should_invoke",
+      "prompt": "Our central IT team charges every application team a flat $10,000/month for 'cloud platform support' regardless of how much they use. Is this a problem?",
+      "reason": "Fixed overhead charges violate measured service. The skill names this pattern explicitly and explains why it negates the cloud's consumption-based value proposition."
+    },
+    {
+      "id": "tp04",
+      "type": "should_invoke",
+      "prompt": "We're building an internal cloud platform for our enterprise. How do we evaluate whether what we build will actually qualify as a cloud?",
+      "reason": "This is the exact use case for the diagnostic — run the five NIST characteristics as a self-assessment against the proposed platform design before it is built."
+    },
+    {
+      "id": "tp05",
+      "type": "should_invoke",
+      "prompt": "Finance requires that each team have their own dedicated cloud account with reserved instances so we can track costs accurately. Is there a better approach?",
+      "reason": "Dedicated instances for cost tracking violates resource pooling. The skill explains why and provides the cloud-native alternative: consumption billing with cost allocation tags on shared resources."
+    },
+    {
+      "id": "tp06",
+      "type": "should_invoke",
+      "prompt": "A vendor is selling us an 'enterprise cloud solution' that routes all traffic through our data center for security monitoring. Should we buy it?",
+      "reason": "Routing traffic through the corporate data center violates broad network access. The diagnostic provides the evaluation framework for this sales conversation."
+    },
+    {
+      "id": "tp07",
+      "type": "should_not_invoke",
+      "prompt": "We need to decide whether to run our workloads on AWS, Azure, or GCP. Which should we pick?",
+      "reason": "This is a multicloud provider selection question, not an Enterprise Non-Cloud diagnostic question. The relevant skill is the 5-option multicloud decision table."
+    },
+    {
+      "id": "tp08",
+      "type": "should_not_invoke",
+      "prompt": "Our cloud costs went up 40% last quarter and nobody knows why. How do we get visibility?",
+      "reason": "This is a cloud cost management / Supermarket Effect / cost formula question, not an Enterprise Non-Cloud diagnostic question."
+    },
+    {
+      "id": "tp09",
+      "type": "should_not_invoke",
+      "prompt": "We're 70% through our cloud migration but the business doesn't see value. What's happening?",
+      "reason": "This is the value-gap / proxy-metrics pattern. Not an Enterprise Non-Cloud NIST diagnostic."
+    },
+    {
+      "id": "tp10",
+      "type": "should_not_invoke",
+      "prompt": "We want to establish Kubernetes as our standard container platform. How should we write this as a guiding principle?",
+      "reason": "This is a principles quality question (product name in a principle is a checklist failure). Not an Enterprise Non-Cloud diagnostic."
+    },
+    {
+      "id": "tp11",
+      "type": "blurred_boundary",
+      "prompt": "We're in financial services and regulators require all production data to stay in a specific geographic region and be accessible only to authorized staff. Does this mean we can't use real cloud?",
+      "reason": "This is a genuine boundary case: some regulatory constraints may legitimately limit NIST characteristics. The skill applies to diagnose which characteristics are affected, but the boundary section explicitly covers non-negotiable compliance constraints. The answer is not 'remove the constraint' but 'satisfy it using cloud-native patterns where possible and accept limitation where not.'"
+    },
+    {
+      "id": "tp12",
+      "type": "blurred_boundary",
+      "prompt": "Our legacy ERP system was 'lifted and shifted' to the cloud. It's on AWS but it's a single VM with no auto-scaling and takes a week to patch. Is this a cloud migration?",
+      "reason": "This is an Enterprise Non-Cloud scenario (rapid elasticity violated) but also a legitimate use case for the hybrid-cloud slicing skill (some apps genuinely can't benefit from all cloud characteristics and should be treated differently). The diagnostic applies but the answer involves segmentation rather than full remediation."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "skill": "matryer-run-function",
+  "version": "1.0",
+  "test_prompts": [
+    {
+      "id": "should_invoke_1",
+      "category": "should_invoke",
+      "prompt": "My Go service reads database config from os.Getenv and parses CLI flags with flag.Parse in main(). Tests fail with 'flag redefined' when I run them together and t.SetEnv prevents me from using t.Parallel(). What's the structural fix?",
+      "expected_skill_triggered": true,
+      "rationale": "Directly matches the core problem the run() pattern solves: global flag state and os.Getenv preventing parallel tests."
+    },
+    {
+      "id": "should_invoke_2",
+      "category": "should_invoke",
+      "prompt": "How do I write a Go test that starts my HTTP server with different environment variables for each test case without those variables leaking between tests?",
+      "expected_skill_triggered": true,
+      "rationale": "Asks for environment variable isolation per test — exactly what the getenv func(string) string injection solves."
+    },
+    {
+      "id": "should_invoke_3",
+      "category": "should_invoke",
+      "prompt": "I want to call my Go program's startup logic directly from test code so I can assert on its behavior without subprocess exec. My entire startup is in main() right now. How do I restructure it?",
+      "expected_skill_triggered": true,
+      "rationale": "Asks how to make main() logic callable from tests — the exact motivation for extracting run()."
+    },
+    {
+      "id": "should_invoke_4",
+      "category": "should_invoke",
+      "prompt": "Each of my Go integration tests starts a server in a goroutine. What's the idiomatic way to make the server stop automatically when the test finishes, without calling os.Exit or killing the process?",
+      "expected_skill_triggered": true,
+      "rationale": "Asks about per-test server lifetime — solved by passing a cancellable context to run() and using t.Cleanup(cancel)."
+    },
+    {
+      "id": "should_not_invoke_1",
+      "category": "should_not_invoke",
+      "prompt": "How do I write an HTTP handler in Go that reads a JSON body, validates it, and returns a 422 with field-level error messages if validation fails?",
+      "expected_skill_triggered": false,
+      "rationale": "About HTTP handler request/response decoding and validation — covered by matryer-decode-valid, not run() injection."
+    },
+    {
+      "id": "should_not_invoke_2",
+      "category": "should_not_invoke",
+      "prompt": "I want to add authentication middleware to my Go router that checks a JWT on every request. What's the idiomatic way to write and register middleware so it wraps all my routes?",
+      "expected_skill_triggered": false,
+      "rationale": "About middleware construction and registration — covered by matryer-middleware-constructor, unrelated to entry-point extraction."
+    },
+    {
+      "id": "should_not_invoke_3",
+      "category": "should_not_invoke",
+      "prompt": "What's the best way to handle database connection pooling in a Go HTTP service — should I create a single *sql.DB at startup and pass it to handlers, or create connections per request?",
+      "expected_skill_triggered": false,
+      "rationale": "About database connection lifetime and dependency passing, not about the testable entry-point structure."
+    },
+    {
+      "id": "blurred_boundary_1",
+      "category": "blurred_boundary",
+      "prompt": "I'm restructuring my Go service for better testability. I already have a run() function, but it still calls os.Getenv and flag.Parse directly. My tests need to provide different flag values per test. What changes do I need inside run()?",
+      "expected_skill_triggered": true,
+      "rationale": "The developer has partially applied the pattern but is missing the flag.NewFlagSet and getenv injection steps — the skill's E section covers exactly this."
+    },
+    {
+      "id": "blurred_boundary_2",
+      "category": "blurred_boundary",
+      "prompt": "My Go service uses context.WithCancel for graceful shutdown but the cancel function never gets called because I defer it in main() after calling run(). How should I structure the context and cancellation?",
+      "expected_skill_triggered": true,
+      "rationale": "Describes the exact placement bug the author corrected — signal.NotifyContext and defer cancel() must be inside run(), not in main(). The B section covers this blind spot explicitly."
+    },
+    {
+      "id": "blurred_boundary_3",
+      "category": "blurred_boundary",
+      "prompt": "I want my Go CLI tool's tests to be able to capture what the tool prints to stdout and stderr without redirecting os.Stdout globally. Is there a pattern for this?",
+      "expected_skill_triggered": true,
+      "rationale": "Asks about stdout/stderr capture in tests — a direct consequence of the run() pattern passing io.Writer parameters instead of writing to os.Stdout directly. Slightly blurred because the developer may not realize the full run() restructuring is needed."
+    }
+  ]
+}

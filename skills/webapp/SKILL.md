@@ -18,6 +18,81 @@ but `nolintlint` enforces that the linter name and reason are always present.
 
 ______________________________________________________________________
 
+## Linting Infrastructure
+
+### How the Custom Binary Is Built
+
+webapp does **not** use an upstream golangci-lint release. It builds the binary
+from source at `genfiles/go/bin/golangci-lint` using `go build` against the
+version pinned in `go.mod`, stamped with `main.version=khan-local`. This means
+the exact binary version is tied to the repo's Go module graph.
+
+In addition to the upstream binary, webapp compiles 30 custom linter plugins as
+Go shared objects (`-buildmode=plugin`) under `genfiles/go/plugins/linters/*.so`.
+Every rule prefixed `ka-` in the cheat sheet above comes from one of these plugins.
+
+### Rebuilding the Linting Tools
+
+Two Make targets handle this (both live in the root `webapp/` Makefile):
+
+```bash
+# Rebuild only the golangci-lint binary
+# Deps: go.mod, current Go version
+make -B genfiles/go/bin/golangci-lint
+
+# Rebuild the binary AND all 30 custom plugin .so files
+# This is what runlint/quicklinc actually need
+make -B go_lint_deps
+```
+
+`-B` forces an unconditional rebuild regardless of timestamps — use it when the
+binary or a plugin is stale or missing. Without `-B` Make skips the target if
+the output file already exists and its declared inputs haven't changed.
+
+`go_lint_deps` is the target called by `dev/testing/cmd/runlint` before linting.
+Running it manually is the right fix when `make lint` or `make linc` fails with
+a plugin load error or a binary-not-found error.
+
+### Custom Plugin List
+
+Each plugin source lives at `dev/linters/plugins/<name>/main.go` and compiles
+to `genfiles/go/plugins/linters/<name>.so`:
+
+| Plugin                   | Rule enforced (see sections above)               |
+| ------------------------ | ------------------------------------------------ |
+| `always-close`           | `ka-always-close` — defer Close on io.Closer     |
+| `backfill-cedar`         | enforces backfill patterns                       |
+| `banned-symbol`          | `ka-banned-symbol` — forbidden APIs              |
+| `cache`                  | `ka-cache` — cache ordering rules                |
+| `compare`                | `ka-compare` — use `.Equal`/`.Before`/`.After`   |
+| `context`                | `ka-context` — ctx first param, no Background    |
+| `context-interface`      | `ka-context-interface` — embed only what you use |
+| `cross-service`          | `ka-cross-service` — genqlient call boundaries   |
+| `datastore-model`        | `ka-datastore-model` — model struct rules        |
+| `datastore-not-found`    | `ka-datastore-not-found` — no (nil, nil) return  |
+| `datastore-transaction`  | `ka-datastore-transaction` — re-init in closure  |
+| `deprecated-terminology` | `ka-deprecated-terminology` — banned word list   |
+| `documentation`          | `ka-documentation` — exported fn doc comments    |
+| `errors-arguments`       | `ka-errors-arguments` — Is/As arg order          |
+| `errors-stacktrace`      | `ka-errors-stacktrace` — wrap third-party errors |
+| `errors-wrap`            | `ka-errors-wrap` — odd arg count, string keys    |
+| `eval-component`         | `ka-eval-component`                              |
+| `genqlient`              | `ka-genqlient` — genqlient usage rules           |
+| `graphql-task`           | `ka-graphql-task`                                |
+| `http-return`            | `ka-http-return` — return after http.Error       |
+| `import`                 | `ka-import` — service/pkg boundary enforcement   |
+| `json-tag`               | `ka-json-tag` — explicit json struct tags        |
+| `linewrap`               | `ka-linewrap` — 80/100 char line limits          |
+| `log`                    | `ka-log` — no fmt.Sprintf in log messages        |
+| `log-or-return-error`    | `ka-log-or-return-error` — log OR return         |
+| `no-screaming-snake`     | `ka-no-screaming-snake` — no SCREAMING_SNAKE     |
+| `permissions`            | `ka-permissions` — resolver permission checks    |
+| `resolver-error`         | `ka-resolver-error` — error in response struct   |
+| `suite`                  | `ka-suite` — khantest.Suite assertions           |
+| `visiblity`              | `ka-visibility` — `_`-prefixed file-private      |
+
+______________________________________________________________________
+
 ## Quick-Reference Cheat Sheet
 
 The most-commonly violated rules at a glance. ✓ = auto-fixable.
@@ -54,16 +129,17 @@ ______________________________________________________________________
 Always use webapp's error package, never stdlib:
 
 ```go
-// Bad
-import "errors"
-import "fmt"
-return fmt.Errorf("not found: %w", err)
-return errors.New("bad input")
+// Bad — use stdlib errors/fmt
+// import "errors"
+// import "fmt"
+func badErr(err error) error {
+	return fmt.Errorf("not found: %w", err)
+}
 
-// Good
-import "github.com/Khan/webapp/pkg/lib/errors"
-return errors.New("bad input")
-return errors.Wrap(err)
+// Good — use github.com/Khan/webapp/pkg/lib/errors
+func goodErr(err error) error {
+	return errors.New("bad input")
+}
 ```
 
 ### Wrapping Rules (`ka-errors-stacktrace`)
@@ -72,22 +148,30 @@ Wrap **sentinel errors** and **third-party/stdlib errors** before returning.
 This captures the call-site stack trace. The linter auto-fixes these.
 
 ```go
-// Bad — sentinel and stdlib errors returned bare
 var ErrNotFound = errors.New("not found")
-return ErrNotFound
-return io.ErrUnexpectedEOF
+
+// Bad — sentinel and stdlib errors returned bare
+func badWrap() error {
+	return ErrNotFound
+}
 
 // Good
-return errors.Wrap(ErrNotFound)
-return errors.Wrap(io.ErrUnexpectedEOF)
+func goodWrap() error {
+	return errors.Wrap(ErrNotFound)
+}
 
 // Bad — third-party call result not wrapped
-data, err := json.Unmarshal(b, &v)
-return err
+func badThirdParty(b []byte, v any) error {
+	_, err := json.Marshal(v)
+	return err
+}
 
 // Good
-if err := json.Unmarshal(b, &v); err != nil {
-	return errors.Wrap(err)
+func goodThirdParty(b []byte, v any) error {
+	if _, err := json.Marshal(v); err != nil {
+		return errors.Wrap(err)
+	}
+	return nil
 }
 ```
 
@@ -166,10 +250,13 @@ func doWork(ctx context.Context, name string) {}
 
 ```go
 // Bad — inside a handler or service
-ctx := context.Background()
+func badHandler() {
+	ctx := context.Background()
+	_ = ctx
+}
 
 // Good — receive ctx from caller
-func HandleRequest(ctx kacontext.MutableContext) error { ... }
+func HandleRequest(ctx kacontext.MutableContext) error { return nil }
 ```
 
 ### No `nil` Context — Ever
@@ -206,25 +293,23 @@ ______________________________________________________________________
 ## Logging
 
 ```go
-// Bad — banned package
-import "log"
-import "github.com/sirupsen/logrus"
-log.Printf("user: %s", id)
-logrus.Infof("done")
-
-// Bad — fmt.Sprintf in log message (ka-log)
-ctx.Log().Info(fmt.Sprintf("processing user %s", userID))
-
-// Bad — printing to stdout in server code (ka-banned-symbol)
-fmt.Println("debug")
+// Bad — use webapp logger, not "log" or "github.com/sirupsen/logrus"
+func badLog(ctx kacontext.MutableContext, id, userID string, err error) {
+	log.Printf("user: %s", id)
+	logrus.Infof("done")
+	ctx.Log().Info(fmt.Sprintf("processing user %s", userID)) // bad: fmt.Sprintf in message
+	fmt.Println("debug")                                      // bad: stdout in server code
+}
 
 // Good — Debug/Info: fixed string message + log.Fields for variable data
-ctx.Log().Info("processing user", log.Fields{"user_id": userID})
-ctx.Log().Debug("cache miss")  // fieldsMaps is variadic; omit when there are no fields
+func goodLog(ctx kacontext.MutableContext, userID string, err error) {
+	ctx.Log().Info("processing user", log.Fields{"user_id": userID})
+	ctx.Log().Debug("cache miss") // fieldsMaps is variadic; omit when there are no fields
 
-// Good — Warn/Error/Panic: error object only; attach context to the error itself
-ctx.Log().Error(errors.Wrap(err, "user_id", userID))
-ctx.Log().Warn(errors.Wrap(err, "operation", "fetchUser"))
+	// Good — Warn/Error/Panic: error object only; attach context to the error itself
+	ctx.Log().Error(errors.Wrap(err, "user_id", userID))
+	ctx.Log().Warn(errors.Wrap(err, "operation", "fetchUser"))
+}
 ```
 
 `Debug` and `Info` take `(message string, fieldsMaps ...log.Fields)`. `Warn`,
@@ -383,22 +468,22 @@ ______________________________________________________________________
 
 ```go
 type UserData struct {
-    datastore.BaseModel                          // required embed
-    Name      string    `datastore:"name"`       // all fields must be tagged
-    CreatedAt time.Time `datastore:"created_at,omitempty"` // time: omitempty
-    Profile   Profile   `datastore:"profile,omitempty"`    // struct: omitempty
-    Tags      []string  `datastore:"tags"`                 // slice: NO omitempty
+	datastore.BaseModel           // required embed
+	Name                string    `datastore:"name"`                 // all fields must be tagged
+	CreatedAt           time.Time `datastore:"created_at,omitempty"` // time: omitempty
+	Profile             Profile   `datastore:"profile,omitempty"`    // struct: omitempty
+	Tags                []string  `datastore:"tags"`                 // slice: NO omitempty
 }
 
 // Required: key constructor in same file
-func MakeUserDataKey(id string) *datastore.Key { ... }
+func MakeUserDataKey(id string) *datastore.Key { return nil }
 
 // Required: PreSave calls both super and safety check
 func (m *UserData) PreSave(ctx context.Context) error {
-    if err := m.BaseModel.PreSave(ctx); err != nil {
-        return errors.Wrap(err)
-    }
-    return datastore.CheckTransactionSafetyForPut(ctx, m)
+	if err := m.BaseModel.PreSave(ctx); err != nil {
+		return errors.Wrap(err)
+	}
+	return datastore.CheckTransactionSafetyForPut(ctx, m)
 }
 ```
 
@@ -421,7 +506,8 @@ key := models.MakeUserDataKey(id)
 
 Outer variables declared with zero value and modified inside a transaction
 closure **must be re-initialized at the very top** of the closure. Transactions
-may retry up to three times.
+may retry up to three times, so the closure must be idempotent — it must
+produce the same result whether it runs once or three times.
 
 ```go
 var user models.UserData
@@ -468,20 +554,20 @@ ______________________________________________________________________
 ```go
 // Bad — no permission check
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*User, error) {
-    return r.userService.Get(ctx, id)
+	return r.userService.Get(ctx, id)
 }
 
 // Good
 // checkUserReadPermission verifies the caller can read user data.
 //
 //ka:permission-check
-func checkUserReadPermission(ctx kacontext.Context, userID string) error { ... }
+func checkUserReadPermission(ctx kacontext.Context, userID string) error { return nil }
 
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*User, error) {
-    if err := checkUserReadPermission(ctx, id); err != nil {
-        return nil, err
-    }
-    return r.userService.Get(ctx, id)
+	if err := checkUserReadPermission(ctx, id); err != nil {
+		return nil, err
+	}
+	return r.userService.Get(ctx, id)
 }
 ```
 
@@ -672,7 +758,7 @@ function, type, and variable. Generated files are exempt.
 
 ```go
 // DoThing performs the thing operation and returns the result.
-func DoThing(ctx context.Context) error { ... }
+func DoThing(ctx context.Context) error { return nil }
 ```
 
 ### Line Length (`ka-linewrap`)
@@ -773,6 +859,12 @@ Walk through these for every PR touching Go code in webapp.
 - [ ] Every resolver calls a `//ka:permission-check` function
 - [ ] Mutation resolvers put errors in the response struct (not `error` return)
 - [ ] genqlient calls only from `cross_service/`
+- [ ] Resolver body is thin — delegates work to a service function; no business logic embedded in the resolver
+
+## Tasks / Pub/Sub
+
+- [ ] Handler is idempotent — delivering the same message or task twice produces the same result
+- [ ] Permanent failures (bad payload, schema mismatch) ack/consume the message; transient failures return an error to trigger retry
 
 ## Naming / Imports
 

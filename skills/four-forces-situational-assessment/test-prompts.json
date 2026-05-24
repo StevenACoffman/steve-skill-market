@@ -1,0 +1,66 @@
+{
+  "skill_id": "four-forces-situational-assessment",
+  "version": "1.0",
+  "prompts": [
+    {
+      "id": "tp-01",
+      "category": "should_invoke",
+      "prompt": "I've just taken over a large organizational change program. It's 18 months old, originally scoped for 24 months. The team is tired, the sponsor has become disengaged, two of the four original program directors have left, and we keep re-doing decisions that were supposedly made six months ago. The previous program director got burned out. Where do I even start?",
+      "expected_behavior": "Invoke four-forces-situational-assessment. Run the four-force diagnostic. Entropy is clearly dominant: team fatigue, sponsor disengagement, leadership attrition, commitment decay. Ambiguity is likely also present: re-litigated decisions suggest contested understanding of success. Check Velocity: if the operating environment has shifted in 18 months, the re-opened decisions may partly reflect environmental change (Velocity) rather than purely governance failure. Surface the Entropy + Ambiguity combination as the immediate leadership challenge. Recommend designing explicit re-enrollment mechanisms and establishing clarity on current constraints before attempting to re-accelerate execution. Warn against trying to recover momentum through effort alone."
+    },
+    {
+      "id": "tp-02",
+      "category": "should_invoke",
+      "prompt": "Every workstream in my program is reporting green. My dashboard looks fine. But we keep missing integration milestones and the senior stakeholders keep saying the program doesn't feel like it's going anywhere. What am I missing?",
+      "expected_behavior": "Invoke four-forces-situational-assessment. The symptom profile — all-green components, failing integration milestones, stakeholder perception of stagnation — is the signature Complexity force pattern. Williams' definition applies directly: outcomes are shaped by interactions, not tasks. Component health is not predicting system health. The governance posture is almost certainly workstream-focused rather than interaction-layer focused. Diagnose Complexity as dominant. Recommend immediate ownership of the interaction layer: explicit dependency mapping, interface accountability, and governance decisions that operate at the junction between workstreams rather than within them."
+    },
+    {
+      "id": "tp-03",
+      "category": "should_invoke",
+      "prompt": "We're running a three-year digital transformation program and the business keeps changing what it wants. Every quarter the priorities shift, new requirements get added, and old ones get deprioritized. By the time we deliver something, the business has moved on. Our governance cycle is a monthly steering committee. What's going wrong?",
+      "expected_behavior": "Invoke four-forces-situational-assessment. Velocity is clearly dominant: the environmental change rate (quarterly priority shifts) is much faster than the governance cycle (monthly steering committee). The monthly cadence means decisions are already stale by the time they are made. Diagnose Velocity as the dominant force. The response is not to improve execution speed within the existing model but to shorten the governance cycle and design for reversibility — scope commitments need shorter horizons and explicit reversibility so that when priorities shift, the cost of changing course is manageable. Flag that forcing long-horizon scope commitments in a high-Velocity environment is the structural mismatch."
+    },
+    {
+      "id": "tp-04",
+      "category": "should_invoke",
+      "prompt": "I've been asked to write a briefing for an incoming executive sponsor who's inheriting a complex program midway through. She wants to understand what she's walking into before her first governance review. The program has been running for two years, the scope has grown significantly, and there's been significant turnover in the core team. Help me structure the briefing.",
+      "expected_behavior": "Invoke four-forces-situational-assessment as a diagnostic structure for the briefing. Walk through all four forces as a diagnostic lens for characterizing the current state. Scope growth and two years of runtime suggest Complexity and Entropy warrant assessment. Turnover creates Ambiguity risk (institutional knowledge lost, shared understanding eroded). Frame the briefing around: which forces are currently dominant, what governance mechanisms are in place for each, and what the structural vulnerabilities are. Give the incoming sponsor a diagnostic map rather than a status report."
+    },
+    {
+      "id": "tp-05",
+      "category": "should_not_invoke",
+      "prompt": "Our project manager left unexpectedly and I'm taking over a six-month software implementation that's in month four. The project is on track but I need to get up to speed quickly. What should I do first?",
+      "expected_behavior": "Do NOT invoke four-forces-situational-assessment. This is a straightforward project handover situation on a bounded, short-duration implementation that is on track. The Four Forces diagnostic is designed for complex programs where forces are meaningfully present; a six-month on-track implementation with a leadership transition does not meet this threshold. The appropriate response covers practical handover steps: review the project plan and risk register, meet the key stakeholders and team, understand the remaining scope and dependencies."
+    },
+    {
+      "id": "tp-06",
+      "category": "should_not_invoke",
+      "prompt": "I need to present our program's status to the board next week. What's the best way to structure an executive status presentation?",
+      "expected_behavior": "Do NOT invoke four-forces-situational-assessment. This is a communication and presentation design question. The Four Forces framework is a diagnostic for program situational assessment, not a presentation structure. The correct response helps with executive communication design — what boards need to understand, how to frame status versus risk, what level of detail is appropriate. The Four Forces might be referenced as content if the program situation warrants it, but the skill itself is not the right tool for this request."
+    },
+    {
+      "id": "tp-07",
+      "category": "should_not_invoke",
+      "prompt": "Two of my team leads disagree about the technical architecture. One wants a microservices approach, the other wants a monolith to start. How should I resolve this?",
+      "expected_behavior": "Do NOT invoke four-forces-situational-assessment. This is a technical decision-making and team facilitation question, not a program situational diagnosis. The Four Forces framework does not operate at the level of individual technical disputes between team members. The appropriate response addresses how to facilitate the architectural decision: establish the decision criteria, understand what the tradeoffs actually are given the program's constraints, and consider whether the decision has the reversibility to start one way and change later."
+    },
+    {
+      "id": "tp-08",
+      "category": "blurred_boundary",
+      "prompt": "I'm running a cloud migration program. The technical migration work is straightforward and on track, but we've discovered that different business units have completely different expectations about what the migrated platform will enable. Some think it's purely infrastructure lift-and-shift. Others think it's a platform transformation that will unlock new capabilities. No one has been in the same room together to reconcile this. Are we in trouble?",
+      "expected_behavior": "Invoke four-forces-situational-assessment with Ambiguity as the clearly dominant force. The technical work being straightforward is not the issue — the stakeholder expectation divergence on what the program is *for* is the issue. This is not a scope disagreement; it's a contested definition of success. Apply the Ambiguity response framework: do not force premature precision, but do not let the ambiguity continue unmanaged either. Establish a structured process for clarifying the constraints (what the program can and cannot deliver) without forcing a single narrow definition prematurely. Surface that this ambiguity will surface as a governance crisis at delivery if not addressed — the technical success will be politically contested."
+    },
+    {
+      "id": "tp-09",
+      "category": "blurred_boundary",
+      "prompt": "We're 18 months into a four-year program and everything is going well. No red flags. But our CDIO has asked me to do a proactive risk assessment for the next phase. She's concerned that the program will get harder as we move into the more interdependent components. How do I think about what's coming?",
+      "expected_behavior": "Invoke four-forces-situational-assessment as a forward-looking diagnostic rather than a current-state diagnosis. The current-state score is low (no red flags, things going well), but the question is about the force profile of the upcoming phase. Assess which forces are likely to become dominant as the program moves into more interdependent components: Complexity is the flagged risk (more interdependence means the interaction layer becomes more critical). Entropy risk grows with timeline extension. If the next phase introduces new stakeholders or revised scope, Ambiguity may enter. Use the framework to design proactive governance additions for the forces that will intensify, rather than waiting for the symptoms to appear."
+    },
+    {
+      "id": "tp-10",
+      "category": "blurred_boundary",
+      "prompt": "I've identified that my program has both high Ambiguity and high Velocity — we're making important decisions under uncertainty in a fast-moving environment. My sponsor wants a committed delivery date and scope baseline. What do I tell her?",
+      "expected_behavior": "Invoke four-forces-situational-assessment to confirm the dominant force combination (Ambiguity + Velocity, which Williams identifies as the most dangerous pairing), then address the sponsor conversation directly. The core answer is: locking scope and date in an Ambiguity + Velocity environment produces false certainty — the commitment will be made on assumptions that the Velocity force will invalidate, and the Ambiguity means the scope definition itself may not survive contact with emerging clarity. Recommend a staged commitment conversation: offer to commit to the next horizon (the next decision gate) with confidence, and explain what conditions would allow a longer-horizon commitment. This is not scope resistance — it is reversibility design, which is the correct governance response to this force combination."
+    }
+  ]
+}

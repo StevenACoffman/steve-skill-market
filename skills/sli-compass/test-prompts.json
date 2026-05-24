@@ -1,0 +1,69 @@
+{
+  "skill": "sli-compass",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We have a synthetic health check that pings our homepage every minute and reports 99.9% availability. But we keep getting user complaints about checkout failing. The health check is always green when checkout is broken. Should we replace it, and with what?",
+      "expected_behavior": "Invokes sli-compass, identifies the health check as Q1 (synthetic + simple): cheap, easy to implement, but low fidelity because it only tests a trivial path. Prescribes moving toward Q3 (organic + simple: instrument real checkout requests) or Q4 (organic + complex: full user journey RUM). Explains the fidelity-cost tradeoff and recommends starting with Q3 as the next step.",
+      "notes": "Positive scenario: synthetic-simple SLI missing real consumer failures; the canonical compass upgrade path."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We're considering investing in real user monitoring (RUM) to measure actual user experience instead of our current synthetic probes. The tooling is expensive. How do we evaluate whether it's worth it?",
+      "expected_behavior": "Invokes sli-compass, provides the ROI evaluation framework: current synthetic probes are Q1/Q2 (low cost, low fidelity). RUM is Q3/Q4 depending on complexity (high cost, high fidelity). The investment is justified when: (a) the current synthetic SLI has a known fidelity gap (misses real failures or fires on non-failures); (b) the consumer impact of missed failures is high enough to justify the measurement cost.",
+      "notes": "Positive scenario: explicit ROI evaluation of a fidelity upgrade — exactly the skill's intended use case."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our synthetic journey monitor (a Playwright script that simulates a login, search, and checkout) is incredibly noisy. It fires false positives constantly and takes 45 seconds to complete, which means we have almost a minute of lag between a real incident and when the alert fires. Is this a good SLI?",
+      "expected_behavior": "Invokes sli-compass, identifies this as Q2 (synthetic + complex): medium fidelity but high maintenance burden, slow signal, and difficult to debug. The 45-second latency makes it unsuitable for real-time alerting. Prescribes either: (a) supplementing with organic Q3 measures for faster signal, or (b) decomposing the complex synthetic into simpler per-step checks to isolate what's failing.",
+      "notes": "Positive scenario: Q2 SLI with its classic problems (slow, noisy, hard to debug). Demonstrates the SLI Compass evaluation of a complex synthetic."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We have two options for measuring our API's reliability: (1) a simple endpoint ping that checks if the service responds at all, or (2) instrumenting real API traffic from our logs to measure actual request success rates. We have high traffic volume. Which is better?",
+      "expected_behavior": "Invokes sli-compass, compares Q1 (synthetic + simple: endpoint ping) vs Q3 (organic + simple: log-based request success). With high traffic volume, Q3 is clearly better: it measures real consumer requests with high fidelity at low cost (logs are already generated). Q1 only catches complete outages; Q3 catches partial failures, degradation, and error rate increases that Q1 misses.",
+      "notes": "Positive scenario: direct comparison between two measurement approaches; high traffic makes organic clearly superior."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I write a Playwright test that logs in, adds an item to the cart, and checks out? I need to automate our critical user journey.",
+      "expected_behavior": "Test automation tooling question. Should not invoke sli-compass; answer with Playwright scripting guidance.",
+      "notes": "Decoy: mentions user journey testing but is purely about test implementation, not SLI evaluation or investment decisions."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What consumer tasks should we be measuring for our e-commerce checkout SLI?",
+      "expected_behavior": "Consumer task discovery question. Should not invoke sli-compass; this belongs to sli-4-stage-evolution (Stage 3: task-aware SLI derivation). The compass answers HOW to measure, not WHAT to measure.",
+      "notes": "Decoy: SLI content question (what to measure) vs. SLI implementation question (how to measure). Compass is for the latter."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Which team should own the availability SLI for our checkout service?",
+      "expected_behavior": "SLO ownership question. Should not invoke sli-compass; this belongs to responsibility-control-slo.",
+      "notes": "Decoy: team assignment / control boundary question, not measurement fidelity or implementation."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "We have very low traffic — maybe 200 requests per day. Our organic error rate SLI is statistically meaningless because even one error is 0.5%. Should we switch to synthetic?",
+      "expected_behavior": "Likely invokes sli-compass. Low traffic is the specific condition where synthetic (Q1 or Q2) becomes more appropriate than organic (Q3/Q4) because organic lacks statistical volume. The compass trade-off analysis: low traffic makes high-fidelity organic unreliable as a percentage; synthetic provides consistent signal volume. Recommends Q1 or Q2 with the explicit understanding that it's a proxy, plus a wider error budget window for organic.",
+      "notes": "Boundary: low traffic inverts the usual 'organic is better' advice; this is one of the legitimate cases where synthetic is the right choice even at lower fidelity."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "Our SLI catches real failures reliably, but when it fires, it takes us 20-30 minutes to figure out which component actually failed because the metric aggregates too many things. Is this an SLI problem or a debugging problem?",
+      "expected_behavior": "Likely invokes sli-compass, identifies this as a Q4 (organic + complex) problem: high fidelity but low granularity makes debugging slow. The compass analysis: the SLI is doing its detection job (high fidelity catches real failures) but the complex aggregation increases mean-time-to-diagnose. Prescribes either decomposing into per-step metrics alongside the aggregate, or adding debug labels to narrow the signal source.",
+      "notes": "Boundary: user frames it as a debugging problem but the root cause is the compass position (complex SLI without decomposed sub-signals)."
+    }
+  ]
+}

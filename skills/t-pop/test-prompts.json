@@ -1,0 +1,76 @@
+{
+  "skill": "t-pop",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "I was just promoted to Staff Engineer. My manager says I need to have 'org-wide impact' now, but I'm not sure what that means in practice. I spend most of my time doing deep technical work and architecture reviews. What should I be doing differently?",
+      "expected_behavior": "Invokes t-pop, provides the four-dimension framework: the user is spending energy primarily in T (Technology). At Staff+ level, impact requires active investment in P (People — building influence networks), O (Operations — understanding how the organization actually works), and P (Product — grounding technical work in business value). The 'org-wide impact' feedback is a signal of T-overload with P/O/P deficit.",
+      "notes": "Positive scenario: new Staff Engineer with tech-only focus; explicit 'what should I do differently' prompt."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "I'm a Principal Engineer and I've been proposing a platform consolidation initiative for 8 months. Leadership keeps saying they support it but nothing moves forward. The proposals keep getting delayed or deprioritized. My technical case is solid. What am I missing?",
+      "expected_behavior": "Invokes t-pop, diagnoses a likely P or O dimension gap: the technical case (T) is prepared, but the initiative is stalling because of unaddressed people dynamics (P — wrong stakeholders cultivated, or missing coalition) or operational context (O — the initiative collides with incentive structures, priorities, or cultural antibodies the user hasn't mapped). Prescribes an O-dimension audit of why the current process produces stalls, and a P-dimension map of who actually influences these decisions.",
+      "notes": "Positive scenario: technically strong proposal failing to land; typical P/O dimension neglect pattern."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "I'm a Staff Engineer starting a new job next month. I've worked at the company for two years as a senior engineer but this is a new team and a different part of the codebase. How should I approach the first 90 days?",
+      "expected_behavior": "Invokes t-pop as an onboarding framework: map each of the four dimensions systematically before proposing changes. T: understand the tech landscape, system maturity, failure modes. P: map the talent composition, informal authority, relationships. O: learn the real ways of working, incentive structures, unwritten rules. Product: understand what the business is actually trying to achieve. 'Seek to understand before trying to change' is the core principle.",
+      "notes": "Positive scenario: Staff Engineer onboarding; explicit new-role scenario described in the skill's A2 trigger scenarios."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "My peers call me an ivory tower architect. I write detailed design documents and tech standards, but I've noticed the teams aren't really following them. When I ask why, I get vague answers. I think the standards are technically correct. What's going wrong?",
+      "expected_behavior": "Invokes t-pop, applies the Ivory Tower failure mode: strong T dimension (technical standards are correct) but neglected P dimension (not building relationships at the team level, not present in their daily work) and O dimension (not understanding the operational reality that the standards don't account for, which is why teams are working around them). Prescribes immersion in the P and O dimensions before the next standards cycle.",
+      "notes": "Positive scenario: 'ivory tower' label received; the exact case described in the book's ITA incident management example."
+    },
+    {
+      "id": "should-trigger-05",
+      "type": "should_trigger",
+      "prompt": "I'm a Staff Engineer preparing for my Principal Engineer promotion. My manager says my technical work is excellent but I'm 'not having enough impact at the right level.' I don't know what that means. How do I figure out what I'm missing?",
+      "expected_behavior": "Invokes t-pop, provides the framework as a self-assessment tool: 'not having enough impact at the right level' is typically a P, O, or Product dimension gap. The T dimension is acknowledged as strong. A T-POP self-audit asks: Am I investing in the People dimension (mentoring, coalition building, influencing decisions through others)? Do I understand the Operational context (how decisions actually get made)? Is my work grounded in Product outcomes (business impact) rather than technical excellence for its own sake?",
+      "notes": "Positive scenario: Staff → Principal promotion gap; the 'great technical work, insufficient impact' feedback is an explicit trigger signal."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "How do I improve my public speaking and presentation skills for technical talks?",
+      "expected_behavior": "Communication skill development question. Should not invoke t-pop; answer with presentation skill guidance. T-POP is about energy allocation across four organizational dimensions, not individual skill development.",
+      "notes": "Decoy: communication improvement question; mentions 'technical' but is about individual skill, not Staff+ leadership framework."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "What does a Staff Engineer do? I'm trying to understand if it's a role I want to pursue.",
+      "expected_behavior": "Career exploration question. Should not invoke t-pop; provide a general overview of Staff Engineer scope and expectations. T-POP is invoked when a Staff Engineer needs to self-assess or diagnose an existing pattern, not when someone is exploring whether to pursue the role.",
+      "notes": "Decoy: definitional/career-exploration question; no specific pattern to diagnose or onboarding situation present."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "Should we adopt event-driven architecture for our new service? What are the trade-offs?",
+      "expected_behavior": "Technical architecture question. Should not invoke t-pop; answer with event-driven vs. synchronous architecture trade-offs.",
+      "notes": "Decoy: architecture decision question; mentions 'technical leader context' implicitly but is a pure technical choice question, not a leadership energy allocation question."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I'm a Staff Engineer and I've been asked to lead a cross-team technical initiative to unify our logging and observability standards. I've never led something this cross-functional before. How should I approach it?",
+      "expected_behavior": "Likely invokes t-pop as a planning framework: this initiative requires all four dimensions. T: understand the current technical landscape (existing tooling, what teams actually use vs. what they're supposed to use). P: map who are the informal authority nodes in each team, who needs to be on board. O: understand why the current fragmentation exists (historical incentives, tool proliferation reasons). Product: connect the unification to a business outcome (cost, observability quality). Starting with O and P before proposing the technical solution avoids the ivory tower failure mode.",
+      "notes": "Boundary: not a self-assessment question but a planning question for a cross-team initiative; T-POP applies as a scoping tool for the initiative."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "I'm a senior engineer considering a move to a Staff Engineer role at a different company. How do I evaluate if the company will let me actually have impact at that level, or if I'll end up doing senior engineer work with a Staff title?",
+      "expected_behavior": "Likely invokes t-pop as a job evaluation framework: assess whether the company has the organizational conditions for each T-POP dimension. T: is there meaningful technical complexity requiring Staff-level judgment? P: does the org give Staff engineers actual influence, or are decisions made by managers? O: are the ways of working compatible with a Staff-level contributor (do they value technical leadership)? Product: will technical strategy be connected to product outcomes? This is T-POP applied as a due diligence checklist for a career decision.",
+      "notes": "Boundary: career evaluation question rather than self-assessment or onboarding; T-POP applies as a company evaluation tool."
+    }
+  ]
+}

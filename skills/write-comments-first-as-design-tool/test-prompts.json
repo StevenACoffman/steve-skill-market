@@ -1,0 +1,75 @@
+{
+  "skill_id": "write-comments-first-as-design-tool",
+  "test_prompts": [
+    {
+      "id": "tp01",
+      "prompt": "I always write my code first and then add comments afterward. My comments end up just restating what the code does. How do I write more useful comments?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Describes the exact failure mode Ousterhout addresses: comments-after-code produce low-value paraphrases. Writing comments first as a design tool is the solution."
+    },
+    {
+      "id": "tp02",
+      "prompt": "I'm designing a new module interface. Should I write the doc comments for the public methods before I implement them?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Direct question about whether to use comments as a design tool before implementation — the core practice this skill teaches."
+    },
+    {
+      "id": "tp03",
+      "prompt": "When I try to write the comment for a method I just designed, I realize I can't explain it cleanly. Does that mean the design is bad?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Ousterhout's key insight: difficulty writing the comment is a signal the abstraction is unclear. This is comments-first used as a diagnostic."
+    },
+    {
+      "id": "tp04",
+      "prompt": "My team argues that if the code is clean enough, comments are unnecessary. I disagree but I can't articulate why. What's the strongest argument for comments?",
+      "expected": "invoke",
+      "category": "should_invoke",
+      "rationale": "Directly asks for the case for comments — leads into Ousterhout's argument that comments capture intent, abstraction, and design rationale that code cannot express."
+    },
+    {
+      "id": "tp05",
+      "prompt": "How should I write the README for this open-source library? What sections should it include?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "README/documentation writing for end users, not inline code comments as a design tool."
+    },
+    {
+      "id": "tp06",
+      "prompt": "What's the best format for commit messages? Should I use the conventional commits specification?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "Commit message format and conventions question, unrelated to inline documentation or using comments to drive design."
+    },
+    {
+      "id": "tp07",
+      "prompt": "We want to auto-generate our API docs from code. Should we use Swagger annotations or OpenAPI YAML files?",
+      "expected": "no_invoke",
+      "category": "should_not_invoke",
+      "rationale": "API documentation generation tooling question. The concern is tooling and output format, not using comments as a design and thinking tool."
+    },
+    {
+      "id": "tp08",
+      "prompt": "I have a 50-line function implementing a tricky graph traversal algorithm. Should I add comments explaining each step, or should I extract the steps into named helper methods?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Code clarity question that is partly about comments and partly about extraction. Ousterhout would say comments explaining the algorithm are valuable even with extraction, but the framing is slightly different from comments-first-as-design."
+    },
+    {
+      "id": "tp09",
+      "prompt": "Should I add a comment above this if statement? The condition is `if user.isActive && !user.isPendingDeletion` — I can't decide if it's self-explanatory.",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Whether to add a specific comment — boundary because it's a micro-level comment decision, not the broader design-tool application, but the skill's principles on what comments should add still apply."
+    },
+    {
+      "id": "tp10",
+      "prompt": "My code is getting hard to read. Should I add more comments or should I refactor for clarity first?",
+      "expected": "invoke",
+      "category": "boundary",
+      "rationale": "Code clarity question that overlaps with comment philosophy. Boundary because it could be answered from a refactoring perspective or from Ousterhout's comments-as-design-complement perspective."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "skill_id": "letsgo-db-sentinel-error-translation",
+  "prompts": [
+    {
+      "id": "tp-f04-01",
+      "prompt": "How should a Go HTTP handler distinguish between 'no record found' and a real database error without importing database/sql?",
+      "tags": ["sentinel-errors", "handler-isolation"]
+    },
+    {
+      "id": "tp-f04-02",
+      "prompt": "My Go program panics with 'nil pointer dereference' when a database query fails. I have `defer rows.Close()` right after the Query call. What's wrong?",
+      "tags": ["defer-ordering", "nil-panic", "p03"]
+    },
+    {
+      "id": "tp-f04-03",
+      "prompt": "When would `err == models.ErrNoRecord` return false even though the error is ErrNoRecord?",
+      "tags": ["errors-is", "wrapped-errors", "p04"]
+    },
+    {
+      "id": "tp-f04-04",
+      "prompt": "I'm switching my Go app from MySQL to PostgreSQL. How many files need to change if I've used the sentinel error pattern correctly?",
+      "tags": ["database-migration", "isolation"]
+    },
+    {
+      "id": "tp-f04-05",
+      "prompt": "Where should I define ErrNoRecord and ErrInvalidCredentials in a Go web project? Which package owns them?",
+      "tags": ["package-design", "errors-go"]
+    },
+    {
+      "id": "tp-f04-06",
+      "prompt": "How do I detect a MySQL duplicate key error in Go and return a domain-specific error instead of exposing the driver error?",
+      "tags": ["duplicate-key", "driver-errors", "errors-as"]
+    },
+    {
+      "id": "tp-f04-07",
+      "prompt": "Should my login handler return different errors for 'email not found' vs 'wrong password'? What's the security implication?",
+      "tags": ["user-enumeration", "auth-errors"]
+    },
+    {
+      "id": "tp-f04-08",
+      "prompt": "What is the correct order of: db.Query(), error check, and defer rows.Close() in a Go model method?",
+      "tags": ["query-pattern", "defer-rows-close"]
+    },
+    {
+      "id": "tp-f04-09",
+      "prompt": "My handler imports both internal/models and database/sql to check sql.ErrNoRows. How should I refactor this?",
+      "tags": ["refactoring", "handler-imports"]
+    }
+  ]
+}

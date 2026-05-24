@@ -1,0 +1,62 @@
+{
+  "skill": "slo-decision-matrix",
+  "description": "Use this skill when a team needs to determine the right engineering action from SLO state alone is insufficient. Call it when you know whether the SLO is being met, but still don't know what to do — because you need two additional dimensions: toil level and user satisfaction.",
+  "test_prompts": [
+    {
+      "id": "slo-decision-matrix-should-01",
+      "category": "should_invoke",
+      "prompt": "Our API service has been hitting 99.95% availability for the last three months, well above our 99.9% SLO. But NPS scores dropped 8 points in the same period and support tickets are up 30%. Everyone on the team is confused — the SLO is green but users clearly aren't happy. What should we do?",
+      "expected": "invoke",
+      "rationale": "Textbook Met/Low/Low matrix cell: SLO is met, satisfaction is low. The key trigger from the skill description is exactly 'our SLO is green — why are users still unhappy?' The prescribed action is to investigate the SLI — the service is measuring the wrong thing (availability while users experience latency or correctness failures)."
+    },
+    {
+      "id": "slo-decision-matrix-should-02",
+      "category": "should_invoke",
+      "prompt": "We missed our latency SLO last quarter — p99 was 850ms against a 500ms target. But I've checked our support channels, NPS surveys, and user forums and I can't find any complaints about slowness. The product team is pressuring us to do a reliability sprint to fix it. Should we?",
+      "expected": "invoke",
+      "rationale": "Missed/Low/High matrix cell: SLO missed, satisfaction high. The skill's Scenario 2 covers this exactly — the correct action is to loosen the SLO, not invest in a reliability sprint. The matrix makes this a calibration decision rather than a performance failure."
+    },
+    {
+      "id": "slo-decision-matrix-should-03",
+      "category": "should_invoke",
+      "prompt": "Our SLO is green and our users seem pretty satisfied based on CSAT scores. But our on-call engineer spent 68% of their time last sprint on operational work — mostly manual alert triage and runbook steps that haven't been automated yet. We're not sure whether to celebrate the green SLO or be worried.",
+      "expected": "invoke",
+      "rationale": "Met/High/High matrix cell: SLO met, toil high (68% far exceeds the 50% cap), satisfaction high. The skill's Scenario 3 addresses this — the green SLO is not a reason to celebrate. The matrix prescribes either loosening the SLO to reduce alerting sensitivity or investing in automation to reduce toil while maintaining the target."
+    },
+    {
+      "id": "slo-decision-matrix-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We're in the middle of a P1 incident — our payment service has been down for 45 minutes and we're losing transactions. The on-call is triaging. What should our incident command structure look like and how do we coordinate across teams?",
+      "expected": "skip",
+      "rationale": "Active incident response, explicitly excluded by the boundary: 'Do not use as a real-time incident response tool.' The right approach is incident command (IC/Comms Lead/Ops Lead structure, 3Cs framework). The matrix is a strategic calibration tool applied at service review cadence, not during incidents."
+    },
+    {
+      "id": "slo-decision-matrix-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our error budget just ran out. We have a release scheduled for tomorrow. Do we freeze it or can we proceed?",
+      "expected": "skip",
+      "rationale": "This is an error budget policy execution question, not a matrix calibration question. The error-budget-policy-framework skill governs what happens when the budget is exhausted — the answer comes from the pre-written policy, not from a matrix analysis. The matrix calibrates whether the SLO target is correct; the policy governs the response to budget exhaustion."
+    },
+    {
+      "id": "slo-decision-matrix-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "We want to know how quickly we'll detect when our service is trending toward SLO violation. Our current alerting fires when we burn through the weekly budget in a day, but by that time we've already lost a lot of budget. How should we tune our alerting to catch this faster?",
+      "expected": "skip",
+      "rationale": "Alerting threshold tuning is the domain of multiwindow-multi-burn-rate alerting, not the SLO decision matrix. The matrix determines what engineering action to take given the current SLO × toil × satisfaction state; multiwindow burn rate alerting determines how quickly the team learns the SLO is at risk."
+    },
+    {
+      "id": "slo-decision-matrix-boundary-01",
+      "category": "boundary",
+      "prompt": "At our quarterly service review we want to decide whether to tighten, loosen, or leave our SLO alone. We have good availability and latency data. We don't have any structured user satisfaction measurement — we haven't done NPS surveys and support tickets are managed by a separate team we don't have access to. Can we still apply the matrix?",
+      "expected": "skip",
+      "rationale": "Resolved as skip because the boundary explicitly states: 'Do not use when you don't have data on user satisfaction. Without it, you can only observe two dimensions — and the two counterintuitive cells are invisible.' The correct first step is to obtain at least one satisfaction proxy (support ticket counts, forum posts, direct sampling) before applying the matrix. Applying it with two dimensions produces an incomplete and potentially misleading prescription."
+    },
+    {
+      "id": "slo-decision-matrix-boundary-02",
+      "category": "boundary",
+      "prompt": "Our SLO is green, user satisfaction looks fine, and toil is low. The team is pushing to hand the service back to the developer team since we seem to have nothing to fix. Is this the right call?",
+      "expected": "invoke",
+      "rationale": "Resolved as invoke because the Met/Low/High cell has a prescribed action: 'increase velocity or reduce SRE engagement.' The matrix explicitly covers this — it is not a case for inaction or open-ended discussion. The skill notes this is the best possible state and the prescribed outputs (step back from engagement, hand back the service) are exactly what the team is considering. The matrix confirms the judgment rather than leaving it to intuition."
+    }
+  ]
+}

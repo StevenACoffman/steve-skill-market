@@ -1,0 +1,62 @@
+{
+  "skill": "semantic-vocabulary-ladder",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "svl-t1",
+      "type": "should_trigger",
+      "prompt": "Our Sales team calls them 'clients', our Support team calls them 'customers', and our Finance team calls them 'accounts'. Now that we're merging our data warehouse we're getting three different counts for the same population. How do we fix this?",
+      "expected_skill": "semantic-vocabulary-ladder",
+      "trigger_rationale": "Classic rung 1 problem: synonym collision across teams after integration. Directly matches the three-CRM post-acquisition case (ce16) and the language signal 'Different teams call this same thing by different names'.",
+      "should_not_trigger": []
+    },
+    {
+      "id": "svl-t2",
+      "type": "should_trigger",
+      "prompt": "We have a data dictionary with about 200 terms. We're about to deploy an LLM to query our data platform. Someone said we need an ontology but our architect wants to start with a glossary. How do we decide?",
+      "expected_skill": "semantic-vocabulary-ladder",
+      "trigger_rationale": "Explicit vocabulary-level decision question ('Do we need an ontology, or is a glossary enough?'). Also involves AI agent deployment, which requires rung 4. The vocabulary ladder is the decision framework — it determines which rung is required.",
+      "should_not_trigger": []
+    },
+    {
+      "id": "svl-t3",
+      "type": "should_trigger",
+      "prompt": "Finance reported $47M in on-time deliveries last quarter. Operations reported $71M. Same time period, same table. We dug in and found Finance defines 'on-time' as delivered before the promised date, and Operations defines it as shipped within 48 hours of order. How do we formalize which definition wins?",
+      "expected_skill": "semantic-vocabulary-ladder",
+      "trigger_rationale": "Matches the Hellta/airline 'different numbers' escalation pattern (ce10). The problem is a vocabulary disagreement — two definitions for one term — not a grain or JOIN issue. Rung 1 forces the organizational agreement; the ladder is the remediation framework.",
+      "should_not_trigger": []
+    },
+    {
+      "id": "svl-d1",
+      "type": "should_not_trigger",
+      "prompt": "We're designing a data catalog for our lakehouse. What metadata should we be attaching to our tables and columns to make the catalog useful for both engineers and business users?",
+      "expected_skill": "three-layer-metadata-stack",
+      "trigger_rationale": "This is a metadata layer architecture question — what to document and at which layer — not a vocabulary structure question. The three-layer-metadata-stack defines the architecture (technical / business / semantic layers). The semantic-vocabulary-ladder would answer a sub-question (what level of vocabulary goes in the semantic layer) but is not the right entry point here.",
+      "should_not_trigger": ["semantic-vocabulary-ladder"]
+    },
+    {
+      "id": "svl-d2",
+      "type": "should_not_trigger",
+      "prompt": "We're building an AI agent that queries our customer database. How do we make sure the agent only takes actions it's authorized to take, and doesn't trigger refunds or notifications without approval?",
+      "expected_skill": "context-intent-action-for-ai-models",
+      "trigger_rationale": "Action authorization for AI agent consumers is the domain of context-intent-action-for-ai-models (specifically the Action layer). This is not a vocabulary structure question — it's about encoding permissible operations on data for an agent. The semantic-vocabulary-ladder does not cover agent action constraints.",
+      "should_not_trigger": ["semantic-vocabulary-ladder"]
+    },
+    {
+      "id": "svl-e1",
+      "type": "edge_case",
+      "prompt": "We just acquired a company and are trying to merge our product catalogs. Their 'SKU' is our 'product_code', their 'line item' is our 'order row'. We have a data engineer who wants to just rename the columns and move on. Our data governance lead says we should 'do the semantics right'. Who is correct, and what does doing it right actually mean?",
+      "expected_skill": "semantic-vocabulary-ladder",
+      "edge_rationale": "This could superficially look like a schema migration or technical question (the engineer's position), but the governance lead is describing a vocabulary problem. The answer depends on whether the terms are true synonyms (rung 1 sufficient) or whether there are semantic differences that will resurface as reporting errors (requiring rung 2+). The skill correctly scopes this as a vocabulary ladder question, not a column-rename task. The tension makes it an edge case: the user may not yet recognize it as a vocabulary problem.",
+      "self_evaluation": {
+        "triggers_correctly": true,
+        "confidence": "high",
+        "notes": "The post-acquisition synonym collision is the canonical rung 1 entry point. The governance framing is a direct vocabulary ladder question. The engineer's instinct to rename-and-move-on is exactly the 'write-once-read-never glossary' failure pattern the skill warns against."
+      }
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy svl-d1 routes to three-layer-metadata-stack (metadata layer architecture, not vocabulary structure). Decoy svl-d2 routes to context-intent-action-for-ai-models (agent action constraints). These three skills form a progression: vocabulary ladder builds the vocabulary -> three-layer stack organizes all metadata -> CIA delivers it to AI agents."
+}

@@ -1,0 +1,50 @@
+{
+  "skill_id": "letsgo-postform-not-postformvalue",
+  "prompts": [
+    {
+      "id": "tp-p02p10-01",
+      "prompt": "What happens in a Go HTTP handler if I use r.PostFormValue() and the request body is malformed?",
+      "tags": ["postformvalue-silent-error", "malformed-body"]
+    },
+    {
+      "id": "tp-p02p10-02",
+      "prompt": "What is the difference between r.PostFormValue(), r.FormValue(), and r.PostForm.Get() in Go?",
+      "tags": ["form-reading-comparison", "query-vs-body"]
+    },
+    {
+      "id": "tp-p02p10-03",
+      "prompt": "How do I correctly read form data from a POST request in Go and return 400 if the body is malformed?",
+      "tags": ["parseform", "400-bad-request"]
+    },
+    {
+      "id": "tp-p02p10-04",
+      "prompt": "A Go handler is reading a form field with r.FormValue() but it's picking up a value from the URL query string instead of the POST body. Why?",
+      "tags": ["formvalue-mixing", "query-param-leak"]
+    },
+    {
+      "id": "tp-p02p10-05",
+      "prompt": "What does the internal/ directory do in a Go module? Is it a naming convention or compiler-enforced?",
+      "tags": ["internal-package", "compiler-enforcement"]
+    },
+    {
+      "id": "tp-p02p10-06",
+      "prompt": "Which packages should go under internal/ in a Go web application vs at the module root?",
+      "tags": ["package-layout", "public-vs-internal"]
+    },
+    {
+      "id": "tp-p02p10-07",
+      "prompt": "If I use gorilla/schema or go-playground/form to decode form data, do I still need to call r.ParseForm() first?",
+      "tags": ["form-decoder", "parseform-requirement"]
+    },
+    {
+      "id": "tp-p02p10-08",
+      "prompt": "What happens if I put my models package under internal/ and later someone tries to import it from another module?",
+      "tags": ["internal-restriction", "external-import-error"]
+    },
+    {
+      "id": "tp-p02p10-09",
+      "prompt": "How do I prevent teammates from accidentally importing implementation-detail packages in a Go module?",
+      "tags": ["encapsulation", "internal-package"]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "skill": "process-to-model-translation",
+  "version": "0.1.0",
+  "source_book": "Practical Data Modeling — Joe Reis",
+  "darwin_compatible": true,
+  "test_cases": [
+    {
+      "id": "ptm-trigger-01",
+      "type": "should_trigger",
+      "prompt": "We have a documented support ticket workflow: a ticket is created by the customer, assigned to a tier-1 agent, can be escalated to tier-2, and finally resolved or closed. We've confirmed the five components. Now I need to design the actual tables. How do I structure this so we can query both the current state of any ticket AND how long each ticket spent in each state?",
+      "expected_behavior": "Skill triggers. The five-component description exists and the user needs to convert it into model components. Apply all four mapping rules: Rule 1 (business object = Support Ticket → primary entity); Rule 2 (each action = Created, Assigned, Escalated, Resolved → event records); Rule 3 (each status change → timestamped row in TicketStateHistory, not an overwrite); Rule 4 (agent assignment and escalation = actor hand-offs → TicketOwnershipChange records). The requirement to query time-in-state confirms Rule 3 is the load-bearing rule here.",
+      "should_trigger": true,
+      "rationale": "Direct trigger: user has process documentation (five components confirmed) and is asking to design tables. Language matches 'How do I model this workflow?' and 'We need to track the history of changes to this entity.' This is exactly the A2 trigger scenario #1 and #2."
+    },
+    {
+      "id": "ptm-trigger-02",
+      "type": "should_trigger",
+      "prompt": "I have a swimlane diagram for our procurement approval workflow. It shows: Requester submits a purchase request → Procurement Manager reviews and approves → Finance Controller approves if over $25K → Accounts Payable issues the PO. I need to turn this into a database schema. What tables should I create?",
+      "expected_behavior": "Skill triggers. User explicitly has a process diagram and needs to convert it into a schema — this is the A2 trigger scenario #1 and #4 (approval process / state machine schema). Apply four rules: Rule 1 (Purchase Request → primary entity); Rule 2 (Submitted, ManagerApproved, FinanceApproved, POIssued → event records table); Rule 3 (state transitions as new rows in PurchaseRequestStateHistory — not UPDATE to status column); Rule 4 (actor hand-offs from Requester → ProcurementManager → FinanceController → AP → each hand-off generates a relationship change record).",
+      "should_trigger": true,
+      "rationale": "Language directly matches 'We have a process diagram — how do we turn it into a schema?' Approval process with multiple actor hand-offs = canonical four-rule translation case."
+    },
+    {
+      "id": "ptm-trigger-03",
+      "type": "should_trigger",
+      "prompt": "Our data warehouse currently stores the current status of each loan application in a single 'status' column in the applications table. A new requirement just came in: stakeholders need to know how long each application spent in each review state last quarter. We can't answer that question with our current model. How should we fix this?",
+      "expected_behavior": "Skill triggers. This is A2 trigger scenario #5: a historical question the current model cannot answer because Rule 3 was violated (overwrite-in-place rather than timestamped state history rows). Skill should diagnose: the missing state history table is the failure (overwrite-in-place pattern). Prescribe: design a LoanApplicationStateHistory table (entity_id, from_state, to_state, effective_at). Caveat: if the historical data has been overwritten, the history is gone and recovery requires checking upstream source systems. Also recommend applying Rule 2 and Rule 4 proactively.",
+      "should_trigger": true,
+      "rationale": "Matches A2 trigger scenario #5 and the 'overwrite-in-place state updates' failure pattern from B section. Language aligns with 'We need to track the history of changes to this entity.'"
+    },
+    {
+      "id": "ptm-decoy-01",
+      "type": "should_not_trigger",
+      "prompt": "We need to design a data model for our new employee performance review process. It's a brand new initiative and we've never tracked this before. I have a rough idea that managers do quarterly reviews, but I don't know exactly who is involved, what triggers a review, what the outcomes are, or how it flows through HR versus department heads versus finance. Where do I start?",
+      "expected_behavior": "Skill does NOT trigger. The user does not have a process description — they explicitly don't know the triggering event, outcome, actors, or sequence. The B boundary says: 'If the business process has not been discovered and documented with its five components, there is no valid input for the four mapping rules.' Applying translation rules to an undiscovered process produces the Hellta failure mode. The correct first step is business-process-discovery.",
+      "should_trigger": false,
+      "rationale": "B boundary explicit exclusion: no five-component description exists. The decoy design spec says: 'A prompt about discovering what the business process is should NOT trigger this — it triggers business-process-discovery.'"
+    },
+    {
+      "id": "ptm-decoy-02",
+      "type": "should_not_trigger",
+      "prompt": "Our order management system has been in production for three years. The orders table stores only current status — there's an order_status column that gets overwritten at every step. We have no history of how orders moved through the workflow. The history is gone. Can we use the four mapping rules to recover what happened?",
+      "expected_behavior": "Skill does NOT trigger (or triggers with an explicit stop). This is the B boundary exclusion: 'The existing model is in production and the historical data is gone. Rule 3 requires that state transitions be captured as new rows. If the current model uses in-place updates and the historical states are overwritten, applying these rules to the existing model does not recover the lost history.' The question shifts to infrastructure recovery ('can we recover the history from upstream source systems?') which is outside the scope of this skill.",
+      "should_trigger": false,
+      "rationale": "Explicit B boundary exclusion for in-production models with overwritten history. The decoy design spec says: 'A prompt about historical data recovery (already in production with wrong model) should NOT trigger this.'"
+    },
+    {
+      "id": "ptm-edge-01",
+      "type": "edge_case",
+      "prompt": "We have a documented five-component description for our insurance claims process. The sequence includes a step where a claim can be retroactively reclassified — for example, we discover a claim was miscategorized as fraudulent when it wasn't. We need to be able to query both what the system believed the claim's status was on any given day AND what the correct status actually was after reclassification. How do I handle that in the data model?",
+      "expected_behavior": "Edge case: the process-to-model translation is active (five components exist) but the retroactive correction requirement triggers the bitemporal upgrade decision from Rule 3. Standard Rule 3 produces a unitemporal state history table (valid time only). When retroactive corrections must be auditable — 'what did the system believe at time T versus what was actually true?' — the temporal-depth-selection decision is needed. The skill should apply Rule 3, produce the standard state history table, then flag that the retroactive correction requirement means bitemporal is needed: add recorded_at to ClaimStateHistory alongside effective_at. Reference the support ticket bitemporal example from A1 Case 2.",
+      "should_trigger": true,
+      "rationale": "Translation is clearly needed (five components exist) but the retroactive correction requirement pushes into bitemporal territory. Tests whether the skill correctly identifies the temporal-depth-selection handoff. Matches A2 scenario #2 and Rule 3's bitemporal upgrade condition."
+    }
+  ],
+  "minimum_pass_rate": 0.8,
+  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy-01 tests the undiscovered-process boundary (BPD territory). Decoy-02 tests the in-production-history-gone boundary. Edge case tests the Rule 3 bitemporal upgrade and handoff to temporal-depth-selection."
+}

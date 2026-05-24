@@ -1,0 +1,65 @@
+{
+  "skill": "matryer-decode-valid",
+  "prompts": [
+    {
+      "id": "si-1",
+      "type": "should_invoke",
+      "prompt": "I'm tired of writing decode, then validate, then check errors in every handler. Is there a cleaner Go pattern for this?",
+      "reason": "Directly matches the trigger scenario — repeated decode+validate boilerplate in HTTP handlers."
+    },
+    {
+      "id": "si-2",
+      "type": "should_invoke",
+      "prompt": "How do I return field-level validation errors as a JSON map in a Go HTTP API?",
+      "reason": "The problems map[string]string return type is the exact mechanism this skill describes for structured validation error responses."
+    },
+    {
+      "id": "si-3",
+      "type": "should_invoke",
+      "prompt": "Show me how to use Go generics to create a request validation helper that combines JSON decoding and struct validation into one function.",
+      "reason": "Asks explicitly for the decodeValid[T Validator] generic pattern."
+    },
+    {
+      "id": "si-4",
+      "type": "should_invoke",
+      "prompt": "Where should I put input validation in a Go HTTP service — inline in each handler, or in a shared interface on the request struct?",
+      "reason": "This is the architectural question the Validator interface pattern answers: move field-level checks onto the struct, away from handler bodies."
+    },
+    {
+      "id": "sni-1",
+      "type": "should_not_invoke",
+      "prompt": "How do I validate a user's email address against the database to ensure it is unique before creating an account?",
+      "reason": "This is I/O-dependent validation (database lookup), which the skill explicitly places outside Valid() in the handler or service layer. The skill does not cover this case."
+    },
+    {
+      "id": "sni-2",
+      "type": "should_not_invoke",
+      "prompt": "What Go library should I use for JSON schema validation of HTTP request bodies?",
+      "reason": "Asks about third-party schema validation libraries. This skill uses a hand-rolled interface and generic helper, not external schema validation tools."
+    },
+    {
+      "id": "sni-3",
+      "type": "should_not_invoke",
+      "prompt": "How do I write middleware in Go to authenticate requests using a JWT token?",
+      "reason": "Authentication middleware is a separate concern (covered by adapter/middleware patterns). The skill is about decoding and field-level validation, not auth."
+    },
+    {
+      "id": "bb-1",
+      "type": "blurred_boundary",
+      "prompt": "I want to validate that the user ID in a request body matches an existing record in my database before processing. Should that go in Valid() or in the handler?",
+      "reason": "Blurred because it sounds like validation, but it is I/O-dependent. The skill covers this boundary explicitly: Valid() is for structural checks only; database checks belong in the handler after decodeValid returns successfully."
+    },
+    {
+      "id": "bb-2",
+      "type": "blurred_boundary",
+      "prompt": "How do I decode and validate a multipart form request in Go instead of JSON?",
+      "reason": "Blurred because the pattern applies conceptually (decode + validate as one step), but decodeValid as written uses json.NewDecoder. The skill notes this limitation but does not provide a multipart implementation."
+    },
+    {
+      "id": "bb-3",
+      "type": "blurred_boundary",
+      "prompt": "Should I use a validation library like go-playground/validator or write my own Valid() method on each struct?",
+      "reason": "Blurred because the question is about the same problem space (struct validation in Go HTTP services), but asks for a library comparison rather than the hand-rolled interface approach this skill advocates."
+    }
+  ]
+}

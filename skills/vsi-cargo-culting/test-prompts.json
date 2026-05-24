@@ -1,0 +1,69 @@
+{
+  "skill": "vsi-cargo-culting",
+  "version": "0.1.0",
+  "test_cases": [
+    {
+      "id": "should-trigger-01",
+      "type": "should_trigger",
+      "prompt": "Our new CTO just came from Google and wants us to implement their full SRE model — dedicated SRE team, error budgets, SLOs, the works. He read the SRE book and says this is how Google does it so we should do it too. We're a 40-person company. Should we just do it?",
+      "expected_behavior": "Invokes vsi-cargo-culting, applies the VSI framework: V — Google's prestige and the CTO's background give the practice unexamined credibility; S — no analysis of whether the enabling conditions (thousands of engineers, full ownership models, blameless culture at scale) exist at a 40-person company; I — the plan is to install the forms (SRE team, dashboards, tooling) without the prerequisites. Prescribes a fit-practice analysis before committing.",
+      "notes": "Positive scenario: 'this is how Google does it' from a prestigious hire; textbook VSI + the SLO adoption without cultural shift case from the book."
+    },
+    {
+      "id": "should-trigger-02",
+      "type": "should_trigger",
+      "prompt": "We attended KubeCon last year and decided to migrate to Kubernetes. We've been running it for 8 months. Our deployment frequency actually went down, incidents went up, and half the team is still fighting the learning curve. But everyone says Kubernetes is the standard now. What's going on?",
+      "expected_behavior": "Invokes vsi-cargo-culting, applies the Kubernetes migration case from the book: V — conference + 'everyone is doing it' creates halo-effect adoption pressure; S — no analysis of whether enabling conditions (dedicated platform team, containerization maturity, engineering bandwidth) are present; I — Kubernetes installed as form without the substance. Outcome is the predictable result of all three VSI elements present.",
+      "notes": "Positive scenario: Kubernetes adoption driven by conference + peer pressure; exactly the pattern in the book's Case 2."
+    },
+    {
+      "id": "should-trigger-03",
+      "type": "should_trigger",
+      "prompt": "We hired two engineers from Spotify to help us scale. They immediately proposed implementing the Spotify model — squads, tribes, chapters, guilds. Our engineering org has 30 people. The proposal is being treated as non-negotiable because 'this is how Spotify does it.' I have doubts. How do I evaluate this?",
+      "expected_behavior": "Invokes vsi-cargo-culting, diagnoses V (ex-Spotify prestige makes the proposal unquestionable), S (no analysis of whether Spotify's enabling conditions — thousands of engineers, specific product and market context — exist), I (plan to install org forms without the enabling culture). Prescribes applying the VSI checklist and asking the fit-practice questions before committing.",
+      "notes": "Positive scenario: 'we hired someone from [prestigious company]' pattern; exactly the language signal in the skill."
+    },
+    {
+      "id": "should-trigger-04",
+      "type": "should_trigger",
+      "prompt": "We've been running SAFe for 18 months. We have all the ceremonies — PI planning, ART syncs, System Demo, Inspect and Adapt. But our velocity hasn't improved, our time-to-market is still slow, and the engineers all hate the process overhead. Is SAFe the problem?",
+      "expected_behavior": "Invokes vsi-cargo-culting, applies the post-hoc audit use case: V — SAFe's branding and widespread adoption made it credible; S — no analysis of whether the enabling conditions for SAFe (large co-located org with portfolio-level dependencies) match the actual context; I — the ceremonies are installed but producing no outcome improvement. Outcome pattern matches all three VSI elements. The answer is not 'SAFe is bad' but 'SAFe was not a fit.'",
+      "notes": "Positive scenario: 12+ months of installed process with no outcome change; the skill's 'audit an existing practice' use case."
+    },
+    {
+      "id": "should-not-trigger-01",
+      "type": "should_not_trigger",
+      "prompt": "What is cargo culting in software engineering?",
+      "expected_behavior": "Definitional question. Should not invoke vsi-cargo-culting; answer with a concise explanation of the cargo cult concept in an engineering context.",
+      "notes": "Decoy: requesting a definition, not a diagnostic analysis of a specific adoption decision."
+    },
+    {
+      "id": "should-not-trigger-02",
+      "type": "should_not_trigger",
+      "prompt": "Should we use DORA metrics? We're trying to measure our engineering team's performance.",
+      "expected_behavior": "Fit evaluation question. Might use fit-practice for the four-question evaluation, but the question doesn't describe a prestige-driven adoption with shallow understanding and imitation already in motion. Should not invoke vsi-cargo-culting unless the user reveals that the reason for adopting DORA is purely 'everyone does it.'",
+      "notes": "Decoy: fit-practice territory (does this practice suit our context?) vs. VSI diagnosis territory (is an adoption being driven by prestige+shallow understanding+imitation?)."
+    },
+    {
+      "id": "should-not-trigger-03",
+      "type": "should_not_trigger",
+      "prompt": "We want to adopt trunk-based development. What are the prerequisites for making it work?",
+      "expected_behavior": "Fit-practice question — asking for enabling conditions. Should not invoke vsi-cargo-culting; this is a methodical evaluation, not a cargo-cult diagnosis. Answer with the enabling conditions for trunk-based development (CI/CD maturity, feature flags, test coverage).",
+      "notes": "Decoy: user is proactively asking for fit analysis — this is exactly the right behavior that cargo culting prevents. No VSI diagnosis needed."
+    },
+    {
+      "id": "edge-01",
+      "type": "edge_case",
+      "prompt": "I went to a conference and heard a compelling talk about chaos engineering. The speaker was from Netflix. I'm now convinced we should do it. How do I propose this to my team?",
+      "expected_behavior": "Likely invokes vsi-cargo-culting with a gentle diagnosis: V is present (Netflix prestige + conference framing); the question is whether S and I are also in play. The answer should help the user move from 'Netflix does it' to a fit-practice analysis: what problem does chaos engineering solve, what enabling conditions are required, and does your current environment have them? This prevents the cargo cult without dismissing the underlying wisdom.",
+      "notes": "Boundary: user is enthusiastic and early in the adoption process; the goal is to redirect to fit analysis, not to dismiss chaos engineering."
+    },
+    {
+      "id": "edge-02",
+      "type": "edge_case",
+      "prompt": "We've been doing OKRs for two years and I'm not sure they're working. But every successful company seems to use them. How do I evaluate whether to keep them?",
+      "expected_behavior": "Likely invokes vsi-cargo-culting for the retrospective audit. The 'every successful company uses them' reasoning is a V signal. The evaluation should apply the VSI lens: are we doing OKRs because they fit our context, or because we feel we should? Apply the fit-practice four questions to determine whether OKRs are working for our specific context.",
+      "notes": "Boundary: existing practice audit triggered by 'every successful company does it' reasoning. VSI is the right diagnostic; fit-practice is the evaluation framework."
+    }
+  ]
+}

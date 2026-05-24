@@ -1,0 +1,68 @@
+{
+  "skill_id": "terraform-moved-block-refactoring",
+  "book": "Terraform: Up and Running (3rd Edition)",
+  "author": "Yevgeniy Brikman",
+  "generated": "2026-05-05",
+  "prompts": [
+    {
+      "id": "mb-si-01",
+      "type": "should_invoke",
+      "prompt": "I want to rename a Terraform resource from aws_security_group.instance to aws_security_group.web_server. Will this destroy and recreate the security group?",
+      "rationale": "Direct rename question — without a moved block, yes it destroys. This is the core scenario."
+    },
+    {
+      "id": "mb-si-02",
+      "type": "should_invoke",
+      "prompt": "I'm refactoring my Terraform code to move a bunch of resources from the root module into a module called webserver_cluster. How do I do this without destroying my production infrastructure?",
+      "rationale": "Module extraction refactor — the primary use case for moved blocks."
+    },
+    {
+      "id": "mb-si-03",
+      "type": "should_invoke",
+      "prompt": "What's the difference between using a moved block and using terraform state mv to rename a resource?",
+      "rationale": "Directly asks the moved block vs. terraform state mv comparison — the skill explains both and recommends moved blocks."
+    },
+    {
+      "id": "mb-si-04",
+      "type": "should_invoke",
+      "prompt": "I'm migrating IAM users from count to for_each. The state currently has aws_iam_user.example[0], [1], [2]. After the migration I want aws_iam_user.example[\"alice\"], [\"bob\"], [\"carol\"]. How do I do this without destroying the users?",
+      "rationale": "Count-to-for_each state key migration — the stacked moved block use case."
+    },
+    {
+      "id": "mb-sni-01",
+      "type": "should_not_invoke",
+      "prompt": "How do I delete a resource from Terraform state without destroying the real infrastructure?",
+      "rationale": "terraform state rm — removing from state entirely is different from renaming/moving."
+    },
+    {
+      "id": "mb-sni-02",
+      "type": "should_not_invoke",
+      "prompt": "How do I import an existing AWS resource into Terraform state?",
+      "rationale": "terraform import or import blocks — adding new resources to state, not renaming existing ones."
+    },
+    {
+      "id": "mb-sni-03",
+      "type": "should_not_invoke",
+      "prompt": "I want to move my Terraform state file from one S3 bucket to another. How do I do that?",
+      "rationale": "Moving the entire state file between backends — terraform init -migrate-state, not moved blocks."
+    },
+    {
+      "id": "mb-bb-01",
+      "type": "blurred_boundary",
+      "prompt": "I want to split one large Terraform module into two separate modules with their own state files. Some resources in the first module need to move to the second. Can I use a moved block for this?",
+      "rationale": "Cross-state-file move — the skill's boundary explicitly says moved blocks don't work across state files; terraform state mv is required."
+    },
+    {
+      "id": "mb-bb-02",
+      "type": "blurred_boundary",
+      "prompt": "I applied a moved block to rename a resource and it worked. Can I remove the moved block now?",
+      "rationale": "Premature moved block removal — the skill's lifecycle guidance: only remove after all environments have applied."
+    },
+    {
+      "id": "mb-bb-03",
+      "type": "blurred_boundary",
+      "prompt": "I'm on Terraform 1.0. I want to rename a resource without destroying it. What are my options?",
+      "rationale": "Version boundary — moved blocks require Terraform 1.1+. On 1.0, terraform state mv is the only option."
+    }
+  ]
+}

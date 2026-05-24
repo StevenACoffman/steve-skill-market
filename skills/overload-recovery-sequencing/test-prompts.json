@@ -1,0 +1,62 @@
+{
+  "skill": "overload-recovery-sequencing",
+  "description": "Use this skill when an SRE team is in operational overload — work is accumulating faster than it can be resolved, on-call shifts are exceeding two incidents, team members are working outside contractual hours, or sprint velocity has dropped for more than four weeks. Call it before any structural intervention (triage, automation planning, headcount requests).",
+  "test_prompts": [
+    {
+      "id": "overload-recovery-sequencing-should-01",
+      "category": "should_invoke",
+      "prompt": "Our SRE team's velocity has been dropping for about two months. Sprint after sprint we're carrying more tickets over than we're closing. My instinct is to schedule a full-day prioritization session with the whole team to get the backlog under control. Is that the right move?",
+      "expected": "invoke",
+      "rationale": "Classic structural-before-psychological anti-pattern: sustained velocity drop (>4 weeks) with manager's first instinct being sprint planning overhead. The skill directly addresses this scenario and names it as the key trigger."
+    },
+    {
+      "id": "overload-recovery-sequencing-should-02",
+      "category": "should_invoke",
+      "prompt": "I manage a small SRE team and three people have quietly mentioned in 1:1s that they've been working weekends and evenings just to keep up. Morale survey scores are the lowest I've seen. On-call handoffs are getting hostile. Page volume hasn't spiked dramatically but the team feels like it's falling apart. What do I do first?",
+      "expected": "invoke",
+      "rationale": "Sustained overload with collapse in psychological safety: health indicators (weekend work, exhaustion), morale indicators (survey, hostile handoffs), and team collaboration breakdown. This is perceived overload with the same effects as objective overload, directly matching the Zürich case pattern."
+    },
+    {
+      "id": "overload-recovery-sequencing-should-03",
+      "category": "should_invoke",
+      "prompt": "We have a service handback conversation that keeps going nowhere. The SRE team insists they can manage this service but our data shows they're spending 60% of their time on toil for it alone. Every time I bring up the handback, the team gets defensive and the meeting ends badly. I'm thinking about setting a firm deadline and making it a requirement.",
+      "expected": "invoke",
+      "rationale": "The skill's Scenario 3 exactly: team cannot make clear-headed handback decisions under psychosocial stress; defensiveness signals safety has collapsed. Imposing a firm deadline is the management-pressure anti-pattern. Psychological safety must be restored before the handback conversation can succeed."
+    },
+    {
+      "id": "overload-recovery-sequencing-should-not-01",
+      "category": "should_not_invoke",
+      "prompt": "We had a Sev-1 this morning that ran for six hours. The on-call engineer is exhausted and two engineers who were on vacation got pulled in. How do we handle the immediate aftermath and make sure the team recovers before the next on-call shift?",
+      "expected": "skip",
+      "rationale": "This is acute incident stress, not sustained overload. The boundary section explicitly excludes single-incident situations. The right response is incident management and post-incident recovery practices, not the overload recovery sequence."
+    },
+    {
+      "id": "overload-recovery-sequencing-should-not-02",
+      "category": "should_not_invoke",
+      "prompt": "Our toil ratio is sitting at 65% this quarter. I want to identify which of our on-call tasks are genuinely automatable so we can make the case to prioritize automation work next quarter. How do I classify what counts as toil?",
+      "expected": "skip",
+      "rationale": "This is a toil identification and classification question, not an overload recovery sequencing question. The skill explicitly contrasts with toil identification: the six-property test (manual, repetitive, automatable, tactical, no enduring value, scales linearly) is the right tool here, not the overload recovery sequence."
+    },
+    {
+      "id": "overload-recovery-sequencing-should-not-03",
+      "category": "should_not_invoke",
+      "prompt": "Our SLO is too tight — the on-call team is constantly paged for things users don't actually care about. I want to loosen the SLO to reduce alert noise, but the product manager keeps saying we need 99.99%. How do we resolve this disagreement?",
+      "expected": "skip",
+      "rationale": "This is an SLO calibration and stakeholder negotiation question, not a team overload recovery question. The slo-stakeholder-negotiation-gate skill applies — the SLO is the variable to resolve through tripartite negotiation, not a psychological safety intervention."
+    },
+    {
+      "id": "overload-recovery-sequencing-boundary-01",
+      "category": "boundary",
+      "prompt": "Two of our five SREs just quit in the same week — both senior people. The remaining three are suddenly carrying the full operational load and it's only been ten days. The backlog is exploding. Should we do a rapid triage session to cut scope, or is there something else we should do first?",
+      "expected": "invoke",
+      "rationale": "Resolved as invoke because the question is exactly what the skill addresses — what to do first under sudden overload. The answer depends on whether psychological safety is intact. This mirrors Case Study 1 (Storage SRE team): if the remaining team still trusts each other and the overload is objective not perceived, triage may be the correct first step. The skill is needed to make that diagnostic call, even if Steps 2 and 3 get collapsed."
+    },
+    {
+      "id": "overload-recovery-sequencing-boundary-02",
+      "category": "boundary",
+      "prompt": "I took over as manager of an SRE team six weeks ago. My predecessor apparently set very aggressive commitments and the team has been missing them for months. Metrics show toil at 55% and backlog trending up. The team seems functional in 1:1s but they don't speak up in group settings and there's almost no cross-team collaboration happening anymore. HR is asking me to put two engineers on a performance improvement plan.",
+      "expected": "invoke",
+      "rationale": "Resolved as invoke despite the complication of an HR-driven pressure to add performance accountability. The behavioral signals (silence in group settings, no collaboration) indicate collapsed psychological safety, which is exactly the condition the skill addresses. Imposing PIPs on a team in this state is the documented anti-pattern from the Zürich case. The overload recovery sequence — psychological safety first — must precede any performance accountability intervention."
+    }
+  ]
+}
