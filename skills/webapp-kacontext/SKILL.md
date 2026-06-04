@@ -147,6 +147,59 @@ type MyContext interface {
 }
 ```
 
+**Do not put an omnibus interface in a function signature.** `kacontext.TestContext`
+exists for the test suite (it embeds every capability), but production code must
+take the narrowest interface it uses. Same for the per-package omnibus types you
+might see in `cmd/` wiring: those are entry-point types, not service-function
+parameter types.
+
+```go
+// Bad — function signature takes the test omnibus; ka-context-interface
+// fires for every capability the body doesn't call.
+func badProcessSignup(ctx kacontext.TestContext, args *Args) error {
+	ctx.Log().Info("starting", nil)
+	return nil
+}
+
+// Bad — function signature takes the concrete kacontext type. Aside from
+//
+//	defeating dependency narrowing, this also makes the function impossible
+//	to call with a narrower interface in tests.
+func badProcessSignupConcrete(ctx *kacontext.KAContext, args *Args) error {
+	ctx.Log().Info("starting", nil)
+	return nil
+}
+
+// Good — declare a named interface with exactly the sub-interfaces called.
+type ProcessSignupContext interface {
+	kacontext.Base
+	log.KAContext
+	datastore.KAContext
+	emails.KAContext
+}
+
+func goodProcessSignup(ctx ProcessSignupContext, args *Args) error {
+	ctx.Log().Info("starting", nil)
+	return nil
+}
+```
+
+If the function calls only one or two sub-interfaces, use an inline anonymous
+interface in the parameter type rather than declaring a named one:
+
+```go
+// Good — 2-interface helper inlines the type
+func goodLogFailure(
+	ctx interface {
+		kacontext.Base
+		log.KAContext
+	},
+	err error,
+) {
+	ctx.Log().Error(errors.Wrap(err))
+}
+```
+
 ### Passing Ctx Between Functions
 
 Because all KAContext values satisfy any interface whose methods they implement,
@@ -339,6 +392,65 @@ if err != nil {
 }
 defer resp.Body.Close()
 ```
+
+______________________________________________________________________
+
+## Environment Variables
+
+`os.Getenv`, `os.LookupEnv`, `os.Environ`, and `os.ExpandEnv` are banned in
+`services/` and `pkg/` (`ka-banned-symbol`). The model is **read once at the
+top level, then thread the value through** — service code never asks the OS
+directly.
+
+Exempt locations: `cmd/` scripts, `pkg/kacontext`, `pkg/web/serve`, any
+`root.go`, and test files (test files may also use `suite.Setenv`).
+
+```go
+// Bad — reading envvars in a service or pkg function
+func badNewClient() *Client {
+	url := os.Getenv("MY_SERVICE_URL")    // ka-banned-symbol
+	timeout, _ := os.LookupEnv("TIMEOUT") // ka-banned-symbol
+	return &Client{URL: url, Timeout: timeout}
+}
+
+// Bad — listing all envvars in service/pkg code
+func badListEnv() {
+	for _, kv := range os.Environ() { // ka-banned-symbol
+		_ = kv
+	}
+}
+
+// Good — main reads, constructor receives explicit values
+//
+//	cmd/serve/root.go (or main.go):
+func goodMainWiring() *Client {
+	url := os.Getenv("MY_SERVICE_URL") // ok in root.go / main.go
+	timeout := os.Getenv("TIMEOUT")
+	return goodNewClient(url, timeout)
+}
+
+// pkg/myservice/client.go:
+func goodNewClient(url, timeout string) *Client {
+	return &Client{URL: url, Timeout: timeout}
+}
+
+// Good — iterate envvars via the context (works in service/pkg code)
+func goodListEnv(ctx kacontext.Base) {
+	for k, v := range kacontext.Environ(ctx) {
+		_, _ = k, v
+	}
+}
+
+// Good — tests use suite.Setenv (auto-cleaned)
+func (suite *MySuite) TestFoo() {
+	suite.Setenv("MY_FLAG", "true")
+	// ...
+}
+```
+
+For envvars that must be read after startup (e.g. a script that wants to
+honour `--env` overrides), use `kacontext.Environ(ctx)` rather than reaching
+back through `os` — the context-provided map respects test overrides.
 
 ______________________________________________________________________
 
@@ -671,3 +783,59 @@ go func() {
 	slowOp(detachedCtx)
 }()
 ```
+
+______________________________________________________________________
+
+## Cleaning up Stale Imports After Context Edits
+
+When you remove a sub-interface from a `ctx` parameter (e.g. dropping
+`log.KAContext` because the function no longer logs), the corresponding import
+often becomes unused. `go vet ./...` flags these as `imported and not used`.
+The script below collects the offending file paths and runs `goimports -w`
+on each:
+
+```bash
+#!/usr/bin/env bash
+# Run `go vet ./...` from the webapp module root, collect any "imported and
+# not used" errors, and apply `goimports -w` to each unique offending file.
+set -u
+
+go vet ./... 2>&1 |
+	grep -E '^[^[:space:]]+\.go:[0-9]+:[0-9]+: .*imported and not used' |
+	awk -F: '{print $1}' |
+	sort -u |
+	xargs -I{} goimports -w {}
+```
+
+**Cascading-fix variant.** Fixing one file can unblock a downstream package
+that `go vet` previously refused to type-check. Loop until the output is
+empty (capped to avoid an infinite loop on something the script can't fix):
+
+```bash
+#!/usr/bin/env bash
+set -u
+
+for _ in 1 2 3 4 5; do
+	hits=$(go vet ./... 2>&1 |
+		grep -E '^[^[:space:]]+\.go:[0-9]+:[0-9]+: .*imported and not used' |
+		awk -F: '{print $1}' |
+		sort -u)
+	[ -z "$hits" ] && break
+	xargs -I{} goimports -w {} <<<"$hits"
+done
+```
+
+**Before running:**
+
+- Commit or stash first — `goimports -w` rewrites in place.
+- Ensure `goimports` is in `PATH`
+  (`go install golang.org/x/tools/cmd/goimports@latest` if missing).
+- Run from the webapp module root, not a subdirectory, so file paths in
+  `go vet` output are resolvable from the current directory.
+
+**Known limitation.** When `go vet` emits errors under a `# package/path`
+header, the diagnostic line uses a package-relative path
+(e.g. `client.go:5:2:` rather than `./pkg/foo/client.go:5:2:`). The script
+won't find those files and `goimports` will print "no such file" for them;
+the rest of the batch still completes. Re-run from the affected package
+directory, or fix those by hand.

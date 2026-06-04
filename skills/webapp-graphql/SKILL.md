@@ -204,6 +204,73 @@ s.Require().Equal(js.Obj{
 
 ______________________________________________________________________
 
+## `# @genqlient` Directives — Authoring Cross-Service Operations
+
+Cross-service operations live as raw GraphQL strings inside `cross_service/`
+Go files, marked with a `# @genqlient` comment. The `genqlient` code generator
+turns each one into a typed Go function plus an `*_Operation` symbol you can
+hand to `tasks.GraphQLTask`.
+
+The `ka-genqlient` linter enforces two related rules:
+
+1. **Every `# @genqlient`-annotated operation must be referenced in the same
+   `.go` file.** Either call the generated function, or — for cases where you
+   only want the operation registered (e.g. it's executed via
+   `tasks.GraphQLTask` rather than called directly) — add a `_ = …` reference
+   to the corresponding symbol.
+2. **Removing the last call site requires removing the directive.** Orphan
+   directives left after a refactor will fail the linter on the next CI run.
+
+```go
+// Good — operation is invoked directly; no extra reference needed
+func goodGetUser(ctx federationCtx, kaid string) (*User, error) {
+	_ = `# @genqlient
+		query Users_GetUser($kaid: String!) {
+			user(kaid: $kaid) { id name }
+		}
+	`
+	resp, err := client.UsersGetUser(ctx, kaid) // direct call site
+	if err != nil {
+		return nil, errors.Wrap(err)
+	}
+	return resp, nil
+}
+
+// Good — operation is fired only via tasks.GraphQLTask; add _ = … so the
+//
+//	linter sees the symbol is used. Place the reference next to the directive.
+func goodTriggerEnrollment(ctx tasks.KAContext, kaid string) error {
+	_ = `# @genqlient
+		mutation Enrollments_Task_EnrollUser($kaid: String!) {
+			enrollUserInClassroom(kaid: $kaid) { error { code } }
+		}
+	`
+	_ = genqlient.Enrollments_Task_EnrollUser_Operation // satisfies ka-genqlient
+
+	task, err := tasks.GraphQLTask(
+		genqlient.Enrollments_Task_EnrollUser_Operation,
+		map[string]any{"kaid": kaid},
+	)
+	if err != nil {
+		return errors.Wrap(err)
+	}
+	return ctx.Tasks().CreateTask(ctx, "enrollments-deferred-queue", task)
+}
+
+// Bad — directive present, no call site or _ = reference in this file
+func badOrphanDirective() {
+	_ = `# @genqlient
+		query Users_OrphanedQuery { user { id } }
+	` // ka-genqlient fires: no caller and no _ = genqlient.Users_OrphanedQuery
+}
+```
+
+When you delete the last caller of a generated function, search for and remove
+its `# @genqlient` block too. The directive is not load-bearing on its own —
+genqlient only emits the typed function when something in the same file uses it.
+
+______________________________________________________________________
+
 ## GraphQL Safelist
 
 Webapp maintains a static allowlist of every GraphQL query sent by Go services.

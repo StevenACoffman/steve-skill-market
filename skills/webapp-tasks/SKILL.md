@@ -139,20 +139,54 @@ Use `tasks.GraphQLTask` to create a task that fires a GraphQL mutation via the
 `graphql-gateway`. The mutation **must be idempotent** because the task queue
 retries on error.
 
+The first argument is **not** a raw mutation string. `ka-graphql-task` requires
+it to be a `genqlient.<service>_Task_<something>_Operation` symbol generated
+from a `# @genqlient` directive in the same file. A raw string fails the linter.
+
 ```go
-task, err := tasks.GraphQLTask(
-	`mutation EnrollUser($kaid: String!, $classId: String!) {
-        enrollUserInClassroom(kaid: $kaid, classId: $classId) {
-            error { code }
-        }
-    }`,
-	map[string]any{"kaid": userKaid, "classId": classId},
-)
-if err != nil {
-	return err
+// Bad — raw mutation string (ka-graphql-task fires)
+func badEnroll(ctx tasks.KAContext, userKaid, classId string) error {
+	task, err := tasks.GraphQLTask(
+		`mutation EnrollUser($kaid: String!, $classId: String!) {
+			enrollUserInClassroom(kaid: $kaid, classId: $classId) {
+				error { code }
+			}
+		}`,
+		map[string]any{"kaid": userKaid, "classId": classId},
+	)
+	if err != nil {
+		return errors.Wrap(err)
+	}
+	return ctx.Tasks().CreateTask(ctx, "enrollments-deferred-queue", task)
 }
-err = ctx.Tasks().CreateTask(ctx, "enrollments-deferred-queue", task)
+
+// Good — declare the operation with @genqlient, then pass the generated
+//
+//	_Operation symbol. The directive lives in the same file as the call.
+func goodEnroll(ctx tasks.KAContext, kaid, classID string) error {
+	_ = `# @genqlient
+		mutation Enrollments_Task_EnrollUser($kaid: String!, $classId: String!) {
+			enrollUserInClassroom(kaid: $kaid, classId: $classId) {
+				error { code }
+			}
+		}
+	`
+
+	task, err := tasks.GraphQLTask(
+		genqlient.Enrollments_Task_EnrollUser_Operation,
+		map[string]any{"kaid": kaid, "classId": classID},
+	)
+	if err != nil {
+		return errors.Wrap(err)
+	}
+	return ctx.Tasks().CreateTask(ctx, "enrollments-deferred-queue", task)
+}
 ```
+
+The operation name must follow the `<service>_Task_<something>` convention —
+the linter checks that `_Task_` appears in the symbol name and that it ends in
+`_Operation`. The service prefix (e.g. `Enrollments_`) must match the owning
+service's operation-name mapping; `ka-cross-service-opname` flags mismatches.
 
 `GraphQLTask` sets `Target: "graphql-gateway"` and routes to
 `/tasks/graphql/{operationName}`. The queue's `target` in `queue.yaml` must

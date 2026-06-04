@@ -142,6 +142,47 @@ func goodErr(err error) error {
 }
 ```
 
+### Converting `fmt.Errorf` Calls
+
+`errors.Wrap` does **not** accept a format string. Every interpolated value in
+the original `fmt.Errorf` becomes a `"key", value` pair. Keys are string
+literals; the leading sentence stays plain text.
+
+```go
+// Bad — fmt.Errorf is banned (ka-banned-symbol)
+func badCreate(id string, err error) error {
+	return fmt.Errorf("creating user %s: %w", id, err)
+}
+
+func badValidate(score int, kaid string, err error) error {
+	return fmt.Errorf("invalid score %d for kaid %s: %w", score, kaid, err)
+}
+
+// Good — same context, no format string; each %-placeholder becomes a key/val pair
+func goodCreate(id string, err error) error {
+	return errors.Wrap(err, "operation", "createUser", "user_id", id)
+}
+
+func goodValidate(score int, kaid string, err error) error {
+	return errors.Wrap(err, "operation", "validateScore", "score", score, "kaid", kaid)
+}
+
+// Bad — fmt.Errorf with no wrapped error
+func badRange(score int) error {
+	return fmt.Errorf("score %d out of range", score)
+}
+
+// Good — errors.New for the message; Wrap adds fields
+func goodRange(score int) error {
+	return errors.Wrap(errors.New("score out of range"), "score", score)
+}
+```
+
+Common keys: `"operation"` (verb/function name), `"user_id"`/`"kaid"`,
+`"resource_id"`, `"input"` (the raw user input). Drop English connectives
+like "while" / "when" / ": failed to" — the wrapped chain already carries
+that meaning.
+
 ### Wrapping Rules (`ka-errors-stacktrace`)
 
 Wrap **sentinel errors** and **third-party/stdlib errors** before returning.
@@ -298,7 +339,16 @@ func badLog(ctx kacontext.MutableContext, id, userID string, err error) {
 	log.Printf("user: %s", id)
 	logrus.Infof("done")
 	ctx.Log().Info(fmt.Sprintf("processing user %s", userID)) // bad: fmt.Sprintf in message
-	fmt.Println("debug")                                      // bad: stdout in server code
+
+	// Bad — every form of stdout write is banned in services/ and pkg/
+	//   (ka-banned-symbol). This includes the builtins, not just the fmt
+	//   wrappers. Temporary "just for debugging" output is not exempt.
+	fmt.Print("…")
+	fmt.Printf("user=%s\n", id)
+	fmt.Println("debug")
+	print("debug")
+	println("debug")
+	os.Stdout.Write([]byte("…"))
 }
 
 // Good — Debug/Info: fixed string message + log.Fields for variable data
@@ -311,6 +361,11 @@ func goodLog(ctx kacontext.MutableContext, userID string, err error) {
 	ctx.Log().Warn(errors.Wrap(err, "operation", "fetchUser"))
 }
 ```
+
+`cmd/` scripts (`main` packages) are the only place `fmt.Print*` / `print` /
+`println` / `os.Stdout` are allowed — that's where stdout is the legitimate
+output channel. Everywhere else (anything under `services/` or `pkg/`), use
+`ctx.Log()`.
 
 `Debug` and `Info` take `(message string, fieldsMaps ...log.Fields)`. `Warn`,
 `Error`, and `Panic` take `(err error)` only — attach structured context via
@@ -352,17 +407,34 @@ ______________________________________________________________________
 ### Outbound Requests
 
 ```go
-// Bad — no context propagation, bypasses observability
+// Bad — every stdlib shortcut is banned (ka-banned-symbol). They use
+// http.DefaultClient internally, which drops context, auth headers,
+// and observability spans.
 resp, err := http.Get(url)
+resp, err := http.Head(url)
+resp, err := http.Post(url, contentType, body)
+resp, err := http.PostForm(url, formValues)
 resp, err := http.DefaultClient.Get(url)
+resp, err := http.DefaultClient.Do(req)
 
 // Bad — no context
 req, err := http.NewRequest("GET", url, nil)
 
-// Good
+// Good — build a request with context, send through ctx.HTTP()
 req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+if err != nil {
+	return errors.Wrap(err)
+}
 resp, err := ctx.HTTP().Do(req)
+if err != nil {
+	return errors.Wrap(err)
+}
 defer resp.Body.Close()
+
+// Good — POST / form / HEAD all build their own request the same way
+req, err := http.NewRequestWithContext(ctx, "POST", url, body)
+req.Header.Set("Content-Type", contentType)
+resp, err := ctx.HTTP().Do(req)
 ```
 
 ### Response Writing
