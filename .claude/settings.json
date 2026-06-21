@@ -2,8 +2,13 @@
   "hooks": {
     "SessionStart": [
       {
-        "type": "command",
-        "command": "bash .agents/hooks/sync-skills.sh"
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/sync-skills.sh"
+          }
+        ]
       }
     ]
   }

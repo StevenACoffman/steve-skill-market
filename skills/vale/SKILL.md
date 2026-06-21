@@ -34,10 +34,10 @@ vale --config=.vale/.vale.ini --no-global ls-config | jq '{Paths, ConfigFiles}'
 
 ```bash
 if builtin type -P "vale" &>/dev/null; then
-	echo "vale found"
+  echo "vale found"
 else
-	echo "vale not found — install with: brew install vale"
-	exit 1
+  echo "vale not found — install with: brew install vale"
+  exit 1
 fi
 ```
 
@@ -46,7 +46,7 @@ fi
 Run with `--minAlertLevel=error` first to find blocking issues:
 
 ```bash
-vale --config=.vale/.vale.ini --no-global --minAlertLevel=error FILES
+vale --config=.vale/.vale.ini --no-global --minAlertLevel=error $FILES
 ```
 
 If no files are specified, run on all markdown files in the repo:
@@ -156,7 +156,7 @@ vale --config=.vale/.vale.ini --no-global README.md
 
 # JSON — useful for programmatic post-processing
 vale --config=.vale/.vale.ini --no-global --output=JSON README.md |
-	jq '.[].Alerts[] | {line: .Line, check: .Check, msg: .Message}'
+  jq '.[].Alerts[] | {line: .Line, check: .Check, msg: .Message}'
 
 # Line format — one alert per line, easy to grep
 vale --config=.vale/.vale.ini --no-global --output=line README.md

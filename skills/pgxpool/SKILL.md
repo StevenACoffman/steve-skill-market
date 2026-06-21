@@ -11,6 +11,15 @@ This repo uses [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v5/pgxpool) for
 ## Entry Point
 
 ```go
+import (
+	"context"
+	"log/slog"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/Khan/districts-jobs/pkg/sqldb"
+)
+
 func setup(ctx context.Context, logger *slog.Logger, dbInfo *sqldb.DBInfo, useProdDialer bool, configCustomizer func(*pgxpool.Config)) (*pgxpool.Pool, error) {
 	pool, cleanup, err := sqldb.ConfigureConnectionPool(
 		ctx,
@@ -102,6 +111,15 @@ type DBTX interface {
 Pass the pool to any generated query package:
 
 ```go
+import (
+	"context"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/Khan/districts-jobs/pkg/generated/districtsql"
+	"github.com/Khan/districts-jobs/pkg/sqldb"
+)
+
 func queryDistrict(ctx context.Context, pool *pgxpool.Pool, districtID string) (*districtsql.District, error) {
 	q := districtsql.New(pool)
 	return q.GetDistrict(ctx, sqldb.ToUUID(districtID))
@@ -133,6 +151,8 @@ Do not use `database/sql`-style transactions (`*sql.Tx`). `pgx.Tx` carries the t
 `pkg/sqldb/params.go` converts Go values to the PostgreSQL types that generated queries expect. Use these instead of constructing `pgtype.*` values directly:
 
 ```go
+import "github.com/Khan/districts-jobs/pkg/sqldb"
+
 func buildParams(req *Request) Params {
 	// String → uuid.NullUUID
 	id := sqldb.ToUUID(req.DistrictID)
@@ -194,6 +214,18 @@ The span name becomes `"query -- name: GetDistrict :one\nSELECT id, name FROM di
 To use the sqlc query name (`GetDistrict`) as the span name, override the tracer in `configCustomizer`:
 
 ```go
+import (
+	"context"
+	"log/slog"
+	"regexp"
+	"strings"
+
+	"github.com/exaring/otelpgx"
+	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/Khan/districts-jobs/pkg/sqldb"
+)
+
 var sqlcNameRe = regexp.MustCompile(`^(?:--|/\*)\s*name:\s*(\w+)`)
 
 func setupWithNamedSpans(ctx context.Context, logger *slog.Logger, dbInfo *sqldb.DBInfo, useProdDialer bool) (*pgxpool.Pool, func(), error) {
@@ -222,6 +254,8 @@ This produces span names like `GetDistrict`, `ListTeachers`, `UpsertCurrentYear`
 ### Other Useful Options
 
 ```go
+import "github.com/exaring/otelpgx"
+
 func tracerOptions() []otelpgx.Option {
 	return []otelpgx.Option{
 		// Include connection host/port in span attributes (on by default, disable to reduce cardinality)
@@ -241,6 +275,8 @@ func tracerOptions() []otelpgx.Option {
 To get connection pool stats (useful in health checks or dashboards):
 
 ```go
+import "github.com/jackc/pgx/v5/pgxpool"
+
 func logPoolStats(pool *pgxpool.Pool) {
 	stats := pool.Stat()
 	// stats.TotalConns(), stats.IdleConns(), stats.AcquiredConns()

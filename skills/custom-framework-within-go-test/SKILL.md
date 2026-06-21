@@ -310,7 +310,7 @@ ______________________________________________________________________
 5. **Gate acceptance runs in PreCheck:**
 
    ```go
-   func preCheck(t *testing.T) func() {
+   func PreCheck(t *testing.T) func() {
    	return func() {
    		if os.Getenv("MY_PLUGIN_TEST_TOKEN") == "" {
    			t.Skip("MY_PLUGIN_TEST_TOKEN not set; skipping acceptance test")
