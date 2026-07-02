@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: time-multiplier-over-fake-time
 description: |
   Apply when a test waits on a goroutine, channel, or event; the test passes locally
@@ -8,11 +7,8 @@ description: |
   — set it larger in CI via TestMain or an env var, with no production code changes.
   Do not apply when the test must assert on ordering of time events (cache TTL vs
   retry); real time is too non-deterministic for that, and a clock mock is warranted.
-source_book: "Advanced Testing with Go" by Mitchell Hashimoto
-source_chapter: Part 1 — Test Methodology / Timing-Dependent Tests
 tags: [go, testing, timing, async, concurrency, test-methodology]
-related_skills:
-  - avoid-t-parallel-use-multiple-processes  # contrasts-with: both address flaky/slow tests but different root causes
+allowed-tools: Bash, Read, Edit
 ---
 
 # Time Multiplier Over Fake Time
@@ -285,3 +281,9 @@ of whether the async wait succeeded or timed out — `t.Fatal` still runs
 ## Related Skills
 
 - **avoid-t-parallel-use-multiple-processes** (contrasts-with): Both address slow or flaky tests in CI, but for different root causes. `timeMultiplier` fixes timeout failures on slow machines (the async event *does* happen, just slowly). The parallel skill fixes ambiguous failures from concurrent execution. They are orthogonal — a test can suffer from both problems simultaneously, and each requires its own solution.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 1 — Test Methodology / Timing-Dependent Tests

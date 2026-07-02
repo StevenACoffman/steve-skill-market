@@ -13,26 +13,8 @@ description: |
   - "What's the right precedence order for flags vs env vars vs config files?"
   - "Should this go in a .env file or a real config file?"
   - Developer designing a CLI's configuration system for the first time
-  - Any question of the form "how should my CLI accept <X>?"
-
-  Do NOT use this skill when:
-  - The question is specifically about secrets (tokens, passwords, private keys) —
-    use cli-secret-handling instead, which covers the security considerations that
-    this skill explicitly defers.
-  - The question is about CLI output formatting or interface stability — see
-    cli-interface-stability instead.
-  - The configuration question is about a server or library, not a command-line tool.
-
-  Based on: "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman,
-  Carl Tashian, Eva Parish (2020, cli-guidelines.github.io).
-source_book: "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish
-source_chapter: Configuration
+  - Any question of the form "how should my CLI accept X?"
 tags: [cli, configuration, flags, env-vars, xdg, precedence, dotfiles]
-related_skills:
-  - slug: cli-secret-handling
-    relation: composes-with
-  - slug: cli-interface-stability
-    relation: composes-with
 ---
 
 # CLI Configuration Hierarchy
@@ -322,11 +304,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`cli-secret-handling`](../cli-secret-handling/SKILL.md): After
+- **composes-with** `cli-secret-handling`: After
   using this skill to determine that a configuration value should live in an env var
   or config file, apply cli-secret-handling if the value is a secret (token, password,
   key). The placement decision is made here; the security handling is made there.
-- **composes-with** [`cli-interface-stability`](../cli-interface-stability/SKILL.md): Once
+- **composes-with** `cli-interface-stability`: Once
   flags, env var names, and config file keys are chosen using this skill, cli-interface-stability
   covers how to version them and communicate breaking changes to users over time. Config file
   keys are stable interfaces and are subject to the same deprecation discipline as flags.
@@ -338,3 +320,9 @@ ______________________________________________________________________
 - **Verification Passed**: Phase 2
 - **Source**: CLI Guidelines (cli-guidelines.github.io, 2020) — Configuration section
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish — Configuration

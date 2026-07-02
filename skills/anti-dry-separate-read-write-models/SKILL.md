@@ -1,9 +1,9 @@
 ---
-id: anti-dry-separate-read-write-models
-title: Anti-DRY for Data Structures — Separate Models Per Concern
-description: Invoke when a single Go struct is being used across multiple layers (API response, database persistence, domain entity, CQRS read model) or when a PR adds a field to a shared struct that spans concerns.
-source: Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026
+name: anti-dry-separate-read-write-models
+description: |
+  Invoke when a single Go struct is being used across multiple layers (API response, database persistence, domain entity, CQRS read model) or when a PR adds a field to a shared struct that spans concerns.
 ---
+# Anti-DRY for Data Structures — Separate Models Per Concern
 
 ## R — Reading
 
@@ -60,6 +60,12 @@ DRY still applies to behavior. If two command handlers share identical business 
 
 ## Related Skills
 
-- **[strategic-before-tactical-ddd](../strategic-before-tactical-ddd/SKILL.md)** — depends on: Bounded Context analysis determines which read/write model separations are meaningful vs. which are over-engineering; don't separate models before understanding the domain boundaries.
-- **[test-layer-architecture-mapping](../test-layer-architecture-mapping/SKILL.md)** — informs: separate read and write models produce clearly scoped test targets; command handlers test write models, query handlers test read projections — aligning naturally with the four-layer test taxonomy.
-- **[microservices-dont-fix-coupling](../microservices-dont-fix-coupling/SKILL.md)** — compares: both skills address coupling, but at different granularities — this skill addresses struct-level coupling within a service; microservices coupling is the same problem at service-boundary level.
+- **strategic-before-tactical-ddd** — depends on: Bounded Context analysis determines which read/write model separations are meaningful vs. which are over-engineering; don't separate models before understanding the domain boundaries.
+- **test-layer-architecture-mapping** — informs: separate read and write models produce clearly scoped test targets; command handlers test write models, query handlers test read projections — aligning naturally with the four-layer test taxonomy.
+- **microservices-dont-fix-coupling** — compares: both skills address coupling, but at different granularities — this skill addresses struct-level coupling within a service; microservices coupling is the same problem at service-boundary level.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026

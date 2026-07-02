@@ -15,13 +15,7 @@ description: |
   Not suitable for: questions about distributed transactions or sagas across multiple
   services; questions about database connection pooling; questions purely about SQL
   query design (use the four-tenet layout or error design skills for those aspects).
-
-  Key trigger: the user is deciding whether the transaction boundary should be visible
-  to callers of the service layer, or encapsulated inside service method implementations.
-source_book: "Go Beyond" Ben B. Johnson
-source_chapter: real-world-sql-part-one.md, crud.md
 tags: [transactions, service-design, go, database, architecture]
-related_skills: []
 ---
 
 # Service-as-Transaction-Boundary
@@ -189,8 +183,8 @@ ______________________________________________________________________
 
 ## Related Skills (Stage 3 Filling)
 
-- depends-on: [go-beyond-four-tenet-layout](../go-beyond-four-tenet-layout/SKILL.md) — transactions live in tenet 2 subpackages (database adapters)
-- composes-with: [go-beyond-three-consumer-error](../go-beyond-three-consumer-error/SKILL.md) — service methods own both transactions and error translation
+- depends-on: go-beyond-four-tenet-layout — transactions live in tenet 2 subpackages (database adapters)
+- composes-with: go-beyond-three-consumer-error — service methods own both transactions and error translation
 
 ______________________________________________________________________
 
@@ -199,3 +193,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: See test-prompts.json
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Beyond" Ben B. Johnson

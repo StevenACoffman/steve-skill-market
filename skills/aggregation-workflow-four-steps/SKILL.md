@@ -14,26 +14,7 @@ description: |
   - Any aggregation design request before SQL is written
   - "How do I count unique users across channels?"
   - "How do I roll up store-level metrics to company-wide?"
-
-  Do NOT use this skill when:
-  - An aggregation is already designed and built, and the question is about verifying
-    it before shipping to production (use six-aggregation-properties instead)
-  - The grain of the dataset has not yet been determined (use grain-decision-four-questions
-    first — grain declaration is Step 1 of this workflow; that skill resolves it)
-  - The question is purely about SQL syntax with no ambiguity in what is being measured
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 9 — Counting and
-  Aggregation: Controlling the Grain.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 9 — Counting and Aggregation: Controlling the Grain
 tags: [aggregation, workflow, design-framework, grain, disjointness, additivity, closure, boundedness]
-related_skills:
-  - slug: grain-decision-four-questions
-    relation: depends-on
-  - slug: six-aggregation-properties
-    relation: composes-with
-  - slug: decompose-averages-sum-count
-    relation: composes-with
 ---
 
 # Aggregation Workflow — Grain → Group → Operation → Bounds
@@ -420,9 +401,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`grain-decision-four-questions`](../grain-decision-four-questions/SKILL.md): Step 1 of this workflow requires grain to be declared; if the grain is not yet settled, grain-decision-four-questions must be applied before this workflow can begin.
-- **composes-with** [`six-aggregation-properties`](../six-aggregation-properties/SKILL.md): This workflow designs the aggregation; the six-property checklist then validates the result before production deployment — the two skills run in sequence on every aggregation.
-- **composes-with** [`decompose-averages-sum-count`](../decompose-averages-sum-count/SKILL.md): When Step 3 of this workflow identifies a non-additive (ratio or average) measure, the decompose rule prescribes exactly how to store it as SUM and COUNT rather than a pre-divided float.
+- **depends-on** `grain-decision-four-questions`: Step 1 of this workflow requires grain to be declared; if the grain is not yet settled, grain-decision-four-questions must be applied before this workflow can begin.
+- **composes-with** `six-aggregation-properties`: This workflow designs the aggregation; the six-property checklist then validates the result before production deployment — the two skills run in sequence on every aggregation.
+- **composes-with** `decompose-averages-sum-count`: When Step 3 of this workflow identifies a non-additive (ratio or average) measure, the decompose rule prescribes exactly how to store it as SUM and COUNT rather than a pre-divided float.
 
 ______________________________________________________________________
 
@@ -432,3 +413,9 @@ ______________________________________________________________________
 - **Source IDs**: f11 (framework extractor) + p22 (principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 9 — Counting and Aggregation: Controlling the Grain

@@ -14,21 +14,7 @@ description: |
   - Early return inside a function that spawned goroutines writing to unbuffered channels
   - `make(chan ...)` with no buffer where multiple senders may not all be read
   - "semaphore", "limit goroutines", "max concurrent", "backpressure"
-
-  Do NOT activate for:
-  - Pure channel communication questions with no goroutine lifetime concern (e.g., select
-    on already-running goroutines)
-  - Context cancellation signal design (use context-cancellation-cause skill instead)
-  - Mutex, atomic, or logical-race questions where goroutine spawning is not involved
-  - Single-goroutine programs or sequential code
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: structured_concurrency, early_return_and_goroutine_leak, limit_goroutines_with_buffered_channels
 tags: [go, concurrency, goroutines, safety]
-related_skills:
-  - slug: context-cancellation-cause
-    relation: composes-with
-  - slug: mutex-closure-atomic-mutation
-    relation: contrasts-with
 ---
 
 # Structured Goroutine Lifetime Management
@@ -328,8 +314,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`context-cancellation-cause`](../context-cancellation-cause/SKILL.md): Context cancellation is the signal mechanism — `ctx.Done()` tells goroutines to stop. Structured lifetime management is the enforcement mechanism — errgroup/WaitGroup ensures goroutines have actually stopped before the parent returns. Both are needed: cancellation without waiting leaks; waiting without cancellation hangs.
-- **contrasts-with** [`mutex-closure-atomic-mutation`](../mutex-closure-atomic-mutation/SKILL.md): Both address problems that arise from concurrent execution, but at different levels. Goroutine lifetime management controls when goroutines start and stop. The mutex closure pattern makes compound mutations inside a single operation atomic. A function can have correct lifetime management and still have logical mutex races; a function can use the closure pattern and still leak goroutines.
+- **composes-with** `context-cancellation-cause`: Context cancellation is the signal mechanism — `ctx.Done()` tells goroutines to stop. Structured lifetime management is the enforcement mechanism — errgroup/WaitGroup ensures goroutines have actually stopped before the parent returns. Both are needed: cancellation without waiting leaks; waiting without cancellation hangs.
+- **contrasts-with** `mutex-closure-atomic-mutation`: Both address problems that arise from concurrent execution, but at different levels. Goroutine lifetime management controls when goroutines start and stop. The mutex closure pattern makes compound mutations inside a single operation atomic. A function can have correct lifetime management and still have logical mutex races; a function can use the closure pattern and still leak goroutines.
 
 ______________________________________________________________________
 
@@ -338,3 +324,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — structured_concurrency, early_return_and_goroutine_leak, limit_goroutines_with_buffered_channels

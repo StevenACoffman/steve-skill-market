@@ -4,12 +4,7 @@ description: |
   Invoke this skill when a developer is struggling to write property-based tests, asking whether to use property-based testing, or trying to understand why their function is hard to test exhaustively. Specific triggers: a developer reports that their properties keep requiring exception clauses or special-case conditions; someone is choosing between example-based and property-based testing; a function's invariants are hard to state in universal terms; someone wants to know what makes property-based testing different from fuzz testing.
 
   Do NOT invoke when: the question is about which property-based testing library to install or how to use a specific framework's API; the function is simple CRUD with no non-trivial invariants; the question is purely about test coverage percentage or mutation score; the function's design is not in question and properties are already clean.
-
-  Key signals: "I'm trying to write property-based tests but the properties keep having exceptions", "should I use property-based tests for this function?", "my function is hard to test with example inputs", "what invariants should hold for this function?", "my property tests need a lot of conditional logic", "I can write examples but I can't figure out what the general rule is."
-source_book: Working Effectively with Legacy Code — Michael C. Feathers; also informed by Feathers' 'Testing Patience' talks (all three recorded versions) and p17 (Jessica Kerr, 'Writing property-based tests forces you to think way harder')
-source_chapter: Testing Patience (conference talk, multiple versions); merged with f15 (Working Effectively with Legacy Code chapter on sensing and separation)
 tags: [property-based-testing, design-pressure, invariants, TDD, test-difficulty, design-smell, legacy-code]
-related_skills: [welc-characterization-test, welc-seam-model, welc-sensing-vs-separation, welc-tended-untended-systems]
 ---
 
 # Property-Based Testing as Design Pressure
@@ -177,3 +172,9 @@ ______________________________________________________________________
 - **Source merge**: f15 + p17
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Working Effectively with Legacy Code — Michael C. Feathers; also informed by Feathers' 'Testing Patience' talks (all three recorded versions) and p17 (Jessica Kerr, 'Writing property-based tests forces you to think way harder') — Testing Patience (conference talk, multiple versions), merged with f15 (Working Effectively with Legacy Code chapter on sensing and separation)

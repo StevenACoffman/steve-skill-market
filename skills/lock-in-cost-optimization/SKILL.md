@@ -1,3 +1,9 @@
+---
+name: lock-in-cost-optimization
+description: |
+  Invoke this skill when you encounter any of the following: - An architecture review rejects a managed service because it is "cloud-specific" without calculating whether the expected switching cost exceeds the underutilization cost of avoiding it. - An engineer or architect proposes building an abstraction layer to avoid cloud-provider API dependency. - A team debates whether to use a native cloud database (DynamoDB, Firestore, Cloud Spanner) versus a portable open-source database, and the deciding factor is lock-in concern without quantification. - An organization's multicloud strategy requires building a uniform experience across all providers. - A cloud vendor is offering favorable commercial terms, deeper integration, or a roadmap partnership in exchange for increased platform commitment, and the team needs to evaluate whether to accept. - Architecture principles include "avoid vendor lock-in" without a threshold or cost model that defines what level of lock-in is acceptable.
+---
+
 # Lock-in Cost Optimization
 
 **Source:** Cloud Strategy, Gregor Hohpe (~2020–2022) — Chapter 21: Don't Get Locked Up Into Avoiding Lock-In
@@ -97,7 +103,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Multicloud: 5-Option Decision Table](../multicloud-5-option-decision/SKILL.md)** — *composes-with* → The Portable option in the 5-option table is only economically justified when the ROL calculation shows expected switching costs exceed portability investment; lock-in optimization provides the analytic layer the multicloud decision table requires.
-- **[Principles Quality Checklist](../principles-quality-checklist/SKILL.md)** — *composes-with* → "Avoid vendor lock-in" is the canonical example of a principle that fails the checklist's threshold test; both skills applied together replace the platitude with a durable, cost-bounded principle that teams can actually invoke.
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *depends-on* → ROL decisions require executive awareness of what is being accepted (switching cost) and what is being gained (capability, partnership terms); the elevator architect is the mechanism for ensuring the penthouse bears lock-in decisions it will later pay for.
-- **[Enterprise Non-Cloud Diagnostic](../enterprise-non-cloud-diagnostic/SKILL.md)** — *contrasts-with* → The Enterprise Non-Cloud pattern arises from over-governance that strips cloud benefits; lock-in optimization addresses the opposite failure of under-governance — accepting lock-in without calculating its cost.
+- **Multicloud: 5-Option Decision Table** — *composes-with* → The Portable option in the 5-option table is only economically justified when the ROL calculation shows expected switching costs exceed portability investment; lock-in optimization provides the analytic layer the multicloud decision table requires.
+- **Principles Quality Checklist** — *composes-with* → "Avoid vendor lock-in" is the canonical example of a principle that fails the checklist's threshold test; both skills applied together replace the platitude with a durable, cost-bounded principle that teams can actually invoke.
+- **Architect Elevator** — *depends-on* → ROL decisions require executive awareness of what is being accepted (switching cost) and what is being gained (capability, partnership terms); the elevator architect is the mechanism for ensuring the penthouse bears lock-in decisions it will later pay for.
+- **Enterprise Non-Cloud Diagnostic** — *contrasts-with* → The Enterprise Non-Cloud pattern arises from over-governance that strips cloud benefits; lock-in optimization addresses the opposite failure of under-governance — accepting lock-in without calculating its cost.

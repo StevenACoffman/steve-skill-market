@@ -12,23 +12,7 @@ description: |
   (d) a user asks "should we invest in RUM (real user monitoring)?"; (e) the SLI fires on noise
   or misses real incidents and you need to diagnose why from the measurement dimension; (f)
   the user wants to plan an SLI investment roadmap from cheap/simple to expensive/high-fidelity.
-
-  WHEN NOT TO CALL: Do not call when the question is about what the SLI should measure (consumer
-  tasks, failure modes) — that is `sli-monitoring-design-maturity`. Do not call for questions about
-  SLO target levels. Do not call when the question is purely about metric scope and control
-  boundaries — that is `responsibility-control-slo`.
-
-  KEY TRIGGER SIGNAL: "Should we use Pingdom or instrument real traffic?", "our synthetic check
-  is green but users are failing", "is it worth investing in end-to-end journey monitoring?",
-  "how much does real-user monitoring cost compared to what we get?", "our SLI is too noisy."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20250808_111403_sli-compass.md, 20250827_123438_sli-evolution-stages.md, 20230809_201014_sli-measurement-location.md
 tags: [sli, measurement, signal-quality, investment, evolution, fidelity, granularity]
-related_skills:
-  - slug: sli-monitoring-design-maturity
-    relation: depends-on
-  - slug: service-level-topology
-    relation: composes-with
 ---
 
 # SLI Compass (Fidelity × Granularity)
@@ -304,7 +288,7 @@ ______________________________________________________________________
 ## Related Skills
 
 - **depends-on** → `sli-monitoring-design-maturity`: The stage model must be understood first to know what the SLI should measure; the compass then evaluates how the measurement is collected.
-- **composes-with** → [`service-level-topology`](../service-level-topology/SKILL.md): The topology identifies which SLIs to create; the compass evaluates how to instrument them and guides investment toward higher fidelity.
+- **composes-with** → `service-level-topology`: The topology identifies which SLIs to create; the compass evaluates how to instrument them and guides investment toward higher fidelity.
 
 ______________________________________________________________________
 
@@ -312,3 +296,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

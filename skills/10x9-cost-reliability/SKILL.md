@@ -9,22 +9,7 @@ description: |
   - Leadership is treating high reliability as a prestige signal rather than a cost/benefit question.
   - An engineer needs to push back on an unrealistic SLO mandate from above.
   - A cost-of-reliability conversation needs a quantitative anchor.
-
-  WHEN NOT TO CALL:
-  - The SLO level has already been agreed and the question is how to measure it (use sli-monitoring-design-maturity or sli-compass instead).
-  - The conversation is about which SLI to use, not what target to set.
-  - The system is safety-critical (life support, aviation, banking core) where cost arguments are secondary to regulatory or ethical obligations.
-  - You need the precise cost estimate — this skill provides directional reasoning, not an accounting model.
-
-  KEY TRIGGER SIGNAL: Any sentence that includes a specific "nines" target without an accompanying cost analysis, or any request to "improve reliability" without scoping what level of reliability is actually needed.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20231201_053017_10x9.md, 20231211_053037_slo-definition-calibration-framework.md, 20250606_111644_wardley-maps-and-pace-layering-for.md
 tags: [slo, cost-of-reliability, 10x9, error-budget, reliability-economics]
-related_skills:
-  - slug: slo-definition-calibration-framework
-    relation: composes-with
-  - slug: wardley-pace-slo
-    relation: composes-with
 ---
 
 # 10X/9 Cost-of-Reliability Reasoning
@@ -150,7 +135,7 @@ ______________________________________________________________________
 ## Related Skills
 
 - **composes-with** → `slo-definition-calibration-framework`: The 10x/9 rule provides the cost-scaling argument; slo-definition-calibration-framework uses that as one input and adds the consumer-tolerance side to find the calibrated target.
-- **composes-with** → [`wardley-pace-slo`](../wardley-pace-slo/SKILL.md): Wardley/Pace classifies the system's evolutionary tier; 10x/9 is the cost-reasoning tool applied when evaluating whether a candidate SLO level within that tier is economically justified.
+- **composes-with** → `wardley-pace-slo`: Wardley/Pace classifies the system's evolutionary tier; 10x/9 is the cost-reasoning tool applied when evaluating whether a candidate SLO level within that tier is economically justified.
 
 ______________________________________________________________________
 
@@ -158,3 +143,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

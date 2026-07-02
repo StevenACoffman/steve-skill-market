@@ -1,9 +1,8 @@
 ---
-id: grpc-fieldmask-partial-updates
-title: FieldMask for Partial Reads — Caller-Controlled Field Selection on Streaming Endpoints
+name: grpc-fieldmask-partial-updates
 description: Trigger when implementing caller-controlled partial field selection on a gRPC read or list endpoint, especially streaming, to prevent over-fetching.
-source: [gRPC Go for Professionals, Clément Jean, Packt, 2023]
 ---
+# FieldMask for Partial Reads — Caller-Controlled Field Selection on Streaming Endpoints
 
 ## R — Reading
 
@@ -47,5 +46,11 @@ FieldMask path strings use the proto field name (snake_case), not the Go struct 
 
 ## Related Skills
 
-- **[grpc-payload-optimization](../grpc-payload-optimization/SKILL.md)** — prerequisite for: FieldMask is step 4 in the payload optimization sequence; consult payload-optimization for the full 5-step ordering and the decision on when gzip complements or undercuts FieldMask savings.
-- **[grpc-flatten-streaming-requests](../grpc-flatten-streaming-requests/SKILL.md)** — compares: both reduce per-message bandwidth on streaming endpoints by different means — FieldMask eliminates unwanted response fields at read time; flattening eliminates sub-message framing overhead at write time.
+- **grpc-payload-optimization** — prerequisite for: FieldMask is step 4 in the payload optimization sequence; consult payload-optimization for the full 5-step ordering and the decision on when gzip complements or undercuts FieldMask savings.
+- **grpc-flatten-streaming-requests** — compares: both reduce per-message bandwidth on streaming endpoints by different means — FieldMask eliminates unwanted response fields at read time; flattening eliminates sub-message framing overhead at write time.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Go for Professionals, Clément Jean, Packt, 2023]

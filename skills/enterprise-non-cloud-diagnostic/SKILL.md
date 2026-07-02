@@ -1,3 +1,9 @@
+---
+name: enterprise-non-cloud-diagnostic
+description: |
+  Invoke this skill when you encounter any of the following: - An organization is building a private cloud or "enterprise cloud" platform and you want to evaluate whether it will actually be a cloud - Developers complain that provisioning a new environment takes days or weeks via a ticketing process - All cloud access is routed through a corporate proxy or VPN that is not available to external collaborators or mobile workers - Teams are allocated dedicated cloud resources for financial tracking rather than drawing from a shared pool - The cloud platform is primarily used for the same applications unchanged from on-premises deployments — no auto-scaling, no stateless design,
+---
+
 # Enterprise Non-Cloud Diagnostic
 
 **Source:** *Cloud Strategy*, Gregor Hohpe (~2020–2022) — Chapter 14: Don't Build an Enterprise Non-Cloud!
@@ -107,7 +113,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[First-Derivative Thinking](../first-derivative-economies-of-speed/SKILL.md)** — *depends-on* → An Enterprise Non-Cloud emerges precisely when an Economies of Scale organization layers its static mental model onto cloud infrastructure; understanding why an organization thinks in absolutes is prerequisite to diagnosing which NIST characteristics it will inadvertently violate.
-- **[Value Gap and Migration Metrics](../value-gap-migration-metrics/SKILL.md)** — *composes-with* → A migration that completes into an Enterprise Non-Cloud will produce a maximal value gap: servers are moved but cloud operating-model characteristics are absent, so no business outcomes improve.
-- **[Multicloud: 5-Option Decision Table](../multicloud-5-option-decision/SKILL.md)** — *precedes* → The NIST diagnostic should be run on the current single-cloud platform before adding multi-cloud complexity; an organization building a multicloud strategy on top of an Enterprise Non-Cloud simply multiplies its governance problems.
-- **[Robustness, Resilience, and Antifragility](../robustness-resilience-antifragility/SKILL.md)** — *enables* → Genuine cloud characteristics (rapid elasticity, measured service, automated provisioning) are prerequisites for the automated-recovery inner loop that resilience requires; an Enterprise Non-Cloud is structurally locked at the Robust stage.
+- **First-Derivative Thinking** — *depends-on* → An Enterprise Non-Cloud emerges precisely when an Economies of Scale organization layers its static mental model onto cloud infrastructure; understanding why an organization thinks in absolutes is prerequisite to diagnosing which NIST characteristics it will inadvertently violate.
+- **Value Gap and Migration Metrics** — *composes-with* → A migration that completes into an Enterprise Non-Cloud will produce a maximal value gap: servers are moved but cloud operating-model characteristics are absent, so no business outcomes improve.
+- **Multicloud: 5-Option Decision Table** — *precedes* → The NIST diagnostic should be run on the current single-cloud platform before adding multi-cloud complexity; an organization building a multicloud strategy on top of an Enterprise Non-Cloud simply multiplies its governance problems.
+- **Robustness, Resilience, and Antifragility** — *enables* → Genuine cloud characteristics (rapid elasticity, measured service, automated provisioning) are prerequisites for the automated-recovery inner loop that resilience requires; an Enterprise Non-Cloud is structurally locked at the Robust stage.

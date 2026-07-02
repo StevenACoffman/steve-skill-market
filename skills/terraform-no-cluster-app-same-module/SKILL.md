@@ -1,9 +1,9 @@
 ---
-id: terraform-no-cluster-app-same-module
-title: 'Terraform: Never Mix EKS Cluster Provisioning and Kubernetes App Deployment in One Module'
-description: Invoke when a user is deploying an EKS cluster and Kubernetes resources (Deployments, Services, etc.) in the same Terraform module, gets a provider configuration error referencing cluster outputs, or asks why depends_on doesn't fix the Kubernetes provider initialization failure.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
+name: terraform-no-cluster-app-same-module
+description: |
+  Invoke when a user is deploying an EKS cluster and Kubernetes resources (Deployments, Services, etc.) in the same Terraform module, gets a provider configuration error referencing cluster outputs, or asks why depends_on doesn't fix the Kubernetes provider initialization failure.
 ---
+# Terraform: Never Mix EKS Cluster Provisioning and Kubernetes App Deployment in One Module
 
 ## R — Reading
 
@@ -103,6 +103,12 @@ resource "kubernetes_deployment" "app" { ... }
 
 ## Related Skills
 
-- **[terraform-module-size-smell](../terraform-module-size-smell/SKILL.md)** — compares: the provider-initialization constraint is a hard technical reason to split a module; the size-smell skill covers the organizational and operational reasons — together they give the full case for module separation.
-- **[terraform-directory-layout-isolation](../terraform-directory-layout-isolation/SKILL.md)** — informs: the two-apply ordering required for EKS cluster then apps maps naturally onto two separate environment-aware directories in the file layout, each with its own backend and CI pipeline step.
-- **[terraform-moved-block-refactoring](../terraform-moved-block-refactoring/SKILL.md)** — informs: if resources are being extracted from a mixed cluster+app module into separate modules, moved blocks prevent destroy/create during the split.
+- **terraform-module-size-smell** — compares: the provider-initialization constraint is a hard technical reason to split a module; the size-smell skill covers the organizational and operational reasons — together they give the full case for module separation.
+- **terraform-directory-layout-isolation** — informs: the two-apply ordering required for EKS cluster then apps maps naturally onto two separate environment-aware directories in the file layout, each with its own backend and CI pipeline step.
+- **terraform-moved-block-refactoring** — informs: if resources are being extracted from a mixed cluster+app module into separate modules, moved blocks prevent destroy/create during the split.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

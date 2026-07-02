@@ -16,21 +16,7 @@ description: |
   - Calculating the combined SLO of parallel or serial dependencies (use `composite-slo`)
   - Setting the SLO target for a service (use `slo-definition-calibration-framework`)
   - Designing the SLI formula for the service (use `sli-formula-measurement`)
-
-  **Key trigger signal:** The user is deciding what happens when a service or dependency
-  fails — should the backup be the same type (failover) or a different type (fallback)?
-  Or: "We need higher availability but our dependency isn't reliable enough." Or: "Our
-  failover system keeps failing at the same time as the primary."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20230726_113038_fallback.md, 20230712_231043_failover.md, 20240325_053017_composite-slo.md
 tags: [failover, fallback, resilience, availability, degradation, common-cause-failure, heterogeneous]
-related_skills:
-  - slug: degradation-disruption
-    relation: depends-on
-  - slug: composite-slo
-    relation: composes-with
-  - slug: slo-definition-calibration-framework
-    relation: composes-with
 ---
 
 # Fallback Vs Failover Selection Framework
@@ -295,8 +281,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`degradation-disruption`](../degradation-disruption/SKILL.md): Use degradation-disruption to decide whether a degraded fallback state is acceptable before designing the fallback mechanism itself.
-- **composes-with** → [`composite-slo`](../composite-slo/SKILL.md): Fallback/failover introduces parallel paths; composite-slo provides the math for quantifying how much reliability improvement the parallel topology actually delivers.
+- **depends-on** → `degradation-disruption`: Use degradation-disruption to decide whether a degraded fallback state is acceptable before designing the fallback mechanism itself.
+- **composes-with** → `composite-slo`: Fallback/failover introduces parallel paths; composite-slo provides the math for quantifying how much reliability improvement the parallel topology actually delivers.
 - **composes-with** → `slo-definition-calibration-framework`: Lagom-slo determines the target SLO level; fallback-failover designs the resilience architecture required to achieve that level given the current dependency SLOs.
 
 ______________________________________________________________________
@@ -305,3 +291,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

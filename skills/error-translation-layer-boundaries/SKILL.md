@@ -14,25 +14,7 @@ description: |
   - A user asks when to use `%w` vs `%v` in `fmt.Errorf`
   - Adding a new storage backend or cache layer requires touching handler code
   - A user says "callers are checking for sql.ErrNoRows" or "I need to translate errors"
-
-  Do NOT activate when:
-  - The question is purely about goroutine error propagation or error fan-in (use the goroutine
-    lifetime skill instead)
-  - The user is building a CLI tool where `%w` everywhere is fine and there are no layer boundaries
-  - The discussion is about error presentation to end users (logging format, structured slog fields)
-    without architectural coupling concerns
-  - The user wants to add stack traces or custom error types with runtime.Caller() for debugging
-    purposes — that is the anemic-stack-traces skill
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: error_translation, splintered_failure_modes, to_wrap_or_not_to_wrap
 tags: [go, error-handling, architecture, layer-boundaries]
-related_skills:
-  - slug: repository-unit-of-work
-    relation: composes-with
-  - slug: transport-agnostic-service-functions
-    relation: composes-with
-  - slug: domain-driven-package-structure
-    relation: depends-on
 ---
 
 # Error Translation at Layer Boundaries
@@ -275,9 +257,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`repository-unit-of-work`](../repository-unit-of-work/SKILL.md): The repository layer is the primary translation point — storage errors (`sql.ErrNoRows`) become domain sentinels (`ErrNotFound`) inside repository methods. Error translation defines the discipline; the repository pattern creates the boundary where it must be applied.
-- **composes-with** [`transport-agnostic-service-functions`](../transport-agnostic-service-functions/SKILL.md): The generic `Wrap` adapter calls `writeError`/`toStatus` to map domain sentinels to HTTP/gRPC status codes — that mapping is the wire boundary translation this skill defines. Transport-agnostic services rely on error translation being in place at both translation points.
-- **depends-on** [`domain-driven-package-structure`](../domain-driven-package-structure/SKILL.md): Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live in a domain package (`order/`, `user/`) so they have no dependency on storage libraries. Without domain-driven package structure, there is no natural home for sentinels that is independent of the storage driver.
+- **composes-with** `repository-unit-of-work`: The repository layer is the primary translation point — storage errors (`sql.ErrNoRows`) become domain sentinels (`ErrNotFound`) inside repository methods. Error translation defines the discipline; the repository pattern creates the boundary where it must be applied.
+- **composes-with** `transport-agnostic-service-functions`: The generic `Wrap` adapter calls `writeError`/`toStatus` to map domain sentinels to HTTP/gRPC status codes — that mapping is the wire boundary translation this skill defines. Transport-agnostic services rely on error translation being in place at both translation points.
+- **depends-on** `domain-driven-package-structure`: Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live in a domain package (`order/`, `user/`) so they have no dependency on storage libraries. Without domain-driven package structure, there is no natural home for sentinels that is independent of the storage driver.
 
 ______________________________________________________________________
 
@@ -286,3 +268,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — error_translation, splintered_failure_modes, to_wrap_or_not_to_wrap

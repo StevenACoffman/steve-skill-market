@@ -1,3 +1,9 @@
+---
+name: principles-quality-checklist
+description: |
+  Invoke this skill when you encounter any of the following: - A team is writing or reviewing a principles document for a cloud program, architecture review board, or technology strategy - A principle statement ends with phrases like "to deliver value" or "for our customers" — these are almost always wishful-principle signals - Someone refers to a product name, vendor, or architectural buzzword inside a stated principle - A strategy presentation has a large gap between stated goals and funding request with no clear decision chain connecting them (hourglass) - No one on the team can recite a principle from memory during a design discussion — the principles exist only in a document - A set of principles was adopted with no debate — unanimous easy agreement is a red flag - A team has fewer than five or more than twelve guiding principles and is wondering why they don't seem useful - A decision is described as "aligned with our principles" but no specific principle is cited — it may be that
+---
+
 # Principles Quality Checklist
 
 **Source:** *Cloud Strategy*, Gregor Hohpe (~2020–2022) — Chapter 4: Principle-Powered Decision Discipline
@@ -93,7 +99,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *depends-on* → The elevator architect needs principles that can survive cross-level scrutiny; the checklist is the mechanism for verifying that principles carry genuine decision-forcing content before they are communicated to either penthouse or engine room.
-- **[First-Derivative Thinking](../first-derivative-economies-of-speed/SKILL.md)** — *precedes* → A team writing cloud principles must understand whether their organization operates in Economies of Scale or Economies of Speed — a principle like "we manage cloud as a fixed-budget line item" would pass none of the six checklist tests once first-derivative thinking is applied.
-- **[Lock-In Cost Optimization](../lock-in-cost-optimization/SKILL.md)** — *composes-with* → An architecture principle of "avoid vendor lock-in" is a classic checklist failure (no threshold, no cost model, fails the opposite test); applying both skills together produces a principle that can actually guide decisions.
-- **[Multicloud: 5-Option Decision Table](../multicloud-5-option-decision/SKILL.md)** — *precedes* → A sound multicloud strategy requires principles that express the organization's actual driver (availability, autonomy, workload fit); the checklist should be run on any multicloud principles before the 5-option decision is locked in.
+- **Architect Elevator** — *depends-on* → The elevator architect needs principles that can survive cross-level scrutiny; the checklist is the mechanism for verifying that principles carry genuine decision-forcing content before they are communicated to either penthouse or engine room.
+- **First-Derivative Thinking** — *precedes* → A team writing cloud principles must understand whether their organization operates in Economies of Scale or Economies of Speed — a principle like "we manage cloud as a fixed-budget line item" would pass none of the six checklist tests once first-derivative thinking is applied.
+- **Lock-In Cost Optimization** — *composes-with* → An architecture principle of "avoid vendor lock-in" is a classic checklist failure (no threshold, no cost model, fails the opposite test); applying both skills together produces a principle that can actually guide decisions.
+- **Multicloud: 5-Option Decision Table** — *precedes* → A sound multicloud strategy requires principles that express the organization's actual driver (availability, autonomy, workload fit); the checklist should be run on any multicloud principles before the 5-option decision is locked in.

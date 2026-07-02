@@ -1,9 +1,9 @@
 ---
-id: domain-service-interface-composition
-title: Domain Service Receives Interfaces; Application Service Composes Layers
-description: Apply when structuring a domain service that depends on external capabilities (payment gateways, third-party APIs, other domain services) — specifically when deciding how to inject dependencies into a domain service and how to separate coordination logic from domain logic.
-source: Domain-Driven Design with Golang, Matthew Boyle, 2022
+name: domain-service-interface-composition
+description: |
+  Apply when structuring a domain service that depends on external capabilities (payment gateways, third-party APIs, other domain services) — specifically when deciding how to inject dependencies into a domain service and how to separate coordination logic from domain logic.
 ---
+# Domain Service Receives Interfaces; Application Service Composes Layers
 
 ## R — Reading
 
@@ -55,7 +55,13 @@ Boyle's domain service examples are stateless (domain service with injected inte
 
 ## Related Skills
 
-- **[ddd-fitness-scorecard](../ddd-fitness-scorecard/SKILL.md)** — depends on: the layered domain/application service architecture is tactical DDD overhead; the scorecard confirms it is justified before this pattern is applied.
-- **[internal-package-bounded-context-enforcement](../internal-package-bounded-context-enforcement/SKILL.md)** — informs: domain service interfaces defined via this pattern belong inside internal/ (enforced by that skill); the composition root in main.go sits outside internal/ and provides the wiring.
-- **[strong-consistency-across-bounded-contexts](../strong-consistency-across-bounded-contexts/SKILL.md)** — informs: the consistency rule determines whether a domain service calls another service directly (within-context, strong consistency) or publishes an event (cross-context, eventual consistency); this choice determines the interface design and composition structure.
-- **[go-value-object-immutability](../go-value-object-immutability/SKILL.md)** — informs: value objects are the primary types in domain service interface method signatures; their value-type vs pointer-type semantics affect the API contract design.
+- **ddd-fitness-scorecard** — depends on: the layered domain/application service architecture is tactical DDD overhead; the scorecard confirms it is justified before this pattern is applied.
+- **internal-package-bounded-context-enforcement** — informs: domain service interfaces defined via this pattern belong inside internal/ (enforced by that skill); the composition root in main.go sits outside internal/ and provides the wiring.
+- **strong-consistency-across-bounded-contexts** — informs: the consistency rule determines whether a domain service calls another service directly (within-context, strong consistency) or publishes an event (cross-context, eventual consistency); this choice determines the interface design and composition structure.
+- **go-value-object-immutability** — informs: value objects are the primary types in domain service interface method signatures; their value-type vs pointer-type semantics affect the API contract design.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Domain-Driven Design with Golang, Matthew Boyle, 2022

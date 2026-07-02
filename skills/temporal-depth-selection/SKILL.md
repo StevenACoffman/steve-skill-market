@@ -13,26 +13,8 @@ description: |
   - "We need an audit trail"
   - Any schema design question where corrections, overwrites, or retroactive amendments
     are possible
-
-  Do NOT use this skill when:
-  - The question is about identifying WHICH type of time a column represents (use
-    four-types-of-time first to name the axes, then return here)
-  - The question is about how to construct an AS OF join for ML training (use
-    ml-pipeline-integrity-pre-training, which presupposes this decision)
-  - The temporal model is already designed and the question is about querying it
-    correctly
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 10 — Why Time Matters
-  in Data Modeling.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 10 — Why Time Matters in Data Modeling
 tags: [time, temporal-modeling, bitemporal, unitemporal, SCD, data-modeling,
        audit-trail, ML-features]
-related_skills:
-  - slug: four-types-of-time
-    relation: depends-on
-  - slug: ml-pipeline-integrity-pre-training
-    relation: composes-with
 ---
 
 # Temporal Depth Selection — Non/Uni/Bi/Tritemporal Decision Path
@@ -364,7 +346,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`four-types-of-time`](../four-types-of-time/SKILL.md): The four time types must be identified and named before this skill can decide which axes to track — running four-types-of-time first ensures the temporal vocabulary is unambiguous before the depth decision is made.
+- **depends-on** `four-types-of-time`: The four time types must be identified and named before this skill can decide which axes to track — running four-types-of-time first ensures the temporal vocabulary is unambiguous before the depth decision is made.
 - **composes-with** `ml-pipeline-integrity-pre-training`: This skill determines whether the feature store is unitemporal or bitemporal (and therefore whether AS OF joins are architecturally possible); that skill then mandates that AS OF joins must always be used in ML training pipelines.
 
 ______________________________________________________________________
@@ -375,3 +357,9 @@ ______________________________________________________________________
 - **Source IDs**: f13 (framework extractor — Phase 1.5)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 10 — Why Time Matters in Data Modeling

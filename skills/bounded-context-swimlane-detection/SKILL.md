@@ -11,26 +11,7 @@ description: |
   - "We're doing a data platform consolidation"
   - "The same concept appears in multiple systems with different definitions"
   - Any cross-team or cross-system data integration design
-
-  Do NOT use this skill when:
-  - The process is confined to a single department with no cross-domain hand-offs
-    (use business-process-discovery to map the process, then proceed to
-    process-to-model-translation directly)
-  - The question is about resolving the vocabulary difference once boundaries are
-    confirmed (use semantic-vocabulary-ladder for controlled vocabulary and
-    thesaurus-level resolution)
-  - The question is about which metadata layer to use to communicate context across
-    contexts (use three-layer-metadata-stack)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 13 — Seeing the Business.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 13 — Seeing the Business
 tags: [bounded-context, domain-driven-design, swimlane, integration, data-modeling]
-related_skills:
-  - slug: business-process-discovery
-    relation: depends-on
-  - slug: semantic-vocabulary-ladder
-    relation: composes-with
 ---
 
 # Bounded Context Detection via Swimlane Crossing Analysis
@@ -340,8 +321,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`business-process-discovery`](../business-process-discovery/SKILL.md): The swimlane map used for crossing analysis is produced by business process discovery — the sequence of steps and actor hand-offs from discovery is the direct input to this skill's candidate identification phase.
-- **composes-with** [`semantic-vocabulary-ladder`](../semantic-vocabulary-ladder/SKILL.md): Each confirmed boundary identifies terms that carry different definitions on each side; the vocabulary ladder then determines what level of formal shared vocabulary (controlled vocabulary through ontology) the translation layer requires.
+- **depends-on** `business-process-discovery`: The swimlane map used for crossing analysis is produced by business process discovery — the sequence of steps and actor hand-offs from discovery is the direct input to this skill's candidate identification phase.
+- **composes-with** `semantic-vocabulary-ladder`: Each confirmed boundary identifies terms that carry different definitions on each side; the vocabulary ladder then determines what level of formal shared vocabulary (controlled vocabulary through ontology) the translation layer requires.
 
 ______________________________________________________________________
 
@@ -351,3 +332,9 @@ ______________________________________________________________________
 - **Source IDs**: f18
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 13 — Seeing the Business

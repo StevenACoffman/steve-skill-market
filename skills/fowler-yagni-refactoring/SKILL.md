@@ -1,14 +1,8 @@
 ---
 name: fowler-yagni-refactoring
-description: Apply when a team is considering adding speculative flexibility, future-proofing mechanisms, plugin architectures, abstract interfaces "for extensibility", or other design features not required by any current, concrete use case. Covers Fowler's YAGNI + refactoring mutual reinforcement: build only what's needed now, refactor safely when new needs arise.
-source_book: "Refactoring: Improving the Design of Existing Code, 2nd Edition — Martin Fowler (2018)"
-source_chapter: "Chapter 2: Principles in Refactoring"
+description: |
+  Apply when a team is considering adding speculative flexibility, future-proofing mechanisms, plugin architectures, abstract interfaces "for extensibility", or other design features not required by any current, concrete use case. Covers Fowler's YAGNI + refactoring mutual reinforcement: build only what's needed now, refactor safely when new needs arise.
 tags: [yagni, architecture, design, simplicity, evolutionary-architecture]
-related_skills:
-  - slug: fowler-design-stamina
-    relation: depends-on
-  - slug: fowler-branch-by-abstraction
-    relation: contrasts-with
 ---
 
 # YAGNI + Refactoring — Simple Design with Evolutionary Architecture
@@ -151,3 +145,9 @@ YAGNI is only defensible when the codebase has adequate test coverage and the te
 - **Primary quote lines:** 3592–3604 (YAGNI strategy), 3648–3653 (mutual reinforcement), 3562–3618 (full section)
 - **Phase:** 2 (SKILL.md + test-prompts.json)
 - **Created:** 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code, 2nd Edition — Martin Fowler (2018) — Chapter 2: Principles in Refactoring

@@ -1,9 +1,9 @@
 ---
-id: test-layer-architecture-mapping
-title: Test Architecture Mapping to Code Layers
-description: Invoke when deciding what kind of test to write for a given piece of logic — domain function, repository adapter, HTTP/gRPC endpoint wiring, or cross-service contract — or when designing a test strategy for a new service.
-source: Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026
+name: test-layer-architecture-mapping
+description: |
+  Invoke when deciding what kind of test to write for a given piece of logic — domain function, repository adapter, HTTP/gRPC endpoint wiring, or cross-service contract — or when designing a test strategy for a new service.
 ---
+# Test Architecture Mapping to Code Layers
 
 ## R — Reading
 
@@ -60,4 +60,10 @@ End-to-end tests are necessary but must be kept narrow. Adding E2E coverage for 
 
 ## Related Skills
 
-- **[anti-dry-separate-read-write-models](../anti-dry-separate-read-write-models/SKILL.md)** — informs: separate read and write models map cleanly to distinct test targets — command handlers (component tests) and query handlers (integration tests against optimized projections).
+- **anti-dry-separate-read-write-models** — informs: separate read and write models map cleanly to distinct test targets — command handlers (component tests) and query handlers (integration tests against optimized projections).
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026

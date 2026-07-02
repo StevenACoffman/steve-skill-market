@@ -13,31 +13,7 @@ description: |
   - Determining whether an existing metric is worth waking someone up for
   - Scoping an SLI to what one team actually controls (control boundary alignment)
   - Deciding between event-based and time-based SLI formulas
-
-  **When NOT to call:**
-  - Setting the SLO target percentage (use `slo-definition-calibration-framework`)
-  - Designing multiple SLO tiers (use `multi-tier-slo`)
-  - Choosing between failover and fallback as resilience mechanisms (use `fallback-failover`)
-  - Classifying an incident as degradation vs. disruption (use `degradation-disruption`)
-
-  **Key trigger signal:** The SLI denominator includes events the team does not control
-  (e.g. DDoS traffic, dependency failures, planned maintenance). Or: "We're getting paged
-  for things that don't affect users." Or: "Our availability metric doesn't match what
-  users are experiencing." Or: "We measure from inside the container — is that good enough?"
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20230808_153608_valid-vs-total.md, 20231126_051120_sli.md, 20230808_214447_sli-good.md, 20230809_201014_sli-measurement-location.md
 tags: [sli, formula, valid-vs-total, measurement-location, consumer-perception, good-events, fidelity]
-related_skills:
-  - slug: sli-monitoring-design-maturity
-    relation: composes-with
-  - slug: slo-definition-calibration-framework
-    relation: composes-with
-  - slug: composite-slo
-    relation: composes-with
-  - slug: degradation-disruption
-    relation: composes-with
-  - slug: multi-tier-slo
-    relation: composes-with
 ---
 
 # SLI Formula and Measurement Design Principles
@@ -345,9 +321,9 @@ ______________________________________________________________________
 
 - **composes-with** → `sli-monitoring-design-maturity`: The formula design (good/valid) is the technical implementation of the task-awareness Stage 3 requires; both are needed for a complete SLI design.
 - **composes-with** → `slo-definition-calibration-framework`: The SLI formula must be defined before setting the SLO target; slo-definition-calibration-framework calibrates the target against consumer tolerance once the formula is correct.
-- **composes-with** → [`composite-slo`](../composite-slo/SKILL.md): Each component SLI formula feeds into the composite SLO calculation across dependency graphs.
-- **composes-with** → [`degradation-disruption`](../degradation-disruption/SKILL.md): The SLI formula's good/valid design is what allows it to detect quality failures (degradation) vs. total failures (disruption).
-- **composes-with** → [`multi-tier-slo`](../multi-tier-slo/SKILL.md): Multi-tier SLO applies multiple threshold targets to a well-designed SLI formula; the formula design comes first.
+- **composes-with** → `composite-slo`: Each component SLI formula feeds into the composite SLO calculation across dependency graphs.
+- **composes-with** → `degradation-disruption`: The SLI formula's good/valid design is what allows it to detect quality failures (degradation) vs. total failures (disruption).
+- **composes-with** → `multi-tier-slo`: Multi-tier SLO applies multiple threshold targets to a well-designed SLI formula; the formula design comes first.
 
 ______________________________________________________________________
 
@@ -355,3 +331,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

@@ -1,16 +1,11 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: consistency-model-selection
 description: |
   Invoke this skill when a system uses replicated storage and you must decide whether an operation requires linearizability (single-copy semantics) or whether eventual consistency is acceptable. Specific triggers: a uniqueness constraint, quota, rate limit, or distributed lock must be enforced across replicas; a counter is incremented by concurrent writers; a "check then act" pattern reads from a replica before making a decision; the team is debating whether to pay the performance cost of strong consistency.
 
   Do NOT invoke when: there is only one replica (single-node database, no replication); the question is about transaction isolation levels within a single database (see `transaction-isolation-level-selection`); the question is about which replication topology to use (see `replication-topology-selection`).
-
-  Key signals: "can we use the replica for this read?", "two users checked at the same time and both got approved," "rate limiter is letting through more requests than the quota," "we need to enforce uniqueness across the cluster," "does quorum = strong consistency?", "is eventual consistency acceptable here?"
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 10: Consistency and Consensus'
 tags: [consistency, linearizability, eventual-consistency, distributed-systems, CAP-theorem, replication]
-related_skills: [replication-topology-selection, transaction-isolation-level-selection, distributed-fault-taxonomy, timeliness-vs-integrity-distinction]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Consistency Model Selection (Linearizability Vs. Eventual Consistency)
@@ -170,3 +165,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 10: Consistency and Consensus

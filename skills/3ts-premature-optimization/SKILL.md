@@ -4,18 +4,7 @@ description: |
   Use this skill to assess whether a proposed optimization is premature before the work begins, or to diagnose why a completed optimization failed to produce the expected outcome. The 3T framework tests three independent conditions: Thing (is the target the real bottleneck?), Time (is this the right moment in the lifecycle?), and Trade-offs (are all costs accounted for?). Failing any one test means the optimization is premature.
 
   Call this skill when: (1) A team is proposing a rewrite, refactor, migration, or performance initiative and the justification is intuition or anecdote rather than measured data. (2) An optimization has been completed but user-perceived outcomes didn't improve. (3) Leadership is proposing a structural change (reorg, platform migration, process overhaul) and there is no explicit analysis of timing or trade-offs. (4) A team is planning to adopt a new technology on the basis that it is "better" without confirming it addresses the actual constraint.
-
-  Do not call this skill when: (a) No optimization is being proposed — the system is working fine and no one is suggesting changes. (b) The question is about *what to measure* rather than *whether to optimize* — use `service-level-topology` for SLI derivation. (c) The question is about whether a practice is being cargo-culted — use `vsi-cargo-culting`.
-
-  Key trigger signal: "We should rewrite / migrate / refactor / restructure [X] to improve [Y]" with no supporting measurement that X is actually the bottleneck.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20250224_181737_premature-optimization.md, 20241110_160839_cargo-culting.md, 20231201_053017_10x9.md
 tags: [optimization, premature-optimization, 3ts, decision-making, engineering-judgment, trade-offs]
-related_skills:
-  - slug: vsi-cargo-culting
-    relation: contrasts-with
-  - slug: fit-practice
-    relation: composes-with
 ---
 
 # 3T's of Premature Optimization Diagnosis (Thing, Time, Trade-Offs)
@@ -165,8 +154,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → [`vsi-cargo-culting`](../vsi-cargo-culting/SKILL.md): VSI diagnoses prestige-driven adoption decisions; 3Ts diagnoses whether the timing, target, and trade-offs of a specific optimization are sound. They address different root causes of engineering misjudgment.
-- **composes-with** → [`fit-practice`](../fit-practice/SKILL.md): 3Ts validates whether an optimization is justified; fit-practice evaluates whether the approach being optimized fits the context — use together when evaluating both the timing and the fit of a proposed change.
+- **contrasts-with** → `vsi-cargo-culting`: VSI diagnoses prestige-driven adoption decisions; 3Ts diagnoses whether the timing, target, and trade-offs of a specific optimization are sound. They address different root causes of engineering misjudgment.
+- **composes-with** → `fit-practice`: 3Ts validates whether an optimization is justified; fit-practice evaluates whether the approach being optimized fits the context — use together when evaluating both the timing and the fit of a proposed change.
 
 ______________________________________________________________________
 
@@ -174,3 +163,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

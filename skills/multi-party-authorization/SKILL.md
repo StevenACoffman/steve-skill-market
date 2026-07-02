@@ -13,14 +13,7 @@ description: |
   viewing dashboards, deploying to dev) should not require MPA — overuse produces
   rubber-stamp approvals that defeat the control. Apply proportionally to the risk tier
   established by least-privilege classification.
-
-  Trigger phrases: "single admin account", "only one engineer approved", "no peer review
-  required for this path", "shared service account", "insider risk", "who can approve
-  this unilaterally", "emergency database access".
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: Chapter 5 — Design for Least Privilege
 tags: [MPA, multi-party-authorization, insider-risk, code-review, 3FA, audit, least-privilege]
-related_skills: []
 ---
 
 # Multi-Party Authorization for All Sensitive Operations
@@ -194,3 +187,9 @@ ______________________________________________________________________
 ## Audit Information
 
 - V1 ✓ / V2 ✓ / V3 ✓ — 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 5 — Design for Least Privilege

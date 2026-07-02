@@ -15,21 +15,7 @@ description: |
   order/, user/, payment/. Technology packages (http/, postgres/, redis/) import from
   domain packages; domain packages never import from technology packages. The Go
   compiler enforces this via import cycle prohibition — no linter or convention needed.
-
-  The result: navigating to order/ finds all order logic; adding a Tenant domain
-  means creating tenant/, not spreading changes across models/, controllers/, and
-  handlers/. Domain packages remain independently testable without technology dependencies.
-
-  Do not apply to single-package scripts, single-domain microservices, or library
-  packages where the caller defines the domain.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: app_structure, di_frameworks_bleh
 tags: [go, architecture, packages, domain-driven-design]
-related_skills:
-  - slug: manual-dependency-injection
-    relation: composes-with
-  - slug: error-translation-layer-boundaries
-    relation: composes-with
 ---
 
 # Domain-Driven Package Structure
@@ -360,8 +346,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`manual-dependency-injection`](../manual-dependency-injection/SKILL.md): Domain-driven package structure determines which packages exist and which direction they import. Manual DI in `cmd/main.go` wires concrete implementations into those packages' interfaces. Domain packages are already decoupled when you reach `cmd/`; constructors compose naturally because technology packages never import domain packages.
-- **composes-with** [`error-translation-layer-boundaries`](../error-translation-layer-boundaries/SKILL.md): Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live inside domain packages (`order/`, `user/`) with no imports from storage libraries. Domain-driven structure gives these sentinels a clear, technology-free home, making the `%w`-for-domain / `%v`-for-storage discipline structurally enforceable.
+- **composes-with** `manual-dependency-injection`: Domain-driven package structure determines which packages exist and which direction they import. Manual DI in `cmd/main.go` wires concrete implementations into those packages' interfaces. Domain packages are already decoupled when you reach `cmd/`; constructors compose naturally because technology packages never import domain packages.
+- **composes-with** `error-translation-layer-boundaries`: Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live inside domain packages (`order/`, `user/`) with no imports from storage libraries. Domain-driven structure gives these sentinels a clear, technology-free home, making the `%w`-for-domain / `%v`-for-storage discipline structurally enforceable.
 
 ______________________________________________________________________
 
@@ -370,3 +356,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — app_structure, di_frameworks_bleh

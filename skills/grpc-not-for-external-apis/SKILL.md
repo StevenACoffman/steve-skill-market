@@ -1,16 +1,14 @@
 ---
-id: grpc-not-for-external-apis
-title: gRPC Is Not Suitable for External-Facing APIs
-description: >
+name: grpc-not-for-external-apis
+description: |
   Invoke when a team proposes exposing a gRPC service directly to external
   third-party consumers, public API users, or browser clients. Key trigger:
   "should we expose our gRPC service publicly?" or "can external clients use
   our gRPC API?" The answer is no for direct exposure; the correct pattern is
   gRPC internally + HTTP/JSON transcoding (gRPC gateway or Envoy) at the boundary.
-source: "gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)"
 tags: [grpc, external-api, grpc-gateway, rest, graphql, public-api, architecture]
-related_skills:
 ---
+# gRPC Is Not Suitable for External-Facing APIs
 
 ## gRPC Is Not Suitable for External-Facing APIs
 
@@ -194,13 +192,18 @@ limitation — gRPC-Web was maturing at the time of publication.
 ### Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: candidates/counter-examples.md ce04; candidates/frameworks.md fw02
 - Verified entries: verified.md ce04, fw02
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
 ### Related Skills
 
-- **[grpc-vs-rest-vs-graphql](../grpc-vs-rest-vs-graphql/SKILL.md)** — depends on: this skill is the actionable consequence of the broader protocol-selection framework; run grpc-vs-rest-vs-graphql first for the full decision logic.
-- **[grpc-security-credential-composition](../grpc-security-credential-composition/SKILL.md)** — informs: introducing a gRPC gateway changes the TLS topology — the gateway terminates TLS from external clients while the backend may use mTLS internally.
-- **[grpc-load-balancer-selection](../grpc-load-balancer-selection/SKILL.md)** — relates: the gRPC gateway is itself an L7 proxy that sits at the external boundary; its placement interacts with the internal load-balancing topology.
+- **grpc-vs-rest-vs-graphql** — depends on: this skill is the actionable consequence of the broader protocol-selection framework; run grpc-vs-rest-vs-graphql first for the full decision logic.
+- **grpc-security-credential-composition** — informs: introducing a gRPC gateway changes the TLS topology — the gateway terminates TLS from external clients while the backend may use mTLS internally.
+- **grpc-load-balancer-selection** — relates: the gRPC gateway is itself an L7 proxy that sits at the external boundary; its placement interacts with the internal load-balancing topology.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)

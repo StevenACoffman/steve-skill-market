@@ -1,11 +1,8 @@
 ---
 name: custom-framework-within-go-test
-description: Invoke when building a pluggable system where multiple backends or plugins must satisfy the same multi-step acceptance scenario, or when considering a separate test binary or external test runner. Covers building a custom harness (TestCase struct + Test function) as a Go library so go test orchestrates all backends with full -run/-race/-cover support.
-source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
-source_chapter: Part 2 — Writing Testable Code / Custom Frameworks
+description: |
+  Invoke when building a pluggable system where multiple backends or plugins must satisfy the same multi-step acceptance scenario, or when considering a separate test binary or external test runner. Covers building a custom harness (TestCase struct + Test function) as a Go library so go test orchestrates all backends with full -run/-race/-cover support.
 tags: [go, testing, custom-framework, plugin-systems, acceptance-testing]
-related_skills:
-  - testing-go-public-test-api  # composes-with: the custom harness is published in testing.go to be importable
 ---
 
 # R — Raw Source
@@ -413,3 +410,9 @@ single pluggable system.
 ### Related Skills
 
 - **testing-go-public-test-api** (composes-with): The custom harness (`TestCase` struct and `Test(t, tc)` function) needs to be importable by plugin authors in other packages. Publishing it in a `testing.go` file (not `_test.go`) provides that importability. The public test API skill provides the mechanism; this skill provides the structure. The two appear together in every production use of this pattern (e.g., Vault's `logicaltest`).
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 2 — Writing Testable Code / Custom Frameworks

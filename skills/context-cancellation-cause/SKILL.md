@@ -12,16 +12,8 @@ description: |
   CancelCauseFunc covers all paths, and first-cancel-wins records the most specific
   reason. When downstream code also needs errors.Is(err, context.DeadlineExceeded) to
   work, stack WithCancelCause on top of WithTimeoutCause with careful LIFO defer
-  ordering. Enables converting "context canceled" log noise into "client disconnected",
-  "query timeout", or "circuit open" in structured log fields.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: context_cancellation_cause
+  ordering.
 tags: [go, context, concurrency, observability, debugging]
-related_skills:
-  - slug: structured-goroutine-lifetime
-    relation: composes-with
-  - slug: context-key-collision-prevention
-    relation: composes-with
 ---
 
 # Context Cancellation Cause
@@ -196,8 +188,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`structured-goroutine-lifetime`](../structured-goroutine-lifetime/SKILL.md): Structured goroutine lifetime management uses context cancellation as the stop signal — goroutines check `ctx.Done()` in loops and return when the context is cancelled. `context.WithCancelCause` adds observability to that signal: when errgroup cancels the shared context on first error, `context.Cause(ctx)` in middleware or logging shows exactly which goroutine failed and why. Use errgroup for lifetime; use `WithCancelCause` to label the reason.
-- **composes-with** [`context-key-collision-prevention`](../context-key-collision-prevention/SKILL.md): Both are about using `context` correctly in the same request lifecycle. A request context often carries both typed value keys (request ID, user ID) via `WithValue` and a cancellation cause via `WithCancelCause`. Correct key types prevent value shadowing; correct cancel cause tracking preserves the cancellation reason. Apply both when instrumenting middleware.
+- **composes-with** `structured-goroutine-lifetime`: Structured goroutine lifetime management uses context cancellation as the stop signal — goroutines check `ctx.Done()` in loops and return when the context is cancelled. `context.WithCancelCause` adds observability to that signal: when errgroup cancels the shared context on first error, `context.Cause(ctx)` in middleware or logging shows exactly which goroutine failed and why. Use errgroup for lifetime; use `WithCancelCause` to label the reason.
+- **composes-with** `context-key-collision-prevention`: Both are about using `context` correctly in the same request lifecycle. A request context often carries both typed value keys (request ID, user ID) via `WithValue` and a cancellation cause via `WithCancelCause`. Correct key types prevent value shadowing; correct cancel cause tracking preserves the cancellation reason. Apply both when instrumenting middleware.
 
 ______________________________________________________________________
 
@@ -206,3 +198,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — context_cancellation_cause

@@ -1,3 +1,9 @@
+---
+name: write-comments-first-as-design-tool
+description: |
+  Invoke this skill when: - Starting any new class or interface: before writing the first line of implementation. - In code review: when a reviewer cannot understand what a module does from reading it, the interface comment is missing or misleading — redesign, do not just annotate. - Onboarding a new developer: if they cannot understand a module by reading its interface comments alone, the comments (and possibly the design) need work. - After a refactor changes interface semantics: the interface comment is now wrong — update it first, then verify the implementation still matches. - As a pre-implementation checklist item: on any pull request, before requesting review, confirm that each new class and each public method has a complete interface comment. - When you feel the urge to write a long inline comment inside a method signature: that urge signals the interface may be too complex. Do NOT apply when: 1.
+---
+
 # Skill: Write Comments First as a Design Tool
 
 **Source**: *A Philosophy of Software Design* by John Ousterhout (2018), Chapter 15 — "Write the Comments First"
@@ -86,5 +92,5 @@ ______________________________________________________________________
 ## Related Skills
 
 - **Strategic vs. Tactical Programming (`design-stamina-strategic-investment`)** — *enabled-by* → Comments-first produces no immediate feature output. It is a strategic investment in design clarity. Without the strategic mindset, this skill is abandoned as "documentation overhead."
-- **[Design It Twice](../design-it-twice/SKILL.md)** — *preceded-by* → Design-it-twice selects the interface structure; comments-first verifies the chosen design can be described simply. Apply design-it-twice first to select between alternatives, then use comments-first on the winner.
+- **Design It Twice** — *preceded-by* → Design-it-twice selects the interface structure; comments-first verifies the chosen design can be described simply. Apply design-it-twice first to select between alternatives, then use comments-first on the winner.
 - **Deep Module / Classitis Diagnosis (`structural-diagnosis-smells-depth`)** — *depends-on* → The comment-length signal ("long interface comment = bad abstraction, short interface + long implementation = good") requires understanding what module depth means. Deep module evaluation provides the vocabulary to read this signal correctly.

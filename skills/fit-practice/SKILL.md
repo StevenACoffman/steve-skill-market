@@ -4,20 +4,7 @@ description: |
   Use this skill to evaluate whether an externally-sourced practice, methodology, or technical approach is appropriate for the current context — and to derive a context-specific alternative when it is not. The fit-practice framework replaces the binary "best practice / not best practice" judgment with a four-question evaluation that exposes the conditions required for a practice to work and tests whether those conditions are present.
 
   Call this skill when: (1) A team or leader wants to adopt a practice that originated elsewhere and the justification relies on the source's reputation rather than an explicit fit analysis. (2) An existing practice is producing poor results and you need to diagnose whether it was ever appropriate. (3) You want to help a team extract the underlying wisdom from a "best practice" and apply that wisdom in a way that fits their actual context. (4) A practice is being applied uniformly across teams with very different contexts and needs.
-
-  Do not call this skill when: (a) The goal is to diagnose *why* an adoption is prestige-driven (the mechanism) — use `vsi-cargo-culting` to identify the V/S/I elements. (b) A specific optimization proposal is being evaluated for timing and trade-offs — use `3ts-premature-optimization`. (c) The practice in question has context-independent measurable properties (e.g., a cryptographic algorithm) — technical specifications don't require fit analysis.
-
-  Key trigger signal: Someone says "this is best practice" without being able to explain the conditions that make it work or where it doesn't apply.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20241204_163905_best-practice.md, 20241110_160839_cargo-culting.md, 20240524_130358_service-level-adoption-obstacles.md
 tags: [best-practice, fit-practice, critical-thinking, cargo-culting, decision-making, context]
-related_skills:
-  - slug: vsi-cargo-culting
-    relation: contrasts-with
-  - slug: vsi-cargo-culting
-    relation: composes-with
-  - slug: 3ts-premature-optimization
-    relation: composes-with
 ---
 
 # Fit Practice Decision Framework (Vs. Best Practice)
@@ -166,9 +153,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → [`vsi-cargo-culting`](../vsi-cargo-culting/SKILL.md): VSI diagnoses the mechanism of prestige-driven adoption; fit-practice is the corrective evaluation framework that determines what would actually fit the context.
-- **composes-with** → [`vsi-cargo-culting`](../vsi-cargo-culting/SKILL.md): When VSI diagnosis reveals cargo culting, fit-practice provides the four-question framework to extract the underlying wisdom and derive a context-appropriate alternative.
-- **composes-with** → [`3ts-premature-optimization`](../3ts-premature-optimization/SKILL.md): 3Ts tests whether an optimization is justified in this moment; fit-practice tests whether the approach is appropriate for this context — together they cover both timing and fit.
+- **contrasts-with** → `vsi-cargo-culting`: VSI diagnoses the mechanism of prestige-driven adoption; fit-practice is the corrective evaluation framework that determines what would actually fit the context.
+- **composes-with** → `vsi-cargo-culting`: When VSI diagnosis reveals cargo culting, fit-practice provides the four-question framework to extract the underlying wisdom and derive a context-appropriate alternative.
+- **composes-with** → `3ts-premature-optimization`: 3Ts tests whether an optimization is justified in this moment; fit-practice tests whether the approach is appropriate for this context — together they cover both timing and fit.
 
 ______________________________________________________________________
 
@@ -176,3 +163,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

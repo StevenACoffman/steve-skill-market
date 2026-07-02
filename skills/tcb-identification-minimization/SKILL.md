@@ -14,14 +14,7 @@ description: |
   a specific, stated policy to work from. You are doing a general attack-surface reduction
   (which is adjacent but broader). You are assessing a running system for known
   vulnerabilities (penetration testing is a different skill).
-
-  KEY TRIGGER: "What needs to be correct for this security guarantee to hold?" or "Which
-  components do we need to audit?" or "We're splitting this monolith — what changes in
-  terms of security review scope?" This is the skill.
-source_book: "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google)
-source_chapter: Chapter 6 — Design for Understandability
 tags: [tcb, security-boundary, least-privilege, system-decomposition, understandability, audit]
-related_skills: []
 ---
 
 # TCB Identification and Minimization Methodology
@@ -220,3 +213,9 @@ ______________________________________________________________________
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Source IDs: f06, p02
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google) — Chapter 6 — Design for Understandability

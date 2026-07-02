@@ -1,9 +1,9 @@
 ---
-id: governance-variety-lever-selection
-title: Governance Variety Lever Selection
-description: Invoke after a variety deficit has been located (via requisite-variety-gap-assessment) and the question is what type of intervention to apply. The skill maps deficit location to lever type — amplify governance response capacity, attenuate environmental variety, or both — and guards against the most common misuse: using attenuation to reduce governance capacity rather than environmental variety.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: governance-variety-lever-selection
+description: |
+  Invoke after a variety deficit has been located (via requisite-variety-gap-assessment) and the question is what type of intervention to apply. The skill maps deficit location to lever type — amplify governance response capacity, attenuate environmental variety, or both — and guards against the most common misuse: using attenuation to reduce governance capacity rather than environmental variety.
 ---
+# Governance Variety Lever Selection
 
 ## R — Reading
 
@@ -69,5 +69,11 @@ In political environments, the organizationally feasible lever may not match the
 
 ## Related Skills
 
-- **[requisite-variety-gap-assessment](../requisite-variety-gap-assessment/SKILL.md)** — *depends on*: REQUIRED prerequisite; do not invoke without a completed variety deficit profile
-- **[cynefin-pm-domain-identification](../cynefin-pm-domain-identification/SKILL.md)** — *combines*: domain classification informs which amplify/attenuate lever is viable given the nature of the environment
+- **requisite-variety-gap-assessment** — *depends on*: REQUIRED prerequisite; do not invoke without a completed variety deficit profile
+- **cynefin-pm-domain-identification** — *combines*: domain classification informs which amplify/attenuate lever is viable given the nature of the environment
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

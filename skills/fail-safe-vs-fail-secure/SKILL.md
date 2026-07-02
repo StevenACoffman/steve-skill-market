@@ -15,14 +15,7 @@ description: |
   WHEN NOT TO CALL: The component has no authorization layer (it serves only public data).
   The failure mode has already been decided and encoded in the system. You are debugging
   an existing failure rather than designing future behavior.
-
-  KEY TRIGGER: Someone asks "what happens if the auth system is unavailable?" or "should
-  we fail open or fail closed?" — this is the skill. The answer is never improvised; it
-  is derived from the threat model and encoded at design time.
-source_book: "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google)
-source_chapter: Chapter 8 — Design for Resilience; Chapter 4 — Design Tradeoffs
 tags: [fail-safe, fail-secure, failure-mode-design, security-reliability-tradeoff, resilience]
-related_skills: []
 ---
 
 # Fail-Safe Vs. Fail-Secure Must Be Decided at Design Time
@@ -211,3 +204,9 @@ ______________________________________________________________________
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Source IDs: f03, p20
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google) — Chapter 8 — Design for Resilience, Chapter 4 — Design Tradeoffs

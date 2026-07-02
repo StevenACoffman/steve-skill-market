@@ -2,20 +2,7 @@
 name: t-pop
 description: |
   Use this skill when a technical leader at Staff+ level needs to self-assess their energy allocation across four dimensions — Technology, People, Operations, and Product — or when onboarding to a new technical leadership role and mapping the unfamiliar environment. T-POP is both an onboarding diagnostic and an ongoing energy-management tool that prevents the specific failure modes that derail senior IC roles: ivory tower isolation, snacking on low-value work, preening on high-visibility low-impact work, and proposing premature technical solutions to organizational or product problems.
-
-  Call this skill when: (1) A Staff/Principal/Distinguished Engineer is starting a new position and needs a systematic approach to mapping the environment. (2) A technical leader suspects their time allocation has drifted toward tech-only work and away from the dimensions that make technical decisions land. (3) A leader is about to propose a technical initiative and wants to verify the T-POP dimensions are covered. (4) A Staff+ engineer is being rejected in promotions or struggling to demonstrate impact — a T-POP audit often reveals the missing dimension.
-
-  Do not call this skill when: (a) The question is about technical decision-making methodology rather than leadership energy allocation. (b) The person is a senior engineer (not yet Staff+) for whom the T-POP dimensions may not yet be in scope. (c) The question is specifically about whether a technical practice fits the current context — use `fit-practice`.
-
-  Key trigger signal: A technical leader describes spending "most of my time on tech" while having difficulty driving organizational change, or is described as "not having enough impact" despite strong technical contributions.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20240318_053010_t-pop.md, 20240226_053008_introduction-to-the-role-of-staff.md, 20241031_155019_ivory-tower-architect.md
 tags: [technical-leadership, staff-engineer, t-pop, onboarding, organizational-awareness, ivory-tower]
-related_skills:
-  - slug: ephemeral-taskforce
-    relation: composes-with
-  - slug: fit-practice
-    relation: composes-with
 ---
 
 # T-POP Technical Leadership Framework (Tech + People + Operation + Product)
@@ -174,8 +161,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → [`ephemeral-taskforce`](../ephemeral-taskforce/SKILL.md): The ETF is the People-dimension execution tool for T-POP; T-POP provides the leader with the Tech/People/Ops/Product context needed to charter and run an ETF effectively.
-- **composes-with** → [`fit-practice`](../fit-practice/SKILL.md): T-POP helps technical leaders identify which practices are appropriate for their context; fit-practice provides the four-question framework to formally evaluate each candidate practice.
+- **composes-with** → `ephemeral-taskforce`: The ETF is the People-dimension execution tool for T-POP; T-POP provides the leader with the Tech/People/Ops/Product context needed to charter and run an ETF effectively.
+- **composes-with** → `fit-practice`: T-POP helps technical leaders identify which practices are appropriate for their context; fit-practice provides the four-question framework to formally evaluate each candidate practice.
 
 ______________________________________________________________________
 
@@ -183,3 +170,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

@@ -1,9 +1,8 @@
 ---
-id: grpc-service-decomposition-by-capability
-title: Service Decomposition by Business Capability — Y-Axis Scale Cube, Team Ownership, and When to Decompose
+name: grpc-service-decomposition-by-capability
 description: Trigger when deciding how to decompose a monolith into gRPC microservices, or when evaluating the boundaries between services in a microservice system.
-source: [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]
 ---
+# Service Decomposition by Business Capability — Y-Axis Scale Cube, Team Ownership, and When to Decompose
 
 ## R — Reading
 
@@ -51,5 +50,11 @@ Business capability decomposition is not always the right granularity. A payment
 
 ## Related Skills
 
-- **[grpc-saga-compensation-ordering](../grpc-saga-compensation-ordering/SKILL.md)** — prerequisite for: sagas arise from decomposition; the step sequence, compensation ownership, and orchestrator location all follow directly from which services own which capabilities
-- **[grpc-kubernetes-deployment-topology](../grpc-kubernetes-deployment-topology/SKILL.md)** — prerequisite for: each service in the decomposition maps to one Deployment + ClusterIP Service + Ingress path rule; the topology directly encodes the capability boundaries
+- **grpc-saga-compensation-ordering** — prerequisite for: sagas arise from decomposition; the step sequence, compensation ownership, and orchestrator location all follow directly from which services own which capabilities
+- **grpc-kubernetes-deployment-topology** — prerequisite for: each service in the decomposition maps to one Deployment + ClusterIP Service + Ingress path rule; the topology directly encodes the capability boundaries
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]

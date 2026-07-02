@@ -1,9 +1,8 @@
 ---
-id: grpc-saga-compensation-ordering
-title: Saga Compensation Ordering — Bottom-Up Rollback and Choreography vs. Orchestration Trade-offs
+name: grpc-saga-compensation-ordering
 description: Trigger when designing distributed transaction rollback across multiple microservices, or when choosing between choreography-based and orchestrator-based saga implementations.
-source: [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]
 ---
+# Saga Compensation Ordering — Bottom-Up Rollback and Choreography vs. Orchestration Trade-offs
 
 ## R — Reading
 
@@ -49,4 +48,10 @@ Sagas guarantee eventual consistency, not strong consistency — there is a wind
 
 ## Related Skills
 
-- **[grpc-service-decomposition-by-capability](../grpc-service-decomposition-by-capability/SKILL.md)** — depends on: sagas only exist because services are decomposed; the decomposition determines the saga participants, step ordering, and compensation ownership
+- **grpc-service-decomposition-by-capability** — depends on: sagas only exist because services are decomposed; the decomposition determines the saga participants, step ordering, and compensation ownership
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]

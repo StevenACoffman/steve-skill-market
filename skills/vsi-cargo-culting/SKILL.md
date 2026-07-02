@@ -4,20 +4,7 @@ description: |
   Use this skill to diagnose whether an adoption decision — for a tool, process, methodology, or organizational model — is being driven by genuine fit-to-context analysis or by cargo culting. The VSI framework identifies the three-element mechanism that explains why intelligent practitioners adopt practices that don't fit: Value dominance, Shallow understanding, and Imitation.
 
   Call this skill when: (1) A team or leader is proposing to adopt something because "Google/Netflix/Spotify does it" or because a prestigious speaker endorsed it. (2) A practice is being adopted wholesale without analysis of the conditions that made it work elsewhere. (3) Rituals and processes have been installed but outcomes haven't improved. (4) You need to explain to leadership why a technically sophisticated adoption effort failed. (5) You want to audit an existing practice to see if it's cargo-culted.
-
-  Do not call this skill when: (a) The goal is to evaluate whether a *specific* practice fits the current context — use `fit-practice` for that evaluation. (b) The adoption decision has already been made and the team needs an execution framework. (c) The question is about optimization timing rather than practice adoption.
-
-  Key trigger signal: Justification for an adoption decision that relies on the source's prestige rather than an explicit analysis of why the practice would work in the current environment.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20241110_160839_cargo-culting.md, 20241204_163905_best-practice.md, 20240524_130358_service-level-adoption-obstacles.md
 tags: [cargo-culting, vsi, critical-thinking, best-practice, organizational-failure, mindset]
-related_skills:
-  - slug: fit-practice
-    relation: contrasts-with
-  - slug: fit-practice
-    relation: composes-with
-  - slug: 3ts-premature-optimization
-    relation: contrasts-with
 ---
 
 # VSI Framework for Cargo Culting Diagnosis
@@ -156,9 +143,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → [`fit-practice`](../fit-practice/SKILL.md): VSI diagnoses whether an adoption is cargo-culted (the mechanism); fit-practice provides the evaluation method to determine what would constitute a fitting alternative.
-- **contrasts-with** → [`3ts-premature-optimization`](../3ts-premature-optimization/SKILL.md): 3Ts diagnoses premature optimization (wrong thing/time/trade-offs); VSI diagnoses prestige-driven adoption. They can co-occur but address different root causes.
-- **composes-with** → [`fit-practice`](../fit-practice/SKILL.md): VSI identifies the adoption is cargo-culted; fit-practice is the remedy — use both together to diagnose and correct the adoption decision.
+- **contrasts-with** → `fit-practice`: VSI diagnoses whether an adoption is cargo-culted (the mechanism); fit-practice provides the evaluation method to determine what would constitute a fitting alternative.
+- **contrasts-with** → `3ts-premature-optimization`: 3Ts diagnoses premature optimization (wrong thing/time/trade-offs); VSI diagnoses prestige-driven adoption. They can co-occur but address different root causes.
+- **composes-with** → `fit-practice`: VSI identifies the adoption is cargo-culted; fit-practice is the remedy — use both together to diagnose and correct the adoption decision.
 
 ______________________________________________________________________
 
@@ -166,3 +153,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

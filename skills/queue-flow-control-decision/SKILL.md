@@ -1,9 +1,9 @@
 ---
-id: queue-flow-control-decision
-title: Queue Flow Control Decision
-description: Invoke when a queue is growing during peak load with no explicit capacity plan, when a service shows high tail latency during traffic spikes despite healthy throughput, when a team says "the queue will handle traffic spikes" with no mention of what happens at capacity, when message value clearly decays over time, or when implementing a rate limit on calls to a third-party API downstream of a queue.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003) + Addendum 4 (Gregor Hohpe, ~2022)
+name: queue-flow-control-decision
+description: |
+  Invoke when a queue is growing during peak load with no explicit capacity plan, when a service shows high tail latency during traffic spikes despite healthy throughput, when a team says "the queue will handle traffic spikes" with no mention of what happens at capacity, when message value clearly decays over time, or when implementing a rate limit on calls to a third-party API downstream of a queue.
 ---
+# Queue Flow Control Decision
 
 ## Queue Flow Control Decision
 
@@ -98,7 +98,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Queue Control Flow Model](../queue-control-flow-model/SKILL.md)** — *depends-on* → The control-flow model identifies who controls the cadence of a pipeline; flow control decision applies once you know whether the active component is a Driver (can slow fetch rate) or a Sender (requires a queue buffer before flow control is possible).
-- **[Competing Consumers vs. Dispatcher](../competing-consumers-vs-dispatcher/SKILL.md)** — *composes-with* → The number of competing consumers directly affects queue drain rate and therefore the correct flow control threshold; flow control sizing and consumer count are co-determined.
-- **[Messaging Observability Design](../messaging-observability-design/SKILL.md)** — *depends-on* → Detecting queue overflow and measuring wait times (the inputs to Little's Result) requires Message Store and Wire Tap instrumentation; flow control cannot be tuned without observability in place.
-- **[Integration Style Selection](../integration-style-selection/SKILL.md)** — *depends-on* → Flow control is only a concern after Messaging is selected; if RPC or File Transfer is the integration style, queue overflow is not a relevant problem.
+- **Queue Control Flow Model** — *depends-on* → The control-flow model identifies who controls the cadence of a pipeline; flow control decision applies once you know whether the active component is a Driver (can slow fetch rate) or a Sender (requires a queue buffer before flow control is possible).
+- **Competing Consumers vs. Dispatcher** — *composes-with* → The number of competing consumers directly affects queue drain rate and therefore the correct flow control threshold; flow control sizing and consumer count are co-determined.
+- **Messaging Observability Design** — *depends-on* → Detecting queue overflow and measuring wait times (the inputs to Little's Result) requires Message Store and Wire Tap instrumentation; flow control cannot be tuned without observability in place.
+- **Integration Style Selection** — *depends-on* → Flow control is only a concern after Messaging is selected; if RPC or File Transfer is the integration style, queue overflow is not a relevant problem.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003) + Addendum 4 (Gregor Hohpe, ~2022)

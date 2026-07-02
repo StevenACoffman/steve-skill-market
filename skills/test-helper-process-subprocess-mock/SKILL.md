@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: test-helper-process-subprocess-mock
 description: |
   When production code calls exec.Command to run an external binary, or when
@@ -9,11 +8,8 @@ description: |
   re-executes the test binary itself with TestHelperProcess and
   GO_WANT_HELPER_PROCESS=1. Do not use for HTTP services (use httptest) or
   databases (use testcontainers).
-source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
-source_chapter: Part 2 — Writing Testable Code / Subprocessing
 tags: [go, testing, subprocess, exec, mocking, testable-code]
-related_skills:
-  - never-mock-net-conn-use-loopback  # contrasts-with: both reject shallow mocks; different problem domain
+allowed-tools: Bash, Read, Edit
 ---
 
 # Test Helper Process Subprocess Mock
@@ -394,3 +390,9 @@ with comments identifying which test case each case serves.
 ## Related Skills
 
 - **never-mock-net-conn-use-loopback** (contrasts-with): Both patterns reject shallow, inadequate mocks in favor of real implementations. `TestHelperProcess` rejects OS-level subprocess mocking by re-executing the real test binary. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real loopback TCP pair. Same underlying philosophy — "use a real instance of the thing" — applied to different problem domains (subprocesses vs. networking).
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 2 — Writing Testable Code / Subprocessing

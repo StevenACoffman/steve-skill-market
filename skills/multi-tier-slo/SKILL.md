@@ -16,25 +16,7 @@ description: |
   - There is an aspirational performance target AND a guarantee threshold that must coexist
     (e.g. "we aim for 200ms but we guarantee 850ms")
   - An SLO needs to constrain both frequency and duration of incidents simultaneously
-
-  **When NOT to call:**
-  - Calculating the combined SLO of dependent services (use `composite-slo`)
-  - Setting the initial SLO target for a service from scratch (use `slo-definition-calibration-framework`)
-  - Designing the SLI metric formula (use `sli-formula-measurement`)
-
-  **Key trigger signal:** "We met our monthly SLO but had a 3-day outage and consumers
-  are furious." Or: "We need a performance guarantee plus an aspirational target." Or:
-  "Different parts of our API need different response time commitments."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20231120_211502_multi-tiered-slos.md, 20231211_053037_slo-definition-calibration-framework.md
 tags: [slo, multi-tiered, window-slo, threshold-tiers, incident-duration, sli, error-budget]
-related_skills:
-  - slug: slo-definition-calibration-framework
-    relation: depends-on
-  - slug: composite-slo
-    relation: contrasts-with
-  - slug: sli-formula-measurement
-    relation: composes-with
 ---
 
 # Multi-Tiered SLO Design (Threshold Tiers + Window Tiers)
@@ -302,8 +284,8 @@ ______________________________________________________________________
 ## Related Skills
 
 - **depends-on** → `slo-definition-calibration-framework`: Use slo-definition-calibration-framework to calibrate each individual tier value (threshold and window) to consumer tolerance and cost before deciding whether multiple tiers are warranted.
-- **contrasts-with** → [`composite-slo`](../composite-slo/SKILL.md): Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They solve different SLO complexity problems and are often applied together.
-- **composes-with** → [`sli-formula-measurement`](../sli-formula-measurement/SKILL.md): A well-designed SLI formula (good/valid) must exist before applying multi-tier thresholds or window structures to it.
+- **contrasts-with** → `composite-slo`: Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They solve different SLO complexity problems and are often applied together.
+- **composes-with** → `sli-formula-measurement`: A well-designed SLI formula (good/valid) must exist before applying multi-tier thresholds or window structures to it.
 
 ______________________________________________________________________
 
@@ -311,3 +293,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

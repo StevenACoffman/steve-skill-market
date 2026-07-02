@@ -14,17 +14,7 @@ description: |
   and getting messy — when should I refactor?", "how do I do TDD when I don't know
   what I'm building yet?", "I have a lot of untested code in my main file — what do
   I do?".
-
-  Not suitable for: well-understood features where the design is already clear (just
-  do standard TDD); bug fixes in existing tested code; refactoring within already-tested
-  classes.
-
-  Key trigger: design uncertainty is the blocker — the user doesn't yet know what they
-  want, so committing to tests feels premature or wasteful.
-source_book: "Functional Core, Imperative Shell" Gary Bernhardt
-source_chapter: Testing the imperative shell / The Refactor Cadence
 tags: [tdd, exploration, refactor-cadence, shell, design-discovery]
-related_skills: []
 ---
 
 # Shell-as-Exploration-Zone / TDD Extraction Cadence
@@ -178,3 +168,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: See test-prompts.json
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Functional Core, Imperative Shell" Gary Bernhardt — Testing the imperative shell / The Refactor Cadence

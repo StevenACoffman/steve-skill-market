@@ -1,9 +1,8 @@
 ---
-id: grpc-bufconn-unit-testing
-title: bufconn Unit Testing — In-Memory gRPC Server with FakeDb Functional Options
+name: grpc-bufconn-unit-testing
 description: Trigger when setting up unit tests for a gRPC service that need a real gRPC server without binding a network port, or when needing per-test fault injection on storage doubles.
-source: [gRPC Go for Professionals, Clément Jean, Packt, 2023]
 ---
+# bufconn Unit Testing — In-Memory gRPC Server with FakeDb Functional Options
 
 ## R — Reading
 
@@ -46,3 +45,9 @@ The TODO service test suite in Ch9 uses this harness to test all four endpoint t
 This harness tests endpoint logic only — without TLS, auth interceptors, or rate limiting. Integration tests own the interceptor stack and require real credentials. The `bufconn` approach does not test that your server handles concurrent connections correctly at the OS level; for that, use Docker Compose or `ghz` load tests. The `bufDialer` function ignores the address argument, so all clients in the package share the same in-memory server — tests that require server state isolation must use `Reset()` or create separate server instances.
 
 ## Related Skills
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Go for Professionals, Clément Jean, Packt, 2023]

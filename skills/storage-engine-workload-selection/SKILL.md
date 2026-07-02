@@ -1,26 +1,9 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: storage-engine-workload-selection
 description: |
   Invoke this skill when selecting a storage engine or database for a new system, or when an existing storage engine is producing performance problems that are workload-driven (not query or schema problems). The key input is the ratio of writes to reads, whether access is by single key or by range/aggregate, and whether the workload is operational (low-latency per-row access) or analytical (bulk column scans).
-
-  Specific trigger situations:
-  - A high-write-throughput system (IoT sensor ingestion, event logging, audit trails, time-series) is experiencing write stalls or compaction-related latency spikes.
-  - A read-heavy OLTP system with frequent random single-row lookups is considering switching from PostgreSQL (B-tree) to a "faster" NoSQL store.
-  - A new system must decide between RocksDB, PostgreSQL, Cassandra, or a columnar store (Parquet+DuckDB, Redshift, BigQuery).
-  - An engineering team is observing that LSM compaction is causing write stalls or read latency degradation under sustained write load.
-  - A system serves both high-volume operational writes and periodic analytical queries across the same data.
-
-  Do NOT invoke when:
-  - The decision is about replication topology (single-leader vs. leaderless) — use `replication-topology-selection`.
-  - The problem is a query optimization issue (missing index, bad query plan) rather than a structural workload/engine mismatch.
-  - The system is choosing between managed cloud services primarily based on cost or SLA (vendor selection, not engine selection).
-
-  Key signals: "write-heavy," "compaction," "LSM," "B-tree," "columnar," "time-series," "analytical queries," "write stalls," "read amplification," "RocksDB vs. PostgreSQL."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 4: Storage and Retrieval'
 tags: [storage-engine, lsm-tree, b-tree, columnar, write-amplification, compaction, oltp, olap, workload-classification]
-related_skills: [sharding-strategy-selection, system-of-record-vs-derived-data]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Storage Engine Workload Selection
@@ -171,3 +154,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 4: Storage and Retrieval

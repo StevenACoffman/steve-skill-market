@@ -6,12 +6,7 @@ description: |
   Call this skill whenever an on-call or incident response situation requires systematic diagnosis. The key trigger is the impulse to act before examining: when an engineer says "let's just roll back the last deploy" or "this looks like the X problem we had last week," the loop has been skipped.
 
   Do not call this skill when the mitigation is obvious from monitoring (e.g., a known alert with an established playbook — use the playbook skill instead), or when triage dictates immediate action to prevent data loss before any diagnosis is possible.
-
-  Key trigger signal: an engineer is forming a theory before gathering evidence, or proposing treatment before confirming the diagnosis.
-source_book: "Site Reliability Engineering" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 12: Effective Troubleshooting"
 tags: [troubleshooting, incident-response, debugging, on-call, diagnosis, root-cause-analysis]
-related_skills: []
 ---
 
 # Hypothetico-Deductive Troubleshooting Loop
@@ -139,3 +134,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer et al. (Google) — Chapter 12: Effective Troubleshooting

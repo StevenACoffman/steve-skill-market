@@ -13,21 +13,7 @@ description: |
   WHEN NOT TO CALL: Do not call when the question is purely about SLO targets, SLI formula design,
   or cost-of-reliability reasoning — those have dedicated skills. Do not call when the question is
   about individual career development rather than team/org structure.
-
-  KEY TRIGGER SIGNAL: Any phrasing that contains "who is responsible for X", "we know what to fix
-  but cannot get approval", "the team that gets paged can't fix the problem", "we are being held
-  accountable for things we don't control", or "you build it you run it" versus "you build it
-  you own it."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20230617_174506_you-build-it-you-own-it.md, 20230801_171054_broken-ownership.md, 20240220_185447_responsible-for-control.md
 tags: [ownership, accountability, organizational-design, devops, reliability]
-related_skills:
-  - slug: oncall-ownership-sustainability
-    relation: composes-with
-  - slug: responsibility-control-slo
-    relation: composes-with
-  - slug: ephemeral-taskforce
-    relation: composes-with
 ---
 
 # Ownership Trio (Knowledge + Mandate + Responsibility)
@@ -234,8 +220,8 @@ ______________________________________________________________________
 ## Related Skills
 
 - **composes-with** → `oncall-ownership-sustainability`: The archetypes are the diagnostic application of the Ownership Trio — they name the specific failure mode when one or more elements are missing.
-- **composes-with** → [`responsibility-control-slo`](../responsibility-control-slo/SKILL.md): Responsibility-Control SLO is the technical instrument that operationalizes the Ownership Trio's mandate principle at the metric scope level.
-- **composes-with** → [`ephemeral-taskforce`](../ephemeral-taskforce/SKILL.md): ETF composition requirements follow directly from the Ownership Trio — each ETF member must hold all three elements for their slice.
+- **composes-with** → `responsibility-control-slo`: Responsibility-Control SLO is the technical instrument that operationalizes the Ownership Trio's mandate principle at the metric scope level.
+- **composes-with** → `ephemeral-taskforce`: ETF composition requirements follow directly from the Ownership Trio — each ETF member must hold all three elements for their slice.
 
 ______________________________________________________________________
 
@@ -243,3 +229,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

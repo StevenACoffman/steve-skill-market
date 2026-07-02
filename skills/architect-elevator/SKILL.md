@@ -1,3 +1,9 @@
+---
+name: architect-elevator
+description: |
+  Invoke this skill when you encounter any of the following: - An EA team is producing architecture diagrams and principles that the engineering teams describe as "out of touch" or never reference. - Engineers are making significant technology choices (cloud provider, database, container orchestration) without any business-level framing of the trade-offs. - A CTO or CIO is making cloud commitments ("we will be fully cloud-native in two years") while the engineering org is building something that cannot fulfill that commitment. - A vendor pitch is accepted or rejected based on a feature checklist, without anyone asking what assumptions are baked into the product's design. - Technical trade-offs (managed vs. self-hosted, lock-in vs. portability, MTBF vs. MTTR) are being discussed only among engineers, with no mechanism to surface the business consequences to leadership.
+---
+
 # Architect Elevator
 
 **Source:** Cloud Strategy, Gregor Hohpe (~2020–2022) — Intro / Part IV framing (throughout); "Enterprise Architecture in the Cloud"
@@ -92,8 +98,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Principles Quality Checklist](../principles-quality-checklist/SKILL.md)** — *composes-with* → The elevator architect uses the architecture chain (Strategy → Principles → Decisions → Architecture) as the scaffolding for cross-level communication; the checklist ensures the principles layer of that chain is load-bearing rather than decorative.
-- **[Multicloud: 5-Option Decision Table](../multicloud-5-option-decision/SKILL.md)** — *enables* → The 5-option table is itself an elevator artifact — designed to work at executive and engineer abstraction levels simultaneously; the elevator posture is required to deploy it effectively to both audiences.
-- **[Lock-In Cost Optimization](../lock-in-cost-optimization/SKILL.md)** — *composes-with* → Lock-in trade-offs (ROL calculation, U-curve, Esperanto Effect) are engine-room decisions with penthouse consequences; the elevator architect is the mechanism that ensures executives understand what is being traded away before the decision is made.
-- **[Value Gap and Migration Metrics](../value-gap-migration-metrics/SKILL.md)** — *enables* → The value gap is fundamentally a floor-gap failure — IT speaks engine-room metrics, business expects penthouse outcomes; the elevator architect prevents the gap by maintaining the translation in both directions throughout the migration.
-- **[First-Derivative Thinking](../first-derivative-economies-of-speed/SKILL.md)** — *composes-with* → The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes and bring first-derivative constraints downward to teams that budget in fixed annual cycles.
+- **Principles Quality Checklist** — *composes-with* → The elevator architect uses the architecture chain (Strategy → Principles → Decisions → Architecture) as the scaffolding for cross-level communication; the checklist ensures the principles layer of that chain is load-bearing rather than decorative.
+- **Multicloud: 5-Option Decision Table** — *enables* → The 5-option table is itself an elevator artifact — designed to work at executive and engineer abstraction levels simultaneously; the elevator posture is required to deploy it effectively to both audiences.
+- **Lock-In Cost Optimization** — *composes-with* → Lock-in trade-offs (ROL calculation, U-curve, Esperanto Effect) are engine-room decisions with penthouse consequences; the elevator architect is the mechanism that ensures executives understand what is being traded away before the decision is made.
+- **Value Gap and Migration Metrics** — *enables* → The value gap is fundamentally a floor-gap failure — IT speaks engine-room metrics, business expects penthouse outcomes; the elevator architect prevents the gap by maintaining the translation in both directions throughout the migration.
+- **First-Derivative Thinking** — *composes-with* → The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes and bring first-derivative constraints downward to teams that budget in fixed annual cycles.

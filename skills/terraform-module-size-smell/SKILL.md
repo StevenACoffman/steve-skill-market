@@ -1,9 +1,8 @@
 ---
-id: terraform-module-size-smell
-title: 'Terraform Module Size as Code Smell: Six Specific Harms of Large Modules'
+name: terraform-module-size-smell
 description: Invoke when a user has a large Terraform module or monolithic configuration, asks when to split a module, or reports that plan/apply is slow, tests are impractical, or changes feel high-risk.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
 ---
+# Terraform Module Size as Code Smell: Six Specific Harms of Large Modules
 
 ## R — Reading
 
@@ -73,7 +72,13 @@ Each module is applied independently. Cross-module dependencies flow through `te
 
 ## Related Skills
 
-- **[terraform-moved-block-refactoring](../terraform-moved-block-refactoring/SKILL.md)** — depends on: extracting resources from a large module into smaller modules changes resource addresses; moved blocks are required to prevent destroy/create on all extracted resources.
-- **[terraform-no-cluster-app-same-module](../terraform-no-cluster-app-same-module/SKILL.md)** — compares: the EKS/Kubernetes skill is a concrete, provider-constraint-driven forcing function for the same module-boundary principle; use both to cover structural and behavioral reasons to split modules.
-- **[terraform-directory-layout-isolation](../terraform-directory-layout-isolation/SKILL.md)** — combines: small focused modules (this skill) populate the `modules/` tree; environment directory layout (that skill) organizes how those modules are called per environment.
-- **[terraform-for-each-over-count](../terraform-for-each-over-count/SKILL.md)** — informs: loop constructs inside large modules amplify blast radius; refactoring to for_each and splitting the module are often done together.
+- **terraform-moved-block-refactoring** — depends on: extracting resources from a large module into smaller modules changes resource addresses; moved blocks are required to prevent destroy/create on all extracted resources.
+- **terraform-no-cluster-app-same-module** — compares: the EKS/Kubernetes skill is a concrete, provider-constraint-driven forcing function for the same module-boundary principle; use both to cover structural and behavioral reasons to split modules.
+- **terraform-directory-layout-isolation** — combines: small focused modules (this skill) populate the `modules/` tree; environment directory layout (that skill) organizes how those modules are called per environment.
+- **terraform-for-each-over-count** — informs: loop constructs inside large modules amplify blast radius; refactoring to for_each and splitting the module are often done together.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

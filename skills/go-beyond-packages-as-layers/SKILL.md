@@ -16,12 +16,7 @@ description: |
   Not suitable for: users who already understand the layers model and just need the
   four-tenet layout recipe (use go-beyond-four-tenet-layout instead); performance
   questions; build system questions.
-
-  Key trigger: the user needs the conceptual WHY, not just the structural WHAT.
-source_book: "Go Beyond" Ben B. Johnson
-source_chapter: packages-as-layers.md
 tags: [mental-model, package-layout, circular-dependencies, go, architecture]
-related_skills: []
 ---
 
 # Packages as Layers Mental Model
@@ -169,7 +164,7 @@ ______________________________________________________________________
 
 ## Related Skills (Stage 3 Filling)
 
-- composes-with: [go-beyond-four-tenet-layout](../go-beyond-four-tenet-layout/SKILL.md) — the four tenets are the actionable recipe built on this mental model
+- composes-with: go-beyond-four-tenet-layout — the four tenets are the actionable recipe built on this mental model
 
 ______________________________________________________________________
 
@@ -178,3 +173,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: See test-prompts.json
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Beyond" Ben B. Johnson

@@ -1,9 +1,9 @@
 ---
-id: microservices-dont-fix-coupling
-title: Microservices Do Not Automatically Reduce Coupling
-description: Invoke when a team is planning a monolith-to-microservices migration, evaluating whether their microservices are delivering promised independence, or diagnosing why coordinated deployments are still required after service splitting.
-source: Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026
+name: microservices-dont-fix-coupling
+description: |
+  Invoke when a team is planning a monolith-to-microservices migration, evaluating whether their microservices are delivering promised independence, or diagnosing why coordinated deployments are still required after service splitting.
 ---
+# Microservices Do Not Automatically Reduce Coupling
 
 ## R — Reading
 
@@ -55,5 +55,11 @@ For teams with a simple, single-domain product and a small team, a well-structur
 
 ## Related Skills
 
-- **[strategic-before-tactical-ddd](../strategic-before-tactical-ddd/SKILL.md)** — depends on: the solution to a distributed monolith is Bounded Context analysis via Event Storming; this skill diagnoses the problem, strategic-before-tactical provides the remedy.
-- **[anti-dry-separate-read-write-models](../anti-dry-separate-read-write-models/SKILL.md)** — compares: both skills address coupling at different granularities — this skill at service-boundary level, anti-dry at struct/model level within a service; recognizing both prevents coupling at every scale.
+- **strategic-before-tactical-ddd** — depends on: the solution to a distributed monolith is Bounded Context analysis via Event Storming; this skill diagnoses the problem, strategic-before-tactical provides the remedy.
+- **anti-dry-separate-read-write-models** — compares: both skills address coupling at different granularities — this skill at service-boundary level, anti-dry at struct/model level within a service; recognizing both prevents coupling at every scale.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026

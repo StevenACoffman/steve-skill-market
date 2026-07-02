@@ -14,23 +14,7 @@ description: |
   - "How do we set up fuzzing in CI?"
   - "Which components should we prioritize for security testing?"
   - Any component in the TCB for a security-critical invariant
-
-  Do NOT use this skill when:
-  - The component only processes developer-controlled, schema-validated internal
-    configuration — unit tests are sufficient; external input is not the threat
-  - The question is about general test coverage strategy without an external
-    input or security concern — use a standard testing skill
-  - The unit under test has no complex branching behavior under malformed input
-    (e.g., a pure arithmetic calculation with bounded inputs)
-
-  The core decision rule: fuzz anything that parses complex external input, because
-  that is the bug class (memory corruption, integer overflows, unexpected state
-  transitions under edge-case input) that human test imagination structurally cannot
-  cover. This is a qualitative distinction from unit tests, not a quantitative one.
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: "Chapter 13 — Testing Code"
 tags: [fuzzing, testing, security-testing, continuous-fuzzing, memory-safety, parsers, TCB, ClusterFuzz]
-related_skills: []
 ---
 
 # Continuous Fuzzing Strategy — Coverage-Guided Fuzzing for All External Input Handlers
@@ -279,3 +263,9 @@ ______________________________________________________________________
 - **Source IDs**: f15, p10
 - **Verification**: All three validation tests passed (cross-domain, predictive power,
   exclusivity) — see verified.md entry for f15+p10
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 13 — Testing Code

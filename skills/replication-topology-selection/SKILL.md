@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: replication-topology-selection
 description: |
   Invoke this skill when designing or evaluating a database replication strategy — specifically when choosing between single-leader, multi-leader, and leaderless topologies, or when an existing topology is producing availability, consistency, or conflict problems.
@@ -10,17 +9,8 @@ description: |
   - A team argues that Cassandra quorum reads provide "strong consistency" and is designing correctness-critical logic on that assumption.
   - A system experiences write conflicts and needs a conflict resolution strategy.
   - A new architecture is being designed and "how many leaders" has not been explicitly decided.
-
-  Do NOT invoke when:
-  - The question is specifically about replication lag causing stale reads (use `replication-lag-as-correctness`).
-  - The question is about distributing data volume across nodes (use `sharding-strategy-selection`).
-  - The question is about whether linearizability is needed for a specific operation (use `consistency-model-selection`).
-
-  Key signals: "multi-region writes," "high availability," "conflict resolution," "quorum," "Cassandra," "Dynamo-style," "split-brain," "failover," "replication topology."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 6: Replication'
 tags: [replication, single-leader, multi-leader, leaderless, conflict-resolution, consistency, availability]
-related_skills: [replication-lag-as-correctness, sharding-strategy-selection, consistency-model-selection, fencing-tokens-distributed-locks]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Replication Topology Selection
@@ -172,3 +162,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 6: Replication

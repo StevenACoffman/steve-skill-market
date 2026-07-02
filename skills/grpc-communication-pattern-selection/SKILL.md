@@ -1,15 +1,13 @@
 ---
-id: grpc-communication-pattern-selection
-title: gRPC Communication Pattern Selection
-description: >
+name: grpc-communication-pattern-selection
+description: |
   Invoke when choosing between gRPC's four communication patterns (unary,
   server streaming, client streaming, bidirectional streaming) for a new
   service method. Trigger conditions: designing a new RPC that involves
   multiple results, batched writes, or real-time full-duplex flows.
-source: "gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)"
 tags: [grpc, streaming, pattern-selection, architecture, unary, bidi]
-related_skills:
 ---
+# gRPC Communication Pattern Selection
 
 ## gRPC Communication Pattern Selection
 
@@ -157,12 +155,17 @@ is slow. This is a production concern not addressed by pattern selection alone.
 ### Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: candidates/frameworks.md fw01; candidates/cases.md ca01–ca04
 - Verified entry: verified.md fw01
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
 ### Related Skills
 
-- **[grpc-vs-rest-vs-graphql](../grpc-vs-rest-vs-graphql/SKILL.md)** — informs: confirms gRPC is the right protocol before selecting which of its four patterns to use.
-- **[grpc-observability-three-pillar](../grpc-observability-three-pillar-with-trace-log-bridge/SKILL.md)** — relates: streaming interceptors must be registered separately from unary interceptors; pattern selection determines which interceptor variants are needed.
+- **grpc-vs-rest-vs-graphql** — informs: confirms gRPC is the right protocol before selecting which of its four patterns to use.
+- **grpc-observability-three-pillar** — relates: streaming interceptors must be registered separately from unary interceptors; pattern selection determines which interceptor variants are needed.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)

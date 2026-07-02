@@ -10,22 +10,7 @@ description: |
   prevent users from accidentally triggering an irreversible action while keeping the command
   scriptable; (e) reviewing a CLI command that implicitly destroys resources as a side effect
   of an innocuous-looking change.
-
-  WHEN NOT TO CALL: Do not call when the question is about command-line output formatting,
-  error message wording, or help text design — those are presentation concerns unrelated to
-  confirmation tiers. Do not call when the operation is purely read-only (no data or state
-  is modified). Do not call when the question is about authentication, secrets handling, or
-  access control — those have dedicated skills.
-
-  KEY TRIGGER SIGNAL: Any phrasing that contains "should I ask for confirmation", "how do I
-  prevent accidental deletion", "is --force enough", "users keep accidentally destroying",
-  "how do I make this hard to run by mistake", or "do I need a y/n prompt before this command".
-source_book: "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish
-source_chapter: Interactivity — Prompts / Dangerous Actions
 tags: [cli, ux, confirmation, destructive-operations, safety]
-related_skills:
-  - slug: cli-interface-stability
-    relation: composes-with
 ---
 
 # CLI Destructive Confirmation Tiers
@@ -256,7 +241,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`cli-interface-stability`](../cli-interface-stability/SKILL.md): Confirmation
+- **composes-with** `cli-interface-stability`: Confirmation
   tier flags (`--force`, `--yes`, `--confirm`) are stable CLI surfaces; renaming or removing them
   requires the same deprecation discipline as any other stable flag.
 
@@ -266,3 +251,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish — Interactivity — Prompts / Dangerous Actions

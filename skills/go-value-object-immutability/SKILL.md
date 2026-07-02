@@ -1,9 +1,9 @@
 ---
-id: go-value-object-immutability
-title: Go Value Object Immutability via Unexported Fields and Value-Type Structs
-description: Apply when implementing a DDD value object in Go — specifically when deciding on field visibility, constructor shape, method receiver types, and return semantics for any type classified as a value object (immutable, value-comparable, describes a domain concept).
-source: Domain-Driven Design with Golang, Matthew Boyle, 2022
+name: go-value-object-immutability
+description: |
+  Apply when implementing a DDD value object in Go — specifically when deciding on field visibility, constructor shape, method receiver types, and return semantics for any type classified as a value object (immutable, value-comparable, describes a domain concept).
 ---
+# Go Value Object Immutability via Unexported Fields and Value-Type Structs
 
 ## R — Reading
 
@@ -54,5 +54,11 @@ The immutability pattern complicates some standard Go idioms: JSON unmarshaling 
 
 ## Related Skills
 
-- **[entity-vs-value-object-decision](../entity-vs-value-object-decision/SKILL.md)** — depends on: this skill implements what the decision framework classifies; always run entity-vs-value-object-decision first to confirm a type is a value object before applying these Go immutability mechanics.
-- **[domain-service-interface-composition](../domain-service-interface-composition/SKILL.md)** — informs: value objects are the primary domain types passed through domain service interfaces; the immutability and value-equality properties established here affect how interface method parameters and return types are designed.
+- **entity-vs-value-object-decision** — depends on: this skill implements what the decision framework classifies; always run entity-vs-value-object-decision first to confirm a type is a value object before applying these Go immutability mechanics.
+- **domain-service-interface-composition** — informs: value objects are the primary domain types passed through domain service interfaces; the immutability and value-equality properties established here affect how interface method parameters and return types are designed.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Domain-Driven Design with Golang, Matthew Boyle, 2022

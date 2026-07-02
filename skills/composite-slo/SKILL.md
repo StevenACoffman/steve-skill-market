@@ -2,31 +2,7 @@
 name: composite-slo
 description: |
   Use this skill when a system's SLO must be derived from multiple dependent components, or when someone asks "what is the overall availability of our system?" and the system has serial or parallel dependencies. The two rules are: multiply SLOs for serial dependencies; multiply *error budgets* (1 - SLO) for parallel dependencies. Most engineers get the parallel case wrong by multiplying SLOs rather than error budgets.
-
-  WHEN TO CALL:
-  - An architect or engineer needs to calculate or predict the end-to-end SLO for a multi-component system.
-  - A team owns a service with multiple upstream dependencies and needs to know what SLO they can realistically commit to.
-  - Someone is evaluating whether adding redundancy (parallel instances) actually improves overall reliability and by how much.
-  - A consumer's SLO requirement must be decomposed into SLO budgets for each dependent team.
-  - A discussion involves third-party SLAs and the question is whether those vendor commitments are compatible with an overall system SLO.
-
-  WHEN NOT TO CALL:
-  - The question is what SLO to *target* rather than what SLO is *achievable* — use slo-definition-calibration-framework for calibration.
-  - The question is which metric to use as an SLI — use sli-compass or sli-monitoring-design-maturity.
-  - All components are owned and controlled by a single team — the calculation is trivial and the real problem is probably SLI design.
-  - Components have correlated failure modes (shared infrastructure, shared deployment pipeline) — the independence assumption required by the probability multiplication breaks down.
-
-  KEY TRIGGER SIGNAL: "What's our system availability?" or "We have X redundant servers — how does that improve our SLO?" or any question involving a dependency graph and reliability numbers.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20240325_053017_composite-slo.md, 20250803_112619_service-level-topology.md, 20240220_185447_responsible-for-control.md
 tags: [composite-slo, serial-dependencies, parallel-dependencies, error-budget, system-reliability, probability]
-related_skills:
-  - slug: sli-formula-measurement
-    relation: depends-on
-  - slug: responsibility-control-slo
-    relation: composes-with
-  - slug: multi-tier-slo
-    relation: contrasts-with
 ---
 
 # Composite SLO Calculation (Serial/Parallel Rules)
@@ -176,9 +152,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`sli-formula-measurement`](../sli-formula-measurement/SKILL.md): Each component SLI formula must be defined before composing them into a system-level SLO; the good/valid design is the input to the serial/parallel composition math.
-- **composes-with** → [`responsibility-control-slo`](../responsibility-control-slo/SKILL.md): Responsibility-Control SLO decomposes a target top-level SLO into per-team budgets; composite-slo provides the inverse direction — calculating what system SLO is achievable from those per-team numbers.
-- **contrasts-with** → [`multi-tier-slo`](../multi-tier-slo/SKILL.md): Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They are orthogonal and often applied together.
+- **depends-on** → `sli-formula-measurement`: Each component SLI formula must be defined before composing them into a system-level SLO; the good/valid design is the input to the serial/parallel composition math.
+- **composes-with** → `responsibility-control-slo`: Responsibility-Control SLO decomposes a target top-level SLO into per-team budgets; composite-slo provides the inverse direction — calculating what system SLO is achievable from those per-team numbers.
+- **contrasts-with** → `multi-tier-slo`: Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They are orthogonal and often applied together.
 
 ______________________________________________________________________
 
@@ -186,3 +162,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

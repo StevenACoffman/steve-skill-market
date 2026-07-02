@@ -1,9 +1,9 @@
 ---
-id: multidimensional-coupling-assessment
-title: Multidimensional Coupling Assessment
-description: Invoke when someone says "we use messaging, so we're loosely coupled," when evaluating whether to use REST vs. a message queue vs. Pub-Sub, when designing an integration with a system you do not control, when auditing a "decoupled" architecture that keeps causing cascading failures, or when reviewing an event-driven architecture proposal that claims decoupling benefits.
-source: Enterprise Integration Patterns addendum, Gregor Hohpe (2022)
+name: multidimensional-coupling-assessment
+description: |
+  Invoke when someone says "we use messaging, so we're loosely coupled," when evaluating whether to use REST vs. a message queue vs. Pub-Sub, when designing an integration with a system you do not control, when auditing a "decoupled" architecture that keeps causing cascading failures, or when reviewing an event-driven architecture proposal that claims decoupling benefits.
 ---
+# Multidimensional Coupling Assessment
 
 ## Multidimensional Coupling Assessment
 
@@ -124,7 +124,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Integration Style Selection](../integration-style-selection/SKILL.md)** — *depends-on* → Style selection identifies which integration approach to use; coupling assessment deepens that decision by quantifying exactly which coupling dimensions each style introduces.
-- **[EDA Coupling Diagnosis](../eda-coupling-diagnosis/SKILL.md)** — *composes-with* → EDA coupling diagnosis applies the 8-dimension model specifically to event-driven patterns, focusing on the asymmetric topology coupling that Pub-Sub creates; the two skills apply the same vocabulary to overlapping scenarios.
-- **[Canonical Data Model Decision](../canonical-data-model-decision/SKILL.md)** — *enables* → Identifying tight data-format coupling across N applications through coupling assessment is the precise diagnosis that motivates adopting a Canonical Data Model.
-- **[Competing Consumers vs. Dispatcher](../competing-consumers-vs-dispatcher/SKILL.md)** — *enables* → Coupling assessment can reveal conversation and order-dependency coupling that determines whether a Competing Consumers approach (which destroys order) is safe.
+- **Integration Style Selection** — *depends-on* → Style selection identifies which integration approach to use; coupling assessment deepens that decision by quantifying exactly which coupling dimensions each style introduces.
+- **EDA Coupling Diagnosis** — *composes-with* → EDA coupling diagnosis applies the 8-dimension model specifically to event-driven patterns, focusing on the asymmetric topology coupling that Pub-Sub creates; the two skills apply the same vocabulary to overlapping scenarios.
+- **Canonical Data Model Decision** — *enables* → Identifying tight data-format coupling across N applications through coupling assessment is the precise diagnosis that motivates adopting a Canonical Data Model.
+- **Competing Consumers vs. Dispatcher** — *enables* → Coupling assessment can reveal conversation and order-dependency coupling that determines whether a Competing Consumers approach (which destroys order) is safe.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns addendum, Gregor Hohpe (2022)

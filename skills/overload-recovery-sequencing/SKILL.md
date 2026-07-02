@@ -6,12 +6,7 @@ description: |
   Trigger scenarios: a manager scheduling an emergency prioritization session for an overloaded team (wrong first action), a team whose collaboration has broken down under stress, an SRE team where morale surveys show sustained decline, or any situation where the first instinct is to "fix the process" before addressing the people.
 
   Do not use as a substitute for real workload reduction. Psychological safety is the prerequisite for structural fixes, not a replacement for them. Do not use for a team that is merely stressed by a single incident — this skill addresses sustained overload, not acute incident stress.
-
-  Key trigger: "The team is struggling — let's do a sprint planning session to reprioritize." This is the anti-pattern. Psychological safety must come first.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 17 - Identifying and Recovering from Overload"
 tags: [overload, team-health, psychological-safety, toil, triage, recovery, management]
-related_skills: []
 ---
 
 # Overload Identification and Recovery Sequencing (Psychological Safety First)
@@ -184,3 +179,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 17 - Identifying and Recovering from Overload

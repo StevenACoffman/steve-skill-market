@@ -1,12 +1,8 @@
 ---
 name: never-mock-net-conn-use-loopback
-description: Invoke when production code tests networked Go code by mocking net.Conn, net.Listener, or net.Dial. Invoke when choosing between loopback TCP, net.Pipe, and bufconn for testing connection-oriented protocols. Covers the testConn helper pattern, real SSH server in-process testing, and when to use net/http/httptest instead.
-source_book: "Advanced Testing with Go" by Mitchell Hashimoto
-source_chapter: Part 2 — Writing Testable Code / Networking
+description: |
+  Invoke when production code tests networked Go code by mocking net.Conn, net.Listener, or net.Dial. Invoke when choosing between loopback TCP, net.Pipe, and bufconn for testing connection-oriented protocols. Covers the testConn helper pattern, real SSH server in-process testing, and when to use net/http/httptest instead.
 tags: [go, testing, networking, tcp, mocking, testable-code]
-related_skills:
-  - test-helper-contract              # composes-with: testConn is a test helper following the no-error-return contract
-  - test-helper-process-subprocess-mock  # contrasts-with: both reject shallow mocks; different problem domain
 ---
 
 # Never Mock net.Conn — Use Loopback or Pipe
@@ -228,3 +224,9 @@ This pattern is specifically for **`net.Conn`** (TCP, Unix socket, or any connec
 
 - **test-helper-contract** (composes-with): The `testConn` helper is the canonical application of the test helper contract in the networking domain — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and returns both connection ends with no error. Writing `testConn` requires applying both skills simultaneously.
 - **test-helper-process-subprocess-mock** (contrasts-with): Both patterns reject shallow mocks in favor of real implementations. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real TCP loopback pair. `TestHelperProcess` rejects OS-level subprocess mocking by providing a real subprocess (the test binary re-executing itself). Same philosophy, different problem domain — networking vs. subprocesses.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 2 — Writing Testable Code / Networking

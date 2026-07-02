@@ -2,30 +2,7 @@
 name: wardley-pace-slo
 description: |
   Use this skill when an organization or team needs a strategic starting point for SLO levels across multiple systems, especially when those systems serve different business purposes and change at different rates. The core heuristic: Systems of Innovation (SOI) ~95%, Systems of Differentiation (SOD) ~99.6%, Systems of Record (SOR) ~99.99%. Evolution stage determines appropriate SLO level — not organizational prestige, not competitor benchmarking, not historical performance.
-
-  WHEN TO CALL:
-  - A technical leader needs to justify why different systems in the same organization should have different SLO targets.
-  - An organization is rolling out SLOs for the first time and needs a starting framework rather than deriving every SLO from scratch.
-  - Someone is asking "why does the infrastructure team get a 99.99% SLO while the experimentation team uses 95%?"
-  - A system is evolving from experimental to production and its SLO needs to be renegotiated upward.
-  - An architect is evaluating whether a component's reliability investment matches its role in the business.
-  - A Wardley Map or pace layering exercise is in progress and SLO alignment is needed.
-
-  WHEN NOT TO CALL:
-  - The exact SLO number for a specific service needs to be calibrated to consumer tolerance — use slo-definition-calibration-framework for the detailed calibration after using this skill to establish the range.
-  - The question is about measuring reliability (which SLI to use) rather than targeting it.
-  - The system does not fit the SOI/SOD/SOR classification cleanly (e.g., a purely internal tooling service with no clear evolutionary stage).
-  - The business context is regulated and SLO floors are set by law or contract.
-
-  KEY TRIGGER SIGNAL: "What SLO should we set for [system]?" combined with any information about the system's role in the business (experimental, core product differentiator, foundational record system) or any discussion comparing reliability expectations across different types of systems.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20250606_111644_wardley-maps-and-pace-layering-for.md, 20231201_053017_10x9.md, 20231211_053037_slo-definition-calibration-framework.md
 tags: [wardley-maps, pace-layering, slo, soi, sod, sor, strategic-reliability, system-evolution]
-related_skills:
-  - slug: slo-definition-calibration-framework
-    relation: depends-on
-  - slug: 10x9-cost-reliability
-    relation: composes-with
 ---
 
 # Wardley Maps + Pace Layering for Strategic SLO Setting
@@ -172,7 +149,7 @@ ______________________________________________________________________
 ## Related Skills
 
 - **depends-on** → `slo-definition-calibration-framework`: Wardley/Pace provides the strategic tier range as the starting point; slo-definition-calibration-framework calibrates precisely within that range based on actual consumer tolerance and cost.
-- **composes-with** → [`10x9-cost-reliability`](../10x9-cost-reliability/SKILL.md): The 10x/9 rule explains why different evolutionary tiers require different SLO levels; Wardley/Pace provides the classification system that applies the cost argument across a portfolio of systems.
+- **composes-with** → `10x9-cost-reliability`: The 10x/9 rule explains why different evolutionary tiers require different SLO levels; Wardley/Pace provides the classification system that applies the cost argument across a portfolio of systems.
 
 ______________________________________________________________________
 
@@ -180,3 +157,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

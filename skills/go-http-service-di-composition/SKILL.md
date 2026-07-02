@@ -1,27 +1,9 @@
 ---
 name: go-http-service-di-composition
-allowed-tools: Bash, Read, Edit
-id: go-http-service-di-composition
-description: Invoke when wiring a Go HTTP service's dependency injection from the entrypoint down to handlers — specifically when choosing how to make startup logic testable, how to inject shared handler dependencies, and how to compose both concerns without globals.
-type: merged-skill
-source_skills:
-  - slug: lets-go/letsgo-application-struct-di
-    book: Let's Go
-    author: Alex Edwards
-  - slug: matryer-http-services/matryer-run-function
-    book: How I Write HTTP Services in Go After 13 Years
-    author: Mat Ryer
-related_skills:
-  - slug: lets-go/letsgo-application-struct-di
-    relation: supersedes
-    note: Merged into go-http-service-di-composition; source covers the application struct pattern and newTestApplication(t) handler-level mocking.
-  - slug: matryer-http-services/matryer-run-function
-    relation: supersedes
-    note: Merged into go-http-service-di-composition; source covers the run() entrypoint pattern, getenv injection, and parallel-safe startup testing.
-  - slug: rednafi/manual-dependency-injection
-    relation: composes-with
-    note: Third convergence source; independently confirms "pass values into constructors, main() is the DI container" principle and the anti-DI-framework argument.
+description: |
+  Invoke when wiring a Go HTTP service's dependency injection from the entrypoint down to handlers — specifically when choosing how to make startup logic testable, how to inject shared handler dependencies, and how to compose both concerns without globals.
 tags: []
+allowed-tools: Bash, Read, Edit
 ---
 
 # Go Http Service Di Composition
@@ -343,3 +325,11 @@ The conflict is confined to the handler layer. Apply Layer 1 (`run()`) universal
 **Treating run() and the application struct as alternatives rather than layers.** Developers who learn Ryer's pattern sometimes eliminate the `application` struct, accumulating all dependencies as closures or locals inside `run()`. Developers who learn Edwards's pattern sometimes leave startup logic in `main()`, making it untestable. The correct composition is: `run()` constructs the `application` struct; the struct carries dependencies to handlers. Applying only one layer produces either untestable startup logic (Edwards alone) or no coherent handler dependency model (Ryer alone). The synthesis failure is invisible until you try to write both kinds of test — handler-level mock injection AND parallel-safe startup tests — and find that one or the other is structurally blocked.
 
 > **Note on quote accuracy:** Edwards's source text says "a neat way" not "the cleanest way" — the source SKILL.md paraphrased this. The merged skill uses the correct verbatim quote.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Merged from:** Let's Go (Alex Edwards); How I Write HTTP Services in Go After 13 Years (Mat Ryer)
+- **Type:** merged-skill
+- **Related skills:** lets-go/letsgo-application-struct-di (supersedes; Merged into go-http-service-di-composition; source covers the application struct pattern and newTestApplication(t) handler-level mocking.); matryer-http-services/matryer-run-function (supersedes; Merged into go-http-service-di-composition; source covers the run() entrypoint pattern, getenv injection, and parallel-safe startup testing.); rednafi/manual-dependency-injection (composes-with; Third convergence source; independently confirms "pass values into constructors, main() is the DI container" principle and the anti-DI-framework argument.)

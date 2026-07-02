@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: transaction-isolation-level-selection
 description: |
   Invoke this skill when an engineer must decide which database isolation level to configure or verify for a specific application, or when debugging concurrency anomalies (lost updates, dirty reads, write skew, phantom reads) that appear intermittently under concurrent load.
@@ -10,17 +9,8 @@ description: |
   - The team assumes "we use PostgreSQL / MySQL / Oracle, so we're fine" without stating which isolation level is configured.
   - A database is described as "ACID" or "serializable" and the team is relying on that for correctness.
   - Concurrency bugs appear only at high traffic and are difficult to reproduce.
-
-  Do NOT invoke when:
-  - The question is about replication lag or stale reads from replicas (use `replication-lag-as-correctness`).
-  - The question is about distributed transactions across multiple databases or services.
-  - The application is read-only or single-writer.
-
-  Key signals: "double-booking," "race condition," "write skew," "lost update," "phantom read," "concurrent requests," "check-then-act," "ORM saves."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 8: Transactions'
 tags: [transactions, isolation-levels, concurrency, serializability, snapshot-isolation, write-skew]
-related_skills: [replication-lag-as-correctness, consistency-model-selection, timeliness-vs-integrity-distinction]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Transaction Isolation Level Selection
@@ -169,3 +159,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 8: Transactions

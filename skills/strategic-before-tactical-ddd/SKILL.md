@@ -1,9 +1,9 @@
 ---
-id: strategic-before-tactical-ddd
-title: Strategic Before Tactical DDD
-description: Invoke when a team is adopting DDD, planning service decomposition, or questioning whether their DDD implementation is delivering expected benefits — especially when they have tactical patterns in place but service boundaries feel wrong.
-source: Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026
+name: strategic-before-tactical-ddd
+description: |
+  Invoke when a team is adopting DDD, planning service decomposition, or questioning whether their DDD implementation is delivering expected benefits — especially when they have tactical patterns in place but service boundaries feel wrong.
 ---
+# Strategic Before Tactical DDD
 
 ## R — Reading
 
@@ -55,5 +55,11 @@ Event Storming is not the only strategic tool. User Story Mapping, Impact Mappin
 
 ## Related Skills
 
-- **[microservices-dont-fix-coupling](../microservices-dont-fix-coupling/SKILL.md)** — prerequisite for: strategic DDD (Event Storming, Bounded Context mapping) is the specific cure for the distributed monolith problem; run this skill first to provide the boundary analysis that skill requires.
-- **[anti-dry-separate-read-write-models](../anti-dry-separate-read-write-models/SKILL.md)** — informs: separate read/write models are a tactical DDD pattern; strategic analysis determines which bounded context owns each model and prevents premature sharing across context boundaries.
+- **microservices-dont-fix-coupling** — prerequisite for: strategic DDD (Event Storming, Bounded Context mapping) is the specific cure for the distributed monolith problem; run this skill first to provide the boundary analysis that skill requires.
+- **anti-dry-separate-read-write-models** — informs: separate read/write models are a tactical DDD pattern; strategic analysis determines which bounded context owns each model and prevents premature sharing across context boundaries.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Go with the Domain, Three Dots Labs (R. Laszczak, M. Smółka), 2026

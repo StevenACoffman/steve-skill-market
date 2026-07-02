@@ -1,9 +1,8 @@
 ---
-id: letsgo-session-token-renewal
-title: Session Token Renewal on Every Authentication State Change
+name: letsgo-session-token-renewal
 description: Invoke when implementing login or logout handlers in a Go web app, or when auditing session management for session fixation vulnerabilities.
-source: Let's Go, Alex Edwards, 2023
 ---
+# Session Token Renewal on Every Authentication State Change
 
 ## R — Reading
 
@@ -93,7 +92,13 @@ This pattern covers session fixation prevention for standard login/logout flows.
 ## Related Skills
 
 - **go-http-middleware-construction-and-organization** — depends on: `sessionManager.LoadAndSave` must be placed on the `dynamic` chain in `routes()` for session state to be available to login and logout handlers at all
-- **[go-http-service-di-composition](../go-http-service-di-composition/SKILL.md)** — depends on: `sessionManager` is a struct field on `application`; login and logout handlers call it through the `*application` receiver
-- **[letsgo-form-validator](../letsgo-form-validator/SKILL.md)** — informs: the login handler uses both patterns simultaneously — `form.AddNonFieldError(...)` on `ErrInvalidCredentials` and `RenewToken()` before setting `authenticatedUserID`; understanding both is required to implement login correctly
-- **[letsgo-db-sentinel-error-translation](../letsgo-db-sentinel-error-translation/SKILL.md)** — informs: `ErrInvalidCredentials` is what the login handler checks to decide whether to call `AddNonFieldError` or `RenewToken`; sentinel translation is upstream of token renewal
+- **go-http-service-di-composition** — depends on: `sessionManager` is a struct field on `application`; login and logout handlers call it through the `*application` receiver
+- **letsgo-form-validator** — informs: the login handler uses both patterns simultaneously — `form.AddNonFieldError(...)` on `ErrInvalidCredentials` and `RenewToken()` before setting `authenticatedUserID`; understanding both is required to implement login correctly
+- **letsgo-db-sentinel-error-translation** — informs: `ErrInvalidCredentials` is what the login handler checks to decide whether to call `AddNonFieldError` or `RenewToken`; sentinel translation is upstream of token renewal
 - **go-http-service-test-strategy** — informs: session state across redirects requires the test client's cookie jar; the login/logout token renewal flow is what makes end-to-end multi-request test sequences meaningful
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Let's Go, Alex Edwards, 2023

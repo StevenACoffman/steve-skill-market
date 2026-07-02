@@ -2,17 +2,7 @@
 name: matryer-run-function
 description: |
   Apply this skill when a Go developer needs to make their program's startup logic testable, wants to call their program from tests with controlled inputs, or needs t.Parallel() safety across tests that read environment variables or parse flags. Trigger on: "how do I test my main function", "os.Getenv in tests breaks parallel", "flag.Parse global state", "graceful shutdown from tests", "inject environment variables in Go tests". DO NOT INVOKE when the question is about HTTP handler logic, middleware construction, or request/response decoding — those are covered by matryer-maker-func, matryer-middleware-constructor, and matryer-decode-valid.
-source_book: "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024)
-source_chapter: func main() only calls run()
 tags: [go, testing, http-services, dependency-injection, entry-point, parallelism]
-related_skills:
-  - matryer-maker-func
-  - matryer-run-e2e-testing
-  - matryer-getenv-injection
-  - matryer-waitfor-ready
-  - slug: merged/all-books-v1/go-http-service-di-composition
-    relation: superseded-by
-    note: Merged into go-http-service-di-composition; source covers the run() entrypoint pattern, getenv injection, and parallel-safe startup testing.
 ---
 
 # The Run() Function Pattern: Testable, Parallel-Safe Entry Points
@@ -204,3 +194,9 @@ ______________________________________________________________________
 - **matryer-run-e2e-testing** — prerequisite-for: `run()` is the exact mechanism that makes e2e tests possible — tests call `go run(ctx)` to start a real server.
 - **matryer-getenv-injection** — prerequisite-for: `getenv func(string) string` is a parameter of `run()`; the injection pattern lives inside the `run()` signature.
 - **matryer-waitfor-ready** — prerequisite-for: the server is started in a goroutine by `run()`; `waitForReady` polls the server that `run()` launched.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024) — func main() only calls run()

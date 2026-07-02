@@ -12,23 +12,7 @@ description: |
   incidents consistently occur at the handover point between two teams; leadership is
   considering a reorg and needs a non-arbitrary basis for new team boundaries; a team
   cannot clearly articulate who their consumer is or what journey they own.
-
-  Do NOT call this skill when: the organizational structure is not in scope (technical
-  architecture decisions should use the relevant technical skills); the team is evaluating
-  a single team's internal practices rather than inter-team boundaries; the initiative
-  requires a temporary cross-team delivery (use `ephemeral-taskforce` instead, which
-  operates without changing the org structure).
-
-  Key trigger signal: "Each team's individual metrics look fine but the end-to-end
-  reliability is terrible" or "Incidents always fall between the cracks between teams."
 tags: [organization, conways-law, consumer-journey, reliability, team-topology]
-related_skills:
-  - slug: ownership-trio
-    relation: depends-on
-  - slug: ephemeral-taskforce
-    relation: contrasts-with
-  - slug: service-level-topology
-    relation: composes-with
 ---
 
 # Consumer Journey as Organizational Architecture Driver
@@ -311,9 +295,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`ownership-trio`](../ownership-trio/SKILL.md): Consumer journey org only produces reliability if each journey team holds all three ownership elements; a team cannot own a journey it doesn't fully control.
-- **contrasts-with** → [`ephemeral-taskforce`](../ephemeral-taskforce/SKILL.md): ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries to align with consumer journeys.
-- **composes-with** → [`service-level-topology`](../service-level-topology/SKILL.md): The consumer journey identifies the topology starting point (who uses what, for what task); service-level-topology provides the SLI derivation methodology for each journey the org redesign produces.
+- **depends-on** → `ownership-trio`: Consumer journey org only produces reliability if each journey team holds all three ownership elements; a team cannot own a journey it doesn't fully control.
+- **contrasts-with** → `ephemeral-taskforce`: ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries to align with consumer journeys.
+- **composes-with** → `service-level-topology`: The consumer journey identifies the topology starting point (who uses what, for what task); service-level-topology provides the SLI derivation methodology for each journey the org redesign produces.
 
 ______________________________________________________________________
 

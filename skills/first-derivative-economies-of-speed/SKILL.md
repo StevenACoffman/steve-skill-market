@@ -1,3 +1,9 @@
+---
+name: first-derivative-economies-of-speed
+description: |
+  Invoke this skill when you encounter any of the following: - A team argues about cloud savings by comparing per-unit server prices across providers rather than modeling actual consumption over time - An IT organization budgets cloud as a fixed annual line item rather than a variable rate to be managed continuously - A cloud migration is measured by percentage of servers migrated as if that were a proxy for value delivered - Someone asks "how many engineers do we need?" rather than "what delivery rate do we need to achieve?" - A roadmap is structured as projects with start/end dates instead of a continuous delivery pipeline with prioritized throughput - An organization resists per-consumption billing and insists on reserved capacity because "we like to know what we're spending" - A team frames cloud adoption as a one-time transformation project with a target end state - A CIO presents cloud strategy progress by counting servers moved rather than by improvements in deployment frequency o
+---
+
 # First-Derivative Thinking: Economies of Speed
 
 **Source:** *Cloud Strategy*, Gregor Hohpe (~2020–2022) — Chapter 2: Cloud Thinks in the First Derivative
@@ -76,7 +82,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Value Gap and Migration Metrics](../value-gap-migration-metrics/SKILL.md)** — *composes-with* → Both skills challenge the use of absolute counts (servers migrated, percent complete) as progress proxies; first-derivative thinking names the conceptual error and value-gap provides the migration-specific remedy.
-- **[Enterprise Non-Cloud Diagnostic](../enterprise-non-cloud-diagnostic/SKILL.md)** — *enables* → An organization that shifts to first-derivative thinking (consumption billing, rate-based planning) is better positioned to preserve the NIST cloud characteristics the diagnostic checks for.
-- **[Principles Quality Checklist](../principles-quality-checklist/SKILL.md)** — *precedes* → The first-derivative audit (step 1: classify each metric as absolute or rate) should inform which cloud principles are durable before the checklist is run; principles built on absolute targets will fail the time-horizon test.
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *composes-with* → The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes; this skill supplies the conceptual vocabulary for that translation.
+- **Value Gap and Migration Metrics** — *composes-with* → Both skills challenge the use of absolute counts (servers migrated, percent complete) as progress proxies; first-derivative thinking names the conceptual error and value-gap provides the migration-specific remedy.
+- **Enterprise Non-Cloud Diagnostic** — *enables* → An organization that shifts to first-derivative thinking (consumption billing, rate-based planning) is better positioned to preserve the NIST cloud characteristics the diagnostic checks for.
+- **Principles Quality Checklist** — *precedes* → The first-derivative audit (step 1: classify each metric as absolute or rate) should inform which cloud principles are durable before the checklist is run; principles built on absolute targets will fail the time-horizon test.
+- **Architect Elevator** — *composes-with* → The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes; this skill supplies the conceptual vocabulary for that translation.

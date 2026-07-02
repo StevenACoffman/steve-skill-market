@@ -1,9 +1,9 @@
 ---
-id: competing-consumers-vs-dispatcher
-title: Competing Consumers vs. Message Dispatcher
-description: Invoke when a team wants to add more workers to speed up message processing and is deciding how to structure that parallelism, when different message subtypes require different processing logic, when transactional message processing is required, or when the team asks whether to let the queue handle load balancing or write their own dispatcher logic.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)
+name: competing-consumers-vs-dispatcher
+description: |
+  Invoke when a team wants to add more workers to speed up message processing and is deciding how to structure that parallelism, when different message subtypes require different processing logic, when transactional message processing is required, or when the team asks whether to let the queue handle load balancing or write their own dispatcher logic.
 ---
+# Competing Consumers vs. Message Dispatcher
 
 ## Competing Consumers Vs. Message Dispatcher
 
@@ -102,7 +102,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Queue Control Flow Model](../queue-control-flow-model/SKILL.md)** — *depends-on* → The order-preservation rule from the control-flow model — Queue + Competing Consumers destroys order; only a single Driver preserves it — is the prerequisite for choosing Competing Consumers safely.
-- **[Queue Flow Control Decision](../queue-flow-control-decision/SKILL.md)** — *composes-with* → Adding more competing consumers changes the queue drain rate and flow control threshold; the two skills are applied together when both throughput and overload behavior must be designed.
-- **[Messaging Observability Design](../messaging-observability-design/SKILL.md)** — *composes-with* → Competing Consumers creates non-deterministic processing order that Message History must account for; Wire Tap placement and Message Store design must reflect the parallel consumer topology.
-- **[Multidimensional Coupling Assessment](../multidimensional-coupling-assessment/SKILL.md)** — *depends-on* → Competing Consumers introduces conversation coupling (is each message independently processable?) and order coupling (does downstream logic break if messages arrive out of sequence?); coupling assessment should precede the parallelism decision.
+- **Queue Control Flow Model** — *depends-on* → The order-preservation rule from the control-flow model — Queue + Competing Consumers destroys order; only a single Driver preserves it — is the prerequisite for choosing Competing Consumers safely.
+- **Queue Flow Control Decision** — *composes-with* → Adding more competing consumers changes the queue drain rate and flow control threshold; the two skills are applied together when both throughput and overload behavior must be designed.
+- **Messaging Observability Design** — *composes-with* → Competing Consumers creates non-deterministic processing order that Message History must account for; Wire Tap placement and Message Store design must reflect the parallel consumer topology.
+- **Multidimensional Coupling Assessment** — *depends-on* → Competing Consumers introduces conversation coupling (is each message independently processable?) and order coupling (does downstream logic break if messages arrive out of sequence?); coupling assessment should precede the parallelism decision.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)

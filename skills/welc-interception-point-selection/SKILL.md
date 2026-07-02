@@ -4,12 +4,7 @@ description: |
   Invoke this skill when deciding WHERE to place tests to detect the effects of a set of planned changes in legacy code. Specific triggers: a developer has identified which methods need to change but doesn't know which methods to test; there are multiple related changes spread across several classes and the question is whether to write separate tests for each or find a shared test location; a test is passing but it's unclear whether it actually covers the change point; a single test suite is needed to cover several interrelated changes.
 
   Do NOT invoke when: the question is how to break dependencies to get code into a test harness (see welc-seam-model or welc-sensing-vs-separation); the question is what characterization tests to write once the test location is known (see welc-characterization-test); the question is which code to change, not where to test it (see welc-legacy-code-change-algorithm).
-
-  Key signals: "which methods should I test given these changes," "I made the change and the test still passes — is it really testing anything?", "I have to touch four classes — do I need four separate test suites?", "where is the best place to write a test for this?", "pinch point," "effect sketch," "tracing effects outward."
-source_book: Working Effectively with Legacy Code — Michael C. Feathers (2005)
-source_chapter: 'Chapter 11: I Need to Make a Change. What Methods Should I Test? / Chapter 12: I Need to Make Many Changes in One Area'
 tags: [legacy-code, testing, effect-sketching, interception-points, pinch-points, characterization-tests]
-related_skills: [welc-legacy-code-change-algorithm, welc-characterization-test, welc-seam-model, welc-sensing-vs-separation]
 ---
 
 # Interception Point and Pinch Point Selection
@@ -182,3 +177,9 @@ ______________________________________________________________________
 - **Merged from**: f06 (Interception Point Selection) + f08 (Effect Sketching)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Working Effectively with Legacy Code — Michael C. Feathers (2005) — Chapter 11: I Need to Make a Change. What Methods Should I Test? / Chapter 12: I Need to Make Many Changes in One Area

@@ -6,12 +6,7 @@ description: |
   Trigger scenarios: SLO is met but users are still complaining, SLO is met but the team is burning out on operational work, SLO is missed but users don't seem to notice, or a service review where the team needs to decide whether to tighten, relax, automate, or hand back a service.
 
   Do not use as a real-time incident response tool (use incident command for that). Do not use when you don't have data on at least two of the three dimensions — the matrix requires all three inputs to prescribe the right action. Do not use to justify inaction: the "met / low / high" cell (everything looks good) still has a prescribed action (increase velocity or reduce engagement).
-
-  Key trigger: "Our SLO is green — why are users still unhappy?" or "Our SLO is red but nobody seems to care."
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 2 - Implementing SLOs; Chapter 3 - SLO Engineering Case Studies"
 tags: [slo, decision-making, toil, customer-satisfaction, prioritization, calibration]
-related_skills: []
 ---
 
 # SLO × Toil × Satisfaction Decision Matrix
@@ -153,3 +148,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 2 - Implementing SLOs, Chapter 3 - SLO Engineering Case Studies

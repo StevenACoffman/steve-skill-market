@@ -1,9 +1,8 @@
 ---
-id: letsgo-template-safe-render
-title: Template Cache with Two-Stage Safe Render
+name: letsgo-template-safe-render
 description: Invoke when writing the render helper for a Go HTML template service — specifically to prevent the partial-200 failure mode where a template error produces corrupted HTML with an incorrect 200 status.
-source: Let's Go, Alex Edwards, 2023
 ---
+# Template Cache with Two-Stage Safe Render
 
 ## R — Reading
 
@@ -83,7 +82,13 @@ Templates are loaded once at startup and not reloaded on change — a server res
 
 ## Related Skills
 
-- **[go-http-service-di-composition](../go-http-service-di-composition/SKILL.md)** — depends on: `templateCache` is a field on `application`; `render()` is a method on `*application` that reads from it
-- **[letsgo-form-validator](../letsgo-form-validator/SKILL.md)** — combines: `render()` is the function called on validation failure; the form struct carrying its validation state is the `data.Form` value passed to `render()` — these two patterns are always used together on the re-render path
+- **go-http-service-di-composition** — depends on: `templateCache` is a field on `application`; `render()` is a method on `*application` that reads from it
+- **letsgo-form-validator** — combines: `render()` is the function called on validation failure; the form struct carrying its validation state is the `data.Form` value passed to `render()` — these two patterns are always used together on the re-render path
 - **go-http-service-test-strategy** — informs: `newTestApplication(t)` must supply a test template cache so end-to-end tests can exercise the two-stage render path without a filesystem
 - **go-http-middleware-construction-and-organization** — informs: the `dynamic` chain's session and CSRF middleware run before handlers that call `render()`; CSRF token injection into template data is part of the render data pipeline
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Let's Go, Alex Edwards, 2023

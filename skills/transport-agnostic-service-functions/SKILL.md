@@ -11,17 +11,8 @@ description: |
   applies when wrapping a generated gRPC client behind a Go-native interface: the wrapper
   holds the generated stub as an unexported field, translates protobuf request/response types
   to plain Go types, and converts gRPC status codes to domain sentinel errors using `%v` (not
-  `%w`) so proto types never leak to callers. The combined effect is that 80% of handler code
-  (wire plumbing) is written once per transport, not once per handler, and the 20% that
-  matters (domain logic) lives in one testable function with no transport dependency.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: hoist_wire_plumb, wrap_grpc_client
+  `%w`) so proto types never leak to callers.
 tags: [go, architecture, http, grpc, handlers, generics]
-related_skills:
-  - slug: error-translation-layer-boundaries
-    relation: composes-with
-  - slug: consumer-side-interface-segregation
-    relation: composes-with
 ---
 
 # Transport-Agnostic Service Functions via Wire-Plumbing Adapter
@@ -345,8 +336,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`error-translation-layer-boundaries`](../error-translation-layer-boundaries/SKILL.md): The `Wrap` adapter's error path calls `writeError`/`toStatus` — a single function that maps domain sentinels to wire status codes. That mapping is the wire boundary translation defined by error translation. The two skills together produce handlers with no storage imports and no duplicated error mapping across endpoints.
-- **composes-with** [`consumer-side-interface-segregation`](../consumer-side-interface-segregation/SKILL.md): Transport-agnostic service functions eliminate inbound transport coupling (the service accepts domain types, not `http.Request`). Consumer-side interfaces eliminate outbound infrastructure coupling (the service accepts an `Emailer` interface, not a `*sendgrid.Client`). Together they give a service layer with no transport or SDK imports in either direction.
+- **composes-with** `error-translation-layer-boundaries`: The `Wrap` adapter's error path calls `writeError`/`toStatus` — a single function that maps domain sentinels to wire status codes. That mapping is the wire boundary translation defined by error translation. The two skills together produce handlers with no storage imports and no duplicated error mapping across endpoints.
+- **composes-with** `consumer-side-interface-segregation`: Transport-agnostic service functions eliminate inbound transport coupling (the service accepts domain types, not `http.Request`). Consumer-side interfaces eliminate outbound infrastructure coupling (the service accepts an `Emailer` interface, not a `*sendgrid.Client`). Together they give a service layer with no transport or SDK imports in either direction.
 
 ______________________________________________________________________
 
@@ -355,3 +346,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — hoist_wire_plumb, wrap_grpc_client

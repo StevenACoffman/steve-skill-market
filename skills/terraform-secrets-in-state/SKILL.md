@@ -1,9 +1,9 @@
 ---
-id: terraform-secrets-in-state
-title: "Terraform Secrets Always Land in State: Why Injection Method Doesn't Matter"
-description: Invoke when a user asks how to keep secrets out of Terraform state, whether sensitive=true protects secrets, or whether AWS Secrets Manager or environment variables solve the secrets problem in Terraform.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
+name: terraform-secrets-in-state
+description: |
+  Invoke when a user asks how to keep secrets out of Terraform state, whether sensitive=true protects secrets, or whether AWS Secrets Manager or environment variables solve the secrets problem in Terraform.
 ---
+# Terraform Secrets Always Land in State: Why Injection Method Doesn't Matter
 
 ## R — Reading
 
@@ -72,5 +72,11 @@ This avoids secrets appearing in `.tfvars` files, CLI arguments, or environment 
 
 ## Related Skills
 
-- **[terraform-backend-bootstrap-problem](../terraform-backend-bootstrap-problem/SKILL.md)** — depends on: the S3 backend that holds plaintext secrets must be set up before the secrets concern is addressable; the bootstrap skill covers SSE and versioning configuration of that bucket.
-- **[terraform-directory-layout-isolation](../terraform-directory-layout-isolation/SKILL.md)** — combines: per-environment state buckets with separate IAM roles reduce the blast radius of a state file compromise; pair with state bucket encryption for full defense in depth.
+- **terraform-backend-bootstrap-problem** — depends on: the S3 backend that holds plaintext secrets must be set up before the secrets concern is addressable; the bootstrap skill covers SSE and versioning configuration of that bucket.
+- **terraform-directory-layout-isolation** — combines: per-environment state buckets with separate IAM roles reduce the blast radius of a state file compromise; pair with state bucket encryption for full defense in depth.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

@@ -1,9 +1,9 @@
 ---
-id: emergence-conditions-audit
-title: Emergence Conditions Audit for Program Governance
-description: Invoke when a program is producing strong component-level results (projects on schedule, within budget, reporting green) but weak or absent program-level outcomes (benefits not realizing, strategic objectives not moving, the whole underperforming its parts). Also invoke when setting up governance for a new multi-project program to determine whether the governance design has any mechanism for owning the interaction layer where program-level outcomes actually emerge.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: emergence-conditions-audit
+description: |
+  Invoke when a program is producing strong component-level results (projects on schedule, within budget, reporting green) but weak or absent program-level outcomes (benefits not realizing, strategic objectives not moving, the whole underperforming its parts). Also invoke when setting up governance for a new multi-project program to determine whether the governance design has any mechanism for owning the interaction layer where program-level outcomes actually emerge.
 ---
+# Emergence Conditions Audit for Program Governance
 
 ## R — Reading
 
@@ -70,6 +70,12 @@ Williams' framework relies heavily on Hoel (2026) for the causal emergence found
 
 ## Related Skills
 
-- **[program-governance-ecological-design](../program-governance-ecological-design/SKILL.md)** — *combines*: audit identifies which conditions are absent; ecological design framework provides the design response; run emergence audit first
-- **[sv-trend-diagnostic](../sv-trend-diagnostic/SKILL.md)** — *compares*: both diagnose feedback dysfunction; SV is the quantitative signal; emergence audit is the structural cause
-- **[governance-model-adequacy-test](../governance-model-adequacy-test/SKILL.md)** — *combines*: interaction layer ownership requires someone who holds the model; Conant-Ashby and emergence audit diagnose the same gap from different angles
+- **program-governance-ecological-design** — *combines*: audit identifies which conditions are absent; ecological design framework provides the design response; run emergence audit first
+- **sv-trend-diagnostic** — *compares*: both diagnose feedback dysfunction; SV is the quantitative signal; emergence audit is the structural cause
+- **governance-model-adequacy-test** — *combines*: interaction layer ownership requires someone who holds the model; Conant-Ashby and emergence audit diagnose the same gap from different angles
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

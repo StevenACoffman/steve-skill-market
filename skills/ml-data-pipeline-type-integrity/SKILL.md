@@ -1,9 +1,8 @@
 ---
-id: ml-data-pipeline-type-integrity
-title: ML Data Pipeline Type Integrity — Fail Loudly at Parse Time, Standardize Ingress, Version Data
+name: ml-data-pipeline-type-integrity
 description: Trigger when designing an ML data pipeline; enforce types at ingestion, not at model training; silence on bad data is worse than a loud failure.
-source: [Machine Learning with Go, Daniel Whitenack, Packt, 2017]
 ---
+# ML Data Pipeline Type Integrity — Fail Loudly at Parse Time, Standardize Ingress, Version Data
 
 ## R — Reading
 
@@ -52,4 +51,10 @@ This methodology is language-agnostic; the book uses Go vs. Python to illustrate
 ## Related Skills
 
 - **ml-pipeline-integrity-pre-training** — prerequisite for: type-enforced, versioned data splits are what make a pre-defined evaluation strategy reproducible and auditable.
-- **[ml-simplest-model-baseline-first](../ml-simplest-model-baseline-first/SKILL.md)** — combines: clean, schema-validated data must be in place before baseline model metrics are meaningful; run both together at project start.
+- **ml-simplest-model-baseline-first** — combines: clean, schema-validated data must be in place before baseline model metrics are meaningful; run both together at project start.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [Machine Learning with Go, Daniel Whitenack, Packt, 2017]

@@ -6,10 +6,7 @@ description: |
   Trigger: "the team is 70%+ on ops work," "they can't make progress on engineering projects," "they're burning out," "every week is fire season," "adding engineers hasn't helped."
 
   Do NOT call this skill for a team that is merely having a rough quarter or dealing with a product launch spike. This is a structured multi-week intervention for chronic, structural overload. Do not send more than one embedded SRE — the framework explicitly prohibits it.
-source_book: "Site Reliability Engineering" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 30: Embedding an SRE to Recover from Operational Overload; Chapter 32: The Evolving SRE Engagement Model"
 tags: [sre-engagement, operational-overload, team-health, toil, slo, recovery, embedding]
-related_skills: []
 ---
 
 # Embedding SRE to Recover from Operational Overload (Three-Phase Model)
@@ -162,3 +159,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer et al. (Google) — Chapter 30: Embedding an SRE to Recover from Operational Overload, Chapter 32: The Evolving SRE Engagement Model

@@ -1,9 +1,9 @@
 ---
-id: governance-model-adequacy-test
-title: Governance Model Adequacy Test (Conant-Ashby Good Regulator Audit)
-description: Invoke when a governance structure holds formal authority over a complex program but outcomes are diverging from plan and the governing body appears to be reacting to information rather than anticipating it — specifically when you suspect the oversight layer is governing on someone else's representation of reality rather than its own working model of the system.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: governance-model-adequacy-test
+description: |
+  Invoke when a governance structure holds formal authority over a complex program but outcomes are diverging from plan and the governing body appears to be reacting to information rather than anticipating it — specifically when you suspect the oversight layer is governing on someone else's representation of reality rather than its own working model of the system.
 ---
+# Governance Model Adequacy Test (Conant-Ashby Good Regulator Audit)
 
 ## R — Reading
 
@@ -63,6 +63,12 @@ Finally: holding an adequate model is a necessary condition for effective govern
 
 ## Related Skills
 
-- **[requisite-variety-gap-assessment](../requisite-variety-gap-assessment/SKILL.md)** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
-- **[emergence-conditions-audit](../emergence-conditions-audit/SKILL.md)** — *combines*: model adequacy is a precondition for owning the interaction layer; run both when governance of complex programs is being assessed
-- **[program-governance-ecological-design](../program-governance-ecological-design/SKILL.md)** — *relates*: ecological design requires that someone holds the model; Conant-Ashby names who that must be
+- **requisite-variety-gap-assessment** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
+- **emergence-conditions-audit** — *combines*: model adequacy is a precondition for owning the interaction layer; run both when governance of complex programs is being assessed
+- **program-governance-ecological-design** — *relates*: ecological design requires that someone holds the model; Conant-Ashby names who that must be
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

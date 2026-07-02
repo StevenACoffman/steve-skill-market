@@ -14,23 +14,7 @@ description: |
   - Any mention of "average of averages", "weighted average", "rolling up averages"
   - Any ratio metric (conversion rate, return rate, session duration, error rate)
     being rolled up from a pre-aggregated summary table
-
-  Do NOT use this skill when:
-  - The metric is additive (SUM of revenue, COUNT of orders) — additive measures roll
-    up correctly without decomposition
-  - All groups being averaged have identical sizes — the single exception where
-    averaging averages produces a correct result (see B section)
-  - The question is about aggregation structural properties in general (use
-    six-aggregation-properties instead)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 9 — Counting and
-  Aggregation.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 9 — Counting and Aggregation — Controlling the Grain
 tags: [aggregation, averages, decomposability, ratio-metrics, pipeline-design]
-related_skills:
-  - slug: six-aggregation-properties
-    relation: depends-on
 ---
 
 # Never Aggregate Pre-Computed Averages — Decompose into SUM + COUNT
@@ -405,7 +389,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`six-aggregation-properties`](../six-aggregation-properties/SKILL.md): Properties 3 and 4 of that checklist (Additivity and Decomposability) are the structural justification for this rule — understanding why AVG is non-additive and non-decomposable is the prerequisite for applying the SUM + COUNT fix correctly.
+- **depends-on** `six-aggregation-properties`: Properties 3 and 4 of that checklist (Additivity and Decomposability) are the structural justification for this rule — understanding why AVG is non-additive and non-decomposable is the prerequisite for applying the SUM + COUNT fix correctly.
 
 ______________________________________________________________________
 
@@ -416,3 +400,9 @@ ______________________________________________________________________
 - **Counter-examples used**: ce03 (average-of-averages retail AOV example)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 9 — Counting and Aggregation — Controlling the Grain

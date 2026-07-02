@@ -1,9 +1,9 @@
 ---
-id: sv-trend-diagnostic
-title: Schedule Variance Trend Diagnostic
-description: Invoke when a project is reporting EVM Schedule Variance (SV) that is negative, flat, or worsening and the team or stakeholders are treating it as a status data point rather than a corrective trigger. Specifically useful when SV has been consistently negative across multiple reporting periods without a visible corrective response, or when a PM needs to diagnose *why* a program is not recovering despite visible schedule pressure.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: sv-trend-diagnostic
+description: |
+  Invoke when a project is reporting EVM Schedule Variance (SV) that is negative, flat, or worsening and the team or stakeholders are treating it as a status data point rather than a corrective trigger. Specifically useful when SV has been consistently negative across multiple reporting periods without a visible corrective response, or when a PM needs to diagnose *why* a program is not recovering despite visible schedule pressure.
 ---
+# Schedule Variance Trend Diagnostic
 
 ## R — Reading
 
@@ -71,5 +71,11 @@ The diagnostic power of this case is not the outcome — late programs are commo
 
 ## Related Skills
 
-- **[program-governance-ecological-design](../program-governance-ecological-design/SKILL.md)** — *informs*: SV suppression is a symptom of the interaction layer being unowned; ecological design addresses the structural cause
-- **[emergence-conditions-audit](../emergence-conditions-audit/SKILL.md)** — *compares*: both diagnose feedback loop dysfunction at the program level, different entry points
+- **program-governance-ecological-design** — *informs*: SV suppression is a symptom of the interaction layer being unowned; ecological design addresses the structural cause
+- **emergence-conditions-audit** — *compares*: both diagnose feedback loop dysfunction at the program level, different entry points
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

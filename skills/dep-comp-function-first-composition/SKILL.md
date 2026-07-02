@@ -15,19 +15,7 @@ description: |
   case a local minimal interface (option 1) is the better fit. This skill
   addresses the mechanics of wiring and testing single-responsibility modules,
   not the question of when a cross-package contract is warranted.
-
-  Key trigger signals: a developer declaring interfaces only to satisfy
-  constructor injection; test boilerplate that requires mock generation for a
-  simple function; wanting to test an HTTP handler without a real database;
-  asking "what's the Go way to do dependency injection?"; any hodgepodge where
-  some modules use constructor injection, others use global init(), and tests
-  require different setups per module.
-source_book: '"Dependency Composition (Go Adaptation)" by Daniel Somerfield (2023, updated 2026)'
-source_chapter: Option 4 — Dependencies Struct with Function Fields
 tags: [go, dependency-injection, testing, closure, composition]
-related_skills:
-  - dep-comp-cross-package-contract-decision  # precedes: use that skill to decide IF a contract is needed; use this skill for HOW to wire it
-  - golang-dependency-injection               # broader: covers all four DI options; this skill is option 4 in depth
 ---
 
 # Function-First Dependency Composition in Go
@@ -403,3 +391,9 @@ package internals.
 - Primary source: "Dependency Composition (Go Adaptation)" by Daniel Somerfield (2023, updated 2026)
 - Pipeline stage: Phase 2 (RIA-TV++)
 - Version: 0.1.0
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Dependency Composition (Go Adaptation)" by Daniel Somerfield (2023, updated 2026) — Option 4 — Dependencies Struct with Function Fields

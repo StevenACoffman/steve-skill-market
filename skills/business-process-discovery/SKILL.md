@@ -12,28 +12,7 @@ description: |
   - "We inherited this data but don't know what the business process was"
   - "Multiple teams are getting different numbers from the same source"
   - Any new data model design where the source is a human-facing business workflow
-
-  Do NOT use this skill when:
-  - The business process has already been documented with all five components and
-    the next step is translating it into model components (use process-to-model-translation)
-  - The question is purely about validating an already-designed grain before
-    deployment (use grain-audit-checklist)
-  - Process documentation is available but outdated or unreliable and field
-    research is needed to recover tacit knowledge (use tacit-knowledge-extraction)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 13 — Seeing the Business.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 13 — Seeing the Business
 tags: [business-process, discovery, data-modeling, schema-design, domain-modeling]
-related_skills:
-  - slug: bounded-context-swimlane-detection
-    relation: composes-with
-  - slug: process-to-model-translation
-    relation: composes-with
-  - slug: tacit-knowledge-extraction
-    relation: composes-with
-  - slug: synthesis-checklist-cross-form
-    relation: composes-with
 ---
 
 # Business Process Discovery — Five-Component Framework
@@ -381,10 +360,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`bounded-context-swimlane-detection`](../bounded-context-swimlane-detection/SKILL.md): The sequence map produced by discovery feeds directly into swimlane crossing analysis — every department hand-off in the sequence is a candidate bounded context boundary to verify.
-- **composes-with** [`process-to-model-translation`](../process-to-model-translation/SKILL.md): Discovery produces the five-component process description that the four mapping rules of process-to-model-translation require as input — the two skills are strictly sequential.
-- **composes-with** [`tacit-knowledge-extraction`](../tacit-knowledge-extraction/SKILL.md): When process documentation is missing or unreliable, the three field-research techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) supply the raw evidence that completes the five-component description.
-- **composes-with** [`synthesis-checklist-cross-form`](../synthesis-checklist-cross-form/SKILL.md): Questions 1 and 2 of the synthesis checklist (business question and data forms inventory) are answered by the output of business process discovery before cross-form integration design begins.
+- **composes-with** `bounded-context-swimlane-detection`: The sequence map produced by discovery feeds directly into swimlane crossing analysis — every department hand-off in the sequence is a candidate bounded context boundary to verify.
+- **composes-with** `process-to-model-translation`: Discovery produces the five-component process description that the four mapping rules of process-to-model-translation require as input — the two skills are strictly sequential.
+- **composes-with** `tacit-knowledge-extraction`: When process documentation is missing or unreliable, the three field-research techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) supply the raw evidence that completes the five-component description.
+- **composes-with** `synthesis-checklist-cross-form`: Questions 1 and 2 of the synthesis checklist (business question and data forms inventory) are answered by the output of business process discovery before cross-form integration design begins.
 
 ______________________________________________________________________
 
@@ -394,3 +373,9 @@ ______________________________________________________________________
 - **Source IDs**: f17+p35
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 13 — Seeing the Business

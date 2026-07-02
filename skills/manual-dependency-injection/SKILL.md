@@ -4,36 +4,7 @@ description: |
   Activate when a developer asks whether to use a DI framework (dig, wire, FX) or how to
   structure dependency wiring in Go, or when they describe a complex dependency graph and
   wonder if they need a container.
-
-  The skill covers two tightly connected ideas from rednafi's "Go Advice":
-  1. DI is a "25-dollar term for a 5-cent concept" (James Shore): pass values into
-     constructors instead of creating them inside. A manual main() that calls constructors
-     in dependency order IS the DI container — and the Go compiler enforces it at build time,
-     not at runtime.
-  2. DI frameworks (dig, FX) and mocking libraries (mockery, gomock) are the same anti-pattern
-     applied in different contexts: both hide the dependency graph behind reflection or
-     codegen. With dig, commenting out a provider still compiles — the error is a 5-frame
-     runtime stack trace. With mockery, generated mocks drift from interfaces and require
-     migration workflows. Handwritten fakes passed directly to constructors replace both.
-
-  Trigger phrases: "should I use wire/dig/FX", "how do I manage dependencies in Go",
-  "my dependency graph is getting complex", "is there a DI container for Go", "should I
-  use a mocking library", "why is my dig error so confusing".
-
-  Do NOT activate for: questions about interface design or ISP (see
-  consumer-side-interface-segregation), questions about which dependencies to inject vs.
-  bake in (unrelated to the mechanism), or questions about service mesh / infra-level
-  dependency resolution.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: di_frameworks_bleh, mocking_libraries_bleh
 tags: [go, dependency-injection, architecture, testing]
-related_skills:
-  - slug: domain-driven-package-structure
-    relation: depends-on
-  - slug: consumer-side-interface-segregation
-    relation: composes-with
-  - slug: option-configuration-patterns
-    relation: composes-with
 ---
 
 # Manual Dependency Injection (No DI Frameworks)
@@ -283,9 +254,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`domain-driven-package-structure`](../domain-driven-package-structure/SKILL.md): Manual DI in `cmd/main.go` works elegantly because domain packages are already decoupled — technology packages import domain packages, never the reverse. Without this structural discipline, `main()` would need to resolve circular dependencies or import technology packages from domain packages, defeating the purpose of explicit wiring.
-- **composes-with** [`consumer-side-interface-segregation`](../consumer-side-interface-segregation/SKILL.md): CSI defines the interface shape at the injection boundary (narrow, consumer-owned, in the business package). Manual DI fulfills that boundary by wiring the concrete gateway at `cmd/main.go`. Together: define a `paymentGateway` interface in `order/`, implement it in `external/stripe/`, pass it via `order.NewService(stripeGW)` in `main.go`.
-- **composes-with** [`option-configuration-patterns`](../option-configuration-patterns/SKILL.md): Option patterns control how individual constructors expose their configuration knobs (timeouts, buffer sizes, retry counts). Manual DI connects those constructors to each other in dependency order. Options configure a single type at construction time; DI composes multiple configured types into a working service.
+- **depends-on** `domain-driven-package-structure`: Manual DI in `cmd/main.go` works elegantly because domain packages are already decoupled — technology packages import domain packages, never the reverse. Without this structural discipline, `main()` would need to resolve circular dependencies or import technology packages from domain packages, defeating the purpose of explicit wiring.
+- **composes-with** `consumer-side-interface-segregation`: CSI defines the interface shape at the injection boundary (narrow, consumer-owned, in the business package). Manual DI fulfills that boundary by wiring the concrete gateway at `cmd/main.go`. Together: define a `paymentGateway` interface in `order/`, implement it in `external/stripe/`, pass it via `order.NewService(stripeGW)` in `main.go`.
+- **composes-with** `option-configuration-patterns`: Option patterns control how individual constructors expose their configuration knobs (timeouts, buffer sizes, retry counts). Manual DI connects those constructors to each other in dependency order. Options configure a single type at construction time; DI composes multiple configured types into a working service.
 
 ______________________________________________________________________
 
@@ -294,3 +265,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — di_frameworks_bleh, mocking_libraries_bleh

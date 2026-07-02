@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: fencing-tokens-distributed-locks
 description: |
   Use this skill when designing or reviewing any system that uses a distributed lock, lease, or mutex to protect a shared resource from concurrent access.
@@ -14,12 +13,8 @@ description: |
   - The locking mechanism is a database row lock within a single ACID transaction (the database handles this)
   - The resource being protected is append-only and duplicate writes are harmless
   - The coordination problem only involves nodes you control, and you can guarantee no GC pauses or network delays exceed the lease TTL (this is never safe to assume)
-
-  Key signals: "we use Redis/ZooKeeper/etcd for distributed locking," "only one instance should run at a time," "we saw duplicate processing," "our lease expired and we're not sure what happened"
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 9: The Trouble with Distributed Systems'
 tags: [distributed-systems, locking, leases, fencing, process-pauses, correctness]
-related_skills: [distributed-fault-taxonomy, consistency-model-selection, clock-skew-ordering-hazard, end-to-end-idempotence-request-ids]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Fencing Tokens for Distributed Lock Safety
@@ -179,3 +174,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 9: The Trouble with Distributed Systems

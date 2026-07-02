@@ -11,26 +11,7 @@ description: |
   Trigger signals: "I need to add X but the code isn't structured for it", "I'm reading this
   code and it's hard to follow", "I noticed a problem while working on something else",
   "we have a large architectural problem that needs months to fix."
-
-  Do NOT invoke for: deciding which specific refactoring technique to apply (use the catalog);
-  justifying refactoring to stakeholders (use fowler-design-stamina); separating feature work
-  from structural changes (use fowler-two-hats); or diagnosing what is wrong with code
-  (use fowler-code-smells). This skill answers "when should I refactor?" not "how?" or "why
-  is this code bad?"
-
-  Key constraint: planned refactoring sprints are a symptom of insufficient opportunistic
-  refactoring — they are not the primary vehicle. Most refactoring should be unremarkable,
-  woven into normal work.
-source_book: 'Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)'
-source_chapter: Chapter 2
 tags: [refactoring, workflow, preparatory, opportunistic]
-related_skills:
-  - slug: fowler-two-hats
-    relation: composes-with
-  - slug: fowler-code-smells
-    relation: composes-with
-  - slug: fowler-branch-by-abstraction
-    relation: composes-with
 ---
 
 # Four Modes of Opportunistic Refactoring — When and Why to Refactor
@@ -334,3 +315,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code — Martin Fowler (2018) — Chapter 2

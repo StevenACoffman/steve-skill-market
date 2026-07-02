@@ -1,9 +1,9 @@
 ---
-id: canonical-data-model-decision
-title: Canonical Data Model Decision
-description: Invoke when N ≥ 3 applications must exchange data with each other, when a team is building translators for every pair of systems, when a legacy system is expected to be replaced and its replacement should not force rewrites in all connected systems, or when application field names disagree across systems and semantic disputes are slowing integration work.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)
+name: canonical-data-model-decision
+description: |
+  Invoke when N ≥ 3 applications must exchange data with each other, when a team is building translators for every pair of systems, when a legacy system is expected to be replaced and its replacement should not force rewrites in all connected systems, or when application field names disagree across systems and semantic disputes are slowing integration work.
 ---
+# Canonical Data Model Decision
 
 ## Canonical Data Model Decision
 
@@ -96,7 +96,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Multidimensional Coupling Assessment](../multidimensional-coupling-assessment/SKILL.md)** — *depends-on* → Coupling assessment identifies tight data-format coupling across N applications; the CDM decision follows as the structural remedy once that coupling is diagnosed.
-- **[EDA Coupling Diagnosis](../eda-coupling-diagnosis/SKILL.md)** — *depends-on* → EDA coupling diagnosis reveals that data-format coupling persists regardless of channel type; CDM is the pattern that addresses this dimension specifically when N ≥ 3 systems are involved.
-- **[Integration Style Selection](../integration-style-selection/SKILL.md)** — *depends-on* → CDM is only relevant after Messaging (or Shared Database avoidance) is selected as the style; style selection is the prerequisite that creates the multi-translator problem CDM solves.
-- **[Messaging Observability Design](../messaging-observability-design/SKILL.md)** — *precedes* → After a CDM is in place, each translator becomes an integration component that should be instrumented; observability patterns (Wire Tap, Message History) apply at the canonical channel boundary.
+- **Multidimensional Coupling Assessment** — *depends-on* → Coupling assessment identifies tight data-format coupling across N applications; the CDM decision follows as the structural remedy once that coupling is diagnosed.
+- **EDA Coupling Diagnosis** — *depends-on* → EDA coupling diagnosis reveals that data-format coupling persists regardless of channel type; CDM is the pattern that addresses this dimension specifically when N ≥ 3 systems are involved.
+- **Integration Style Selection** — *depends-on* → CDM is only relevant after Messaging (or Shared Database avoidance) is selected as the style; style selection is the prerequisite that creates the multi-translator problem CDM solves.
+- **Messaging Observability Design** — *precedes* → After a CDM is in place, each translator becomes an integration component that should be instrumented; observability patterns (Wire Tap, Message History) apply at the canonical channel boundary.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)

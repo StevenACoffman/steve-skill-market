@@ -6,12 +6,7 @@ description: |
   The 50% cap is an enforced ceiling on operational work (toil, on-call, interrupt-driven tasks) as a fraction of each SRE's time. It is not a guideline — it is the structural mechanism that prevents SRE from devolving into a conventional ops team. The cap has a specific safety valve: when operational work exceeds 50%, the correct response is to redirect the excess back to the development team, not to hire more SREs. This feedback loop is what creates the incentive for the dev team to fix the reliability problems that generate the operational load.
 
   Key trigger signal: SREs report spending >50% of their time on toil across more than one quarter, or management proposes solving on-call overload by adding headcount.
-
-  Do not use when: the team is below the minimum rotation size (8 engineers for single-site, 6 for dual-site) — the on-call sustainability model must be addressed first. Do not use the cap as an excuse to refuse legitimate operational work below the 50% threshold.
-source_book: "Site Reliability Engineering" by Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
-source_chapter: "Chapter 1: Introduction, Chapter 5: Eliminating Toil, Chapter 11: Being On-Call"
 tags: [toil, engineering-time, sre-identity, ops-team, sustainability, safety-valve]
-related_skills: [] # Stage 3 Fill
 ---
 
 # 50% Engineering Time Cap as Toil-Control Mechanism
@@ -148,3 +143,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.) — Chapter 1: Introduction, Chapter 5: Eliminating Toil, Chapter 11: Being On-Call

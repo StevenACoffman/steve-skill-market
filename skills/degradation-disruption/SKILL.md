@@ -16,21 +16,7 @@ description: |
   - Calculating SLO targets numerically (use `slo-definition-calibration-framework` or `multi-tier-slo`)
   - Designing fallback/failover mechanisms to prevent failures (use `fallback-failover`)
   - Defining which SLI metric to measure (use `sli-formula-measurement`)
-
-  **Key trigger signal:** Someone says "at least the service is partially up" or classifies
-  a severe degradation as low-severity because "it's not fully down." The counter-intuitive
-  finding — degradation can exceed disruption in business impact — is the entry point for
-  this skill.
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20240710_134959_service-degradation-vs-disruption.md, 20230531_195944_why-bother-with-sli-and-slo.md
 tags: [incident-classification, severity, degradation, disruption, service-levels, slo]
-related_skills:
-  - slug: sli-formula-measurement
-    relation: depends-on
-  - slug: fallback-failover
-    relation: contrasts-with
-  - slug: multi-tier-slo
-    relation: composes-with
 ---
 
 # Degradation Vs Disruption Severity Classification
@@ -274,9 +260,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`sli-formula-measurement`](../sli-formula-measurement/SKILL.md): The SLI formula must be designed to detect both quality failures (degradation) and total failures (disruption); this skill uses those formula properties to classify ongoing incidents.
-- **contrasts-with** → [`fallback-failover`](../fallback-failover/SKILL.md): This skill classifies the severity of what is happening during a failure; fallback-failover designs the mechanisms that respond to those failures in advance.
-- **composes-with** → [`multi-tier-slo`](../multi-tier-slo/SKILL.md): Multi-tier SLO window tiers constrain incident duration — use degradation-disruption to classify the active incident severity, and multi-tier-slo's window structure to ensure alert thresholds catch prolonged degradations before they consume the full error budget.
+- **depends-on** → `sli-formula-measurement`: The SLI formula must be designed to detect both quality failures (degradation) and total failures (disruption); this skill uses those formula properties to classify ongoing incidents.
+- **contrasts-with** → `fallback-failover`: This skill classifies the severity of what is happening during a failure; fallback-failover designs the mechanisms that respond to those failures in advance.
+- **composes-with** → `multi-tier-slo`: Multi-tier SLO window tiers constrain incident duration — use degradation-disruption to classify the active incident severity, and multi-tier-slo's window structure to ensure alert thresholds catch prolonged degradations before they consume the full error budget.
 
 ______________________________________________________________________
 
@@ -284,3 +270,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

@@ -15,18 +15,7 @@ description: |
   functions, RPCs, HTTP endpoints) — those have their own versioning disciplines. Do not call
   when the user is asking purely about UX aesthetics of a CLI (colors, column widths, help text
   wording) with no concern for scripting consumers.
-
-  KEY TRIGGER SIGNAL: Any phrasing containing "rename this flag", "change this subcommand",
-  "remove this option", "can I change how my CLI formats its output", "how do I deprecate",
-  "will this break existing scripts", or "designing a long-lived CLI tool / public CLI API".
-source_book: "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish (2020, cli-guidelines.github.io)
-source_chapter: Future-proofing
 tags: [cli, api-stability, backward-compatibility, deprecation, versioning]
-related_skills:
-  - slug: cli-configuration-hierarchy
-    relation: composes-with
-  - slug: cli-destructive-confirmation-tiers
-    relation: composes-with
 ---
 
 # CLI Interface Stability (CLI Surfaces as Versioned Public APIs)
@@ -269,8 +258,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → [`cli-configuration-hierarchy`](../cli-configuration-hierarchy/SKILL.md): Configuration hierarchy governs how config keys, env vars, and flags interact at runtime; interface stability governs whether their names and semantics may change across versions.
-- **composes-with** → [`cli-destructive-confirmation-tiers`](../cli-destructive-confirmation-tiers/SKILL.md): Confirmation tier design depends on stable flag names (e.g., `--force`, `--yes`) — changing those flags is itself a stability problem governed by this skill.
+- **composes-with** → `cli-configuration-hierarchy`: Configuration hierarchy governs how config keys, env vars, and flags interact at runtime; interface stability governs whether their names and semantics may change across versions.
+- **composes-with** → `cli-destructive-confirmation-tiers`: Confirmation tier design depends on stable flag names (e.g., `--force`, `--yes`) — changing those flags is itself a stability problem governed by this skill.
 
 ______________________________________________________________________
 
@@ -278,3 +267,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish (2020, cli-guidelines.github.io) — Future-proofing

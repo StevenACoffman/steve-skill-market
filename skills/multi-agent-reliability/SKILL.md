@@ -11,22 +11,7 @@ description: |
   are unacceptably costly; you need to decide whether to use voting, adversarial
   critique, hierarchical planning, or elimination; you are debugging an existing
   multi-agent system that produces inconsistent or confidently-wrong outputs.
-
-  Do NOT call this skill when: you are designing the control-flow architecture of
-  an AI system (use `ioc-ai-systems` first — multi-agent patterns operate within
-  the IOC framework, not as a replacement for it); the task is simple enough that
-  a single well-constrained LLM call with structured output is sufficient; the
-  problem is about the LLM interface layer (prompting, templating, sanitization)
-  rather than agent coordination topology.
-
-  Key trigger signal: "We need multiple agents but the errors compound instead of
-  canceling" or "How do we make this multi-agent workflow reliable?"
 tags: [ai-reliability, multi-agent, architecture, llm, patterns]
-related_skills:
-  - slug: emergent-properties
-    relation: depends-on
-  - slug: ioc-ai-systems
-    relation: composes-with
 ---
 
 # Multi-Agent Reliability Patterns (Hierarchy, Consensus, Adversarial, Tree-of-Thoughts)
@@ -269,8 +254,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`emergent-properties`](../emergent-properties/SKILL.md): Classify the failure mode (resultant/weak/strong emergent) before selecting a multi-agent pattern; the classification determines which pattern is appropriate.
-- **composes-with** → [`ioc-ai-systems`](../ioc-ai-systems/SKILL.md): IOC is the outer architectural frame (deterministic code owns the workflow state machine); multi-agent reliability patterns are inner structures applied within workflow steps that require parallelism or adversarial review.
+- **depends-on** → `emergent-properties`: Classify the failure mode (resultant/weak/strong emergent) before selecting a multi-agent pattern; the classification determines which pattern is appropriate.
+- **composes-with** → `ioc-ai-systems`: IOC is the outer architectural frame (deterministic code owns the workflow state machine); multi-agent reliability patterns are inner structures applied within workflow steps that require parallelism or adversarial review.
 
 ______________________________________________________________________
 

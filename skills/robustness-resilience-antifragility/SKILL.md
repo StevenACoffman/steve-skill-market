@@ -1,3 +1,9 @@
+---
+name: robustness-resilience-antifragility
+description: |
+  Invoke this skill when you encounter any of the following: - A team is evaluating whether to invest in chaos engineering and needs to determine whether their current system is ready. - An organization is debating the trade-off between high-availability hardware and automated failover/respawn architecture. - An SRE team is designing an availability strategy and needs a conceptual framework for setting targets and choosing mechanisms. - A postmortem reveals that a failure mode was anticipated but never tested in production, and operators were unpracticed at recovery. - A team is determining which reliability metric matters most: MTBF, MTTR, or some combination. - An architecture review must evaluate whether a proposed redundancy design adds availability or just cost. - A team is adopting Chaos Engineering but has not yet established automated recovery capabilities.
+---
+
 # Robustness, Resilience, and Antifragility
 
 **Source:** Cloud Strategy, Gregor Hohpe (~2020–2022) — Chapter 29: Keep Calm and Operate On
@@ -92,7 +98,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Enterprise Non-Cloud Diagnostic](../enterprise-non-cloud-diagnostic/SKILL.md)** — *depends-on* → Resilient architecture requires rapid elasticity and automated provisioning — two NIST cloud characteristics; an Enterprise Non-Cloud (manual provisioning, no auto-scaling) is structurally incapable of reaching the Resilient stage, so the NIST diagnostic is a prerequisite check.
-- **[First-Derivative Thinking](../first-derivative-economies-of-speed/SKILL.md)** — *composes-with* → The shift from MTBF to MTTR as the primary reliability metric is itself a shift from an absolute position metric (time between failures) to a rate metric (time to recover); the first-derivative framing explains why resilient organizations track a different number than robust ones.
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *composes-with* → The warm-standby vs. automated-respawn trade-off is an engine-room decision with penthouse cost and SLO consequences; the elevator architect must surface the availability-formula calculation (MTBF + MTTR = availability) to executives who see only the hardware budget line.
-- **[Lock-In Cost Optimization](../lock-in-cost-optimization/SKILL.md)** — *composes-with* → Chaos Engineering tools (Chaos Monkey, Gremlin) and orchestration platforms create their own lock-in; before committing to an antifragility toolchain, the ROL calculation should confirm the capability value exceeds the expected switching cost.
+- **Enterprise Non-Cloud Diagnostic** — *depends-on* → Resilient architecture requires rapid elasticity and automated provisioning — two NIST cloud characteristics; an Enterprise Non-Cloud (manual provisioning, no auto-scaling) is structurally incapable of reaching the Resilient stage, so the NIST diagnostic is a prerequisite check.
+- **First-Derivative Thinking** — *composes-with* → The shift from MTBF to MTTR as the primary reliability metric is itself a shift from an absolute position metric (time between failures) to a rate metric (time to recover); the first-derivative framing explains why resilient organizations track a different number than robust ones.
+- **Architect Elevator** — *composes-with* → The warm-standby vs. automated-respawn trade-off is an engine-room decision with penthouse cost and SLO consequences; the elevator architect must surface the availability-formula calculation (MTBF + MTTR = availability) to executives who see only the hardware budget line.
+- **Lock-In Cost Optimization** — *composes-with* → Chaos Engineering tools (Chaos Monkey, Gremlin) and orchestration platforms create their own lock-in; before committing to an antifragility toolchain, the ROL calculation should confirm the capability value exceeds the expected switching cost.

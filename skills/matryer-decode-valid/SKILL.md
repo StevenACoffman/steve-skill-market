@@ -7,11 +7,7 @@ description: |
   decode JSON and validate in one call. The returned problems map is structured for
   direct use as an API error response, and the type constraint enforces validation
   at compile time.
-source_book: "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024)
-source_chapter: Handle decoding/encoding in one place / Validating data
 tags: [go, validation, generics, http-services, json, request-handling]
-related_skills:
-  - matryer-maker-func
 ---
 
 # Decode + Validate in One Step with a Generic Helper
@@ -273,3 +269,9 @@ ______________________________________________________________________
 ## Related Skills
 
 - **matryer-maker-func** — pairs-with: `decodeValid` is called inside the closure returned by a maker function; the maker provides the handler skeleton, and `decodeValid` handles the request-body phase of every mutating endpoint.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024) — Handle decoding/encoding in one place / Validating data

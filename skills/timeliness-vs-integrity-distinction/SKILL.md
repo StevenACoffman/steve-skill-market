@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: timeliness-vs-integrity-distinction
 description: |
   Use this skill when a system design decision involves relaxing consistency, accepting stale reads, or choosing between strong consistency and availability — and you need to determine whether the proposed relaxation is safe.
@@ -10,17 +9,8 @@ description: |
   - A system uses async replication or a log-based data pipeline and you need to classify which operations can tolerate propagation delay and which cannot
   - Post-mortem investigation reveals data loss or permanent corruption (integrity violation) that was initially diagnosed as a stale-read problem (timeliness violation)
   - Designing a stream-processing or event-sourcing system where operations are applied asynchronously
-
-  Do NOT invoke when:
-  - The question is about *how* to implement strong consistency (use consistency-model-selection instead)
-  - The operation is clearly a pure display read where staleness is obviously acceptable (e.g., "show approximate user count")
-  - The question is about which replication topology to choose (use replication-topology-selection instead)
-
-  Key signals: "can we tolerate stale reads here," "does this need linearizability," "will eventual consistency work," "we relaxed consistency and now data is wrong"
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 13: The Future of Data Systems'
 tags: [distributed-systems, consistency, correctness, eventual-consistency, integrity, timeliness, stream-processing]
-related_skills: [consistency-model-selection, replication-lag-as-correctness, end-to-end-idempotence-request-ids, transaction-isolation-level-selection]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Timeliness Violations Vs. Integrity Violations Are Not Equivalent
@@ -199,3 +189,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 13: The Future of Data Systems

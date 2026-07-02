@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: clock-skew-ordering-hazard
 description: |
   Use this skill when reviewing any distributed system that uses wall-clock timestamps (System.currentTimeMillis(), time.time(), CLOCK_REALTIME) to order events, resolve conflicts, or enforce ordering guarantees across multiple nodes.
@@ -10,18 +9,8 @@ description: |
   - Engineers claim "our NTP is good enough" to justify using timestamps for ordering
   - A Cassandra, ScyllaDB, or similar leaderless database uses its default LWW conflict resolution
   - Events timestamped on different nodes are being compared, sorted, or deduplicated by timestamp
-
-  Do NOT invoke when:
-  - Timestamps are used only for human display (showing a user "updated at 3:02pm") and not for ordering or conflict resolution
-  - A single authoritative node assigns all timestamps (single-leader clock assignment eliminates the skew problem)
-  - The system uses Spanner TrueTime with commit wait, which explicitly bounds and waits out clock uncertainty
-  - You need to measure elapsed time on a single machine using CLOCK_MONOTONIC (monotonic clocks are safe for duration measurement)
-
-  Key signals: "we sort events by timestamp," "LWW is our conflict strategy," "our NTP sync is under 5ms," "we use wall-clock time for causality"
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 9: The Trouble with Distributed Systems'
 tags: [distributed-systems, clocks, ntp, ordering, causality, lww, consistency]
-related_skills: [distributed-fault-taxonomy, consistency-model-selection, fencing-tokens-distributed-locks]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Do Not Use Wall-Clock Timestamps for Distributed Event Ordering
@@ -190,3 +179,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 9: The Trouble with Distributed Systems

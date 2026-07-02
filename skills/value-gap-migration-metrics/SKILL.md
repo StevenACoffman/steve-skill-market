@@ -1,3 +1,9 @@
+---
+name: value-gap-migration-metrics
+description: |
+  Invoke this skill when you encounter any of the following: - A cloud program is reporting progress as a percentage of servers or workloads migrated - Business stakeholders say they "don't see value" from a cloud migration despite strong IT-side progress metrics - A program board presentation cannot answer what business metric will improve as a result of the migration - A migration plan is sequenced by technical convenience (easiest applications first) rather than by business value contribution - A CIO is presenting cloud progress to the board and the presentation contains words like "servers," "workloads," "pipelines" but not "availability," "deployment frequency," or "customer experience" - An organization is three or more quarters into a migration and business support is beginning to wane - A team is defending a "hockey stick" value curve — "we'll deliver value later, once we've finished migrating" - Program leadership cannot name, before the migration starts,
+---
+
 # Value Gap and Migration Metrics
 
 **Source:** *Cloud Strategy*, Gregor Hohpe (~2020–2022) — Chapter 17: Value Is the Only Real Progress
@@ -97,7 +103,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[First-Derivative Thinking](../first-derivative-economies-of-speed/SKILL.md)** — *composes-with* → The value gap opens because IT reports absolute proxy metrics (servers migrated) while the business cares about rates (deployment velocity, feature delivery cadence); both skills are needed to diagnose the full pattern and translate it to each audience.
-- **[Enterprise Non-Cloud Diagnostic](../enterprise-non-cloud-diagnostic/SKILL.md)** — *composes-with* → A migration that achieves high server-count progress while landing in an Enterprise Non-Cloud produces the worst value gap; the NIST diagnostic identifies whether cloud characteristics were preserved during migration.
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *depends-on* → Closing the value gap requires an elevator architect to translate IT progress metrics (engine room) into business outcome language (penthouse); without the elevator posture, the gap persists even when the value metrics exist.
-- **[Principles Quality Checklist](../principles-quality-checklist/SKILL.md)** — *precedes* → If the migration program has no defined value metrics, it likely also has no concrete principles connecting strategy to decisions; running the checklist before the migration starts surfaces this gap before money is spent.
+- **First-Derivative Thinking** — *composes-with* → The value gap opens because IT reports absolute proxy metrics (servers migrated) while the business cares about rates (deployment velocity, feature delivery cadence); both skills are needed to diagnose the full pattern and translate it to each audience.
+- **Enterprise Non-Cloud Diagnostic** — *composes-with* → A migration that achieves high server-count progress while landing in an Enterprise Non-Cloud produces the worst value gap; the NIST diagnostic identifies whether cloud characteristics were preserved during migration.
+- **Architect Elevator** — *depends-on* → Closing the value gap requires an elevator architect to translate IT progress metrics (engine room) into business outcome language (penthouse); without the elevator posture, the gap persists even when the value metrics exist.
+- **Principles Quality Checklist** — *precedes* → If the migration program has no defined value metrics, it likely also has no concrete principles connecting strategy to decisions; running the checklist before the migration starts surfaces this gap before money is spent.

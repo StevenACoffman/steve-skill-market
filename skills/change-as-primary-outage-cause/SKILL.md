@@ -6,12 +6,7 @@ description: |
   The framework begins from the empirical finding that approximately 70% of production outages originate from changes in a live system — config, code, or traffic changes. The engineering response is not to prohibit change but to make every change smaller, slower, more observable, and more reversible. Progressive rollouts, canarying, and automatic rollback are the primary instruments.
 
   Key trigger signal: a team proposes a change freeze as a reliability strategy, or a team has frequent outages but blames hardware, external systems, or bad luck rather than examining their change management process.
-
-  Do not use to design SLOs or error budgets (use sli-slo-sla-tier-framework and error-budget-conflict-resolution). Do not use as a substitute for capacity planning — traffic spikes causing outages are a capacity problem even if the 70% rule assigns them to the "traffic change" category.
-source_book: "Site Reliability Engineering" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 1: Introduction / Chapter 8: Release Engineering"
 tags: [change-management, progressive-rollout, canarying, rollback, release-engineering, outages, reliability]
-related_skills: []
 ---
 
 # Change as Primary Outage Cause Framework (70% Rule)
@@ -155,3 +150,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer et al. (Google) — Chapter 1: Introduction / Chapter 8: Release Engineering

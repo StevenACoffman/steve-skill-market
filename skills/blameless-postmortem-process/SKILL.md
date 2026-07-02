@@ -4,14 +4,7 @@ description: |
   Use this skill after any significant incident to convert the event into organizational learning that prevents recurrence. The trigger signal is any event that meets one or more of the postmortem criteria: user-visible downtime or degradation beyond a threshold, data loss of any kind, on-call engineer intervention (rollback, traffic rerouting), resolution time above threshold, or monitoring failure requiring manual discovery.
 
   The skill requires three properties to be simultaneously present, and all three must hold or the process fails: (1) blameless — the postmortem must focus on systemic causes, not individual actions; (2) written — the findings must be documented in a shared artifact, not discussed verbally and forgotten; (3) broadly distributed — the postmortem must be published beyond the immediate team so organizational learning can accumulate.
-
-  If any one of these properties is missing, the postmortem is degraded: blame-based culture suppresses honest reporting and future incident disclosure; verbal-only discussion produces no lasting record; restricted distribution prevents cross-team learning.
-
-  Do not use this skill as a performance management tool. Blameless means individuals are not named as root causes — the question is always "why did the system allow this to happen?" not "who did the wrong thing?"
-source_book: "Site Reliability Engineering" by Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.)
-source_chapter: "Chapter 15: Postmortem Culture: Learning from Failure, Chapter 1: Introduction"
 tags: [postmortem, blameless, learning, incident-response, culture]
-related_skills: [] # Stage 3 Fill
 ---
 
 # Blameless Postmortem Process
@@ -141,3 +134,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer, Chris Jones, Jennifer Petoff, Niall Richard Murphy (eds.) — Chapter 15: Postmortem Culture: Learning from Failure, Chapter 1: Introduction

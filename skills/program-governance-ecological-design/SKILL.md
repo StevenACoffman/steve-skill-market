@@ -1,9 +1,9 @@
 ---
-id: program-governance-ecological-design
-title: Program Governance as Ecological Design
-description: Invoke when a PM or program leader is diagnosing why a program is producing strong project-level reporting but weak benefits realization, or when designing governance for a new program and needs to move beyond oversight-and-accountability structures to govern the interaction layer between projects where program-level outcomes actually live.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: program-governance-ecological-design
+description: |
+  Invoke when a PM or program leader is diagnosing why a program is producing strong project-level reporting but weak benefits realization, or when designing governance for a new program and needs to move beyond oversight-and-accountability structures to govern the interaction layer between projects where program-level outcomes actually live.
 ---
+# Program Governance as Ecological Design
 
 ## R — Reading
 
@@ -69,6 +69,12 @@ Ecological design requires someone with sufficient organizational standing and a
 
 ## Related Skills
 
-- **[emergence-conditions-audit](../emergence-conditions-audit/SKILL.md)** — *combines*: audit first to identify which conditions are missing; ecological design framework then prescribes the governance architecture
-- **[governance-model-adequacy-test](../governance-model-adequacy-test/SKILL.md)** — *relates*: ecological design requires interaction layer ownership; Conant-Ashby specifies who must hold the model to make that ownership real
-- **[sv-trend-diagnostic](../sv-trend-diagnostic/SKILL.md)** — *informs*: SV measurement theater is a symptom of ecological design failure; redesigning governance structure addresses the cause
+- **emergence-conditions-audit** — *combines*: audit first to identify which conditions are missing; ecological design framework then prescribes the governance architecture
+- **governance-model-adequacy-test** — *relates*: ecological design requires interaction layer ownership; Conant-Ashby specifies who must hold the model to make that ownership real
+- **sv-trend-diagnostic** — *informs*: SV measurement theater is a symptom of ecological design failure; redesigning governance structure addresses the cause
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

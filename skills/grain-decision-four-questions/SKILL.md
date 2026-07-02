@@ -21,16 +21,7 @@ description: |
     ambiguity about what the rows represent
 
   Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 8 — Grain.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 8 — Grain — Getting the Level Right
 tags: [grain, data-modeling, schema-design, decision-framework]
-related_skills:
-  - slug: grain-audit-checklist
-    relation: composes-with
-  - slug: aggregation-workflow-four-steps
-    relation: composes-with
-  - slug: synthesis-checklist-cross-form
-    relation: composes-with
 ---
 
 # The Four Questions for Grain Decision-Making
@@ -181,9 +172,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`grain-audit-checklist`](../grain-audit-checklist/SKILL.md): Once grain is declared using the four questions, run the audit checklist immediately before production deployment to verify the implementation matches the declaration.
-- **composes-with** [`aggregation-workflow-four-steps`](../aggregation-workflow-four-steps/SKILL.md): Step 1 of the aggregation workflow — defining the grain identity — must be resolved using this skill before aggregation design can proceed.
-- **composes-with** [`synthesis-checklist-cross-form`](../synthesis-checklist-cross-form/SKILL.md): Question 4 of the synthesis checklist (target grain) is answered by applying this skill's four questions to the integration anchor entity across all data forms.
+- **composes-with** `grain-audit-checklist`: Once grain is declared using the four questions, run the audit checklist immediately before production deployment to verify the implementation matches the declaration.
+- **composes-with** `aggregation-workflow-four-steps`: Step 1 of the aggregation workflow — defining the grain identity — must be resolved using this skill before aggregation design can proceed.
+- **composes-with** `synthesis-checklist-cross-form`: Question 4 of the synthesis checklist (target grain) is answered by applying this skill's four questions to the integration anchor entity across all data forms.
 
 ______________________________________________________________________
 
@@ -193,3 +184,9 @@ ______________________________________________________________________
 - **Source IDs**: f08 (framework extractor) + p17 (principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 8 — Grain — Getting the Level Right

@@ -1,24 +1,9 @@
 ---
 name: domain-repository-contract
-allowed-tools: Bash, Read, Edit
-id: domain-repository-contract
-description: Apply when defining a repository interface in a Go DDD project — specifically when deciding where the interface declaration lives in the package tree, how mutation methods must be shaped to prevent transaction leakage, or when reviewing a two-call fetch+save pattern.
-type: merged-skill
-source_skills:
-  - slug: ddd-golang/repository-interface-in-domain-package
-    book: Domain-Driven Design with Golang
-    author: Matthew Boyle
-  - slug: go-with-the-domain/update-function-closure-repository
-    book: Go with the Domain
-    author: Three Dots Labs (R. Laszczak, M. Smółka)
-related_skills:
-  - slug: ddd-golang/repository-interface-in-domain-package
-    relation: supersedes
-    note: Merged into domain-repository-contract which adds transaction-safe mutation contract
-  - slug: go-with-the-domain/update-function-closure-repository
-    relation: supersedes
-    note: Merged into domain-repository-contract which adds interface placement rule
+description: |
+  Apply when defining a repository interface in a Go DDD project — specifically when deciding where the interface declaration lives in the package tree, how mutation methods must be shaped to prevent transaction leakage, or when reviewing a two-call fetch+save pattern.
 tags: []
+allowed-tools: Bash, Read, Edit
 ---
 
 # Domain Repository Contract
@@ -210,3 +195,11 @@ Interface placement: `summary_rules.md §1` places service interfaces in the roo
 **Contradiction surface:** Go's "accept interfaces, return structs" guidance is sometimes misread as "interfaces live near implementations." The correct reading is: interfaces live near their consumers. When the consumer is a domain service, the domain package is where the interface lives — which is exactly what this skill prescribes. Make this reasoning explicit when explaining the rule to Go developers who know the Go idiom but not DDD.
 
 **Scope limitation:** The closure pattern is for read-modify-write operations only. The merged skill does not address complex aggregate reconstitution from a relational database where the aggregate spans multiple tables — neither source provides guidance for this, and the merged skill inherits this gap.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Merged from:** Domain-Driven Design with Golang (Matthew Boyle); Go with the Domain (Three Dots Labs (R. Laszczak, M. Smółka))
+- **Type:** merged-skill
+- **Related skills:** ddd-golang/repository-interface-in-domain-package (supersedes; Merged into domain-repository-contract which adds transaction-safe mutation contract); go-with-the-domain/update-function-closure-repository (supersedes; Merged into domain-repository-contract which adds interface placement rule)
