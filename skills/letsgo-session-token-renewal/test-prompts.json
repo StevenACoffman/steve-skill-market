@@ -1,65 +1,79 @@
 [
   {
     "id": 1,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "Is renewing the session token only on login sufficient to prevent session fixation attacks in a Go web app?",
     "expected": "Skill answers no: session fixation is a two-window attack, and renewing only on login closes the first window but leaves the second open; RenewToken must also be called on logout (every transition between authentication states issues a new session ID).",
     "notes": "source id: tp-f07-01"
   },
   {
     "id": 2,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "What specific attack does NOT renewing the session token on logout enable?",
     "expected": "Skill describes the second session-fixation window: an attacker fixes the post-logout session ID and, because logout reuses it for the next login, inherits the victim's newly-authenticated session when they re-authenticate; RenewToken on logout closes this.",
     "notes": "source id: tp-f07-02"
   },
   {
     "id": 3,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "When exactly in the login handler should I call RenewToken — before or after setting the authenticatedUserID session value?",
     "expected": "Skill answers: call RenewToken(r.Context()) first and check its error, then call Put(ctx, \"authenticatedUserID\", id) — renew before making the authorization/privilege change.",
     "notes": "source id: tp-f07-03"
   },
   {
     "id": 4,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "Why should session LoadAndSave middleware be on the dynamic chain and not the standard chain in a Go web app?",
     "expected": "Skill explains that the standard chain serves static files, and LoadAndSave there would create a session cookie for every CSS/asset request; placing it only on the dynamic (HTML) chain confines session creation to routes that actually need it.",
     "notes": "source id: tp-f07-04"
   },
   {
     "id": 5,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "Does RenewToken destroy the session data (flash messages, form state) or just generate a new session ID?",
     "expected": "Skill answers that RenewToken only generates a new session token and migrates existing session data to it in one operation; it does not destroy data, so flash messages, form data, and other session state survive the renewal.",
     "notes": "source id: tp-f07-05"
   },
   {
     "id": 6,
-    "type": "",
+    "type": "edge_case",
     "prompt": "How do I implement flash messages in Go using alexedwards/scs that survive a redirect and are automatically deleted after being read?",
     "expected": "Skill directs Put(ctx, \"flash\", message) at the redirect source and PopString(ctx, \"flash\") in newTemplateData(); PopString reads and deletes atomically, so the message survives the redirect and is shown exactly once.",
     "notes": "source id: tp-f07-06"
   },
   {
     "id": 7,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "How do I verify that the authenticated user still exists in the database on every request without hitting the DB in every handler?",
     "expected": "Skill directs doing this in authenticate middleware: read authenticatedUserID from the session, verify with users.Exists(id) once per request, and set a typed context key (not a string key) to signal authenticated status downstream, so handlers read the context instead of querying.",
     "notes": "source id: tp-f07-07"
   },
   {
     "id": 8,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "What session cookie settings are required for a production Go web app to prevent session hijacking?",
     "expected": "Skill directs setting sessionManager.Cookie.Secure = true (and HttpOnly) plus a bounded Lifetime (e.g., 12*time.Hour) and serving over HTTPS; it notes this is about post-authentication token theft, distinct from the session-fixation renewal concern.",
     "notes": "source id: tp-f07-08"
   },
   {
     "id": 9,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "I'm implementing privilege escalation (sudo mode) in a Go web app. Do I need to call RenewToken for this too?",
     "expected": "Skill answers yes: the rule generalizes to any authorization or privilege-level change, so a new session token must be generated (RenewToken) before the privilege escalation, not just on login and logout.",
     "notes": "source id: tp-f07-09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "How do I hash and verify user passwords with bcrypt when signing up and logging in users in Go?",
+    "expected": "skill should not activate — this is password hashing, not session-token renewal or session-fixation defense",
+    "notes": "decoy: credential hashing, adjacent auth topic outside session renewal"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "How do I add OAuth2 'Sign in with Google' to a Go web app?",
+    "expected": "skill should not activate — this is an OAuth2 login flow, not scs session-token renewal on login/logout",
+    "notes": "decoy: OAuth login, outside session-renewal scope"
   }
 ]

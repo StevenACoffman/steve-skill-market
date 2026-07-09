@@ -1,65 +1,79 @@
 [
   {
     "id": 1,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "How should a Go HTTP handler distinguish between 'no record found' and a real database error without importing database/sql?",
     "expected": "Skill activates: the model method translates driver errors at the boundary (errors.Is(err, sql.ErrNoRows) -> return models.ErrNoRecord); the handler imports only internal/models and branches with errors.Is(err, models.ErrNoRecord) for a 404 versus serverError/500 for everything else, never importing database/sql.",
     "notes": "source id: tp-f04-01"
   },
   {
     "id": 2,
-    "type": "",
+    "type": "edge_case",
     "prompt": "My Go program panics with 'nil pointer dereference' when a database query fails. I have `defer rows.Close()` right after the Query call. What's wrong?",
     "expected": "Skill identifies that defer rows.Close() is placed before the error check: when db.Query() fails, rows is nil and deferring Close() on a nil *sql.Rows panics and masks the original error. Correct order is Query(), check the error, then defer rows.Close(), then iterate.",
     "notes": "source id: tp-f04-02"
   },
   {
     "id": 3,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "When would `err == models.ErrNoRecord` return false even though the error is ErrNoRecord?",
     "expected": "Skill explains that == compares only the top-level value, so a sentinel wrapped with %w (an error chain) makes == take the wrong branch; comparisons must always use errors.Is(err, models.ErrNoRecord), which unwraps the chain.",
     "notes": "source id: tp-f04-03"
   },
   {
     "id": 4,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "I'm switching my Go app from MySQL to PostgreSQL. How many files need to change if I've used the sentinel error pattern correctly?",
     "expected": "Skill states that only the model files change, because they are the sole place driver errors are translated into domain sentinels; handlers import internal/models (not database/sql or a driver) and are untouched. It notes the driver-specific code parsing differs (e.g., MySQL 1062 duplicate-key vs Postgres's unique-violation code) and lives only in the model layer.",
     "notes": "source id: tp-f04-04"
   },
   {
     "id": 5,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "Where should I define ErrNoRecord and ErrInvalidCredentials in a Go web project? Which package owns them?",
     "expected": "Skill directs defining all domain sentinels in internal/models/errors.go via errors.New with a \"models: ...\" prefix (ErrNoRecord, ErrInvalidCredentials, ErrDuplicateEmail); the model package owns them so handlers depend on internal/models rather than the storage layer.",
     "notes": "source id: tp-f04-05"
   },
   {
     "id": 6,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "How do I detect a MySQL duplicate key error in Go and return a domain-specific error instead of exposing the driver error?",
     "expected": "Skill shows using errors.As to extract the typed *mysql.MySQLError, checking mySQLError.Number == 1062, and returning the domain sentinel models.ErrDuplicateEmail so the driver error never leaks past the model layer.",
     "notes": "source id: tp-f04-06"
   },
   {
     "id": 7,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "Should my login handler return different errors for 'email not found' vs 'wrong password'? What's the security implication?",
     "expected": "Skill says no: the Authenticate model method must return the same models.ErrInvalidCredentials for both 'email not found' and 'password mismatch' so the handler cannot distinguish them, preventing user enumeration.",
     "notes": "source id: tp-f04-07"
   },
   {
     "id": 8,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "What is the correct order of: db.Query(), error check, and defer rows.Close() in a Go model method?",
     "expected": "Skill gives the order: call db.Query(), check and handle the error first, then defer rows.Close(), then iterate — because deferring Close() before the error check panics on a nil *sql.Rows when Query() fails.",
     "notes": "source id: tp-f04-08"
   },
   {
     "id": 9,
-    "type": "",
+    "type": "should_trigger",
     "prompt": "My handler imports both internal/models and database/sql to check sql.ErrNoRows. How should I refactor this?",
     "expected": "Skill refactors so the database/sql import is removed from the handler: the model method translates sql.ErrNoRows into models.ErrNoRecord, and the handler checks errors.Is(err, models.ErrNoRecord), importing only internal/models to preserve storage isolation.",
     "notes": "source id: tp-f04-09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure the MySQL connection pool in Go with db.SetMaxOpenConns and SetMaxIdleConns?",
+    "expected": "skill should not activate — this is database connection-pool tuning, not translating driver errors into domain sentinel errors",
+    "notes": "decoy: connection-pool config, adjacent DB topic outside sentinel-error translation"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "How do I write a SQL migration to add an index to my snippets table in a Go project?",
+    "expected": "skill should not activate — this is schema migration/DDL, not model-layer error translation",
+    "notes": "decoy: DB migrations, outside error-handling scope"
   }
 ]
