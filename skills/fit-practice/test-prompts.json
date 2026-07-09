@@ -1,69 +1,65 @@
-{
-  "skill": "fit-practice",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I went to a conference and saw a great talk on trunk-based development. The speaker said it's best practice and teams should stop using long-lived feature branches. We currently use 2-week feature branches and have a QA gate before merge. Should we switch?",
-      "expected_behavior": "Invokes fit-practice, applies the four questions: (1) Origin — trunk-based development was developed for teams with strong CI/CD, fast automated test coverage, and feature flags. (2) Enabling conditions — fast CI pipelines, high test coverage, feature flags infrastructure, team confidence in automated gates. (3) Underlying wisdom — reduce integration delay and branch divergence. (4) Boundary — doesn't work without the CI infrastructure and test coverage to make short-lived branches safe. Evaluates current context against enabling conditions before recommending.",
-      "notes": "Positive scenario: conference-driven best practice adoption; user has the enabling conditions question implicitly (QA gate suggests limited automated testing)."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "A consultant we hired says we need to implement Team Topologies — stream-aligned teams, enabling teams, platform teams, and complicated-subsystem teams. He says it's the modern best practice for organizing engineering. Our company has 80 engineers. Should we reorganize?",
-      "expected_behavior": "Invokes fit-practice, applies the four questions: (1) Origin — Team Topologies was developed by observing patterns in medium-to-large organizations with complex system boundaries. (2) Enabling conditions — sufficient team size to support the topology, Conway's Law alignment, leadership commitment to sustained re-org. (3) Wisdom — reduce cognitive load by matching team structure to system architecture. (4) Boundary — at 80 engineers, some of the topology categories may collapse; the consultant's recommendation requires a fit check, not blind adoption.",
-      "notes": "Positive scenario: consultant recommending a methodology as 'best practice'; user needs the four-question evaluation framework."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "My senior engineer keeps blocking PRs, saying the code 'doesn't follow best practice' because it uses mutable state. He cites functional programming principles. But our team writes React and the codebase has always used state management libraries. Is he right?",
-      "expected_behavior": "Invokes fit-practice, applies the four questions from the perspective of the senior engineer's claim: (1) Origin — immutability best practices come from functional programming and specific FP languages/paradigms. (2) Enabling conditions — requires team FP expertise and a codebase designed for immutability from the start. (3) Wisdom — reduce side-effect bugs and simplify reasoning about state. (4) Boundary — applying FP dogma to a React codebase with established state patterns is not a fit; the wisdom (reduce side effects) can be applied selectively without wholesale adoption.",
-      "notes": "Positive scenario: 'that's not best practice' blocking behavior with no fit analysis; the skill provides the counter-argument structure."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're joining a company that has inherited a bunch of processes — daily standups, bi-weekly retrospectives, quarterly OKRs, weekly architecture review, monthly tech radar updates. I want to figure out which of these are actually working for us versus which ones are just habits nobody has questioned. How do I evaluate them?",
-      "expected_behavior": "Invokes fit-practice, applies the framework as an audit tool: for each practice, ask the four questions. Which ones have an origin that matches the current problem? Which ones require enabling conditions that are present? Which ones produce the wisdom they're supposed to transfer? Which ones are outside their boundary condition? This turns an inherited process set into a deliberate portfolio.",
-      "notes": "Positive scenario: inherited process audit — explicitly described in the skill's A2 trigger scenarios."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "What are the best practices for designing REST APIs?",
-      "expected_behavior": "Request for a best-practices list. Should not invoke fit-practice; the user wants practical guidelines, not a framework for evaluating whether guidelines fit their context. Answer with REST API design conventions.",
-      "notes": "Decoy: 'best practice' appears but the user wants a list of actionable guidelines, not the fit-practice evaluation framework."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "Should we do retrospectives? We're a new team that hasn't done them before.",
-      "expected_behavior": "Simple adoption question. Should not invoke fit-practice; a retrospective is low-cost and broadly applicable. A direct 'yes, here's how to start' answer is more useful than a four-question fit analysis for something with minimal downside and well-understood benefits.",
-      "notes": "Decoy: yes/no question about a low-stakes, high-value practice; fit-practice overhead is not warranted here."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "We adopted pair programming six months ago because we heard it reduces bugs. It's working — our defect rate dropped 30% and engineers say they like it. Should we keep doing it?",
-      "expected_behavior": "Validation question about a working practice. Should not invoke fit-practice; the user has empirical evidence the practice is working. A direct 'yes, the data supports continuing' answer is appropriate. Fit-practice is for evaluation before adoption or when a practice isn't working.",
-      "notes": "Decoy: practice is already showing positive outcomes with measured data; no fit evaluation needed."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "I want to adopt chaos engineering for my team. I've read the Netflix engineering blog and it makes sense. But I've also heard it can cause more incidents if done wrong. How do I know if we're ready?",
-      "expected_behavior": "Likely invokes fit-practice, applies the four questions with particular weight on enabling conditions: (1) Origin — Netflix's Chaos Monkey was built to force resilience in a large, mature microservices environment. (2) Enabling conditions — high observability maturity, incident response process, service resilience already present. (3) Wisdom — validate that services handle real failure modes. (4) Boundary — without observability and incident response maturity, chaos engineering produces uncontrolled incidents, not controlled learning. The question 'are we ready?' maps directly to the enabling conditions question.",
-      "notes": "Boundary: user is doing fit analysis proactively (good behavior) and asking the enabling conditions question directly. The skill should validate the approach and provide the specific conditions to check."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "I read that Google uses error budgets to manage the tension between reliability and feature velocity. We want to try this. But we're a 15-person startup and I don't want to over-engineer it. Can we do a lightweight version?",
-      "expected_behavior": "Likely invokes fit-practice: (1) Origin — Google's error budget model was developed to govern the relationship between SRE and dev at massive scale. (2) Enabling conditions — requires SLOs that are meaningful, a culture of measuring before shipping, and organizational trust. (3) Wisdom — make reliability risk explicit and create a shared currency for trade-off decisions. (4) Boundary — a 15-person startup can apply the wisdom with much lighter forms. The fit-practice answer is 'yes, extract the wisdom and apply it proportionally' rather than 'copy the full Google implementation.'",
-      "notes": "Boundary: user wants the wisdom of a large-company practice applied at startup scale; the skill should extract the wisdom and prescribe a fit alternative, not reject the practice wholesale."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I went to a conference and saw a great talk on trunk-based development. The speaker said it's best practice and teams should stop using long-lived feature branches. We currently use 2-week feature branches and have a QA gate before merge. Should we switch?",
+    "expected": "Invokes fit-practice, applies the four questions: (1) Origin — trunk-based development was developed for teams with strong CI/CD, fast automated test coverage, and feature flags. (2) Enabling conditions — fast CI pipelines, high test coverage, feature flags infrastructure, team confidence in automated gates. (3) Underlying wisdom — reduce integration delay and branch divergence. (4) Boundary — doesn't work without the CI infrastructure and test coverage to make short-lived branches safe. Evaluates current context against enabling conditions before recommending.",
+    "notes": "Positive scenario: conference-driven best practice adoption; user has the enabling conditions question implicitly (QA gate suggests limited automated testing).; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "A consultant we hired says we need to implement Team Topologies — stream-aligned teams, enabling teams, platform teams, and complicated-subsystem teams. He says it's the modern best practice for organizing engineering. Our company has 80 engineers. Should we reorganize?",
+    "expected": "Invokes fit-practice, applies the four questions: (1) Origin — Team Topologies was developed by observing patterns in medium-to-large organizations with complex system boundaries. (2) Enabling conditions — sufficient team size to support the topology, Conway's Law alignment, leadership commitment to sustained re-org. (3) Wisdom — reduce cognitive load by matching team structure to system architecture. (4) Boundary — at 80 engineers, some of the topology categories may collapse; the consultant's recommendation requires a fit check, not blind adoption.",
+    "notes": "Positive scenario: consultant recommending a methodology as 'best practice'; user needs the four-question evaluation framework.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My senior engineer keeps blocking PRs, saying the code 'doesn't follow best practice' because it uses mutable state. He cites functional programming principles. But our team writes React and the codebase has always used state management libraries. Is he right?",
+    "expected": "Invokes fit-practice, applies the four questions from the perspective of the senior engineer's claim: (1) Origin — immutability best practices come from functional programming and specific FP languages/paradigms. (2) Enabling conditions — requires team FP expertise and a codebase designed for immutability from the start. (3) Wisdom — reduce side-effect bugs and simplify reasoning about state. (4) Boundary — applying FP dogma to a React codebase with established state patterns is not a fit; the wisdom (reduce side effects) can be applied selectively without wholesale adoption.",
+    "notes": "Positive scenario: 'that's not best practice' blocking behavior with no fit analysis; the skill provides the counter-argument structure.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're joining a company that has inherited a bunch of processes — daily standups, bi-weekly retrospectives, quarterly OKRs, weekly architecture review, monthly tech radar updates. I want to figure out which of these are actually working for us versus which ones are just habits nobody has questioned. How do I evaluate them?",
+    "expected": "Invokes fit-practice, applies the framework as an audit tool: for each practice, ask the four questions. Which ones have an origin that matches the current problem? Which ones require enabling conditions that are present? Which ones produce the wisdom they're supposed to transfer? Which ones are outside their boundary condition? This turns an inherited process set into a deliberate portfolio.",
+    "notes": "Positive scenario: inherited process audit — explicitly described in the skill's A2 trigger scenarios.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "What are the best practices for designing REST APIs?",
+    "expected": "Request for a best-practices list. Should not invoke fit-practice; the user wants practical guidelines, not a framework for evaluating whether guidelines fit their context. Answer with REST API design conventions.",
+    "notes": "Decoy: 'best practice' appears but the user wants a list of actionable guidelines, not the fit-practice evaluation framework.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Should we do retrospectives? We're a new team that hasn't done them before.",
+    "expected": "Simple adoption question. Should not invoke fit-practice; a retrospective is low-cost and broadly applicable. A direct 'yes, here's how to start' answer is more useful than a four-question fit analysis for something with minimal downside and well-understood benefits.",
+    "notes": "Decoy: yes/no question about a low-stakes, high-value practice; fit-practice overhead is not warranted here.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We adopted pair programming six months ago because we heard it reduces bugs. It's working — our defect rate dropped 30% and engineers say they like it. Should we keep doing it?",
+    "expected": "Validation question about a working practice. Should not invoke fit-practice; the user has empirical evidence the practice is working. A direct 'yes, the data supports continuing' answer is appropriate. Fit-practice is for evaluation before adoption or when a practice isn't working.",
+    "notes": "Decoy: practice is already showing positive outcomes with measured data; no fit evaluation needed.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I want to adopt chaos engineering for my team. I've read the Netflix engineering blog and it makes sense. But I've also heard it can cause more incidents if done wrong. How do I know if we're ready?",
+    "expected": "Likely invokes fit-practice, applies the four questions with particular weight on enabling conditions: (1) Origin — Netflix's Chaos Monkey was built to force resilience in a large, mature microservices environment. (2) Enabling conditions — high observability maturity, incident response process, service resilience already present. (3) Wisdom — validate that services handle real failure modes. (4) Boundary — without observability and incident response maturity, chaos engineering produces uncontrolled incidents, not controlled learning. The question 'are we ready?' maps directly to the enabling conditions question.",
+    "notes": "Boundary: user is doing fit analysis proactively (good behavior) and asking the enabling conditions question directly. The skill should validate the approach and provide the specific conditions to check.; source id: edge-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I read that Google uses error budgets to manage the tension between reliability and feature velocity. We want to try this. But we're a 15-person startup and I don't want to over-engineer it. Can we do a lightweight version?",
+    "expected": "Likely invokes fit-practice: (1) Origin — Google's error budget model was developed to govern the relationship between SRE and dev at massive scale. (2) Enabling conditions — requires SLOs that are meaningful, a culture of measuring before shipping, and organizational trust. (3) Wisdom — make reliability risk explicit and create a shared currency for trade-off decisions. (4) Boundary — a 15-person startup can apply the wisdom with much lighter forms. The fit-practice answer is 'yes, extract the wisdom and apply it proportionally' rather than 'copy the full Google implementation.'",
+    "notes": "Boundary: user wants the wisdom of a large-company practice applied at startup scale; the skill should extract the wisdom and prescribe a fit alternative, not reject the practice wholesale.; source id: edge-02"
+  }
+]

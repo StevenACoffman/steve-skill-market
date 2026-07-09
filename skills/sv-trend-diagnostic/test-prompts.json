@@ -1,66 +1,72 @@
-{
-  "skill_id": "sv-trend-diagnostic",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "Our program has had negative SV for the past five reporting periods. Each week the project manager explains it as recoverable and presents a recovery plan, but the SV hasn't actually improved. The sponsor keeps accepting the update. How should I think about what's happening here?",
-      "expected_behavior": "Invoke sv-trend-diagnostic. Classify the trend as stable-negative, diagnose the corrective pathway as blocked (likely at both failure narrative suppression and sponsor authority), and distinguish between the compliance loop functioning and the control system functioning. Surface the structural problem: corrective permission is absent."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "I'm doing a post-mortem on a program that finished six months late. Looking back at the weekly EVM reports, the SV was negative from week 8 onward and kept getting worse. Every status report said we had a recovery plan. What should I take away from this?",
-      "expected_behavior": "Invoke sv-trend-diagnostic. Identify the worsening SV trend as evidence of a broken feedback loop. Apply the corrective pathway health diagnostic to the retrospective evidence. Name the structural finding: the measurement system was functioning but the control system was not — the program had EVM data but lacked the organizational conditions to close the corrective loop."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "Our SV has been negative for two months but the gap is narrowing each week. We're still behind but we seem to be catching up. Should I be worried?",
-      "expected_behavior": "Invoke sv-trend-diagnostic. Classify the trend as improving. Interpret this as the feedback loop functioning — the corrective pathway is open and corrective action is working. Recommend continued monitoring rather than escalation. Frame this as a correctly operating control system."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_invoke",
-      "prompt": "I'm reviewing three programs in our portfolio. All three show flat negative SV for the past two months. All three have recovery plans documented in their status reports. My instinct is something structural is wrong but I can't articulate what it is. Can you help?",
-      "expected_behavior": "Invoke sv-trend-diagnostic. Apply the stable-negative pattern diagnosis across the portfolio. The portfolio-wide pattern suggests a systemic corrective pathway problem, not three independent schedule problems. Walk through the three blocking forces (failure narrative suppression, sponsor avoidance, PMO compliance loop) and help the reviewer identify which forces are operating. Distinguish between recovery plans as compliance artifacts vs. recovery plans as corrective action."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "Our sprint velocity has been declining for six weeks. We started the quarter averaging 42 points per sprint and we're now averaging 28. The team says it's because of increased defect load from the last two releases. How should I assess this?",
-      "expected_behavior": "Do NOT invoke sv-trend-diagnostic. This is a sprint/Agile context where EVM Schedule Variance is not the measurement in use. Velocity trend analysis and defect load feedback loops are different frameworks. The skill boundary explicitly excludes Agile/sprint-based programs."
-    },
-    {
-      "id": "tp-06",
-      "category": "should_not_invoke",
-      "prompt": "We don't have a performance measurement baseline yet. The program kicked off eight weeks ago and we're just now getting the WBS and schedule baselined. Should we be worried that we don't have EVM data yet?",
-      "expected_behavior": "Do NOT invoke sv-trend-diagnostic. The skill requires an EVM baseline to exist. The appropriate response addresses baseline establishment — without a baseline there is no SV to trend, and the skill's diagnostic framework has nothing to operate on."
-    },
-    {
-      "id": "tp-07",
-      "category": "should_not_invoke",
-      "prompt": "Our SV is negative and I need to figure out how to tell the sponsor we're behind. He's known to react badly to bad news and I'm worried about how he'll receive it. What's the best way to frame this conversation?",
-      "expected_behavior": "Do NOT invoke sv-trend-diagnostic (or invoke it only briefly to classify the trend, then explicitly defer). The question is about stakeholder communication and political navigation, not trend classification or pathway diagnosis. The skill boundary explicitly notes that opening a blocked pathway is a separate skill. This prompt is asking for the prescriptive follow-on, not the diagnostic."
-    },
-    {
-      "id": "tp-08",
-      "category": "blurred_boundary",
-      "prompt": "We're in week 4 of a 52-week program. Our SV is already negative. The sponsor is asking if we have a problem. I'm not sure whether to be concerned or whether this is just noise.",
-      "expected_behavior": "Invoke sv-trend-diagnostic with an important qualification: at week 4 (approximately 7.7% of timeline), the program is within the 15% startup zone where SV reflects ramp-up variance rather than systemic feedback loop failure. The skill applies in principle but the boundary condition is active — advise against classifying the trend pattern yet, establish a monitoring cadence, and revisit at week 8-10 when the signal should be more reliable."
-    },
-    {
-      "id": "tp-09",
-      "category": "blurred_boundary",
-      "prompt": "Our SV is worsening and I've already diagnosed that the corrective pathway is blocked at the sponsor level. I know what the problem is. Now what do I do?",
-      "expected_behavior": "The sv-trend-diagnostic skill has already done its work — the user has the diagnostic output. The question is now about opening the pathway, which this skill explicitly does not prescribe. The correct behavior is to acknowledge the diagnostic is complete, name that the next problem is a stakeholder influence and organizational navigation problem, and either defer to a relevant stakeholder communication skill or clearly note the boundary rather than overextending the diagnostic framework into prescriptive territory."
-    },
-    {
-      "id": "tp-10",
-      "category": "blurred_boundary",
-      "prompt": "We just implemented a new EVM reporting tool and our SV data for the past six weeks has been inconsistent due to the migration. Some weeks look much worse than they probably are. How do I interpret the trend?",
-      "expected_behavior": "Invoke sv-trend-diagnostic but surface a data quality problem first. The trend classification requires a reliable series — if the data was corrupted during a tool migration, the trend pattern is not interpretable. Recommend establishing a clean baseline from a known-good reporting period before applying the trend diagnostic. Do not skip to trend classification on noisy data."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our program has had negative SV for the past five reporting periods. Each week the project manager explains it as recoverable and presents a recovery plan, but the SV hasn't actually improved. The sponsor keeps accepting the update. How should I think about what's happening here?",
+    "expected": "Invoke sv-trend-diagnostic. Classify the trend as stable-negative, diagnose the corrective pathway as blocked (likely at both failure narrative suppression and sponsor authority), and distinguish between the compliance loop functioning and the control system functioning. Surface the structural problem: corrective permission is absent.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm doing a post-mortem on a program that finished six months late. Looking back at the weekly EVM reports, the SV was negative from week 8 onward and kept getting worse. Every status report said we had a recovery plan. What should I take away from this?",
+    "expected": "Invoke sv-trend-diagnostic. Identify the worsening SV trend as evidence of a broken feedback loop. Apply the corrective pathway health diagnostic to the retrospective evidence. Name the structural finding: the measurement system was functioning but the control system was not — the program had EVM data but lacked the organizational conditions to close the corrective loop.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our SV has been negative for two months but the gap is narrowing each week. We're still behind but we seem to be catching up. Should I be worried?",
+    "expected": "Invoke sv-trend-diagnostic. Classify the trend as improving. Interpret this as the feedback loop functioning — the corrective pathway is open and corrective action is working. Recommend continued monitoring rather than escalation. Frame this as a correctly operating control system.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm reviewing three programs in our portfolio. All three show flat negative SV for the past two months. All three have recovery plans documented in their status reports. My instinct is something structural is wrong but I can't articulate what it is. Can you help?",
+    "expected": "Invoke sv-trend-diagnostic. Apply the stable-negative pattern diagnosis across the portfolio. The portfolio-wide pattern suggests a systemic corrective pathway problem, not three independent schedule problems. Walk through the three blocking forces (failure narrative suppression, sponsor avoidance, PMO compliance loop) and help the reviewer identify which forces are operating. Distinguish between recovery plans as compliance artifacts vs. recovery plans as corrective action.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our sprint velocity has been declining for six weeks. We started the quarter averaging 42 points per sprint and we're now averaging 28. The team says it's because of increased defect load from the last two releases. How should I assess this?",
+    "expected": "Do NOT invoke sv-trend-diagnostic. This is a sprint/Agile context where EVM Schedule Variance is not the measurement in use. Velocity trend analysis and defect load feedback loops are different frameworks. The skill boundary explicitly excludes Agile/sprint-based programs.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We don't have a performance measurement baseline yet. The program kicked off eight weeks ago and we're just now getting the WBS and schedule baselined. Should we be worried that we don't have EVM data yet?",
+    "expected": "Do NOT invoke sv-trend-diagnostic. The skill requires an EVM baseline to exist. The appropriate response addresses baseline establishment — without a baseline there is no SV to trend, and the skill's diagnostic framework has nothing to operate on.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our SV is negative and I need to figure out how to tell the sponsor we're behind. He's known to react badly to bad news and I'm worried about how he'll receive it. What's the best way to frame this conversation?",
+    "expected": "Do NOT invoke sv-trend-diagnostic (or invoke it only briefly to classify the trend, then explicitly defer). The question is about stakeholder communication and political navigation, not trend classification or pathway diagnosis. The skill boundary explicitly notes that opening a blocked pathway is a separate skill. This prompt is asking for the prescriptive follow-on, not the diagnostic.",
+    "notes": "source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We're in week 4 of a 52-week program. Our SV is already negative. The sponsor is asking if we have a problem. I'm not sure whether to be concerned or whether this is just noise.",
+    "expected": "Invoke sv-trend-diagnostic with an important qualification: at week 4 (approximately 7.7% of timeline), the program is within the 15% startup zone where SV reflects ramp-up variance rather than systemic feedback loop failure. The skill applies in principle but the boundary condition is active — advise against classifying the trend pattern yet, establish a monitoring cadence, and revisit at week 8-10 when the signal should be more reliable.",
+    "notes": "source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our SV is worsening and I've already diagnosed that the corrective pathway is blocked at the sponsor level. I know what the problem is. Now what do I do?",
+    "expected": "The sv-trend-diagnostic skill has already done its work — the user has the diagnostic output. The question is now about opening the pathway, which this skill explicitly does not prescribe. The correct behavior is to acknowledge the diagnostic is complete, name that the next problem is a stakeholder influence and organizational navigation problem, and either defer to a relevant stakeholder communication skill or clearly note the boundary rather than overextending the diagnostic framework into prescriptive territory.",
+    "notes": "source id: tp-09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We just implemented a new EVM reporting tool and our SV data for the past six weeks has been inconsistent due to the migration. Some weeks look much worse than they probably are. How do I interpret the trend?",
+    "expected": "Invoke sv-trend-diagnostic but surface a data quality problem first. The trend classification requires a reliable series — if the data was corrupted during a tool migration, the trend pattern is not interpretable. Recommend establishing a clean baseline from a known-good reporting period before applying the trend diagnostic. Do not skip to trend classification on noisy data.",
+    "notes": "source id: tp-10"
+  }
+]

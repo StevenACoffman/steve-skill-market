@@ -1,59 +1,51 @@
-{
-  "skill": "decompose-averages-sum-count",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We pre-compute NPS per country each month and store it in a summary table. At the end of the quarter our data team averages the three monthly NPS scores to get a quarterly NPS. But the quarterly number looks higher than I'd expect. What's going on?",
-      "expected_behavior": "Invoke decompose-averages-sum-count. This is an average-of-averages on a ratio metric (NPS). Monthly response volumes differ, so averaging three monthly NPS scores gives equal weight to low-response months. Fix: store sum_net_score and count_respondents at each tier; compute division only at final display.",
-      "notes": "Multi-tier average rollup (monthly → quarterly) on a score metric. Matches A2 language signals 'We compute NPS per region, then average the regions' and 'we have a weekly average that we roll up into a monthly average'. The 'looks higher than expected' symptom matches the plausibility-masking failure pattern."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our engineering dashboard shows a 99.2% availability rate for last month by averaging the weekly availability percentages for each of our 4 services. My manager says the true availability was closer to 98.7%. Why is my number wrong?",
-      "expected_behavior": "Invoke decompose-averages-sum-count. Averaging pre-computed availability rates (a ratio metric) across services with different request volumes produces an inflated result. Fix: store sum_uptime_seconds and total_seconds (or sum_up_checks and total_checks) per service per week; compute the overall rate only at the final step.",
-      "notes": "Error rate / availability rate is explicitly listed as a ratio metric category in the skill (error rate = SUM(errors)/COUNT(requests)). The symptom is a discrepancy between the rolled-up number and the true value. Matches A2 scenario directly."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "I'm designing a pipeline that calculates average handle time for our support team. We'll have a daily summary table with avg_handle_time per agent per day, then a weekly rollup, then a monthly dashboard. Should I store the average in each summary table?",
-      "expected_behavior": "Invoke decompose-averages-sum-count. This is pipeline design time — exactly the right moment to apply the rule. The user is about to store a pre-divided average in an intermediate summary table that will be further aggregated. Prescribe storing sum_handle_seconds and count_tickets at every tier; divide only at the dashboard display layer.",
-      "notes": "Design-time question about a multi-tier pipeline — the ideal intervention point. 'Average handle time' is listed as a volume-weighted average in A2. The user is explicitly asking whether to store the average, which is the exact wrong thing to do."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We have a store-level average order value already in our store_summary table. When I roll it up to a regional level by running AVG(avg_order_value) across stores in the region, my AOV numbers seem inflated compared to a direct calculation from transactions. The stores have very different order volumes.",
-      "expected_behavior": "Invoke decompose-averages-sum-count. This is the canonical ce03 example: AVG(avg_order_value) on a store summary table produces a wrong result when store sizes differ. Diagnose the decomposability violation and prescribe the fix: sum_order_value and order_count in the store_summary table, with SUM(sum_order_value)/SUM(order_count) at the regional level.",
-      "notes": "Directly parallels the book's retail AOV counter-example. 'Seem inflated' is the plausibility-masking warning. 'Different order volumes' confirms unequal group sizes. Matches A2 language signal 'Our AOV rollup looks higher than the raw transaction data suggests'."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "I need to aggregate total revenue across all our regional sales tables into a company-wide total for the annual report. Each regional table has a revenue column. How do I make sure the rollup is correct?",
-      "expected_behavior": "Should NOT invoke decompose-averages-sum-count. Revenue is an additive measure — SUM(revenue) rolls up correctly across regions without decomposition. The B section explicitly says this skill does not apply to additive measures. A general aggregation question about a SUM.",
-      "notes": "B section: 'Do not use this skill for additive measures. SUM(total_revenue) across stores correctly produces company-wide revenue.' The decoy works because it involves a rollup across groups — superficially similar to the AOV problem — but the metric is additive, not a ratio."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "We need a count of distinct customers who made at least one purchase per month, then roll that up to a quarterly distinct-customer count. I know COUNT DISTINCT doesn't work the way COUNT does — the monthly distinct counts don't add up to the quarterly count.",
-      "expected_behavior": "Should NOT invoke decompose-averages-sum-count. COUNT DISTINCT is a non-decomposable aggregation, but it is a different problem than averaging averages. This skill covers AVERAGE (ratio metric) decomposition via SUM + COUNT. COUNT DISTINCT requires either returning to atomic data, using HyperLogLog approximations, or redesigning the grain. The skill explicitly calls out COUNT DISTINCT as a different problem (HyperLogLog is mentioned in the B section but not prescribed).",
-      "notes": "Tricky decoy: the user correctly identifies that an aggregation doesn't work the way expected across tiers — the same symptom as the average-of-averages problem. But COUNT DISTINCT non-decomposability is a structurally different issue that this skill does not address. B section mentions HyperLogLog as an approximation outside this skill's scope."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "We have five regional teams all the same size — each handles exactly 200 support tickets per month. Our data team averages the five regional CSAT scores to get a company-wide CSAT. Is this pipeline design correct?",
-      "expected_behavior": "Genuinely ambiguous. The B section explicitly states: 'There is exactly one condition under which averaging pre-computed averages produces a correct result: all groups have identical sizes.' With equal group sizes (200 tickets each), averaging the regional CSAT scores is mathematically correct. However the B section also says: 'Even when group sizes happen to be equal today, they may not be equal next month... The correct pipeline design carries SUM and COUNT regardless.' Judgment: the skill SHOULD still be invoked — the equal-size case is called out specifically as the boundary exception, and the skill's prescription (carry SUM and COUNT anyway) still applies as best practice. The answer is 'technically correct today, but redesign the pipeline to be robust.'",
-      "notes": "This tests knowledge of the B section boundary exception. Equal group sizes are the single safe case for averaging averages. The edge is whether to invoke the skill when the current design is technically correct. Judgment: invoke the skill and explain the boundary condition, prescribing the SUM+COUNT approach as future-proof regardless."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. All should_not_triggers must pass (decoy tolerance is 0). Decoy 01 tests additive-measure exclusion (SUM of revenue). Decoy 02 tests COUNT DISTINCT confusion (different non-decomposability problem, not covered by this skill)."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We pre-compute NPS per country each month and store it in a summary table. At the end of the quarter our data team averages the three monthly NPS scores to get a quarterly NPS. But the quarterly number looks higher than I'd expect. What's going on?",
+    "expected": "Invoke decompose-averages-sum-count. This is an average-of-averages on a ratio metric (NPS). Monthly response volumes differ, so averaging three monthly NPS scores gives equal weight to low-response months. Fix: store sum_net_score and count_respondents at each tier; compute division only at final display.",
+    "notes": "Multi-tier average rollup (monthly → quarterly) on a score metric. Matches A2 language signals 'We compute NPS per region, then average the regions' and 'we have a weekly average that we roll up into a monthly average'. The 'looks higher than expected' symptom matches the plausibility-masking failure pattern.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our engineering dashboard shows a 99.2% availability rate for last month by averaging the weekly availability percentages for each of our 4 services. My manager says the true availability was closer to 98.7%. Why is my number wrong?",
+    "expected": "Invoke decompose-averages-sum-count. Averaging pre-computed availability rates (a ratio metric) across services with different request volumes produces an inflated result. Fix: store sum_uptime_seconds and total_seconds (or sum_up_checks and total_checks) per service per week; compute the overall rate only at the final step.",
+    "notes": "Error rate / availability rate is explicitly listed as a ratio metric category in the skill (error rate = SUM(errors)/COUNT(requests)). The symptom is a discrepancy between the rolled-up number and the true value. Matches A2 scenario directly.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm designing a pipeline that calculates average handle time for our support team. We'll have a daily summary table with avg_handle_time per agent per day, then a weekly rollup, then a monthly dashboard. Should I store the average in each summary table?",
+    "expected": "Invoke decompose-averages-sum-count. This is pipeline design time — exactly the right moment to apply the rule. The user is about to store a pre-divided average in an intermediate summary table that will be further aggregated. Prescribe storing sum_handle_seconds and count_tickets at every tier; divide only at the dashboard display layer.",
+    "notes": "Design-time question about a multi-tier pipeline — the ideal intervention point. 'Average handle time' is listed as a volume-weighted average in A2. The user is explicitly asking whether to store the average, which is the exact wrong thing to do.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We have a store-level average order value already in our store_summary table. When I roll it up to a regional level by running AVG(avg_order_value) across stores in the region, my AOV numbers seem inflated compared to a direct calculation from transactions. The stores have very different order volumes.",
+    "expected": "Invoke decompose-averages-sum-count. This is the canonical ce03 example: AVG(avg_order_value) on a store summary table produces a wrong result when store sizes differ. Diagnose the decomposability violation and prescribe the fix: sum_order_value and order_count in the store_summary table, with SUM(sum_order_value)/SUM(order_count) at the regional level.",
+    "notes": "Directly parallels the book's retail AOV counter-example. 'Seem inflated' is the plausibility-masking warning. 'Different order volumes' confirms unequal group sizes. Matches A2 language signal 'Our AOV rollup looks higher than the raw transaction data suggests'.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I need to aggregate total revenue across all our regional sales tables into a company-wide total for the annual report. Each regional table has a revenue column. How do I make sure the rollup is correct?",
+    "expected": "Should NOT invoke decompose-averages-sum-count. Revenue is an additive measure — SUM(revenue) rolls up correctly across regions without decomposition. The B section explicitly says this skill does not apply to additive measures. A general aggregation question about a SUM.",
+    "notes": "B section: 'Do not use this skill for additive measures. SUM(total_revenue) across stores correctly produces company-wide revenue.' The decoy works because it involves a rollup across groups — superficially similar to the AOV problem — but the metric is additive, not a ratio.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We need a count of distinct customers who made at least one purchase per month, then roll that up to a quarterly distinct-customer count. I know COUNT DISTINCT doesn't work the way COUNT does — the monthly distinct counts don't add up to the quarterly count.",
+    "expected": "Should NOT invoke decompose-averages-sum-count. COUNT DISTINCT is a non-decomposable aggregation, but it is a different problem than averaging averages. This skill covers AVERAGE (ratio metric) decomposition via SUM + COUNT. COUNT DISTINCT requires either returning to atomic data, using HyperLogLog approximations, or redesigning the grain. The skill explicitly calls out COUNT DISTINCT as a different problem (HyperLogLog is mentioned in the B section but not prescribed).",
+    "notes": "Tricky decoy: the user correctly identifies that an aggregation doesn't work the way expected across tiers — the same symptom as the average-of-averages problem. But COUNT DISTINCT non-decomposability is a structurally different issue that this skill does not address. B section mentions HyperLogLog as an approximation outside this skill's scope.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We have five regional teams all the same size — each handles exactly 200 support tickets per month. Our data team averages the five regional CSAT scores to get a company-wide CSAT. Is this pipeline design correct?",
+    "expected": "Genuinely ambiguous. The B section explicitly states: 'There is exactly one condition under which averaging pre-computed averages produces a correct result: all groups have identical sizes.' With equal group sizes (200 tickets each), averaging the regional CSAT scores is mathematically correct. However the B section also says: 'Even when group sizes happen to be equal today, they may not be equal next month... The correct pipeline design carries SUM and COUNT regardless.' Judgment: the skill SHOULD still be invoked — the equal-size case is called out specifically as the boundary exception, and the skill's prescription (carry SUM and COUNT anyway) still applies as best practice. The answer is 'technically correct today, but redesign the pipeline to be robust.'",
+    "notes": "This tests knowledge of the B section boundary exception. Equal group sizes are the single safe case for averaging averages. The edge is whether to invoke the skill when the current design is technically correct. Judgment: invoke the skill and explain the boundary condition, prescribing the SUM+COUNT approach as future-proof regardless.; source id: edge-case-01"
+  }
+]

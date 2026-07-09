@@ -1,87 +1,79 @@
-{
-  "skill": "cli-secret-handling",
-  "version": "0.1.0",
-  "source_book": "Command Line Interface Guidelines — Prasad, Firshman, Tashian, Parish",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I'm adding authentication to my CLI. It needs to send an API key to our backend on every request. Should I add a --api-key flag?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should explain that a direct-value --api-key flag exposes the secret in ps output and shell history. It should recommend removing the flag and replacing it with --api-key-file PATH, where the process reads the file internally, so only the path (not the secret) appears in ps.",
-      "notes": "Direct hit on KEY TRIGGER SIGNAL '--api-key flag'. Classic secret via flag anti-pattern."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Is it safe to store my CLI's database password in the MYAPP_DB_PASSWORD environment variable? That way I don't have to pass it as a flag every time.",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should explain that while env vars avoid the ps leak of flags, they are still insecure: they are inherited by all child processes, visible via docker inspect, exposed by systemctl show, and can appear in subprocess logs. Both flags and env vars are insecure for secrets. The correct alternative is --password-file.",
-      "notes": "Matches KEY TRIGGER SIGNAL 'env var for credentials' and 'is it safe to use an environment variable'. Tests ce01 counter-example."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "A developer on my team wrote this in a deploy script: `mycli deploy --token $(cat ~/.secrets/deploy_token)`. Is this approach safe?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should identify this as the $(< file) anti-pattern (ce02): the shell expands the substitution before exec, so the plaintext token becomes the process argument and is visible in ps. This provides no security improvement over --token s3cr3t. The correct fix is --token-file ~/.secrets/deploy_token.",
-      "notes": "Matches language signal 'Should I use --password $(cat ...)?'. Tests the shell-substitution false-safety anti-pattern."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "I'm deploying my CLI tool as a Docker container. The container needs an OAuth token to call external APIs. How should I pass the token to the container at runtime?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should explain that Docker environment variables are visible via `docker inspect` to anyone with Docker daemon access. It should recommend using Docker secrets (mounted as files at /run/secrets/), and having the CLI read the token via --token-file /run/secrets/oauth_token.",
-      "notes": "Matches A2 trigger scenario 5: Docker deployment credentials. Tests docker inspect threat vector."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "My CLI needs to authenticate with a remote service. What's the right way for it to accept credentials?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should provide the full secure-alternatives menu: --password-file / --token-file flag (most universally deployable), stdin pipe (--token-stdin), AF_UNIX socket, or secret management service integration. It should explain why flags and env vars are insecure, making --token-file the canonical recommendation.",
-      "notes": "Matches KEY TRIGGER SIGNAL 'how should my CLI accept credentials?' — the open-ended secure-credential-input design question."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "My CLI needs to know the API endpoint URL — something like https://api.example.com. Should I use an environment variable like MYAPP_API_URL or a --base-url flag?",
-      "expected_behavior": "Do NOT invoke cli-secret-handling. An API endpoint URL is not a secret — it is non-sensitive configuration. The skill's description explicitly excludes 'API endpoint URLs, AWS regions, feature flags, log levels, and timeouts' as non-secrets where environment variables are appropriate. The correct skill is cli-configuration-hierarchy.",
-      "notes": "Lure: mentions environment variable and a CLI config value, but the URL is not a secret. cli-secret-handling explicitly excludes non-secret configuration."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "My Kubernetes deployment injects a DATABASE_URL secret into the pod as an environment variable via a Kubernetes Secret manifest. My CLI reads os.Getenv(\"DATABASE_URL\") at startup. Is this setup OK?",
-      "expected_behavior": "Do NOT invoke cli-secret-handling. The skill's boundary explicitly states: 'Do not call when the environment variable is injected by a secrets manager (Vault, AWS Secrets Manager, Kubernetes Secrets) and never appears directly in shell substitutions or process arguments — that threat model is managed by the secrets manager.' Kubernetes Secrets managing the injection is the boundary case for this exclusion.",
-      "notes": "Boundary case exclusion: Kubernetes Secrets injection is explicitly excluded from cli-secret-handling's scope. The secrets manager is the security boundary."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "I want to rename my --token flag to --auth-token in the next release. What's the right way to do that without breaking existing scripts?",
-      "expected_behavior": "Do NOT invoke cli-secret-handling. Despite mentioning a --token flag, the question is about backward compatibility and safe flag renaming — that is cli-interface-stability territory. The security properties of the flag value are not in question; the concern is the deprecation process.",
-      "notes": "Lure from adjacent skill: --token flag sounds like a secret-handling question but the actual concern is renaming a stable interface surface, which is cli-interface-stability."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "My CI pipeline needs to pass a GitHub token to my CLI. The token is already in a CI environment variable GITHUB_TOKEN set by the CI provider (GitHub Actions). Should I read it from the env var directly in my CLI code?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should reason carefully: the CI provider injecting the env var is not the same as a secrets manager with a managed injection boundary. GITHUB_TOKEN in CI env is still vulnerable to subprocess inheritance and logging. The agent should recommend that the CLI accept --token-file as its canonical interface, and the CI pipeline write the token to a temp file and pass the path — or use --token-stdin piped from a secure source. The agent should acknowledge this is a practical trade-off many teams accept but explain the residual risk.",
-      "notes": "Edge case: CI-injected env vars are common practice but not the same as Vault/K8s Secrets injection. Tests the boundary between 'CI env var' and 'secrets manager injection'."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "I want my CLI to prompt the user interactively for their password if no --password-file is provided, using a masked input (like sudo does). Is interactive prompting a secure approach?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should confirm that TTY-based interactive prompting (getpass / stty -echo) is secure — the value is never placed in a process argument or env var. However, the agent should note the skill's limitation: interactive prompts are not suitable for automation contexts. The canonical recommendation remains --token-file for automation; interactive prompting is an acceptable supplement for human interactive sessions.",
-      "notes": "Edge case: interactive TTY prompting is listed as secure in the B section but 'not suitable for automation'. Tests awareness of this nuance from the author's notes."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "My CLI calls a subprocess (another CLI tool) and needs to pass an API token to it. The subprocess only accepts --token as a flag. How do I pass the secret securely from my process to the subprocess?",
-      "expected_behavior": "Invoke cli-secret-handling. The agent should recognize this as the subprocess-propagation problem: if the child CLI only accepts --token, passing the value as an argument will expose it in ps. The agent should recommend: (1) checking whether the child CLI supports --token-file or --token-stdin; (2) if not, using a temporary file with tight permissions written by the parent and cleaned up after; (3) noting that AF_UNIX socket or environment-variable injection without shell substitution are options but have the inheritance risk. This is a hard problem when the child CLI's interface is fixed.",
-      "notes": "Edge case: the secret-handling problem when the consuming CLI does not support --token-file. Tests reasoning beyond the standard recommendation when the interface is external and fixed."
-    }
-  ],
-  "minimum_pass_rate": 0.85,
-  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm adding authentication to my CLI. It needs to send an API key to our backend on every request. Should I add a --api-key flag?",
+    "expected": "Invoke cli-secret-handling. The agent should explain that a direct-value --api-key flag exposes the secret in ps output and shell history. It should recommend removing the flag and replacing it with --api-key-file PATH, where the process reads the file internally, so only the path (not the secret) appears in ps.",
+    "notes": "Direct hit on KEY TRIGGER SIGNAL '--api-key flag'. Classic secret via flag anti-pattern.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Is it safe to store my CLI's database password in the MYAPP_DB_PASSWORD environment variable? That way I don't have to pass it as a flag every time.",
+    "expected": "Invoke cli-secret-handling. The agent should explain that while env vars avoid the ps leak of flags, they are still insecure: they are inherited by all child processes, visible via docker inspect, exposed by systemctl show, and can appear in subprocess logs. Both flags and env vars are insecure for secrets. The correct alternative is --password-file.",
+    "notes": "Matches KEY TRIGGER SIGNAL 'env var for credentials' and 'is it safe to use an environment variable'. Tests ce01 counter-example.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "A developer on my team wrote this in a deploy script: `mycli deploy --token $(cat ~/.secrets/deploy_token)`. Is this approach safe?",
+    "expected": "Invoke cli-secret-handling. The agent should identify this as the $(\u003c file) anti-pattern (ce02): the shell expands the substitution before exec, so the plaintext token becomes the process argument and is visible in ps. This provides no security improvement over --token s3cr3t. The correct fix is --token-file ~/.secrets/deploy_token.",
+    "notes": "Matches language signal 'Should I use --password $(cat ...)?'. Tests the shell-substitution false-safety anti-pattern.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm deploying my CLI tool as a Docker container. The container needs an OAuth token to call external APIs. How should I pass the token to the container at runtime?",
+    "expected": "Invoke cli-secret-handling. The agent should explain that Docker environment variables are visible via `docker inspect` to anyone with Docker daemon access. It should recommend using Docker secrets (mounted as files at /run/secrets/), and having the CLI read the token via --token-file /run/secrets/oauth_token.",
+    "notes": "Matches A2 trigger scenario 5: Docker deployment credentials. Tests docker inspect threat vector.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "My CLI needs to authenticate with a remote service. What's the right way for it to accept credentials?",
+    "expected": "Invoke cli-secret-handling. The agent should provide the full secure-alternatives menu: --password-file / --token-file flag (most universally deployable), stdin pipe (--token-stdin), AF_UNIX socket, or secret management service integration. It should explain why flags and env vars are insecure, making --token-file the canonical recommendation.",
+    "notes": "Matches KEY TRIGGER SIGNAL 'how should my CLI accept credentials?' — the open-ended secure-credential-input design question.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My CLI needs to know the API endpoint URL — something like https://api.example.com. Should I use an environment variable like MYAPP_API_URL or a --base-url flag?",
+    "expected": "Do NOT invoke cli-secret-handling. An API endpoint URL is not a secret — it is non-sensitive configuration. The skill's description explicitly excludes 'API endpoint URLs, AWS regions, feature flags, log levels, and timeouts' as non-secrets where environment variables are appropriate. The correct skill is cli-configuration-hierarchy.",
+    "notes": "Lure: mentions environment variable and a CLI config value, but the URL is not a secret. cli-secret-handling explicitly excludes non-secret configuration.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "My Kubernetes deployment injects a DATABASE_URL secret into the pod as an environment variable via a Kubernetes Secret manifest. My CLI reads os.Getenv(\"DATABASE_URL\") at startup. Is this setup OK?",
+    "expected": "Do NOT invoke cli-secret-handling. The skill's boundary explicitly states: 'Do not call when the environment variable is injected by a secrets manager (Vault, AWS Secrets Manager, Kubernetes Secrets) and never appears directly in shell substitutions or process arguments — that threat model is managed by the secrets manager.' Kubernetes Secrets managing the injection is the boundary case for this exclusion.",
+    "notes": "Boundary case exclusion: Kubernetes Secrets injection is explicitly excluded from cli-secret-handling's scope. The secrets manager is the security boundary.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I want to rename my --token flag to --auth-token in the next release. What's the right way to do that without breaking existing scripts?",
+    "expected": "Do NOT invoke cli-secret-handling. Despite mentioning a --token flag, the question is about backward compatibility and safe flag renaming — that is cli-interface-stability territory. The security properties of the flag value are not in question; the concern is the deprecation process.",
+    "notes": "Lure from adjacent skill: --token flag sounds like a secret-handling question but the actual concern is renaming a stable interface surface, which is cli-interface-stability.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My CI pipeline needs to pass a GitHub token to my CLI. The token is already in a CI environment variable GITHUB_TOKEN set by the CI provider (GitHub Actions). Should I read it from the env var directly in my CLI code?",
+    "expected": "Invoke cli-secret-handling. The agent should reason carefully: the CI provider injecting the env var is not the same as a secrets manager with a managed injection boundary. GITHUB_TOKEN in CI env is still vulnerable to subprocess inheritance and logging. The agent should recommend that the CLI accept --token-file as its canonical interface, and the CI pipeline write the token to a temp file and pass the path — or use --token-stdin piped from a secure source. The agent should acknowledge this is a practical trade-off many teams accept but explain the residual risk.",
+    "notes": "Edge case: CI-injected env vars are common practice but not the same as Vault/K8s Secrets injection. Tests the boundary between 'CI env var' and 'secrets manager injection'.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I want my CLI to prompt the user interactively for their password if no --password-file is provided, using a masked input (like sudo does). Is interactive prompting a secure approach?",
+    "expected": "Invoke cli-secret-handling. The agent should confirm that TTY-based interactive prompting (getpass / stty -echo) is secure — the value is never placed in a process argument or env var. However, the agent should note the skill's limitation: interactive prompts are not suitable for automation contexts. The canonical recommendation remains --token-file for automation; interactive prompting is an acceptable supplement for human interactive sessions.",
+    "notes": "Edge case: interactive TTY prompting is listed as secure in the B section but 'not suitable for automation'. Tests awareness of this nuance from the author's notes.; source id: edge-case-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My CLI calls a subprocess (another CLI tool) and needs to pass an API token to it. The subprocess only accepts --token as a flag. How do I pass the secret securely from my process to the subprocess?",
+    "expected": "Invoke cli-secret-handling. The agent should recognize this as the subprocess-propagation problem: if the child CLI only accepts --token, passing the value as an argument will expose it in ps. The agent should recommend: (1) checking whether the child CLI supports --token-file or --token-stdin; (2) if not, using a temporary file with tight permissions written by the parent and cleaned up after; (3) noting that AF_UNIX socket or environment-variable injection without shell substitution are options but have the inheritance risk. This is a hard problem when the child CLI's interface is fixed.",
+    "notes": "Edge case: the secret-handling problem when the consuming CLI does not support --token-file. Tests reasoning beyond the standard recommendation when the interface is external and fixed.; source id: edge-case-03"
+  }
+]

@@ -1,76 +1,72 @@
-{
-  "skill": "welc-legacy-code-change-algorithm",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-invoke-01",
-      "type": "should_invoke",
-      "prompt": "I need to add a billing feature to a 5,000-line PaymentProcessor class with zero tests. Every method is tangled together and there's a database connection hardcoded in the constructor. Where do I even start?",
-      "expected_behavior": "Invokes the legacy code change algorithm. Applies Step 1: identify the specific methods in PaymentProcessor that must change to implement billing. Step 2: trace outward from those methods to find where their effects can be observed from test code. Step 3: diagnose the constructor database dependency as a separation problem and prescribe a minimum-viable break (Parameterize Constructor or Extract Interface on the DB connection). Step 4: write characterization tests at the test points before touching the billing logic. Step 5: implement billing. Does NOT recommend rewriting the class or covering the entire class with tests first.",
-      "notes": "Canonical positive case — exactly the scenario in the skill's V2 predictive power evidence. Tests that the algorithm is applied in order and that Step 3 is scoped to the test points from Step 2, not the whole class."
-    },
-    {
-      "id": "should-invoke-02",
-      "type": "should_invoke",
-      "prompt": "There's a bug in our legacy OrderRouter class that miscalculates shipping costs for international addresses. The class has no tests at all. I need to fix the bug but I'm terrified of breaking the domestic shipping logic, which is currently working fine.",
-      "expected_behavior": "Invokes the legacy code change algorithm. Step 1: identify the specific method(s) that compute shipping cost for international addresses. Step 2: find test points — where can the shipping cost calculation be observed from test code (return values, downstream parameters). Step 3: break only the dependencies blocking those test points (e.g., extract interface for address lookup service, parameterize any infrastructure). Step 4: write characterization tests pinning the current domestic shipping behavior BEFORE touching anything; write a failing test for the correct international behavior. Step 5: fix the bug. Warns that Step 4's characterization tests may accidentally pin the international bug as 'expected' — the team must consciously decide to fix rather than pin that specific behavior.",
-      "notes": "Bug fix scenario in untested code. Tests that the algorithm handles the fear-of-regression case explicitly, and that the characterization test subtlety (potentially pinning bugs) is surfaced."
-    },
-    {
-      "id": "should-invoke-03",
-      "type": "should_invoke",
-      "prompt": "Our team inherited a Java monolith from a team that left the company. It has about 80,000 lines of code and maybe 20 tests total, all integration tests that hit a real database and take 15 minutes to run. We need to add a new reporting feature. What's our process?",
-      "expected_behavior": "Invokes the legacy code change algorithm. Frames the 20 slow scenario tests as analogous to the financial industry case from the Preface — they exist but give insufficient, slow feedback because dependency-breaking was never applied. Applies the algorithm to the reporting feature specifically: Step 1 identifies the change points for the new report; Step 2 finds the nearest test points (not the full database round-trip); Step 3 breaks only the dependencies blocking those test points; Step 4 writes fast characterization tests plus the new feature test; Step 5 implements the report. Explicitly does NOT recommend 'cover the whole monolith first' — scopes the work to the specific change.",
-      "notes": "Inherited codebase scenario with scenario-only test suite — mirrors the financial team case from the Preface. Tests that the algorithm scopes work to the specific change rather than prescribing a full-codebase test remediation project."
-    },
-    {
-      "id": "should-invoke-04",
-      "type": "should_invoke",
-      "prompt": "I need to refactor a 300-line ReportGenerator class to separate its data-fetching logic from its formatting logic. Right now they're interleaved. There are no tests. How do I do this safely?",
-      "expected_behavior": "Invokes the legacy code change algorithm. Applies the algorithm with Step 1: the change points are the interleaved data-fetch and format logic throughout ReportGenerator. Step 2: find test points — what does ReportGenerator produce that can be observed (final output string, return value)? Step 3: break dependencies blocking instantiation or observation of the output. Step 4: write characterization tests that pin the existing report output before any structural change is made. Step 5: perform the separation refactoring — the characterization tests catch any deviation from the pinned output. Notes that WITHOUT Step 4, this refactoring is Edit and Pray regardless of how carefully it is executed.",
-      "notes": "Refactoring scenario — demonstrates that refactoring untested code is still dangerous without the algorithm, and that Step 4's characterization tests are the enabling condition for safe structural change."
-    },
-    {
-      "id": "should-not-invoke-01",
-      "type": "should_not_invoke",
-      "prompt": "I'm starting a new microservice from scratch to handle user notifications. Should I use TDD? What testing framework would you recommend for Go?",
-      "expected_behavior": "Greenfield new code question — no legacy context, no existing untested code. Should not invoke the legacy code change algorithm. Answer with standard TDD guidance and Go testing framework recommendations (testing package, testify, etc.). The algorithm's dependency-breaking steps and characterization test approach are irrelevant here.",
-      "notes": "Pure greenfield scenario. No legacy code. The algorithm's prerequisite — existing untested code — is absent."
-    },
-    {
-      "id": "should-not-invoke-02",
-      "type": "should_not_invoke",
-      "prompt": "I have a Go function that calculates order discounts and it's already covered by 15 table-driven tests. I want to add support for a new discount type. How should I structure the new test case?",
-      "expected_behavior": "The function already has comprehensive tests around the change area. Should not invoke the legacy code change algorithm. Answer with standard TDD guidance for adding a new test case to an existing well-tested function — add a new row to the table-driven test, write it failing, implement the discount type, make it pass. The dependency-breaking and characterization test phases of the algorithm are unnecessary.",
-      "notes": "Well-tested code scenario — the algorithm's premise (no tests) is absent. Tests that the skill doesn't over-apply when tests already exist."
-    },
-    {
-      "id": "should-not-invoke-03",
-      "type": "should_not_invoke",
-      "prompt": "I've already identified that I need to break the dependency on a database connection in a class I'm trying to test. The class takes DBConnection directly. What seam types are available to me, and which one should I use?",
-      "expected_behavior": "The user has already applied Steps 1 and 2, knows they are in Step 3, and is asking specifically HOW to break this dependency — which seam type and technique to use. Should invoke welc-seam-model or welc-sensing-vs-separation rather than the full change algorithm. The algorithm's sequencing guidance is not needed; the user is already at the right step and needs execution guidance.",
-      "notes": "User is already inside Step 3 and needs seam-specific guidance, not the algorithm overview. Tests that the skill recognizes when adjacent skills are more appropriate."
-    },
-    {
-      "id": "blurred-boundary-01",
-      "type": "blurred_boundary",
-      "prompt": "We've been sprouting new methods onto our legacy UserService for the past six months. We have good test coverage on all the sprouted methods, but the original 400-line class body still has no tests. Is this a problem? Should we keep sprouting?",
-      "expected_behavior": "This is the permanent-sprout anti-pattern described in the B section. Should invoke the legacy code change algorithm to explain why this pattern is a warning sign: sprouting is a legitimate acceleration for individual change episodes, but using it permanently creates a codebase with islands of tested sprouts surrounding an ever-growing untested core. The algorithm is the intended path forward for eventually getting the original class body under test. Recommend applying Steps 1–4 to the original class body incrementally, one change at a time, rather than continuing to sprout indefinitely. The six months of sprouting is not wasted — it has bought time — but a plan is needed to bring the original code under test.",
-      "notes": "Boundary case — the user is using a legitimate WELC technique (Sprout Method) but in the permanent-substitute pattern that the B section explicitly warns against. Tests whether the skill recognizes the anti-pattern and routes to the full algorithm."
-    },
-    {
-      "id": "blurred-boundary-02",
-      "type": "blurred_boundary",
-      "prompt": "I want to write tests for our entire legacy codebase before we start making any changes this quarter. We have about 200 classes with no tests. Is there a systematic way to do this?",
-      "expected_behavior": "This plan skips Steps 1–2 of the algorithm and jumps directly to 'write tests for everything' — the pattern Feathers warns against (writing tests for untouched code, producing characterization suites that pin accidental behavior across the whole codebase without scoping to change points). Should invoke the legacy code change algorithm and explain that testing the whole codebase without first identifying change points is expensive and counterproductive. The correct approach: apply the algorithm change-by-change — each time a change is needed, run Steps 1–4 for that specific change. Over time, the areas of the codebase that change most often accumulate the most coverage, which is exactly where coverage is most valuable. A blanket pre-coverage project is not wrong, but it is likely to produce tests for rarely-changed code while the actually-changing code still lacks targeted tests.",
-      "notes": "The user's intent is good (get tests in place) but the plan skips Step 1 — scoping to change points — and inverts the algorithm's logic. This tests whether the skill corrects the 'cover everything first' failure pattern from the B section."
-    },
-    {
-      "id": "blurred-boundary-03",
-      "type": "blurred_boundary",
-      "prompt": "I need to change a class but I can't figure out how it works. I've been reading it for two hours and still don't understand what all these methods do. I know I need to add tests before touching it, but I don't even know where to start.",
-      "expected_behavior": "This is a Step 1 precondition failure — the user cannot identify change points because the code is not yet understood. Should invoke the legacy code change algorithm to explain that understanding is a prerequisite for Step 1, then route to welc-scratch-refactoring as the recommended technique for building understanding when reading alone is insufficient. Scratch refactoring (Chapter 16): check out the code, extract every method, rename variables, reorganize the class however makes sense — spend an hour, then discard the branch. The mental model built from scratch refactoring enables Step 1 to be applied to the original. This is not a detour around the algorithm; it is a prerequisite that Feathers addresses in Chapter 16 precisely because Step 1 assumes some level of code understanding.",
-      "notes": "The user is blocked BEFORE Step 1 because they cannot yet identify change points. Tests whether the skill recognizes the understanding-as-prerequisite case and routes to scratch-refactoring before returning to the algorithm."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I need to add a billing feature to a 5,000-line PaymentProcessor class with zero tests. Every method is tangled together and there's a database connection hardcoded in the constructor. Where do I even start?",
+    "expected": "Invokes the legacy code change algorithm. Applies Step 1: identify the specific methods in PaymentProcessor that must change to implement billing. Step 2: trace outward from those methods to find where their effects can be observed from test code. Step 3: diagnose the constructor database dependency as a separation problem and prescribe a minimum-viable break (Parameterize Constructor or Extract Interface on the DB connection). Step 4: write characterization tests at the test points before touching the billing logic. Step 5: implement billing. Does NOT recommend rewriting the class or covering the entire class with tests first.",
+    "notes": "Canonical positive case — exactly the scenario in the skill's V2 predictive power evidence. Tests that the algorithm is applied in order and that Step 3 is scoped to the test points from Step 2, not the whole class.; source id: should-invoke-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "There's a bug in our legacy OrderRouter class that miscalculates shipping costs for international addresses. The class has no tests at all. I need to fix the bug but I'm terrified of breaking the domestic shipping logic, which is currently working fine.",
+    "expected": "Invokes the legacy code change algorithm. Step 1: identify the specific method(s) that compute shipping cost for international addresses. Step 2: find test points — where can the shipping cost calculation be observed from test code (return values, downstream parameters). Step 3: break only the dependencies blocking those test points (e.g., extract interface for address lookup service, parameterize any infrastructure). Step 4: write characterization tests pinning the current domestic shipping behavior BEFORE touching anything; write a failing test for the correct international behavior. Step 5: fix the bug. Warns that Step 4's characterization tests may accidentally pin the international bug as 'expected' — the team must consciously decide to fix rather than pin that specific behavior.",
+    "notes": "Bug fix scenario in untested code. Tests that the algorithm handles the fear-of-regression case explicitly, and that the characterization test subtlety (potentially pinning bugs) is surfaced.; source id: should-invoke-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our team inherited a Java monolith from a team that left the company. It has about 80,000 lines of code and maybe 20 tests total, all integration tests that hit a real database and take 15 minutes to run. We need to add a new reporting feature. What's our process?",
+    "expected": "Invokes the legacy code change algorithm. Frames the 20 slow scenario tests as analogous to the financial industry case from the Preface — they exist but give insufficient, slow feedback because dependency-breaking was never applied. Applies the algorithm to the reporting feature specifically: Step 1 identifies the change points for the new report; Step 2 finds the nearest test points (not the full database round-trip); Step 3 breaks only the dependencies blocking those test points; Step 4 writes fast characterization tests plus the new feature test; Step 5 implements the report. Explicitly does NOT recommend 'cover the whole monolith first' — scopes the work to the specific change.",
+    "notes": "Inherited codebase scenario with scenario-only test suite — mirrors the financial team case from the Preface. Tests that the algorithm scopes work to the specific change rather than prescribing a full-codebase test remediation project.; source id: should-invoke-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I need to refactor a 300-line ReportGenerator class to separate its data-fetching logic from its formatting logic. Right now they're interleaved. There are no tests. How do I do this safely?",
+    "expected": "Invokes the legacy code change algorithm. Applies the algorithm with Step 1: the change points are the interleaved data-fetch and format logic throughout ReportGenerator. Step 2: find test points — what does ReportGenerator produce that can be observed (final output string, return value)? Step 3: break dependencies blocking instantiation or observation of the output. Step 4: write characterization tests that pin the existing report output before any structural change is made. Step 5: perform the separation refactoring — the characterization tests catch any deviation from the pinned output. Notes that WITHOUT Step 4, this refactoring is Edit and Pray regardless of how carefully it is executed.",
+    "notes": "Refactoring scenario — demonstrates that refactoring untested code is still dangerous without the algorithm, and that Step 4's characterization tests are the enabling condition for safe structural change.; source id: should-invoke-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I'm starting a new microservice from scratch to handle user notifications. Should I use TDD? What testing framework would you recommend for Go?",
+    "expected": "Greenfield new code question — no legacy context, no existing untested code. Should not invoke the legacy code change algorithm. Answer with standard TDD guidance and Go testing framework recommendations (testing package, testify, etc.). The algorithm's dependency-breaking steps and characterization test approach are irrelevant here.",
+    "notes": "Pure greenfield scenario. No legacy code. The algorithm's prerequisite — existing untested code — is absent.; source id: should-not-invoke-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I have a Go function that calculates order discounts and it's already covered by 15 table-driven tests. I want to add support for a new discount type. How should I structure the new test case?",
+    "expected": "The function already has comprehensive tests around the change area. Should not invoke the legacy code change algorithm. Answer with standard TDD guidance for adding a new test case to an existing well-tested function — add a new row to the table-driven test, write it failing, implement the discount type, make it pass. The dependency-breaking and characterization test phases of the algorithm are unnecessary.",
+    "notes": "Well-tested code scenario — the algorithm's premise (no tests) is absent. Tests that the skill doesn't over-apply when tests already exist.; source id: should-not-invoke-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I've already identified that I need to break the dependency on a database connection in a class I'm trying to test. The class takes DBConnection directly. What seam types are available to me, and which one should I use?",
+    "expected": "The user has already applied Steps 1 and 2, knows they are in Step 3, and is asking specifically HOW to break this dependency — which seam type and technique to use. Should invoke welc-seam-model or welc-sensing-vs-separation rather than the full change algorithm. The algorithm's sequencing guidance is not needed; the user is already at the right step and needs execution guidance.",
+    "notes": "User is already inside Step 3 and needs seam-specific guidance, not the algorithm overview. Tests that the skill recognizes when adjacent skills are more appropriate.; source id: should-not-invoke-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We've been sprouting new methods onto our legacy UserService for the past six months. We have good test coverage on all the sprouted methods, but the original 400-line class body still has no tests. Is this a problem? Should we keep sprouting?",
+    "expected": "This is the permanent-sprout anti-pattern described in the B section. Should invoke the legacy code change algorithm to explain why this pattern is a warning sign: sprouting is a legitimate acceleration for individual change episodes, but using it permanently creates a codebase with islands of tested sprouts surrounding an ever-growing untested core. The algorithm is the intended path forward for eventually getting the original class body under test. Recommend applying Steps 1–4 to the original class body incrementally, one change at a time, rather than continuing to sprout indefinitely. The six months of sprouting is not wasted — it has bought time — but a plan is needed to bring the original code under test.",
+    "notes": "Boundary case — the user is using a legitimate WELC technique (Sprout Method) but in the permanent-substitute pattern that the B section explicitly warns against. Tests whether the skill recognizes the anti-pattern and routes to the full algorithm.; source id: blurred-boundary-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I want to write tests for our entire legacy codebase before we start making any changes this quarter. We have about 200 classes with no tests. Is there a systematic way to do this?",
+    "expected": "This plan skips Steps 1–2 of the algorithm and jumps directly to 'write tests for everything' — the pattern Feathers warns against (writing tests for untouched code, producing characterization suites that pin accidental behavior across the whole codebase without scoping to change points). Should invoke the legacy code change algorithm and explain that testing the whole codebase without first identifying change points is expensive and counterproductive. The correct approach: apply the algorithm change-by-change — each time a change is needed, run Steps 1–4 for that specific change. Over time, the areas of the codebase that change most often accumulate the most coverage, which is exactly where coverage is most valuable. A blanket pre-coverage project is not wrong, but it is likely to produce tests for rarely-changed code while the actually-changing code still lacks targeted tests.",
+    "notes": "The user's intent is good (get tests in place) but the plan skips Step 1 — scoping to change points — and inverts the algorithm's logic. This tests whether the skill corrects the 'cover everything first' failure pattern from the B section.; source id: blurred-boundary-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I need to change a class but I can't figure out how it works. I've been reading it for two hours and still don't understand what all these methods do. I know I need to add tests before touching it, but I don't even know where to start.",
+    "expected": "This is a Step 1 precondition failure — the user cannot identify change points because the code is not yet understood. Should invoke the legacy code change algorithm to explain that understanding is a prerequisite for Step 1, then route to welc-scratch-refactoring as the recommended technique for building understanding when reading alone is insufficient. Scratch refactoring (Chapter 16): check out the code, extract every method, rename variables, reorganize the class however makes sense — spend an hour, then discard the branch. The mental model built from scratch refactoring enables Step 1 to be applied to the original. This is not a detour around the algorithm; it is a prerequisite that Feathers addresses in Chapter 16 precisely because Step 1 assumes some level of code understanding.",
+    "notes": "The user is blocked BEFORE Step 1 because they cannot yet identify change points. Tests whether the skill recognizes the understanding-as-prerequisite case and routes to scratch-refactoring before returning to the algorithm.; source id: blurred-boundary-03"
+  }
+]

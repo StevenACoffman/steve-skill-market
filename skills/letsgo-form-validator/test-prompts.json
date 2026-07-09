@@ -1,50 +1,65 @@
-{
-  "skill_id": "letsgo-form-validator",
-  "prompts": [
-    {
-      "id": "tp-f06-01",
-      "prompt": "How do I pass both validation errors and original input values back to a Go HTML template in a single struct?",
-      "tags": ["data-bundling", "template-data"]
-    },
-    {
-      "id": "tp-f06-02",
-      "prompt": "What is Go struct embedding and how does Edwards use it for form validation in the Snippetbox app?",
-      "tags": ["embedding", "promotion"]
-    },
-    {
-      "id": "tp-f06-03",
-      "prompt": "What HTTP status code should a Go handler return when form validation fails — 400 or 422? Why?",
-      "tags": ["status-codes", "422-vs-400"]
-    },
-    {
-      "id": "tp-f06-04",
-      "prompt": "My Go form handler stores validation errors in a map and re-reads input from r.PostForm for the template. What's wrong with this approach?",
-      "tags": ["anti-pattern", "refactoring"]
-    },
-    {
-      "id": "tp-f06-05",
-      "prompt": "How do I add a non-field-level error (like 'Email or password is incorrect') to a Go form struct that uses the embedded Validator pattern?",
-      "tags": ["non-field-errors", "login-form"]
-    },
-    {
-      "id": "tp-f06-06",
-      "prompt": "How do I reuse the same Validator struct across multiple form types (signup, login, create snippet) in a Go web app?",
-      "tags": ["reuse", "multiple-forms"]
-    },
-    {
-      "id": "tp-f06-07",
-      "prompt": "Should I use go-playground/validator or build my own validator struct for a Go web app? What are the tradeoffs?",
-      "tags": ["library-vs-custom", "explicit-rules"]
-    },
-    {
-      "id": "tp-f06-08",
-      "prompt": "How do I display per-field validation errors inline in a Go HTML template alongside the original user input?",
-      "tags": ["template-rendering", "per-field-errors"]
-    },
-    {
-      "id": "tp-f06-09",
-      "prompt": "Write a Validator struct for Go form validation with CheckField, AddNonFieldError, and Valid() methods.",
-      "tags": ["code-generation", "validator-struct"]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "",
+    "prompt": "How do I pass both validation errors and original input values back to a Go HTML template in a single struct?",
+    "expected": "Skill directs defining a form struct with fields matching the inputs plus an embedded validator.Validator, decoding the request into it, and passing that one struct as data.Form so errors (FieldErrors/NonFieldErrors) and the original decoded values travel together to the template.",
+    "notes": "source id: tp-f06-01"
+  },
+  {
+    "id": 2,
+    "type": "",
+    "prompt": "What is Go struct embedding and how does Edwards use it for form validation in the Snippetbox app?",
+    "expected": "Skill explains that embedding validator.Validator (unnamed) in the form struct promotes CheckField, AddNonFieldError, and Valid() onto the form struct so form.CheckField() works directly, bundling validation state with the form's original input as a single value.",
+    "notes": "source id: tp-f06-02"
+  },
+  {
+    "id": 3,
+    "type": "",
+    "prompt": "What HTTP status code should a Go handler return when form validation fails — 400 or 422? Why?",
+    "expected": "Skill answers 422 (http.StatusUnprocessableEntity): the request is well-formed but semantically invalid, so 400 (malformed request) is wrong; return 422 when form.Valid() is false and re-render.",
+    "notes": "source id: tp-f06-03"
+  },
+  {
+    "id": 4,
+    "type": "",
+    "prompt": "My Go form handler stores validation errors in a map and re-reads input from r.PostForm for the template. What's wrong with this approach?",
+    "expected": "Skill flags this anti-pattern: errors and re-read input are separate state that can diverge from what was validated, causing duplication and an asymmetric template model. It prescribes the embedded Validator form struct so errors and original values are a single value with no code path that loses errors.",
+    "notes": "source id: tp-f06-04"
+  },
+  {
+    "id": 5,
+    "type": "",
+    "prompt": "How do I add a non-field-level error (like 'Email or password is incorrect') to a Go form struct that uses the embedded Validator pattern?",
+    "expected": "Skill shows calling form.AddNonFieldError(\"Email or password is incorrect\") (promoted from the embedded Validator), which appends to NonFieldErrors; the template renders these form-level errors, typically driven by a model sentinel like ErrInvalidCredentials.",
+    "notes": "source id: tp-f06-05"
+  },
+  {
+    "id": 6,
+    "type": "",
+    "prompt": "How do I reuse the same Validator struct across multiple form types (signup, login, create snippet) in a Go web app?",
+    "expected": "Skill says embed the single validator.Validator type in each distinct form struct (snippetCreateForm, userSignupForm, userLoginForm) unchanged; the pattern requires no modification for reuse since each form gets the promoted CheckField/AddNonFieldError/Valid methods.",
+    "notes": "source id: tp-f06-06"
+  },
+  {
+    "id": 7,
+    "type": "",
+    "prompt": "Should I use go-playground/validator or build my own validator struct for a Go web app? What are the tradeoffs?",
+    "expected": "Skill favors the explicit CheckField Validator for this pattern: struct-tag libraries are terser but the explicit rules are more readable and debuggable, and it notes the Validator does not do automatic struct-tag validation, file-upload, or JSON-body validation.",
+    "notes": "source id: tp-f06-07"
+  },
+  {
+    "id": 8,
+    "type": "",
+    "prompt": "How do I display per-field validation errors inline in a Go HTML template alongside the original user input?",
+    "expected": "Skill directs rendering each field error with {{with .Form.FieldErrors.fieldname}}...{{end}} and repopulating the input with value=\"{{.Form.FieldName}}\", both read from the single embedded-Validator form struct passed as data.Form.",
+    "notes": "source id: tp-f06-08"
+  },
+  {
+    "id": 9,
+    "type": "",
+    "prompt": "Write a Validator struct for Go form validation with CheckField, AddNonFieldError, and Valid() methods.",
+    "expected": "Skill produces a Validator in internal/validator with FieldErrors map[string]string, NonFieldErrors []string, CheckField(ok bool, key, message string) that conditionally adds a field error, AddNonFieldError(message string) that appends a form-level error, and Valid() bool true iff both are empty; plus standalone helpers like NotBlank, MaxChars, PermittedValue.",
+    "notes": "source id: tp-f06-09"
+  }
+]

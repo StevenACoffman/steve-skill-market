@@ -1,50 +1,65 @@
-{
-  "skill_id": "letsgo-postform-not-postformvalue",
-  "prompts": [
-    {
-      "id": "tp-p02p10-01",
-      "prompt": "What happens in a Go HTTP handler if I use r.PostFormValue() and the request body is malformed?",
-      "tags": ["postformvalue-silent-error", "malformed-body"]
-    },
-    {
-      "id": "tp-p02p10-02",
-      "prompt": "What is the difference between r.PostFormValue(), r.FormValue(), and r.PostForm.Get() in Go?",
-      "tags": ["form-reading-comparison", "query-vs-body"]
-    },
-    {
-      "id": "tp-p02p10-03",
-      "prompt": "How do I correctly read form data from a POST request in Go and return 400 if the body is malformed?",
-      "tags": ["parseform", "400-bad-request"]
-    },
-    {
-      "id": "tp-p02p10-04",
-      "prompt": "A Go handler is reading a form field with r.FormValue() but it's picking up a value from the URL query string instead of the POST body. Why?",
-      "tags": ["formvalue-mixing", "query-param-leak"]
-    },
-    {
-      "id": "tp-p02p10-05",
-      "prompt": "What does the internal/ directory do in a Go module? Is it a naming convention or compiler-enforced?",
-      "tags": ["internal-package", "compiler-enforcement"]
-    },
-    {
-      "id": "tp-p02p10-06",
-      "prompt": "Which packages should go under internal/ in a Go web application vs at the module root?",
-      "tags": ["package-layout", "public-vs-internal"]
-    },
-    {
-      "id": "tp-p02p10-07",
-      "prompt": "If I use gorilla/schema or go-playground/form to decode form data, do I still need to call r.ParseForm() first?",
-      "tags": ["form-decoder", "parseform-requirement"]
-    },
-    {
-      "id": "tp-p02p10-08",
-      "prompt": "What happens if I put my models package under internal/ and later someone tries to import it from another module?",
-      "tags": ["internal-restriction", "external-import-error"]
-    },
-    {
-      "id": "tp-p02p10-09",
-      "prompt": "How do I prevent teammates from accidentally importing implementation-detail packages in a Go module?",
-      "tags": ["encapsulation", "internal-package"]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "",
+    "prompt": "What happens in a Go HTTP handler if I use r.PostFormValue() and the request body is malformed?",
+    "expected": "Skill explains that r.PostFormValue() calls ParseForm() internally and silently discards its error, so on a malformed body it returns an empty string with no signal of failure and the handler proceeds with empty data; the fix is explicit r.ParseForm() with an error check.",
+    "notes": "source id: tp-p02p10-01"
+  },
+  {
+    "id": 2,
+    "type": "",
+    "prompt": "What is the difference between r.PostFormValue(), r.FormValue(), and r.PostForm.Get() in Go?",
+    "expected": "Skill distinguishes them: PostFormValue reads the body but swallows ParseForm errors; FormValue reads from both body and URL query string (mixing input sources); r.PostForm.Get reads only the POST body after an explicit, error-checked r.ParseForm(). It recommends r.PostForm.Get().",
+    "notes": "source id: tp-p02p10-02"
+  },
+  {
+    "id": 3,
+    "type": "",
+    "prompt": "How do I correctly read form data from a POST request in Go and return 400 if the body is malformed?",
+    "expected": "Skill directs calling r.ParseForm() first, and on error returning app.clientError(w, http.StatusBadRequest) and returning; then reading values via r.PostForm.Get(\"key\"), never PostFormValue/FormValue.",
+    "notes": "source id: tp-p02p10-03"
+  },
+  {
+    "id": 4,
+    "type": "",
+    "prompt": "A Go handler is reading a form field with r.FormValue() but it's picking up a value from the URL query string instead of the POST body. Why?",
+    "expected": "Skill explains r.FormValue() reads from both r.Form (URL query string) and r.PostForm (body), so a matching query parameter is read even on a POST; the fix is r.PostForm.Get(\"key\") after explicit r.ParseForm(), which reads only the body.",
+    "notes": "source id: tp-p02p10-04"
+  },
+  {
+    "id": 5,
+    "type": "",
+    "prompt": "What does the internal/ directory do in a Go module? Is it a naming convention or compiler-enforced?",
+    "expected": "Skill states internal/ is compiler-enforced, not just a convention: packages under internal/ can only be imported by code inside the parent of internal/ (i.e., within the same module), protecting implementation-detail packages from external import.",
+    "notes": "source id: tp-p02p10-05"
+  },
+  {
+    "id": 6,
+    "type": "",
+    "prompt": "Which packages should go under internal/ in a Go web application vs at the module root?",
+    "expected": "Skill directs placing every non-public-API application package (models, validator, assert, mocks, and other app-specific helpers) under internal/ so they cannot be imported externally; only genuinely public/reusable packages belong at the module root.",
+    "notes": "source id: tp-p02p10-06"
+  },
+  {
+    "id": 7,
+    "type": "",
+    "prompt": "If I use gorilla/schema or go-playground/form to decode form data, do I still need to call r.ParseForm() first?",
+    "expected": "Skill answers yes: those decoders do not call ParseForm() automatically; you must call r.ParseForm() (checking its error) first and pass r.PostForm to decoder.Decode(&form, r.PostForm), since r.PostForm is only populated after parsing.",
+    "notes": "source id: tp-p02p10-07"
+  },
+  {
+    "id": 8,
+    "type": "",
+    "prompt": "What happens if I put my models package under internal/ and later someone tries to import it from another module?",
+    "expected": "Skill explains the import fails to compile: the Go compiler forbids importing internal/ packages from outside the parent module, so an external module cannot import internal/models even if published. Within the same module (including _test.go files) it imports fine.",
+    "notes": "source id: tp-p02p10-08"
+  },
+  {
+    "id": 9,
+    "type": "",
+    "prompt": "How do I prevent teammates from accidentally importing implementation-detail packages in a Go module?",
+    "expected": "Skill directs placing those packages under internal/, which the compiler enforces so they can only be imported within the module; this both prevents accidental external dependencies and signals to teammates that they are implementation details.",
+    "notes": "source id: tp-p02p10-09"
+  }
+]

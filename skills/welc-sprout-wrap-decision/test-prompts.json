@@ -1,65 +1,72 @@
-{
-  "skill_id": "welc-sprout-wrap-decision",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "I need to add audit logging to a legacy `processOrder()` method that I can't get under test right now. The logging is a minor detail — it doesn't change the core algorithm. What's the safest way to make this change?",
-      "expected_concepts": ["new behavior is subordinate", "Sprout Method", "write new method with tests", "call from existing method without touching it"]
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "Our `InvoiceService` class requires a live database connection, a remote tax API client, and a legacy printer driver just to instantiate — I can't construct it in a test harness at all. I still need to add a new currency-conversion step. What do I do?",
-      "expected_concepts": ["class cannot be instantiated in test harness", "Sprout Class", "new class contains new behavior", "tested in isolation", "legacy class delegates to it"]
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "I need to add performance metrics collection to every call on a third-party payment library class. I can't modify the library, and the metrics wrapping feels as important as the payment itself. How should I structure this?",
-      "expected_concepts": ["applies to all callers", "Wrap Class / Decorator", "same interface", "delegate to original", "add behavior around delegation", "original class untouched"]
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "I'm adding a new notification step to `ReportGenerator.generate()`. The notification isn't a detail — it's a first-class part of what 'generate' means in the new requirements. The existing method can be instantiated in tests but the body is too risky to touch right now. Which sprout/wrap technique fits?",
-      "expected_concepts": ["new behavior is co-equal, not subordinate", "Wrap Method", "rename existing method", "new outer method calls both", "public contract unchanged", "high-level algorithm visible"]
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "I want to refactor a large method into smaller private methods to improve readability. The code already has good test coverage. How should I approach this?",
-      "expected_concepts": ["greenfield refactoring under full test coverage", "not about adding behavior to untestable code", "Extract Method applies, not sprout/wrap decision"]
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "What is the Decorator design pattern and when should I use it in a well-tested codebase?",
-      "expected_concepts": ["GoF Decorator as deliberate design choice", "not a legacy code safety technique", "not about the sprout/wrap decision tree"]
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "I need to write characterization tests for a legacy class before I refactor it. What's the best approach?",
-      "expected_concepts": ["characterization testing is a prerequisite step", "not about adding new behavior to untestable code", "different skill: welc-characterization-test"]
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "I sprouted a method six months ago as a temporary fix, and now there are twelve sprouted methods hanging off a legacy class that nobody has cleaned up. Is this a design problem or is sprouting just how we handle legacy code permanently?",
-      "expected_concepts": ["counter-example: cumulative avoidance", "sprout/wrap are bridges not destinations", "original code becomes a lie", "commitment to eventually clean up", "Legacy Code Change Algorithm as the path forward"]
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "My new behavior is both subordinate to the existing method AND it needs to apply to all callers via the interface. Should I use Sprout Method or Wrap Class?",
-      "expected_concepts": ["'applies to all callers' drives toward Wrap Class", "subordinate-but-universal is a Wrap Class signal", "Sprout Method misses callers who bypass the method", "decision criteria are not mutually exclusive — scope of application wins"]
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "I can instantiate the class in a test but only with enormous setup — five fakes, two in-memory databases, and a stubbed network. Is this a 'can instantiate' or 'cannot instantiate' situation for choosing between Sprout Method and Sprout Class?",
-      "expected_concepts": ["practical threshold: if setup is so expensive you won't write the tests, treat it as cannot instantiate", "Sprout Class is valid even when instantiation is technically possible but prohibitively costly", "the goal is testable new behavior, not theoretical testability"]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I need to add audit logging to a legacy `processOrder()` method that I can't get under test right now. The logging is a minor detail — it doesn't change the core algorithm. What's the safest way to make this change?",
+    "expected": "Skill activates and, because the new behavior is subordinate, recommends Sprout Method: write the new logging as a separate, tested method and call it from the existing method without otherwise touching processOrder's body.",
+    "notes": "source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our `InvoiceService` class requires a live database connection, a remote tax API client, and a legacy printer driver just to instantiate — I can't construct it in a test harness at all. I still need to add a new currency-conversion step. What do I do?",
+    "expected": "Skill activates and, because the class cannot be instantiated in a harness, recommends Sprout Class: put the new currency-conversion behavior in a new class tested in isolation, and have the legacy InvoiceService delegate to it.",
+    "notes": "source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I need to add performance metrics collection to every call on a third-party payment library class. I can't modify the library, and the metrics wrapping feels as important as the payment itself. How should I structure this?",
+    "expected": "Skill activates and, because the behavior applies to all callers and the library is unmodifiable, recommends Wrap Class (Decorator): a new class with the same interface that delegates to the original and adds the metrics behavior around the delegation, leaving the original untouched.",
+    "notes": "source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm adding a new notification step to `ReportGenerator.generate()`. The notification isn't a detail — it's a first-class part of what 'generate' means in the new requirements. The existing method can be instantiated in tests but the body is too risky to touch right now. Which sprout/wrap technique fits?",
+    "expected": "Skill activates and, because the new behavior is co-equal (not subordinate) and the class is instantiable, recommends Wrap Method: rename the existing method and add a new outer method with the original public name that calls both the renamed method and the new notification step, keeping the high-level algorithm visible and the contract unchanged.",
+    "notes": "source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I want to refactor a large method into smaller private methods to improve readability. The code already has good test coverage. How should I approach this?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is the Decorator design pattern and when should I use it in a well-tested codebase?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I need to write characterization tests for a legacy class before I refactor it. What's the best approach?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I sprouted a method six months ago as a temporary fix, and now there are twelve sprouted methods hanging off a legacy class that nobody has cleaned up. Is this a design problem or is sprouting just how we handle legacy code permanently?",
+    "expected": "Skill activates and names this cumulative-avoidance counter-example: sprout/wrap are bridges not destinations, and letting them accumulate makes the original code a lie; the path forward is a commitment to eventually get the class under test and clean up via the Legacy Code Change Algorithm.",
+    "notes": "source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My new behavior is both subordinate to the existing method AND it needs to apply to all callers via the interface. Should I use Sprout Method or Wrap Class?",
+    "expected": "Skill activates and resolves the conflict by scope of application: 'applies to all callers' drives toward Wrap Class because Sprout Method would miss callers who bypass the method; the criteria are not mutually exclusive and universal scope wins over the subordinate signal.",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I can instantiate the class in a test but only with enormous setup — five fakes, two in-memory databases, and a stubbed network. Is this a 'can instantiate' or 'cannot instantiate' situation for choosing between Sprout Method and Sprout Class?",
+    "expected": "Skill activates and applies a practical threshold: if setup is so expensive you won't actually write the tests, treat it as 'cannot instantiate' and use Sprout Class; the goal is testable new behavior, not theoretical testability.",
+    "notes": "source id: tp10"
+  }
+]

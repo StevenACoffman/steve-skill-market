@@ -1,79 +1,72 @@
-{
-  "skill": "domain-driven-package-structure",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "How should I structure my Go project? I'm starting a new service that handles orders, users, and payments. Should I use a models/handlers/repos layout?",
-      "expected_behavior": "Recommend domain-driven structure over tech-layer layout. Explain why models/ collapses all domains into one namespace in Go. Show the order/, user/, payment/ layout with http/ and postgres/ importing from domain packages. Point out that cmd/ is the wiring layer.",
-      "notes": "New project structure question — top of Scenario 1 in SKILL.md."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I'm getting an `import cycle not allowed` error between my packages. My `order` package imports `postgres` and `postgres` imports `order`. How do I fix this?",
-      "expected_behavior": "Diagnose as a structural violation: a domain package (order) is importing a technology package (postgres), creating the cycle. Fix by reversing the direction: move shared logic into the domain package; let postgres/ import from order/. The domain package should contain types, business logic, and interfaces — postgres/ implements those interfaces.",
-      "notes": "Import cycle error — explicitly listed as Scenario 3 in SKILL.md and a key symptom of tech-layer violation."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "Every time I add a new feature I have to touch files in models/, controllers/, and handlers/. It feels like changes are spread across the whole codebase for a single concept. Is there a better way to organize this?",
-      "expected_behavior": "Identify the tech-layer layout anti-pattern. Explain that domain-driven structure puts all order logic in order/, all user logic in user/. Adding a feature is confined to one domain directory plus its technology adapter (handler, repo). Walk through a migration path: extract one domain at a time.",
-      "notes": "Cross-cutting changes through tech layers — symptom of models/controllers/handlers coupling (ce15)."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "My HTTP handler is directly importing `pgx` to run SQL queries. I know this is wrong but I'm not sure how to restructure it.",
-      "expected_behavior": "This is a structural violation — handler (technology) reaching past domain into storage. Explain the correct structure: handler imports from order/, order/ defines an interface for the repo, postgres/ implements the interface and imports from order/. Handler never touches pgx directly.",
-      "notes": "Handler importing database package — Scenario 5 from SKILL.md."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "We're adding a multi-tenant feature to our existing application. We already have order/ and user/ packages. Where should tenant logic live?",
-      "expected_behavior": "Create tenant/ as a new top-level domain package. Technology packages (http/, postgres/) import from tenant/ alongside existing domain packages. No changes to order/ or user/ unless they genuinely depend on tenant concepts. This is the core benefit of domain-driven structure — additive changes are isolated.",
-      "notes": "Adding a new domain — Scenario 4 from SKILL.md."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "Should I name my Go files `order.go`, `order_handler.go`, or `handler.go`? What are the naming conventions for Go files?",
-      "expected_behavior": "Explain Go file naming conventions: files are grouped by package (directory), not by convention. Typically the file is named after its primary content. This is a file naming question, not a package structure or namespace question.",
-      "notes": "File naming conventions — SKILL.md explicitly excludes 'file naming conventions'."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How should I name my variables in Go? I keep going back and forth between camelCase and snake_case.",
-      "expected_behavior": "Explain Go naming conventions: camelCase for exported identifiers, unexported identifiers use camelCase (not snake_case). Reference effective Go naming guidance. This is a variable naming question, not a package organization question.",
-      "notes": "Variable naming — SKILL.md explicitly excludes 'how to name variables'."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "What should I put inside a service function? Should business logic go in the handler or in a separate service layer?",
-      "expected_behavior": "Explain the service layer pattern: handlers decode and validate requests, service functions execute business logic, repositories handle persistence. This is about what goes inside a function, not about how packages and directories are organized.",
-      "notes": "'What to put inside a function' — SKILL.md explicitly excludes this. The package organization question is separate from function responsibility."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "Should I use Clean Architecture or Hexagonal Architecture for my Go project?",
-      "expected_behavior": "Triggers the skill — explain that domain-driven package structure achieves the same dependency inversion as both of those architectures with less ceremony. Domain packages at the center, technology packages at the edge, same as ports-and-adapters. The Go compiler enforces the dependency direction via import cycles. No need for named layers or extra interfaces beyond what domain-driven structure already provides.",
-      "notes": "Clean Architecture question — SKILL.md directly addresses this in 'Easily Confused With' section as equivalent but with less ceremony."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "My packages have circular imports. I moved `UserID` into order/ because orders reference users, but now user/ needs to import order/ for some reason too.",
-      "expected_behavior": "Triggers the skill. Cross-domain type sharing (UserID needed in order/) is the shared-domain-types problem. Recommend extracting a shared identity/ or types/ package that both order/ and user/ can import without depending on each other. Alternatively, keep UserID as a plain type alias (type UserID string) defined in the consuming package.",
-      "notes": "Cross-domain type dependency leading to cycles — the book's blind spot on shared domain types, but the skill should still explain the recommended solution."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "How should I structure my Go project? I'm starting a new service that handles orders, users, and payments. Should I use a models/handlers/repos layout?",
+    "expected": "Recommend domain-driven structure over tech-layer layout. Explain why models/ collapses all domains into one namespace in Go. Show the order/, user/, payment/ layout with http/ and postgres/ importing from domain packages. Point out that cmd/ is the wiring layer.",
+    "notes": "New project structure question — top of Scenario 1 in SKILL.md.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm getting an `import cycle not allowed` error between my packages. My `order` package imports `postgres` and `postgres` imports `order`. How do I fix this?",
+    "expected": "Diagnose as a structural violation: a domain package (order) is importing a technology package (postgres), creating the cycle. Fix by reversing the direction: move shared logic into the domain package; let postgres/ import from order/. The domain package should contain types, business logic, and interfaces — postgres/ implements those interfaces.",
+    "notes": "Import cycle error — explicitly listed as Scenario 3 in SKILL.md and a key symptom of tech-layer violation.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Every time I add a new feature I have to touch files in models/, controllers/, and handlers/. It feels like changes are spread across the whole codebase for a single concept. Is there a better way to organize this?",
+    "expected": "Identify the tech-layer layout anti-pattern. Explain that domain-driven structure puts all order logic in order/, all user logic in user/. Adding a feature is confined to one domain directory plus its technology adapter (handler, repo). Walk through a migration path: extract one domain at a time.",
+    "notes": "Cross-cutting changes through tech layers — symptom of models/controllers/handlers coupling (ce15).; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My HTTP handler is directly importing `pgx` to run SQL queries. I know this is wrong but I'm not sure how to restructure it.",
+    "expected": "This is a structural violation — handler (technology) reaching past domain into storage. Explain the correct structure: handler imports from order/, order/ defines an interface for the repo, postgres/ implements the interface and imports from order/. Handler never touches pgx directly.",
+    "notes": "Handler importing database package — Scenario 5 from SKILL.md.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We're adding a multi-tenant feature to our existing application. We already have order/ and user/ packages. Where should tenant logic live?",
+    "expected": "Create tenant/ as a new top-level domain package. Technology packages (http/, postgres/) import from tenant/ alongside existing domain packages. No changes to order/ or user/ unless they genuinely depend on tenant concepts. This is the core benefit of domain-driven structure — additive changes are isolated.",
+    "notes": "Adding a new domain — Scenario 4 from SKILL.md.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Should I name my Go files `order.go`, `order_handler.go`, or `handler.go`? What are the naming conventions for Go files?",
+    "expected": "Explain Go file naming conventions: files are grouped by package (directory), not by convention. Typically the file is named after its primary content. This is a file naming question, not a package structure or namespace question.",
+    "notes": "File naming conventions — SKILL.md explicitly excludes 'file naming conventions'.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How should I name my variables in Go? I keep going back and forth between camelCase and snake_case.",
+    "expected": "Explain Go naming conventions: camelCase for exported identifiers, unexported identifiers use camelCase (not snake_case). Reference effective Go naming guidance. This is a variable naming question, not a package organization question.",
+    "notes": "Variable naming — SKILL.md explicitly excludes 'how to name variables'.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What should I put inside a service function? Should business logic go in the handler or in a separate service layer?",
+    "expected": "Explain the service layer pattern: handlers decode and validate requests, service functions execute business logic, repositories handle persistence. This is about what goes inside a function, not about how packages and directories are organized.",
+    "notes": "'What to put inside a function' — SKILL.md explicitly excludes this. The package organization question is separate from function responsibility.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I use Clean Architecture or Hexagonal Architecture for my Go project?",
+    "expected": "Triggers the skill — explain that domain-driven package structure achieves the same dependency inversion as both of those architectures with less ceremony. Domain packages at the center, technology packages at the edge, same as ports-and-adapters. The Go compiler enforces the dependency direction via import cycles. No need for named layers or extra interfaces beyond what domain-driven structure already provides.",
+    "notes": "Clean Architecture question — SKILL.md directly addresses this in 'Easily Confused With' section as equivalent but with less ceremony.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "My packages have circular imports. I moved `UserID` into order/ because orders reference users, but now user/ needs to import order/ for some reason too.",
+    "expected": "Triggers the skill. Cross-domain type sharing (UserID needed in order/) is the shared-domain-types problem. Recommend extracting a shared identity/ or types/ package that both order/ and user/ can import without depending on each other. Alternatively, keep UserID as a plain type alias (type UserID string) defined in the consuming package.",
+    "notes": "Cross-domain type dependency leading to cycles — the book's blind spot on shared domain types, but the skill should still explain the recommended solution.; source id: edge-case-02"
+  }
+]

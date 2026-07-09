@@ -1,90 +1,86 @@
-{
-  "skill": "integration-style-selection",
-  "description": "Use this skill when choosing how two or more applications should exchange data or invoke behavior. The four candidate styles are File Transfer, Shared Database, Remote Procedure Invocation, and Messaging. Each integration point deserves its own selection based on timeliness requirements, schema ownership, synchronous availability tolerance, and reliability needs.",
-  "test_prompts": [
-    {
-      "id": "tp01",
-      "category": "should_invoke",
-      "prompt": "We're integrating our HR system with payroll. Payroll runs monthly. HR exports employee records once a week, and payroll just needs the latest snapshot before each pay run. What integration approach should we use?",
-      "expected": "invoke",
-      "rationale": "Classic File Transfer scenario: low timeliness requirement (weekly update, monthly payroll run), no need to invoke behavior, batch synchronization is acceptable. The skill's decision tree terminates at File Transfer at step 2."
-    },
-    {
-      "id": "tp02",
-      "category": "should_invoke",
-      "prompt": "We have a frontend that needs to look up the current price of a product before displaying it to the user. The price changes frequently, and we need the current value right now. Should we call the pricing service directly or put a message on a queue?",
-      "expected": "invoke",
-      "rationale": "Classic RPC-vs-Messaging decision: the caller needs a result now (synchronous query), single receiver, no fan-out, and the caller must block for the response. The skill's criteria point to RPC/REST."
-    },
-    {
-      "id": "tp03",
-      "category": "should_invoke",
-      "prompt": "Our e-commerce platform needs to notify inventory, fraud detection, fulfillment, and analytics when an order is placed. Each system is owned by a different team and may be temporarily unavailable. How should we connect them?",
-      "expected": "invoke",
-      "rationale": "Classic Messaging scenario: fan-out to multiple independent receivers, different teams/ownership, availability independence required. The skill walks through all four criteria and terminates at Messaging."
-    },
-    {
-      "id": "tp04",
-      "category": "should_invoke",
-      "prompt": "We just acquired a company. Both businesses run separate ERP systems (SAP and Oracle). Leadership wants them to share customer and order data. The integration team is suggesting a shared PostgreSQL database that both ERPs write to. Is this a good idea?",
-      "expected": "invoke",
-      "rationale": "Shared Database evaluation: the applications are packaged software (SAP, Oracle) that cannot use an external schema. The skill's counter-criteria for Shared Database eliminates this option and points toward Messaging with a Canonical Data Model."
-    },
-    {
-      "id": "tp05",
-      "category": "should_invoke",
-      "prompt": "We're building a new microservices architecture. The team lead says we should use Kafka for all service-to-service communication because 'we want loose coupling.' Is this the right call?",
-      "expected": "invoke",
-      "rationale": "The skill's key principle is that each integration point deserves its own style selection. Mandating Messaging everywhere is the exact mistake the framework warns against. Some integrations are synchronous queries (RPC is correct); some are batch exports (File Transfer is correct)."
-    },
-    {
-      "id": "tp06",
-      "category": "should_invoke",
-      "prompt": "Our payment service calls the fraud-detection service synchronously before authorizing a transaction. When fraud detection is slow (under high load), payment authorization slows down too. Should we switch to async messaging?",
-      "expected": "invoke",
-      "rationale": "This is the RPC temporal coupling failure mode. The skill covers exactly this: slow callee makes caller slow; the question is whether to migrate to Messaging. The answer depends on whether the caller can tolerate async processing — which the skill's decision criteria evaluate."
-    },
-    {
-      "id": "tp07",
-      "category": "should_not_invoke",
-      "prompt": "Our message queue consumer is processing messages too slowly and falling behind. How should we scale it up?",
-      "expected": "skip",
-      "rationale": "This is a throughput/scaling problem for an existing Messaging integration — the style selection has already been made. The relevant skill would be competing consumers or queue flow control, not integration style selection."
-    },
-    {
-      "id": "tp08",
-      "category": "should_not_invoke",
-      "prompt": "We need to transform an XML order message into a JSON format that our fulfillment system can understand. What's the best approach?",
-      "expected": "skip",
-      "rationale": "This is a message transformation problem within an already-chosen Messaging integration. The relevant skill is Canonical Data Model or Message Translator design, not integration style selection."
-    },
-    {
-      "id": "tp09",
-      "category": "should_not_invoke",
-      "prompt": "We're designing a REST API for our product catalog service. Should the endpoints be resource-oriented or action-oriented?",
-      "expected": "skip",
-      "rationale": "This is an API design question within RPC/REST — the integration style has already been chosen. API naming conventions are out of scope for the integration style selection skill."
-    },
-    {
-      "id": "tp10",
-      "category": "blurred_boundary",
-      "prompt": "Our data warehouse team wants to replicate records from our production PostgreSQL database into Snowflake for analytics. They're considering CDC (change data capture) via Debezium streaming vs. a nightly pg_dump export. Which approach is better?",
-      "expected": "invoke",
-      "rationale": "Blurred boundary: this could be analyzed as File Transfer (nightly dump) vs. a streaming/messaging approach (CDC). The integration style selection framework applies — timeliness of analytics data, staleness tolerance, and reliability requirements are the decision criteria. The streaming option is close to Messaging but not a perfect fit for the 2003 framework."
-    },
-    {
-      "id": "tp11",
-      "category": "blurred_boundary",
-      "prompt": "We have two internal microservices that we own completely. Service A needs to tell Service B whenever a user's subscription changes. Both services are deployed in the same Kubernetes cluster. Should we use a REST call or an internal event bus?",
-      "expected": "invoke",
-      "rationale": "Blurred boundary: the skill applies (this is an integration point selection), but the 'both under our control' aspect means tight coupling is more acceptable than for cross-organizational integration. The answer depends on whether notification fan-out, availability independence, or retry reliability are required — criteria the skill makes explicit."
-    },
-    {
-      "id": "tp12",
-      "category": "blurred_boundary",
-      "prompt": "Our legacy COBOL mainframe generates a daily extract file of account transactions. Downstream systems currently read this file. A new team wants to subscribe to account events in real time. Should we replace the file extract with an event stream?",
-      "expected": "invoke",
-      "rationale": "Blurred boundary: this is a File Transfer to Messaging migration decision. The skill applies — specifically evaluating whether the 'timeliness is fine' criterion still holds for the new use case. The answer may be a dual approach (keep File Transfer for batch consumers, add Messaging for real-time consumers), which the skill's 'multiple styles coexist' principle supports."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're integrating our HR system with payroll. Payroll runs monthly. HR exports employee records once a week, and payroll just needs the latest snapshot before each pay run. What integration approach should we use?",
+    "expected": "invoke",
+    "notes": "rationale: Classic File Transfer scenario: low timeliness requirement (weekly update, monthly payroll run), no need to invoke behavior, batch synchronization is acceptable. The skill's decision tree terminates at File Transfer at step 2.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have a frontend that needs to look up the current price of a product before displaying it to the user. The price changes frequently, and we need the current value right now. Should we call the pricing service directly or put a message on a queue?",
+    "expected": "invoke",
+    "notes": "rationale: Classic RPC-vs-Messaging decision: the caller needs a result now (synchronous query), single receiver, no fan-out, and the caller must block for the response. The skill's criteria point to RPC/REST.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our e-commerce platform needs to notify inventory, fraud detection, fulfillment, and analytics when an order is placed. Each system is owned by a different team and may be temporarily unavailable. How should we connect them?",
+    "expected": "invoke",
+    "notes": "rationale: Classic Messaging scenario: fan-out to multiple independent receivers, different teams/ownership, availability independence required. The skill walks through all four criteria and terminates at Messaging.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We just acquired a company. Both businesses run separate ERP systems (SAP and Oracle). Leadership wants them to share customer and order data. The integration team is suggesting a shared PostgreSQL database that both ERPs write to. Is this a good idea?",
+    "expected": "invoke",
+    "notes": "rationale: Shared Database evaluation: the applications are packaged software (SAP, Oracle) that cannot use an external schema. The skill's counter-criteria for Shared Database eliminates this option and points toward Messaging with a Canonical Data Model.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We're building a new microservices architecture. The team lead says we should use Kafka for all service-to-service communication because 'we want loose coupling.' Is this the right call?",
+    "expected": "invoke",
+    "notes": "rationale: The skill's key principle is that each integration point deserves its own style selection. Mandating Messaging everywhere is the exact mistake the framework warns against. Some integrations are synchronous queries (RPC is correct); some are batch exports (File Transfer is correct).; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "Our payment service calls the fraud-detection service synchronously before authorizing a transaction. When fraud detection is slow (under high load), payment authorization slows down too. Should we switch to async messaging?",
+    "expected": "invoke",
+    "notes": "rationale: This is the RPC temporal coupling failure mode. The skill covers exactly this: slow callee makes caller slow; the question is whether to migrate to Messaging. The answer depends on whether the caller can tolerate async processing — which the skill's decision criteria evaluate.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our message queue consumer is processing messages too slowly and falling behind. How should we scale it up?",
+    "expected": "skip",
+    "notes": "rationale: This is a throughput/scaling problem for an existing Messaging integration — the style selection has already been made. The relevant skill would be competing consumers or queue flow control, not integration style selection.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We need to transform an XML order message into a JSON format that our fulfillment system can understand. What's the best approach?",
+    "expected": "skip",
+    "notes": "rationale: This is a message transformation problem within an already-chosen Messaging integration. The relevant skill is Canonical Data Model or Message Translator design, not integration style selection.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "We're designing a REST API for our product catalog service. Should the endpoints be resource-oriented or action-oriented?",
+    "expected": "skip",
+    "notes": "rationale: This is an API design question within RPC/REST — the integration style has already been chosen. API naming conventions are out of scope for the integration style selection skill.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our data warehouse team wants to replicate records from our production PostgreSQL database into Snowflake for analytics. They're considering CDC (change data capture) via Debezium streaming vs. a nightly pg_dump export. Which approach is better?",
+    "expected": "invoke",
+    "notes": "rationale: Blurred boundary: this could be analyzed as File Transfer (nightly dump) vs. a streaming/messaging approach (CDC). The integration style selection framework applies — timeliness of analytics data, staleness tolerance, and reliability requirements are the decision criteria. The streaming option is close to Messaging but not a perfect fit for the 2003 framework.; source id: tp10"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "We have two internal microservices that we own completely. Service A needs to tell Service B whenever a user's subscription changes. Both services are deployed in the same Kubernetes cluster. Should we use a REST call or an internal event bus?",
+    "expected": "invoke",
+    "notes": "rationale: Blurred boundary: the skill applies (this is an integration point selection), but the 'both under our control' aspect means tight coupling is more acceptable than for cross-organizational integration. The answer depends on whether notification fan-out, availability independence, or retry reliability are required — criteria the skill makes explicit.; source id: tp11"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "Our legacy COBOL mainframe generates a daily extract file of account transactions. Downstream systems currently read this file. A new team wants to subscribe to account events in real time. Should we replace the file extract with an event stream?",
+    "expected": "invoke",
+    "notes": "rationale: Blurred boundary: this is a File Transfer to Messaging migration decision. The skill applies — specifically evaluating whether the 'timeliness is fine' criterion still holds for the new use case. The answer may be a dual approach (keep File Transfer for batch consumers, add Messaging for real-time consumers), which the skill's 'multiple styles coexist' principle supports.; source id: tp12"
+  }
+]

@@ -1,68 +1,72 @@
-{
-  "skill_id": "terraform-secrets-in-state",
-  "book": "Terraform: Up and Running (3rd Edition)",
-  "author": "Yevgeniy Brikman",
-  "generated": "2026-05-05",
-  "prompts": [
-    {
-      "id": "ss-si-01",
-      "type": "should_invoke",
-      "prompt": "I marked my database password variable as sensitive = true in Terraform. Is the password now protected from being stored in the state file?",
-      "rationale": "Directly asks about the false security of sensitive = true — the core misconception this skill corrects."
-    },
-    {
-      "id": "ss-si-02",
-      "type": "should_invoke",
-      "prompt": "I'm using AWS Secrets Manager to inject my RDS password into Terraform instead of hardcoding it. Does this mean my password won't appear in the state file?",
-      "rationale": "Asks about the 'most secure' injection pattern — even Secrets Manager still writes the value to state."
-    },
-    {
-      "id": "ss-si-03",
-      "type": "should_invoke",
-      "prompt": "A security audit found that our Terraform state file contains plaintext database credentials. How is this possible if we're using environment variables to pass secrets to Terraform?",
-      "rationale": "Post-incident question — security team found the state file exposure that this skill explains."
-    },
-    {
-      "id": "ss-si-04",
-      "type": "should_invoke",
-      "prompt": "How do I prevent Terraform secrets from ending up in the state file?",
-      "rationale": "Direct question — the answer is that you cannot fully prevent it, only encrypt and restrict the backend."
-    },
-    {
-      "id": "ss-sni-01",
-      "type": "should_not_invoke",
-      "prompt": "How do I rotate IAM access keys that Terraform uses to authenticate with AWS?",
-      "rationale": "About Terraform's own authentication credentials, not about secrets managed by Terraform resources."
-    },
-    {
-      "id": "ss-sni-02",
-      "type": "should_not_invoke",
-      "prompt": "I accidentally committed a .tfvars file with my database password to git. How do I remove it from git history?",
-      "rationale": "Git history cleanup is a separate concern — the skill covers state file exposure, not version control exposure."
-    },
-    {
-      "id": "ss-sni-03",
-      "type": "should_not_invoke",
-      "prompt": "How do I use AWS KMS to encrypt an S3 bucket that stores user data managed by my application?",
-      "rationale": "Application data encryption in S3 — unrelated to Terraform state secrets."
-    },
-    {
-      "id": "ss-bb-01",
-      "type": "blurred_boundary",
-      "prompt": "I'm using Vault dynamic secrets in Terraform so that database credentials are short-lived and automatically rotated. Does this eliminate the state file risk?",
-      "rationale": "Vault dynamic secrets reduce the exposure window in state but the value is still written — a nuanced boundary case."
-    },
-    {
-      "id": "ss-bb-02",
-      "type": "blurred_boundary",
-      "prompt": "If I use Terraform Cloud, are my state file secrets protected? Terraform Cloud says it encrypts state at rest.",
-      "rationale": "Terraform Cloud does encrypt at rest but the state data still exists in plaintext form before encryption — platform boundary."
-    },
-    {
-      "id": "ss-bb-03",
-      "type": "blurred_boundary",
-      "prompt": "Some of my Terraform resources only accept a secret ARN, not the secret value itself. Do those resources still expose secrets in state?",
-      "rationale": "The skill's boundary explicitly notes that resources storing only ARNs (not values) do not have this problem — a valid exception."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I marked my database password variable as sensitive = true in Terraform. Is the password now protected from being stored in the state file?",
+    "expected": "Skill activates and corrects the misconception: sensitive = true is only a display filter that suppresses the value in plan/apply output; it does nothing to the state file, where the password is still written in plaintext. Protect it via backend controls (SSE-KMS, IAM restrictions) not sensitive.",
+    "notes": "rationale: Directly asks about the false security of sensitive = true — the core misconception this skill corrects.; source id: ss-si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm using AWS Secrets Manager to inject my RDS password into Terraform instead of hardcoding it. Does this mean my password won't appear in the state file?",
+    "expected": "Skill activates and explains that Secrets Manager is the best injection method (keeps secrets out of version control) but does not solve state exposure: Terraform reads the plaintext value and writes it verbatim into terraform.tfstate; the real fix is encrypting and access-restricting the state backend.",
+    "notes": "rationale: Asks about the 'most secure' injection pattern — even Secrets Manager still writes the value to state.; source id: ss-si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "A security audit found that our Terraform state file contains plaintext database credentials. How is this possible if we're using environment variables to pass secrets to Terraform?",
+    "expected": "Skill activates and explains this is expected and unavoidable: any secret passed to a resource lands in state in plaintext regardless of injection method (env vars included), because state is JSON storing all attributes verbatim; remediation is backend-level (SSE-KMS, IAM restriction to CI role, versioning, CloudTrail), not changing injection.",
+    "notes": "rationale: Post-incident question — security team found the state file exposure that this skill explains.; source id: ss-si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "How do I prevent Terraform secrets from ending up in the state file?",
+    "expected": "Skill activates and is honest that you cannot fully prevent it — it is an open Terraform limitation; the practical answer is to treat the state file as sensitive: enable SSE-KMS on the S3 bucket, restrict s3:GetObject/PutObject to the CI role, enable versioning, and log access via CloudTrail.",
+    "notes": "rationale: Direct question — the answer is that you cannot fully prevent it, only encrypt and restrict the backend.; source id: ss-si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I rotate IAM access keys that Terraform uses to authenticate with AWS?",
+    "expected": "skill should not activate",
+    "notes": "rationale: About Terraform's own authentication credentials, not about secrets managed by Terraform resources.; source id: ss-sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I accidentally committed a .tfvars file with my database password to git. How do I remove it from git history?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Git history cleanup is a separate concern — the skill covers state file exposure, not version control exposure.; source id: ss-sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I use AWS KMS to encrypt an S3 bucket that stores user data managed by my application?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Application data encryption in S3 — unrelated to Terraform state secrets.; source id: ss-sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I'm using Vault dynamic secrets in Terraform so that database credentials are short-lived and automatically rotated. Does this eliminate the state file risk?",
+    "expected": "Skill answers it reduces but does not eliminate the risk: Vault dynamic secrets are short-lived so the exposure window in state is bounded, but the credential value is still written to state in plaintext at apply time; backend encryption and access controls are still required.",
+    "notes": "rationale: Vault dynamic secrets reduce the exposure window in state but the value is still written — a nuanced boundary case.; source id: ss-bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "If I use Terraform Cloud, are my state file secrets protected? Terraform Cloud says it encrypts state at rest.",
+    "expected": "Skill answers partially: Terraform Cloud does encrypt state at rest by default, which helps, but the state still stores secrets in plaintext form and access is governed by TFC's own access controls and support-staff policies; encryption at rest is not a substitute for treating state as sensitive and restricting who can read it.",
+    "notes": "rationale: Terraform Cloud does encrypt at rest but the state data still exists in plaintext form before encryption — platform boundary.; source id: ss-bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Some of my Terraform resources only accept a secret ARN, not the secret value itself. Do those resources still expose secrets in state?",
+    "expected": "Skill answers no for those resources: if a resource attribute stores only a secret ARN/reference and never the secret value, no plaintext secret lands in state for it — a valid exception; advise reviewing the provider schema to confirm which attributes actually store values.",
+    "notes": "rationale: The skill's boundary explicitly notes that resources storing only ARNs (not values) do not have this problem — a valid exception.; source id: ss-bb-03"
+  }
+]

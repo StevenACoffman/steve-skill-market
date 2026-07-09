@@ -1,74 +1,79 @@
 [
   {
-    "id": "tp01",
-    "segment": "A2",
-    "trigger": "naive proposal to expose gRPC externally",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "We have all our internal services on gRPC. Should we expose our gRPC API directly to external developers as a public API?",
-    "expected_behavior": "Should recommend against direct gRPC exposure for the public API. Should explain the specific failure modes: external consumers may not have proto tooling; browsers cannot call gRPC natively; REST ecosystem tools (curl, Postman, OpenAPI generators) will not work. Should recommend the hybrid pattern: gRPC for internal traffic, gRPC gateway or Envoy HTTP/JSON transcoding at the public boundary. Should mention that the backend gRPC service does not need to change — the gateway provides the REST translation layer.",
-    "should_not": "Should not endorse direct gRPC exposure to external consumers without raising the tooling and browser compatibility issues."
+    "expected": "Should recommend against direct gRPC exposure for the public API. Should explain the specific failure modes: external consumers may not have proto tooling; browsers cannot call gRPC natively; REST ecosystem tools (curl, Postman, OpenAPI generators) will not work. Should recommend the hybrid pattern: gRPC for internal traffic, gRPC gateway or Envoy HTTP/JSON transcoding at the public boundary. Should mention that the backend gRPC service does not need to change — the gateway provides the REST translation layer.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "segment": "R",
-    "trigger": "source quote — external APIs",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "What does the gRPC Up and Running book say about using gRPC for external-facing APIs?",
-    "expected_behavior": "Should quote or closely paraphrase: 'When you want to expose the application or services to an external client over the internet, gRPC may not be the most suitable protocol as most of the external consumers are quite new to gRPC and REST/HTTP.' Should also reference: the contract-driven nature hinders flexibility; consumers get less control compared to GraphQL; the gRPC gateway is the recommended workaround.",
-    "should_not": "Should not attribute a pro-external-gRPC position to the book. Should not omit the GraphQL comparison."
+    "expected": "Should quote or closely paraphrase: 'When you want to expose the application or services to an external client over the internet, gRPC may not be the most suitable protocol as most of the external consumers are quite new to gRPC and REST/HTTP.' Should also reference: the contract-driven nature hinders flexibility; consumers get less control compared to GraphQL; the gRPC gateway is the recommended workaround.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "segment": "I",
-    "trigger": "when to choose GraphQL over gRPC",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "Our mobile app needs to fetch user data from multiple backend services but only needs specific fields from each — sometimes just name and avatar, sometimes a full profile. The backend services are all gRPC. Should we expose gRPC to the mobile client or use GraphQL?",
-    "expected_behavior": "Should recommend GraphQL for the mobile API layer. The trigger is client-controlled field selection: the mobile client needs different fields in different contexts, and GraphQL was designed specifically for this use case — clients specify exactly what they need and the server returns only those fields. gRPC's fixed method contracts cannot satisfy this without application-level field masking. Should describe the typical architecture: gRPC between internal services, GraphQL API gateway that federates the gRPC backends for the mobile client.",
-    "should_not": "Should not recommend exposing the individual gRPC services directly to the mobile client. Should not suggest that REST is a better fit for client-controlled field selection than GraphQL."
+    "expected": "Should recommend GraphQL for the mobile API layer. The trigger is client-controlled field selection: the mobile client needs different fields in different contexts, and GraphQL was designed specifically for this use case — clients specify exactly what they need and the server returns only those fields. gRPC's fixed method contracts cannot satisfy this without application-level field masking. Should describe the typical architecture: gRPC between internal services, GraphQL API gateway that federates the gRPC backends for the mobile client.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "segment": "I",
-    "trigger": "when REST is correct vs gRPC",
+    "id": 4,
+    "type": "should_trigger",
     "prompt": "We're building a public REST API for third-party developers. The existing backend is gRPC. The team wants to migrate the public API to gRPC for performance. Should we?",
-    "expected_behavior": "Should advise against migrating the public API to gRPC. External developers use HTTP clients, may not have a proto compiler, and expect JSON. Performance of the public API boundary is typically not the bottleneck compared to business logic and database calls. Should recommend keeping REST at the public boundary and using the gRPC gateway to translate from REST to the internal gRPC services. This provides the performance of gRPC internally without breaking the external developer experience.",
-    "should_not": "Should not recommend exposing raw gRPC to third-party developers because 'gRPC is faster.' Should not dismiss the tooling friction for external consumers."
+    "expected": "Should advise against migrating the public API to gRPC. External developers use HTTP clients, may not have a proto compiler, and expect JSON. Performance of the public API boundary is typically not the bottleneck compared to business logic and database calls. Should recommend keeping REST at the public boundary and using the gRPC gateway to translate from REST to the internal gRPC services. This provides the performance of gRPC internally without breaking the external developer experience.",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "segment": "E",
-    "trigger": "implementation — gRPC gateway setup",
+    "id": 5,
+    "type": "should_trigger",
     "prompt": "How do I set up the gRPC gateway to expose a gRPC service as a REST API?",
-    "expected_behavior": "Should describe: (1) adding google.api.http annotations to the proto service definition; (2) running protoc with the protoc-gen-grpc-gateway plugin to generate the gateway handler; (3) registering the generated handler with an HTTP mux (runtime.NewServeMux from grpc-gateway); (4) running the gateway as a separate process or alongside the gRPC server. Should note that the gRPC backend service does not change. Should show or reference the proto annotation syntax: option (google.api.http) = { get: \"/v1/resource/{id}\" }.",
-    "should_not": "Should not describe rewriting the gRPC backend as REST. Should not omit the proto annotation step."
+    "expected": "Should describe: (1) adding google.api.http annotations to the proto service definition; (2) running protoc with the protoc-gen-grpc-gateway plugin to generate the gateway handler; (3) registering the generated handler with an HTTP mux (runtime.NewServeMux from grpc-gateway); (4) running the gateway as a separate process or alongside the gRPC server. Should note that the gRPC backend service does not change. Should show or reference the proto annotation syntax: option (google.api.http) = { get: \"/v1/resource/{id}\" }.",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "segment": "A2",
-    "trigger": "event-driven architecture",
+    "id": 6,
+    "type": "should_trigger",
     "prompt": "Our order service needs to notify six downstream services whenever an order is placed. Should we use gRPC for this fan-out?",
-    "expected_behavior": "Should recommend a message broker (Kafka, NATS, RabbitMQ) instead of gRPC. The use case is asynchronous fan-out: one event, multiple consumers, durable delivery, no synchronous response required. gRPC (and REST and GraphQL) are synchronous request-response protocols — they require the caller to know all six receivers and call each in sequence or parallel, with no durability guarantee if a receiver is temporarily down. A message broker provides durability, decoupling, and natural fan-out. This is explicitly in the selection framework: async/event-driven flows belong to message brokers.",
-    "should_not": "Should not recommend gRPC for asynchronous fan-out. Should not suggest polling as an alternative without mentioning message brokers."
+    "expected": "Should recommend a message broker (Kafka, NATS, RabbitMQ) instead of gRPC. The use case is asynchronous fan-out: one event, multiple consumers, durable delivery, no synchronous response required. gRPC (and REST and GraphQL) are synchronous request-response protocols — they require the caller to know all six receivers and call each in sequence or parallel, with no durability guarantee if a receiver is temporarily down. A message broker provides durability, decoupling, and natural fan-out. This is explicitly in the selection framework: async/event-driven flows belong to message brokers.",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "segment": "A1",
-    "trigger": "internal vs external boundary pattern from the book",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "How does the gRPC Up and Running book recommend structuring the internal-vs-external API boundary?",
-    "expected_behavior": "Should describe the hybrid pattern: gRPC for all internal service-to-service communication; HTTP/JSON (via gRPC gateway or Envoy transcoding) at the external boundary. Should reference the ProductInfo service (internal gRPC) and the Chapter 8 gRPC gateway pattern (external REST translation). Should note that GraphQL is positioned for external consumers who need client-controlled field selection, while REST (via the gateway) is for external consumers who need standard HTTP tooling.",
-    "should_not": "Should not say the book recommends pure REST or pure gRPC for all boundaries. Should not omit the GraphQL positioning."
+    "expected": "Should describe the hybrid pattern: gRPC for all internal service-to-service communication; HTTP/JSON (via gRPC gateway or Envoy transcoding) at the external boundary. Should reference the ProductInfo service (internal gRPC) and the Chapter 8 gRPC gateway pattern (external REST translation). Should note that GraphQL is positioned for external consumers who need client-controlled field selection, while REST (via the gateway) is for external consumers who need standard HTTP tooling.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "segment": "B",
-    "trigger": "boundary — gRPC-Web not in book",
+    "id": 8,
+    "type": "edge_case",
     "prompt": "Can a browser-based JavaScript app call a gRPC service directly? What does the book say?",
-    "expected_behavior": "Should explain that standard browser JavaScript cannot call gRPC natively — HTTP/2 binary framing is not accessible via browser fetch/XHR. The book notes browser support is 'primitive' but does not cover gRPC-Web as a solution. Should mention that gRPC-Web (via an Envoy proxy) is the post-book solution for browser-to-gRPC communication, requiring a proxy sidecar to translate between gRPC-Web framing and gRPC. Should note gRPC-Web does not support full bidirectional streaming from the browser. The book's recommended alternative for browser clients is the gRPC gateway (REST/JSON).",
-    "should_not": "Should not claim the book covers gRPC-Web. Should not say browsers can natively call gRPC without a proxy."
+    "expected": "Should explain that standard browser JavaScript cannot call gRPC natively — HTTP/2 binary framing is not accessible via browser fetch/XHR. The book notes browser support is 'primitive' but does not cover gRPC-Web as a solution. Should mention that gRPC-Web (via an Envoy proxy) is the post-book solution for browser-to-gRPC communication, requiring a proxy sidecar to translate between gRPC-Web framing and gRPC. Should note gRPC-Web does not support full bidirectional streaming from the browser. The book's recommended alternative for browser clients is the gRPC gateway (REST/JSON).",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "segment": "B",
-    "trigger": "boundary — book's position on GraphQL is limited",
+    "id": 9,
+    "type": "edge_case",
     "prompt": "We're considering a BFF (Backend for Frontend) pattern where a GraphQL gateway federates multiple gRPC services for different clients (web, mobile, TV app). Is this well covered in the book?",
-    "expected_behavior": "Should acknowledge this is a valid and common architecture that extends beyond what the book covers. The book positions GraphQL only as 'better for external clients who need field selection.' It does not address the BFF pattern, GraphQL federation, or the GraphQL-over-gRPC architecture in detail. Should note the pattern is sound and commonly used: gRPC for internal service communication, GraphQL API layer that resolves fields by calling gRPC backends, per-client BFF GraphQL schemas. Should acknowledge the book is a limited source for this architecture.",
-    "should_not": "Should not claim the book provides detailed guidance on GraphQL federation or BFF patterns."
+    "expected": "Should acknowledge this is a valid and common architecture that extends beyond what the book covers. The book positions GraphQL only as 'better for external clients who need field selection.' It does not address the BFF pattern, GraphQL federation, or the GraphQL-over-gRPC architecture in detail. Should note the pattern is sound and commonly used: gRPC for internal service communication, GraphQL API layer that resolves fields by calling gRPC backends, per-client BFF GraphQL schemas. Should acknowledge the book is a limited source for this architecture.",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "We've already decided gRPC is the right choice for our internal services. Now I need to pick a communication pattern for a job that streams progress updates back to the caller — should this be a server-streaming RPC, client-streaming, or bidirectional streaming?",
+    "expected": "skill should not activate — the protocol (gRPC) is already chosen; this is a within-gRPC communication-pattern (unary vs. streaming) selection question, not a gRPC-vs-REST-vs-GraphQL boundary decision.",
+    "notes": "decoy: same gRPC domain but the protocol choice is settled, so the vs-REST-vs-GraphQL framework does not apply — it's a streaming-pattern question."
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "Our internal gRPC services run in a service mesh and we need to distribute calls across replicas. Should we use client-side load balancing with a resolver, or a proxy/L7 load balancer like Envoy?",
+    "expected": "skill should not activate — this is a gRPC load-balancer topology selection question (client-side vs. proxy LB), not a decision about which of gRPC/REST/GraphQL to use at a given interface boundary.",
+    "notes": "decoy: adjacent gRPC architecture concern (load balancing) rather than the protocol-selection-at-boundary framework this skill covers."
   }
 ]

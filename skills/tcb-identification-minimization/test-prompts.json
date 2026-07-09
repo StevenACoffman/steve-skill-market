@@ -1,62 +1,58 @@
-{
-  "skill": "tcb-identification-minimization",
-  "description": "Use this skill when designing a system that must enforce a specific security policy and you need to identify which components must be correct for the policy to hold — and then shrink that set as small as possible.",
-  "test_prompts": [
-    {
-      "id": "tcb-identification-minimization-should-01",
-      "category": "should_invoke",
-      "prompt": "We're decomposing a monolithic Rails app into microservices. The monolith has a shared Postgres database. Our security team says we have to do a full security audit of anything that could leak customer PII. The monolith is 400,000 lines of code. Is there a way to figure out which services actually need that level of scrutiny and which don't?",
-      "expected": "invoke",
-      "rationale": "This is the monolith-to-microservices TCB scoping problem directly. The team needs to identify which components must be correct for the PII confidentiality policy to hold — which is TCB identification. The goal is to audit a tractable subset rather than 400k lines. The methodology shrinks the TCB to the services that actually touch PII data paths."
-    },
-    {
-      "id": "tcb-identification-minimization-should-02",
-      "category": "should_invoke",
-      "prompt": "We run a multi-tenant SaaS where all tenants share a Postgres database with row-level security. Our compliance team needs to know exactly what components we need to audit to claim 'tenant A cannot read tenant B's data.' Where do we draw the boundary?",
-      "expected": "invoke",
-      "rationale": "Exact TCB identification trigger: a specific stated security policy ('tenant A cannot read tenant B's data'), a multi-tenant system with shared infrastructure, and the question of which components to audit. Maps directly to the Scenario 1 in the skill's A2 section."
-    },
-    {
-      "id": "tcb-identification-minimization-should-03",
-      "category": "should_invoke",
-      "prompt": "We're building a Kubernetes-based platform for running customer workloads. We want to claim 'a customer's pod cannot access another customer's secrets or influence another customer's workloads.' Which parts of the Kubernetes stack actually have to be correct for that to hold, and which parts are outside that boundary?",
-      "expected": "invoke",
-      "rationale": "Asking exactly which components must be correct for a stated isolation policy to hold — TCB identification. The skill's Scenario 2 covers this Kubernetes case: API server RBAC, etcd, kubelet credential injection are in TCB; application containers and ingress controller are outside it."
-    },
-    {
-      "id": "tcb-identification-minimization-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We want to reduce our attack surface before a PCI audit. We're going to remove unused open ports, disable SSH on production hosts, and uninstall packages we don't use. What else should we add to the list?",
-      "expected": "skip",
-      "rationale": "Attack surface reduction is removing unnecessary exposure to attackers — a different question from TCB identification. The skill explicitly distinguishes: 'Attack surface reduction is about removing unnecessary exposure to attackers. TCB minimization is about identifying which components must be correct for a policy to hold.' The right approach here is attack surface enumeration and hardening guidance, not TCB methodology."
-    },
-    {
-      "id": "tcb-identification-minimization-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We're doing a penetration test next month and want to figure out which services are most likely to have exploitable vulnerabilities. Where should the pen testers focus first?",
-      "expected": "skip",
-      "rationale": "Penetration testing is a discovery exercise: finding exploitable vulnerabilities in a running system. The skill's boundary explicitly excludes this: 'You are doing a full penetration test or vulnerability assessment — those are discovery exercises, not TCB exercises.' TCB identification starts from the security property you want to enforce, not from attacker capabilities."
-    },
-    {
-      "id": "tcb-identification-minimization-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're trying to decide whether to write our authentication service in Rust or Go. Security is a factor — which language gives us better memory safety guarantees?",
-      "expected": "skip",
-      "rationale": "Language selection for memory safety is a specific engineering tradeoff question, not TCB identification. TCB identification would be relevant once the security policy is stated and the component is identified as being in the TCB — but choosing between languages doesn't require the TCB methodology. The right response is a comparison of memory safety properties in Rust vs. Go."
-    },
-    {
-      "id": "tcb-identification-minimization-boundary-01",
-      "category": "boundary",
-      "prompt": "We have a shared analytics pipeline that reads from the same database as our core product. A security reviewer flagged it as 'in scope' for our customer data confidentiality audit. The pipeline only does aggregate reporting — it never writes individual records anywhere. Does it belong in our TCB for the policy 'individual customer records are only accessible to the customer who owns them'?",
-      "expected": "invoke",
-      "rationale": "This is a TCB membership evaluation question — applying the TCB test to a specific component. The test: 'If this component fails or is compromised, can the policy be violated?' If the analytics pipeline has read access to the raw database (before row-level security filters), a bug or compromise could expose individual records. Invoke to apply the formal TCB test and determine whether database access patterns put it in or out of TCB."
-    },
-    {
-      "id": "tcb-identification-minimization-boundary-02",
-      "category": "boundary",
-      "prompt": "We haven't fully defined our security requirements yet — we're still in early product design. Our lead engineer wants to start doing TCB analysis now so we know where to focus security review effort as we build. Is it too early?",
-      "expected": "skip",
-      "rationale": "The skill's boundary explicitly states: 'The security policy has not been stated — without a specific policy, the TCB is everything, which is useless.' Without stated security policies, TCB analysis cannot be done meaningfully. The right advice is to first define the security invariants (what the system must guarantee), then apply TCB identification. Skip TCB methodology until the policies are written down; direct the team to articulate their security invariants first."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're decomposing a monolithic Rails app into microservices. The monolith has a shared Postgres database. Our security team says we have to do a full security audit of anything that could leak customer PII. The monolith is 400,000 lines of code. Is there a way to figure out which services actually need that level of scrutiny and which don't?",
+    "expected": "invoke",
+    "notes": "rationale: This is the monolith-to-microservices TCB scoping problem directly. The team needs to identify which components must be correct for the PII confidentiality policy to hold — which is TCB identification. The goal is to audit a tractable subset rather than 400k lines. The methodology shrinks the TCB to the services that actually touch PII data paths.; source id: tcb-identification-minimization-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We run a multi-tenant SaaS where all tenants share a Postgres database with row-level security. Our compliance team needs to know exactly what components we need to audit to claim 'tenant A cannot read tenant B's data.' Where do we draw the boundary?",
+    "expected": "invoke",
+    "notes": "rationale: Exact TCB identification trigger: a specific stated security policy ('tenant A cannot read tenant B's data'), a multi-tenant system with shared infrastructure, and the question of which components to audit. Maps directly to the Scenario 1 in the skill's A2 section.; source id: tcb-identification-minimization-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're building a Kubernetes-based platform for running customer workloads. We want to claim 'a customer's pod cannot access another customer's secrets or influence another customer's workloads.' Which parts of the Kubernetes stack actually have to be correct for that to hold, and which parts are outside that boundary?",
+    "expected": "invoke",
+    "notes": "rationale: Asking exactly which components must be correct for a stated isolation policy to hold — TCB identification. The skill's Scenario 2 covers this Kubernetes case: API server RBAC, etcd, kubelet credential injection are in TCB; application containers and ingress controller are outside it.; source id: tcb-identification-minimization-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We want to reduce our attack surface before a PCI audit. We're going to remove unused open ports, disable SSH on production hosts, and uninstall packages we don't use. What else should we add to the list?",
+    "expected": "skip",
+    "notes": "rationale: Attack surface reduction is removing unnecessary exposure to attackers — a different question from TCB identification. The skill explicitly distinguishes: 'Attack surface reduction is about removing unnecessary exposure to attackers. TCB minimization is about identifying which components must be correct for a policy to hold.' The right approach here is attack surface enumeration and hardening guidance, not TCB methodology.; source id: tcb-identification-minimization-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We're doing a penetration test next month and want to figure out which services are most likely to have exploitable vulnerabilities. Where should the pen testers focus first?",
+    "expected": "skip",
+    "notes": "rationale: Penetration testing is a discovery exercise: finding exploitable vulnerabilities in a running system. The skill's boundary explicitly excludes this: 'You are doing a full penetration test or vulnerability assessment — those are discovery exercises, not TCB exercises.' TCB identification starts from the security property you want to enforce, not from attacker capabilities.; source id: tcb-identification-minimization-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're trying to decide whether to write our authentication service in Rust or Go. Security is a factor — which language gives us better memory safety guarantees?",
+    "expected": "skip",
+    "notes": "rationale: Language selection for memory safety is a specific engineering tradeoff question, not TCB identification. TCB identification would be relevant once the security policy is stated and the component is identified as being in the TCB — but choosing between languages doesn't require the TCB methodology. The right response is a comparison of memory safety properties in Rust vs. Go.; source id: tcb-identification-minimization-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We have a shared analytics pipeline that reads from the same database as our core product. A security reviewer flagged it as 'in scope' for our customer data confidentiality audit. The pipeline only does aggregate reporting — it never writes individual records anywhere. Does it belong in our TCB for the policy 'individual customer records are only accessible to the customer who owns them'?",
+    "expected": "invoke",
+    "notes": "rationale: This is a TCB membership evaluation question — applying the TCB test to a specific component. The test: 'If this component fails or is compromised, can the policy be violated?' If the analytics pipeline has read access to the raw database (before row-level security filters), a bug or compromise could expose individual records. Invoke to apply the formal TCB test and determine whether database access patterns put it in or out of TCB.; source id: tcb-identification-minimization-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We haven't fully defined our security requirements yet — we're still in early product design. Our lead engineer wants to start doing TCB analysis now so we know where to focus security review effort as we build. Is it too early?",
+    "expected": "skip",
+    "notes": "rationale: The skill's boundary explicitly states: 'The security policy has not been stated — without a specific policy, the TCB is everything, which is useless.' Without stated security policies, TCB analysis cannot be done meaningfully. The right advice is to first define the security invariants (what the system must guarantee), then apply TCB identification. Skip TCB methodology until the policies are written down; direct the team to articulate their security invariants first.; source id: tcb-identification-minimization-boundary-02"
+  }
+]

@@ -1,76 +1,72 @@
-{
-  "skill": "composite-slo",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Our checkout flow depends on three services: the product catalog (99.9% SLA), the payment gateway (99.5% SLA), and our identity provider (99.8% SLA). What SLO can we realistically commit to for the end-to-end checkout?",
-      "expected_behavior": "Invokes composite-slo, applies the serial dependency multiplication rule (0.999 × 0.995 × 0.998), explains that the composite is worse than the least reliable dependency, and identifies the payment gateway as the bottleneck.",
-      "notes": "Positive scenario: classic serial dependency chain with known SLAs, engineer needs to derive achievable end-to-end SLO."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "My team's service has a 99.9% SLO and all our individual components seem to be hitting their targets, but we keep missing our overall availability commitment. I can't figure out why the numbers don't add up.",
-      "expected_behavior": "Invokes composite-slo, prompts to map serial dependencies, explains that the composite of serial dependencies is always worse than the least reliable single dependency, and uses the math to diagnose where the gap is coming from.",
-      "notes": "Positive scenario: team is experiencing the hidden cost of serial dependencies without knowing the calculation."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We're planning to add a second database replica in a different availability zone to improve our reliability. Our primary DB is at 99.5% today. How much does the second replica actually help, and what composite availability can we expect?",
-      "expected_behavior": "Invokes composite-slo, applies the parallel error budget multiplication rule (error budgets multiply, not SLOs), shows the dramatic improvement from adding one parallel replica, and warns about independence assumptions if both replicas share the same deployment pipeline.",
-      "notes": "Positive scenario: engineer wants to quantify the reliability benefit of adding redundancy — requires the parallel rule."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're designing SLO targets for each team in our platform. The consumer-facing SLO needs to be 99.9%. We have four teams in the dependency chain. How should we decompose that 99.9% target into per-team SLO budgets?",
-      "expected_behavior": "Invokes composite-slo, explains the reverse application of the serial multiplication rule to decompose a target SLO into per-component targets, and notes that not all components need equal SLOs — the bottleneck principle applies.",
-      "notes": "Positive scenario: SLO decomposition across a dependency chain — the reverse calculation problem."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "Our vendor guarantees 99% in their SLA. Our service has to hit 99.5% for our consumers. We depend on this vendor for every request. Is that even achievable?",
-      "expected_behavior": "Invokes composite-slo, applies serial multiplication showing the composite SLO is capped at 99% (the vendor's SLA), and explains the service cannot achieve 99.5% with a serial dependency that only guarantees 99%.",
-      "notes": "Positive scenario: vendor SLA compatibility check — a common real-world question."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "Our service was down for 3 hours last month. We ran 720 hours total. What's our uptime percentage?",
-      "expected_behavior": "Pure arithmetic — 717/720 = 99.58% — does not invoke composite-slo because there is no dependency graph and no multi-component topology. Simple availability calculation.",
-      "notes": "Decoy: looks like an availability calculation but requires no dependency topology reasoning."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "What is the difference between an SLA and an SLO?",
-      "expected_behavior": "Definitional question — answers with a concise explanation of SLA (external contract with financial penalties) vs SLO (internal engineering target). Does not invoke composite-slo.",
-      "notes": "Decoy: terminology question with no calculation or multi-service context."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "Our SLO is set at 99.9% and we want to raise it to 99.99%. Is that a good idea, and what would it cost us?",
-      "expected_behavior": "SLO calibration and cost-of-reliability question — should use lagom-slo or 10x9-cost-reliability framing, not composite-slo. No dependency graph, no composition question.",
-      "notes": "Decoy: SLO target setting question, not a composition problem."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "We have two CDN providers configured in parallel for failover. Both are hosted in the same AWS region. What availability improvement does this give us?",
-      "expected_behavior": "Invokes composite-slo but immediately flags the independence assumption violation — two CDN nodes in the same AWS region share a failure mode (region outage), so multiplying error budgets overstates the reliability improvement. The skill should quantify the theoretical improvement while explicitly flagging that the actual improvement is far smaller due to correlated failures.",
-      "notes": "Boundary: parallel topology question but the independence assumption is violated — shared cloud region. The skill must surface this caveat clearly."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "We have a caching layer that serves stale content when our backend is down. Should I include the cache as a component in my SLO calculation?",
-      "expected_behavior": "Ambiguous: the cache creates a parallel path (fallback-failover territory) but the composite-slo math applies to quantify the reliability improvement. The skill should recognize this as a parallel dependency topology, apply error budget multiplication, but also note this overlaps with fallback-failover design decisions.",
-      "notes": "Boundary: blend of composite-slo (math) and fallback-failover (design) — the cache introduces a parallel path but the framing is architectural, not just mathematical."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our checkout flow depends on three services: the product catalog (99.9% SLA), the payment gateway (99.5% SLA), and our identity provider (99.8% SLA). What SLO can we realistically commit to for the end-to-end checkout?",
+    "expected": "Invokes composite-slo, applies the serial dependency multiplication rule (0.999 × 0.995 × 0.998), explains that the composite is worse than the least reliable dependency, and identifies the payment gateway as the bottleneck.",
+    "notes": "Positive scenario: classic serial dependency chain with known SLAs, engineer needs to derive achievable end-to-end SLO.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My team's service has a 99.9% SLO and all our individual components seem to be hitting their targets, but we keep missing our overall availability commitment. I can't figure out why the numbers don't add up.",
+    "expected": "Invokes composite-slo, prompts to map serial dependencies, explains that the composite of serial dependencies is always worse than the least reliable single dependency, and uses the math to diagnose where the gap is coming from.",
+    "notes": "Positive scenario: team is experiencing the hidden cost of serial dependencies without knowing the calculation.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're planning to add a second database replica in a different availability zone to improve our reliability. Our primary DB is at 99.5% today. How much does the second replica actually help, and what composite availability can we expect?",
+    "expected": "Invokes composite-slo, applies the parallel error budget multiplication rule (error budgets multiply, not SLOs), shows the dramatic improvement from adding one parallel replica, and warns about independence assumptions if both replicas share the same deployment pipeline.",
+    "notes": "Positive scenario: engineer wants to quantify the reliability benefit of adding redundancy — requires the parallel rule.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're designing SLO targets for each team in our platform. The consumer-facing SLO needs to be 99.9%. We have four teams in the dependency chain. How should we decompose that 99.9% target into per-team SLO budgets?",
+    "expected": "Invokes composite-slo, explains the reverse application of the serial multiplication rule to decompose a target SLO into per-component targets, and notes that not all components need equal SLOs — the bottleneck principle applies.",
+    "notes": "Positive scenario: SLO decomposition across a dependency chain — the reverse calculation problem.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our vendor guarantees 99% in their SLA. Our service has to hit 99.5% for our consumers. We depend on this vendor for every request. Is that even achievable?",
+    "expected": "Invokes composite-slo, applies serial multiplication showing the composite SLO is capped at 99% (the vendor's SLA), and explains the service cannot achieve 99.5% with a serial dependency that only guarantees 99%.",
+    "notes": "Positive scenario: vendor SLA compatibility check — a common real-world question.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our service was down for 3 hours last month. We ran 720 hours total. What's our uptime percentage?",
+    "expected": "Pure arithmetic — 717/720 = 99.58% — does not invoke composite-slo because there is no dependency graph and no multi-component topology. Simple availability calculation.",
+    "notes": "Decoy: looks like an availability calculation but requires no dependency topology reasoning.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between an SLA and an SLO?",
+    "expected": "Definitional question — answers with a concise explanation of SLA (external contract with financial penalties) vs SLO (internal engineering target). Does not invoke composite-slo.",
+    "notes": "Decoy: terminology question with no calculation or multi-service context.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our SLO is set at 99.9% and we want to raise it to 99.99%. Is that a good idea, and what would it cost us?",
+    "expected": "SLO calibration and cost-of-reliability question — should use lagom-slo or 10x9-cost-reliability framing, not composite-slo. No dependency graph, no composition question.",
+    "notes": "Decoy: SLO target setting question, not a composition problem.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We have two CDN providers configured in parallel for failover. Both are hosted in the same AWS region. What availability improvement does this give us?",
+    "expected": "Invokes composite-slo but immediately flags the independence assumption violation — two CDN nodes in the same AWS region share a failure mode (region outage), so multiplying error budgets overstates the reliability improvement. The skill should quantify the theoretical improvement while explicitly flagging that the actual improvement is far smaller due to correlated failures.",
+    "notes": "Boundary: parallel topology question but the independence assumption is violated — shared cloud region. The skill must surface this caveat clearly.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We have a caching layer that serves stale content when our backend is down. Should I include the cache as a component in my SLO calculation?",
+    "expected": "Ambiguous: the cache creates a parallel path (fallback-failover territory) but the composite-slo math applies to quantify the reliability improvement. The skill should recognize this as a parallel dependency topology, apply error budget multiplication, but also note this overlaps with fallback-failover design decisions.",
+    "notes": "Boundary: blend of composite-slo (math) and fallback-failover (design) — the cache introduces a parallel path but the framing is architectural, not just mathematical.; source id: edge-02"
+  }
+]

@@ -1,59 +1,65 @@
-{
-  "skill_id": "microservices-dont-fix-coupling",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "type": "should_invoke",
-      "prompt": "We split our monolith into 8 microservices six months ago. Every feature still requires deploying 3-4 services together. Is this normal for microservices?",
-      "rationale": "Describes the distributed monolith symptom (deployment coupling) — the skill's central diagnostic."
-    },
-    {
-      "id": "tp-02",
-      "type": "should_invoke",
-      "prompt": "Our CTO says moving to microservices will fix our coupling problems. What questions should we ask before starting?",
-      "rationale": "Directly invites the counterintuitive claim: microservices don't fix coupling unless boundaries are right."
-    },
-    {
-      "id": "tp-03",
-      "type": "should_invoke",
-      "prompt": "We're planning to split our Go monolith by team ownership — each team gets one service. What are the risks?",
-      "rationale": "Team-based splitting (Conway's Law applied naively) is one of the wrong splitting criteria the book contrasts with Bounded Context-based splitting."
-    },
-    {
-      "id": "tp-04",
-      "type": "should_invoke",
-      "prompt": "Our microservices share a common 'models' Go module that all services import. A change to one model requires updating all services. How do we break this dependency?",
-      "rationale": "Shared domain model across services is the distributed monolith indicator — internal model distributed via a shared module."
-    },
-    {
-      "id": "tp-05",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure service discovery for microservices in Kubernetes?",
-      "rationale": "Infrastructure/operations question — not about domain coupling or service boundary design."
-    },
-    {
-      "id": "tp-06",
-      "type": "should_not_invoke",
-      "prompt": "What are the performance differences between gRPC and REST for inter-service communication in Go?",
-      "rationale": "Transport protocol comparison — not about coupling, bounded contexts, or why microservices fail."
-    },
-    {
-      "id": "tp-07",
-      "type": "blurred_boundary",
-      "prompt": "We're considering serverless functions to replace our monolith. Will this improve our maintainability and reduce coupling?",
-      "rationale": "Serverless is an infrastructure choice the book explicitly calls out as not solving domain coupling — needs the distinction between infrastructure and domain decisions."
-    },
-    {
-      "id": "tp-08",
-      "type": "blurred_boundary",
-      "prompt": "Should service boundaries align with team ownership (Conway's Law) or with domain boundaries? We're getting conflicting advice.",
-      "rationale": "Conway's Law vs. Bounded Context — the book's position is that domain boundaries come from Strategic DDD, not team structure; team structure should follow domain boundaries, not define them."
-    },
-    {
-      "id": "tp-09",
-      "type": "blurred_boundary",
-      "prompt": "We have 15 microservices but all 15 deployments require the same database migration to run. How did this happen and how do we fix it?",
-      "rationale": "Shared database is a distributed monolith indicator — but the fix involves Bounded Context analysis (this skill) and possibly the anti-dry-separate-read-write-models skill."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We split our monolith into 8 microservices six months ago. Every feature still requires deploying 3-4 services together. Is this normal for microservices?",
+    "expected": "Skill activates and diagnoses a distributed monolith: coordinated multi-service deployment is the deployment-coupling indicator that the service boundaries are wrong because they were drawn by technical convenience rather than Bounded Contexts; it prescribes not merging services back but redrawing boundaries via Event Storming and migrating domain logic to the correct contexts.",
+    "notes": "rationale: Describes the distributed monolith symptom (deployment coupling) — the skill's central diagnostic.; source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our CTO says moving to microservices will fix our coupling problems. What questions should we ask before starting?",
+    "expected": "Skill activates and surfaces the counterintuitive claim that microservices are infrastructure and do not automatically reduce logical coupling; the key questions to ask are what domain analysis (Event Storming / Bounded Context identification) will inform the boundaries, warning that splitting without it just reproduces the monolith's coupling across a network as a distributed monolith.",
+    "notes": "rationale: Directly invites the counterintuitive claim: microservices don't fix coupling unless boundaries are right.; source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're planning to split our Go monolith by team ownership — each team gets one service. What are the risks?",
+    "expected": "Skill activates and identifies team-ownership splitting as one of the wrong criteria (naive Conway's Law) that preserves the original coupling; it warns this risks a distributed monolith and prescribes splitting along Bounded Context boundaries from Strategic DDD instead, with team structure following domain boundaries rather than defining them.",
+    "notes": "rationale: Team-based splitting (Conway's Law applied naively) is one of the wrong splitting criteria the book contrasts with Bounded Context-based splitting.; source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our microservices share a common 'models' Go module that all services import. A change to one model requires updating all services. How do we break this dependency?",
+    "expected": "Skill activates and names the shared domain model distributed via a common module as a distributed-monolith indicator — internal model coupling across services; it prescribes redrawing Bounded Contexts so each service owns its own model and integrating across contexts via domain events rather than a shared struct module (composing with anti-dry-separate-read-write-models).",
+    "notes": "rationale: Shared domain model across services is the distributed monolith indicator — internal model distributed via a shared module.; source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure service discovery for microservices in Kubernetes?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Infrastructure/operations question — not about domain coupling or service boundary design.; source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What are the performance differences between gRPC and REST for inter-service communication in Go?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Transport protocol comparison — not about coupling, bounded contexts, or why microservices fail.; source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're considering serverless functions to replace our monolith. Will this improve our maintainability and reduce coupling?",
+    "expected": "Skill applies the infrastructure-vs-domain distinction: serverless solves only infrastructure/deployment/scaling problems and does not stop you from building a hard-to-maintain, coupled application; the defensible answer is that maintainability and coupling depend on Bounded Context boundaries, not the runtime — moving to functions without domain analysis just yields a distributed monolith of functions.",
+    "notes": "rationale: Serverless is an infrastructure choice the book explicitly calls out as not solving domain coupling — needs the distinction between infrastructure and domain decisions.; source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Should service boundaries align with team ownership (Conway's Law) or with domain boundaries? We're getting conflicting advice.",
+    "expected": "Skill resolves the conflict in favor of domain boundaries: service lines should be drawn from Bounded Contexts identified via Strategic DDD, and team structure should follow those domain boundaries rather than define them; team-based splitting applied first is the naive-Conway trap that produces wrong boundaries and a distributed monolith.",
+    "notes": "rationale: Conway's Law vs. Bounded Context — the book's position is that domain boundaries come from Strategic DDD, not team structure; team structure should follow domain boundaries, not define them.; source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We have 15 microservices but all 15 deployments require the same database migration to run. How did this happen and how do we fix it?",
+    "expected": "Skill identifies a shared database as a distributed-monolith indicator: the services never achieved data ownership independence because boundaries were drawn without Bounded Context analysis; the fix is to redraw contexts so each owns its own data, migrating gradually (composing with anti-dry-separate-read-write-models) rather than merging services back.",
+    "notes": "rationale: Shared database is a distributed monolith indicator — but the fix involves Bounded Context analysis (this skill) and possibly the anti-dry-separate-read-write-models skill.; source id: tp-09"
+  }
+]

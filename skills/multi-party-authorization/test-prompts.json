@@ -1,62 +1,58 @@
-{
-  "skill": "multi-party-authorization",
-  "description": "Use this skill when designing or reviewing controls for operations that, if performed unilaterally by a single insider, could cause significant damage — whether through malice, compromise, or error.",
-  "test_prompts": [
-    {
-      "id": "multi-party-authorization-should-01",
-      "category": "should_invoke",
-      "prompt": "We have a shared DBA account that any senior engineer can use for emergency production database maintenance — schema changes, data corrections, that sort of thing. Our SOC 2 auditor flagged it as a single-actor control weakness. What does a proper control look like here?",
-      "expected": "invoke",
-      "rationale": "Shared account plus single-actor production database access is a canonical MPA trigger. The fix requires eliminating the shared account and requiring two independently-authenticated actors before any emergency maintenance executes — tooling-enforced, not policy-enforced."
-    },
-    {
-      "id": "multi-party-authorization-should-02",
-      "category": "should_invoke",
-      "prompt": "One of our senior engineers can merge their own code to main and trigger a production deploy. We have a code review requirement in our development guide, but nothing technically stops them from clicking 'Merge' on their own PR when they're under deadline pressure. Is this a problem?",
-      "expected": "invoke",
-      "rationale": "Self-merge capability on a production deploy path is a single-actor unilateral risk. The skill explicitly unifies code review enforced as a deployment gate with MPA — the fix is to configure branch protection to require at least one non-author reviewer before merging, making self-merge structurally impossible."
-    },
-    {
-      "id": "multi-party-authorization-should-03",
-      "category": "should_invoke",
-      "prompt": "Our key rotation procedure for signing keys requires only one admin to initiate and confirm the rotation. Last month a phishing attack nearly compromised one of our admins' accounts. We want to harden the rotation process. What controls are appropriate?",
-      "expected": "invoke",
-      "rationale": "Secret rotation is an explicitly named MPA trigger operation. A single-actor key rotation means a compromised account can rotate keys to attacker-controlled values. MPA with 3FA (originator approval from a hardened device outside the workstation fleet) is the design the skill prescribes."
-    },
-    {
-      "id": "multi-party-authorization-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our engineers need to look at production logs to debug customer issues. Right now they SSH into the logging host directly. We want to tighten this up — should we add MPA approval before they can view logs?",
-      "expected": "skip",
-      "rationale": "Log viewing is a low-risk routine operation explicitly excluded by the skill's boundary: applying MPA to routine tasks produces approval fatigue and rubber stamps. The right skill is least-privilege-tooling-enforced — restrict direct SSH, expose a narrow read-only API scoped by time and customer, no MPA gate required."
-    },
-    {
-      "id": "multi-party-authorization-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "Our engineers have permanent admin access to all production AWS accounts. We want to reduce the blast radius if any account is compromised. What's the best way to scope this down?",
-      "expected": "skip",
-      "rationale": "This is a least-privilege design question about narrowing access scope, risk-tier classification, and time-bounding — not about requiring a second approver for specific operations. MPA is the advanced control layered on top of least-privilege for the highest-risk tier; the first step here is least-privilege-tooling-enforced to classify and narrow the access model."
-    },
-    {
-      "id": "multi-party-authorization-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're implementing MFA for all admin accounts using TOTP. One of our senior engineers argues we should use hardware security keys instead because TOTP can be phished. Is hardware key enforcement worth the operational overhead?",
-      "expected": "skip",
-      "rationale": "This is an MFA (multi-factor authentication) strength comparison question — a single-actor control design question. MPA (multi-party authorization) is a two-actor control and is a distinct concept. The skill explicitly notes this confusion: MFA is multiple factors from one person; MPA is two independent actors. The right framing is authentication security and phishing resistance, not MPA."
-    },
-    {
-      "id": "multi-party-authorization-boundary-01",
-      "category": "boundary",
-      "prompt": "We're considering requiring a second approver for all production deployments, even for small CSS and copy changes that go through our normal CI pipeline with passing tests. Our security lead wants consistent MPA everywhere; our engineering lead says it'll kill velocity. Who's right?",
-      "expected": "skip",
-      "rationale": "The skill's boundary is explicit: do not apply MPA to routine low-risk operations — it produces approval fatigue and rubber stamps that defeat the control. Low-risk changes through a passing CI pipeline do not warrant MPA. The right answer is to apply MPA proportionally to the risk tier: reserve it for production data changes, secret rotations, and elevated privilege grants, not for every deployment. The engineering lead is closer to correct here."
-    },
-    {
-      "id": "multi-party-authorization-boundary-02",
-      "category": "boundary",
-      "prompt": "We require two approvals on all pull requests before merging. Our security team is claiming this satisfies our MPA control requirement for production changes. Is that accurate, or is something else needed?",
-      "expected": "invoke",
-      "rationale": "The skill explicitly unifies code review enforced as a deployment gate with MPA — but the control must be tooling-enforced, not policy-enforced. This is a boundary case: the claim may be accurate if branch protection rules technically block merging without two approvals AND the CI/CD pipeline requires that a merged commit passed code review as a deploy precondition. If either gate can be bypassed (emergency merge override, manual deploy trigger from unreviewed commit), the MPA control is incomplete. The skill should be invoked to audit whether the enforcement is structural or honor-based."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have a shared DBA account that any senior engineer can use for emergency production database maintenance — schema changes, data corrections, that sort of thing. Our SOC 2 auditor flagged it as a single-actor control weakness. What does a proper control look like here?",
+    "expected": "invoke",
+    "notes": "rationale: Shared account plus single-actor production database access is a canonical MPA trigger. The fix requires eliminating the shared account and requiring two independently-authenticated actors before any emergency maintenance executes — tooling-enforced, not policy-enforced.; source id: multi-party-authorization-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "One of our senior engineers can merge their own code to main and trigger a production deploy. We have a code review requirement in our development guide, but nothing technically stops them from clicking 'Merge' on their own PR when they're under deadline pressure. Is this a problem?",
+    "expected": "invoke",
+    "notes": "rationale: Self-merge capability on a production deploy path is a single-actor unilateral risk. The skill explicitly unifies code review enforced as a deployment gate with MPA — the fix is to configure branch protection to require at least one non-author reviewer before merging, making self-merge structurally impossible.; source id: multi-party-authorization-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our key rotation procedure for signing keys requires only one admin to initiate and confirm the rotation. Last month a phishing attack nearly compromised one of our admins' accounts. We want to harden the rotation process. What controls are appropriate?",
+    "expected": "invoke",
+    "notes": "rationale: Secret rotation is an explicitly named MPA trigger operation. A single-actor key rotation means a compromised account can rotate keys to attacker-controlled values. MPA with 3FA (originator approval from a hardened device outside the workstation fleet) is the design the skill prescribes.; source id: multi-party-authorization-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our engineers need to look at production logs to debug customer issues. Right now they SSH into the logging host directly. We want to tighten this up — should we add MPA approval before they can view logs?",
+    "expected": "skip",
+    "notes": "rationale: Log viewing is a low-risk routine operation explicitly excluded by the skill's boundary: applying MPA to routine tasks produces approval fatigue and rubber stamps. The right skill is least-privilege-tooling-enforced — restrict direct SSH, expose a narrow read-only API scoped by time and customer, no MPA gate required.; source id: multi-party-authorization-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our engineers have permanent admin access to all production AWS accounts. We want to reduce the blast radius if any account is compromised. What's the best way to scope this down?",
+    "expected": "skip",
+    "notes": "rationale: This is a least-privilege design question about narrowing access scope, risk-tier classification, and time-bounding — not about requiring a second approver for specific operations. MPA is the advanced control layered on top of least-privilege for the highest-risk tier; the first step here is least-privilege-tooling-enforced to classify and narrow the access model.; source id: multi-party-authorization-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're implementing MFA for all admin accounts using TOTP. One of our senior engineers argues we should use hardware security keys instead because TOTP can be phished. Is hardware key enforcement worth the operational overhead?",
+    "expected": "skip",
+    "notes": "rationale: This is an MFA (multi-factor authentication) strength comparison question — a single-actor control design question. MPA (multi-party authorization) is a two-actor control and is a distinct concept. The skill explicitly notes this confusion: MFA is multiple factors from one person; MPA is two independent actors. The right framing is authentication security and phishing resistance, not MPA.; source id: multi-party-authorization-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're considering requiring a second approver for all production deployments, even for small CSS and copy changes that go through our normal CI pipeline with passing tests. Our security lead wants consistent MPA everywhere; our engineering lead says it'll kill velocity. Who's right?",
+    "expected": "skip",
+    "notes": "rationale: The skill's boundary is explicit: do not apply MPA to routine low-risk operations — it produces approval fatigue and rubber stamps that defeat the control. Low-risk changes through a passing CI pipeline do not warrant MPA. The right answer is to apply MPA proportionally to the risk tier: reserve it for production data changes, secret rotations, and elevated privilege grants, not for every deployment. The engineering lead is closer to correct here.; source id: multi-party-authorization-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We require two approvals on all pull requests before merging. Our security team is claiming this satisfies our MPA control requirement for production changes. Is that accurate, or is something else needed?",
+    "expected": "invoke",
+    "notes": "rationale: The skill explicitly unifies code review enforced as a deployment gate with MPA — but the control must be tooling-enforced, not policy-enforced. This is a boundary case: the claim may be accurate if branch protection rules technically block merging without two approvals AND the CI/CD pipeline requires that a merged commit passed code review as a deploy precondition. If either gate can be bypassed (emergency merge override, manual deploy trigger from unreviewed commit), the MPA control is incomplete. The skill should be invoked to audit whether the enforcement is structural or honor-based.; source id: multi-party-authorization-boundary-02"
+  }
+]

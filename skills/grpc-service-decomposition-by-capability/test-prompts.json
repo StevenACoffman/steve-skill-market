@@ -1,65 +1,72 @@
-{
-  "skill_id": "grpc-service-decomposition-by-capability",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "We're splitting our e-commerce monolith into microservices. Should we split by technical layer (controllers, services, repositories) or some other principle?",
-      "rationale": "Direct match: Y-axis decomposition by business capability, not technical layer."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "How do I decide where to draw service boundaries in a microservice architecture? What is the scale cube?",
-      "rationale": "Direct match: the scale cube framework and Y-axis business capability decomposition."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "Two of our teams are constantly blocked by each other's deployments even though they own different services. Could the service boundaries be wrong?",
-      "rationale": "Direct match: Conway's Law and team-ownership alignment — shared release cycles indicate wrong service boundaries."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "Is it safe to have two microservices share the same database schema if they're in the same team and always deployed together?",
-      "rationale": "Direct match: shared databases re-create monolithic coupling; each service must own its own data."
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement service discovery for gRPC microservices in Kubernetes?",
-      "rationale": "Kubernetes DNS-based service discovery — implementation detail, not service boundary design."
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "What is the best way to version a gRPC API across multiple microservices?",
-      "rationale": "Proto versioning and API evolution, not service decomposition principles."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure Kubernetes resource requests and limits for a high-traffic gRPC service?",
-      "rationale": "Kubernetes resource management, not service boundary design."
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "We have an Order service and a Payment service. The Order service currently imports the Payment service's domain types directly. Is this a problem and how do we fix it?",
-      "rationale": "Blurred: the ce01 counter-example is about domain type sharing; this skill covers why service boundaries require API contracts via stubs, while grpc-hexagonal-architecture-ports covers the intra-service adapter pattern."
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "Should we decompose our system now or start with a monolith and split later? We're a team of 5 building a new e-commerce platform.",
-      "rationale": "Blurred: the Boundary section addresses this directly — start with a monolith — but the timing of decomposition is a strategic decision that depends on team size, domain knowledge maturity, and deployment independence requirements."
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "Our checkout service calls 4 other services in sequence. Each call can fail independently. Should we split checkout into smaller services or keep it as one?",
-      "rationale": "Blurred: touches both decomposition criteria (this skill) and saga/distributed transaction handling (grpc-saga-compensation-ordering) — the orchestration pattern may be needed regardless of whether checkout is split further."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're splitting our e-commerce monolith into microservices. Should we split by technical layer (controllers, services, repositories) or some other principle?",
+    "expected": "The skill activates and prescribes decomposing by business capability (Y-axis functional decomposition), not by technical layer. It should explain that splitting into controllers/services/repositories creates distributed coupling without independent deployability, whereas each business capability (e.g., product, cart, checkout/order, payment, shipping) maps to one service boundary with its own data, API, and team. It should map the e-commerce domain to capability-aligned services.",
+    "notes": "rationale: Direct match: Y-axis decomposition by business capability, not technical layer.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "How do I decide where to draw service boundaries in a microservice architecture? What is the scale cube?",
+    "expected": "The skill activates and explains the scale cube (Abbott and Fisher): X-axis is horizontal duplication behind a load balancer (throughput), Z-axis is data partitioning/sharding (data volume), and Y-axis is functional decomposition into independent services (complexity) — the microservices axis. It should prescribe drawing boundaries by business capability along the Y-axis, with each service owning its own data and communicating only via gRPC APIs, and note the scale cube frames the rationale rather than dictating how many services to create.",
+    "notes": "rationale: Direct match: the scale cube framework and Y-axis business capability decomposition.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Two of our teams are constantly blocked by each other's deployments even though they own different services. Could the service boundaries be wrong?",
+    "expected": "The skill activates and confirms the boundaries are likely wrong, invoking Conway's Law: system architecture mirrors team communication structure, so aligning service boundaries with team boundaries is what lets teams deploy independently. Teams blocked by each other's deployments despite owning different services signals deployment coupling — shared release cycles, a shared database, or capabilities split across the wrong seams. It should recommend re-drawing boundaries so each capability is owned end-to-end by one team with no shared data or coupled releases.",
+    "notes": "rationale: Direct match: Conway's Law and team-ownership alignment — shared release cycles indicate wrong service boundaries.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Is it safe to have two microservices share the same database schema if they're in the same team and always deployed together?",
+    "expected": "The skill activates and advises against sharing a database schema: each service must own its own data, and a shared schema re-creates monolithic coupling at the data layer, defeating the purpose of decomposition. It should point out that same-team/always-deployed-together is itself a signal the two are not yet ready to be separate services — services that share a database table belong in the same service; if they should be separate, they must communicate through gRPC APIs, never by reading each other's tables.",
+    "notes": "rationale: Direct match: shared databases re-create monolithic coupling; each service must own its own data.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement service discovery for gRPC microservices in Kubernetes?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Kubernetes DNS-based service discovery — implementation detail, not service boundary design.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is the best way to version a gRPC API across multiple microservices?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Proto versioning and API evolution, not service decomposition principles.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure Kubernetes resource requests and limits for a high-traffic gRPC service?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Kubernetes resource management, not service boundary design.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have an Order service and a Payment service. The Order service currently imports the Payment service's domain types directly. Is this a problem and how do we fix it?",
+    "expected": "The defensible outcome is yes, this is a coupling problem: importing another service's domain types directly (the ce01 counter-example) recreates the shared-code coupling that decomposition is meant to remove and makes the Order service depend on Payment's internal implementation. The fix is to communicate only through Payment's gRPC API contract — Order depends on the generated Payment stub (from a separate proto contract), not an import of Payment's Go domain types. The skill should surface the API-contract-via-stubs principle and hand off to grpc-hexagonal-architecture-ports for the intra-service adapter mapping between the stub and Order's own domain model.",
+    "notes": "rationale: Blurred: the ce01 counter-example is about domain type sharing; this skill covers why service boundaries require API contracts via stubs, while grpc-hexagonal-architecture-ports covers the intra-service adapter pattern.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should we decompose our system now or start with a monolith and split later? We're a team of 5 building a new e-commerce platform.",
+    "expected": "The defensible outcome is start with a monolith and decompose later: premature decomposition creates services with wrong boundaries that are expensive to merge or re-split, and a team of 5 on a new platform has not yet learned the domain well enough to place stable boundaries. The skill should surface the decomposition-timing reasoning — decompose only when a domain boundary has stabilized, when capabilities need independent scaling, or when teams start blocking each other's release cadence — and note this is a strategic decision driven by team size, domain maturity, and independent-deployability needs, favoring incremental brownfield decomposition over greenfield microservices.",
+    "notes": "rationale: Blurred: the Boundary section addresses this directly — start with a monolith — but the timing of decomposition is a strategic decision that depends on team size, domain knowledge maturity, and deployment independence requirements.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our checkout service calls 4 other services in sequence. Each call can fail independently. Should we split checkout into smaller services or keep it as one?",
+    "expected": "The defensible outcome is that the sequential-call fragility is not itself a reason to split checkout further: the decision should be driven by whether checkout is one business capability with its own data and independent scaling/deployment profile, and if it is, keep it as one service. The skill should surface that the multi-service failure exposure is a distributed-transaction concern to be handled with a saga/orchestrator (with bottom-up idempotent compensation) regardless of whether checkout is decomposed, and hand off to grpc-saga-compensation-ordering for that pattern rather than treating further splitting as the fix.",
+    "notes": "rationale: Blurred: touches both decomposition criteria (this skill) and saga/distributed transaction handling (grpc-saga-compensation-ordering) — the orchestration pattern may be needed regardless of whether checkout is split further.; source id: tp10"
+  }
+]

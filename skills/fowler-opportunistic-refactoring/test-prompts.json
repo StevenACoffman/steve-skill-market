@@ -1,94 +1,100 @@
-{
-  "skill": "fowler-opportunistic-refactoring",
-  "version": "1.0",
-  "description": "Test prompts for Four Modes of Opportunistic Refactoring skill",
-  "test_cases": {
-    "should_trigger": [
-      {
-        "id": "ST-01",
-        "prompt": "I need to add pagination to a service that currently returns all results. The existing code mixes data fetching and formatting. What should I do before writing any new code?",
-        "expected_mode": "preparatory",
-        "notes": "V2 canonical scenario — preparatory refactoring before adding a feature"
-      },
-      {
-        "id": "ST-02",
-        "prompt": "I've been reading this legacy function for 20 minutes and I finally understand what it does. How should I proceed?",
-        "expected_mode": "comprehension",
-        "notes": "Comprehension refactoring — understanding should be moved into code, not kept in head"
-      },
-      {
-        "id": "ST-03",
-        "prompt": "While fixing a bug I noticed the three calling sites all duplicate the same validation logic. Should I fix that now or just patch the bug?",
-        "expected_mode": "litter-pickup",
-        "notes": "Litter-pickup triage — small problem noticed in passing, likely worth fixing now"
-      },
-      {
-        "id": "ST-04",
-        "prompt": "Our team has agreed the dependency graph in the payments module is a mess. We can't freeze the codebase to fix it — how do we approach this?",
-        "expected_mode": "long-term",
-        "notes": "Long-term refactoring — large structural problem requiring weeks, Branch By Abstraction"
-      },
-      {
-        "id": "ST-05",
-        "prompt": "I want to add a new discount type to the pricing engine but the existing discount logic is hardcoded in five different places. What's the right sequence of steps?",
-        "expected_mode": "preparatory",
-        "notes": "Preparatory — make the change easy first (consolidate discount logic), then add the new type"
-      },
-      {
-        "id": "ST-06",
-        "prompt": "Our team just got approval for a refactoring sprint next month. We've been accumulating technical debt for two years. How should we use this time and how do we avoid needing another one?",
-        "expected_mode": "planned-vs-opportunistic",
-        "notes": "Planned refactoring as symptom — execute the sprint, but establish opportunistic habits to prevent recurrence"
-      },
-      {
-        "id": "ST-07",
-        "prompt": "I'm reviewing code that was written six months ago and I'm having trouble following the conditional logic. Should I just leave comments or is there something better?",
-        "expected_mode": "comprehension",
-        "notes": "Comprehension refactoring during code review — rename and extract, don't just comment"
-      },
-      {
-        "id": "ST-08",
-        "prompt": "While adding a new endpoint I noticed the existing error handling is inconsistent — some places return 404, others 400, for the same logical error. It would take about 3 hours to fix. What should I do?",
-        "expected_mode": "litter-pickup",
-        "notes": "Litter-pickup with size triage — 3 hours is large, note and defer rather than derail current task"
-      }
-    ],
-    "should_not_trigger": [
-      {
-        "id": "SNT-01",
-        "prompt": "I have a function that's 200 lines long. How do I break it apart?",
-        "reason": "This is asking for a specific refactoring technique (Extract Function from the catalog), not when to refactor. Use the catalog skill, not opportunistic refactoring mode selection."
-      },
-      {
-        "id": "SNT-02",
-        "prompt": "My manager says we don't have time for refactoring and it doesn't deliver business value. How do I convince them?",
-        "reason": "This is a Design Stamina / economic framing question — why refactor and how to justify it to stakeholders. Not a question about which mode to use or when to enter refactoring mode."
-      },
-      {
-        "id": "SNT-03",
-        "prompt": "What are the code smells I should look for in this class?",
-        "reason": "Code smell identification is a diagnostic vocabulary skill (fowler-code-smells). Opportunistic refactoring assumes you have already noticed a problem; it governs when to act, not what to look for."
-      }
-    ],
-    "edge_cases": [
-      {
-        "id": "EC-01",
-        "prompt": "I don't have any tests for this module. Should I refactor it to understand it better?",
-        "expected_behavior": "The skill should fire (comprehension mode is triggered) but immediately apply the Boundary constraint: opportunistic refactoring without a fast test suite is unsafe. Advise getting tests in place first (via WELC techniques) before comprehension refactoring. Do not simply recommend refactoring as if tests don't matter.",
-        "notes": "Boundary condition — no tests means the skill applies conditionally, with explicit safety warning"
-      },
-      {
-        "id": "EC-02",
-        "prompt": "I'm halfway through adding a new feature and I realize the code structure needs to change to make the rest of the feature easy. Should I refactor now?",
-        "expected_behavior": "Preparatory refactoring mid-feature is valid but requires switching hats explicitly. The skill should recommend: stop feature work, commit what you have, switch to refactoring hat, make the structural change, run tests, then switch back to feature hat. Two Hats discipline applies — don't mix both in one mental state. Note that the refactoring and feature work may need to be in separate commits.",
-        "notes": "Overlap with Two Hats — preparatory mode applies but requires hat discipline to execute safely"
-      },
-      {
-        "id": "EC-03",
-        "prompt": "While working on a ticket I found a security vulnerability in nearby code that's not part of my ticket. Should I fix it as litter-pickup?",
-        "expected_behavior": "The skill should recognize this as a litter-pickup signal but escalate the triage: security vulnerabilities are not size-triaged by time cost alone — they have risk dimensions. Recommend fixing immediately if small and isolated, but if larger, raise it as a separate urgent item rather than deferring with a note. The litter-pickup 'note and defer' path is inappropriate for security issues.",
-        "notes": "Litter-pickup mode with atypical triage criteria — not all deferred notes are equal"
-      }
-    ]
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I need to add pagination to a service that currently returns all results. The existing code mixes data fetching and formatting. What should I do before writing any new code?",
+    "expected": "Skill activates and identifies preparatory refactoring: with the refactoring hat on, first separate the data-fetching and formatting concerns so the code is structured for pagination, verify tests still pass, then switch to the feature hat and add pagination as the now-easy change (make the change easy, then make the easy change).",
+    "notes": "V2 canonical scenario — preparatory refactoring before adding a feature; source id: ST-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I've been reading this legacy function for 20 minutes and I finally understand what it does. How should I proceed?",
+    "expected": "Skill activates in comprehension mode: rather than holding the understanding in your head, externalize it into the code now — rename the variables/functions whose meaning you decoded and extract the blocks whose purpose you figured out, running tests after each change to move understanding from your head into the code itself.",
+    "notes": "Comprehension refactoring — understanding should be moved into code, not kept in head; source id: ST-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "While fixing a bug I noticed the three calling sites all duplicate the same validation logic. Should I fix that now or just patch the bug?",
+    "expected": "Skill activates in litter-pickup mode and applies size triage: unifying three duplicated validation sites is a small, in-path fix, so consolidate the duplication now rather than only patching the bug — fixing the duplication reduces the chance of similar bugs recurring in the same code.",
+    "notes": "Litter-pickup triage — small problem noticed in passing, likely worth fixing now; source id: ST-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our team has agreed the dependency graph in the payments module is a mess. We can't freeze the codebase to fix it — how do we approach this?",
+    "expected": "Skill activates in long-term mode: agree on a target state, then use Branch By Abstraction to introduce a layer that works with both old and new implementations and migrate callers incrementally — no feature freeze or sprint; everyone passing through the module moves it one step toward the target, and CI keeps main green at every step.",
+    "notes": "Long-term refactoring — large structural problem requiring weeks, Branch By Abstraction; source id: ST-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I want to add a new discount type to the pricing engine but the existing discount logic is hardcoded in five different places. What's the right sequence of steps?",
+    "expected": "Skill activates in preparatory mode: first make the change easy by consolidating/parameterizing the five hardcoded discount sites into a single point of variation (refactoring hat, tests passing), then switch to the feature hat and add the new discount type as a trivial change — avoiding a sixth duplicate.",
+    "notes": "Preparatory — make the change easy first (consolidate discount logic), then add the new type; source id: ST-05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "Our team just got approval for a refactoring sprint next month. We've been accumulating technical debt for two years. How should we use this time and how do we avoid needing another one?",
+    "expected": "Skill activates and frames the sprint as a symptom of missing opportunistic refactoring: execute the planned episode (valid for a neglected codebase), but use it to establish the four-mode posture — preparatory, comprehension, litter-pickup, and long-term refactoring built into daily work — so refactoring stops being budgeted separately and no future cleanup sprint is needed.",
+    "notes": "Planned refactoring as symptom — execute the sprint, but establish opportunistic habits to prevent recurrence; source id: ST-06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "I'm reviewing code that was written six months ago and I'm having trouble following the conditional logic. Should I just leave comments or is there something better?",
+    "expected": "Skill activates in comprehension mode: rather than only leaving comments, lock the understanding into the code by renaming the unclear identifiers and extracting the confusing conditional logic into well-named functions, verifying with tests — the code becomes its own documentation instead of relying on comments.",
+    "notes": "Comprehension refactoring during code review — rename and extract, don't just comment; source id: ST-07"
+  },
+  {
+    "id": 8,
+    "type": "should_trigger",
+    "prompt": "While adding a new endpoint I noticed the existing error handling is inconsistent — some places return 404, others 400, for the same logical error. It would take about 3 hours to fix. What should I do?",
+    "expected": "Skill activates in litter-pickup mode and applies size triage: a ~3-hour fix is large, so note it (ticket/TODO) and defer rather than derail the current endpoint work — do not abandon the task in progress to pursue a large cleanup; capture it for later or handle via long-term mode.",
+    "notes": "Litter-pickup with size triage — 3 hours is large, note and defer rather than derail current task; source id: ST-08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "I have a function that's 200 lines long. How do I break it apart?",
+    "expected": "skill should not activate",
+    "notes": "source id: SNT-01"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "My manager says we don't have time for refactoring and it doesn't deliver business value. How do I convince them?",
+    "expected": "skill should not activate",
+    "notes": "source id: SNT-02"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "What are the code smells I should look for in this class?",
+    "expected": "skill should not activate",
+    "notes": "source id: SNT-03"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "I don't have any tests for this module. Should I refactor it to understand it better?",
+    "expected": "The skill should fire (comprehension mode is triggered) but immediately apply the Boundary constraint: opportunistic refactoring without a fast test suite is unsafe. Advise getting tests in place first (via WELC techniques) before comprehension refactoring. Do not simply recommend refactoring as if tests don't matter.",
+    "notes": "Boundary condition — no tests means the skill applies conditionally, with explicit safety warning; source id: EC-01"
+  },
+  {
+    "id": 13,
+    "type": "edge_case",
+    "prompt": "I'm halfway through adding a new feature and I realize the code structure needs to change to make the rest of the feature easy. Should I refactor now?",
+    "expected": "Preparatory refactoring mid-feature is valid but requires switching hats explicitly. The skill should recommend: stop feature work, commit what you have, switch to refactoring hat, make the structural change, run tests, then switch back to feature hat. Two Hats discipline applies — don't mix both in one mental state. Note that the refactoring and feature work may need to be in separate commits.",
+    "notes": "Overlap with Two Hats — preparatory mode applies but requires hat discipline to execute safely; source id: EC-02"
+  },
+  {
+    "id": 14,
+    "type": "edge_case",
+    "prompt": "While working on a ticket I found a security vulnerability in nearby code that's not part of my ticket. Should I fix it as litter-pickup?",
+    "expected": "The skill should recognize this as a litter-pickup signal but escalate the triage: security vulnerabilities are not size-triaged by time cost alone — they have risk dimensions. Recommend fixing immediately if small and isolated, but if larger, raise it as a separate urgent item rather than deferring with a note. The litter-pickup 'note and defer' path is inappropriate for security issues.",
+    "notes": "Litter-pickup mode with atypical triage criteria — not all deferred notes are equal; source id: EC-03"
   }
-}
+]

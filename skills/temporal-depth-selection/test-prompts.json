@@ -1,52 +1,44 @@
-{
-  "skill": "temporal-depth-selection",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "tds-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We have an SCD Type 2 products table with `effective_from` and `effective_to` columns. A data engineer just corrected a price error by running an UPDATE on the row directly. An auditor is now asking what price the system showed before the correction was made. Can we answer that question?",
-      "expected": "trigger",
-      "rationale": "Direct SCD Type 2 upgrade scenario (A2 trigger 5, failure pattern ce07). The auditor's question requires transaction time, which SCD Type 2 lacks. The user needs to decide whether to stay at unitemporal or upgrade to bitemporal — a temporal depth selection decision."
-    },
-    {
-      "id": "tds-trigger-02",
-      "type": "should_trigger",
-      "prompt": "We're building a new customer_scores entity. Scores are recalculated monthly and can be retroactively corrected if the calculation logic changes. We need to support two queries: (1) what was a customer's score on a given past date, and (2) what did our system believe a customer's score was on a given past date before any subsequent corrections. Do we need bitemporal?",
-      "expected": "trigger",
-      "rationale": "Textbook bitemporal requirement: the user explicitly states corrections exist and names both query types — valid time ('what was the score on date X?') and transaction time ('what did the system believe before corrections?'). This is the E-section decision path in full: history is needed, corrections exist, prior belief state must be recoverable."
-    },
-    {
-      "id": "tds-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We need to design a feature store for an ML team. Feature values (account balance, product tier, activity score) can be corrected after the fact when upstream data issues are found. The ML team says they need to reproduce training datasets exactly — meaning if they retrain today they need the exact same feature values the model saw last month, including any corrections that were not yet entered last month.",
-      "expected": "trigger",
-      "rationale": "ML feature store design with retroactive corrections and reproducible training — this is A2 trigger 3 and A1 Case 2 directly. The requirement to exclude post-label corrections from training demands bitemporal. The user is deciding the architecture (unitemporal vs. bitemporal), which is this skill's job before point-in-time-ml-feature-correctness can be applied."
-    },
-    {
-      "id": "tds-decoy-01",
-      "type": "should_not_trigger",
-      "prompt": "We have a `processed_at` column and a `created_at` column on our pipeline events table. Someone asked whether `created_at` is event time or ingestion time. How do we tell the difference, and does it matter which one we're using?",
-      "expected": "no_trigger",
-      "rationale": "The user is asking which type of time a column represents — that is a four-types-of-time question. No depth selection decision is being made. The question is upstream identification: is created_at event time or ingestion time? That must be resolved before any depth selection question is relevant."
-    },
-    {
-      "id": "tds-decoy-02",
-      "type": "should_not_trigger",
-      "prompt": "Our feature store is already bitemporal — every feature table has valid_from, valid_to, transaction_from, and transaction_to. We're now building a churn training dataset. What SQL join pattern should we use to make sure we're not pulling in any feature values from after the churn date?",
-      "expected": "no_trigger",
-      "rationale": "The architecture is already decided (bitemporal feature store). The question is how to construct the AS OF join for ML training — that is point-in-time-ml-feature-correctness. The temporal-depth-selection skill's B section explicitly says: 'if the model is already bitemporal and the question is how to write an AS OF join, use point-in-time-ml-feature-correctness.'"
-    },
-    {
-      "id": "tds-edge-01",
-      "type": "edge_case",
-      "prompt": "We're using an event-sourced architecture where every change to a customer record is emitted as an immutable append-only event to Kafka, then projected into a read model. A new analyst is asking whether we need to add valid_from/valid_to or transaction_from/transaction_to columns to the read model. Do the bitemporal design rules apply here?",
-      "expected": "trigger",
-      "rationale": "This probes the B-section boundary: 'Streaming / event-sourced systems: Event sourcing provides bitemporality by default — each event has its event time and its append time. For these systems, the temporal depth decision is made at the architecture level, not the table level.' The skill should activate because the user is asking a depth selection question, but the correct answer is that the event-sourced architecture already provides bitemporal behavior implicitly; the four-level framework applies conceptually but adding explicit valid_from/transaction_from to the read model is an architectural choice, not a requirement. The skill needs to fire to explain this nuance rather than leaving the analyst to apply the table-level pattern incorrectly."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoys target the two adjacent skills: decoy-01 triggers four-types-of-time (type identification, not depth selection); decoy-02 triggers point-in-time-ml-feature-correctness (AS OF join construction on an already-decided bitemporal store). The edge case probes the streaming/event-sourced boundary from the B section."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have an SCD Type 2 products table with `effective_from` and `effective_to` columns. A data engineer just corrected a price error by running an UPDATE on the row directly. An auditor is now asking what price the system showed before the correction was made. Can we answer that question?",
+    "expected": "trigger",
+    "notes": "rationale: Direct SCD Type 2 upgrade scenario (A2 trigger 5, failure pattern ce07). The auditor's question requires transaction time, which SCD Type 2 lacks. The user needs to decide whether to stay at unitemporal or upgrade to bitemporal — a temporal depth selection decision.; source id: tds-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're building a new customer_scores entity. Scores are recalculated monthly and can be retroactively corrected if the calculation logic changes. We need to support two queries: (1) what was a customer's score on a given past date, and (2) what did our system believe a customer's score was on a given past date before any subsequent corrections. Do we need bitemporal?",
+    "expected": "trigger",
+    "notes": "rationale: Textbook bitemporal requirement: the user explicitly states corrections exist and names both query types — valid time ('what was the score on date X?') and transaction time ('what did the system believe before corrections?'). This is the E-section decision path in full: history is needed, corrections exist, prior belief state must be recoverable.; source id: tds-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We need to design a feature store for an ML team. Feature values (account balance, product tier, activity score) can be corrected after the fact when upstream data issues are found. The ML team says they need to reproduce training datasets exactly — meaning if they retrain today they need the exact same feature values the model saw last month, including any corrections that were not yet entered last month.",
+    "expected": "trigger",
+    "notes": "rationale: ML feature store design with retroactive corrections and reproducible training — this is A2 trigger 3 and A1 Case 2 directly. The requirement to exclude post-label corrections from training demands bitemporal. The user is deciding the architecture (unitemporal vs. bitemporal), which is this skill's job before point-in-time-ml-feature-correctness can be applied.; source id: tds-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We have a `processed_at` column and a `created_at` column on our pipeline events table. Someone asked whether `created_at` is event time or ingestion time. How do we tell the difference, and does it matter which one we're using?",
+    "expected": "no_trigger",
+    "notes": "rationale: The user is asking which type of time a column represents — that is a four-types-of-time question. No depth selection decision is being made. The question is upstream identification: is created_at event time or ingestion time? That must be resolved before any depth selection question is relevant.; source id: tds-decoy-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our feature store is already bitemporal — every feature table has valid_from, valid_to, transaction_from, and transaction_to. We're now building a churn training dataset. What SQL join pattern should we use to make sure we're not pulling in any feature values from after the churn date?",
+    "expected": "no_trigger",
+    "notes": "rationale: The architecture is already decided (bitemporal feature store). The question is how to construct the AS OF join for ML training — that is point-in-time-ml-feature-correctness. The temporal-depth-selection skill's B section explicitly says: 'if the model is already bitemporal and the question is how to write an AS OF join, use point-in-time-ml-feature-correctness.'; source id: tds-decoy-02"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "We're using an event-sourced architecture where every change to a customer record is emitted as an immutable append-only event to Kafka, then projected into a read model. A new analyst is asking whether we need to add valid_from/valid_to or transaction_from/transaction_to columns to the read model. Do the bitemporal design rules apply here?",
+    "expected": "trigger",
+    "notes": "rationale: This probes the B-section boundary: 'Streaming / event-sourced systems: Event sourcing provides bitemporality by default — each event has its event time and its append time. For these systems, the temporal depth decision is made at the architecture level, not the table level.' The skill should activate because the user is asking a depth selection question, but the correct answer is that the event-sourced architecture already provides bitemporal behavior implicitly; the four-level framework applies conceptually but adding explicit valid_from/transaction_from to the read model is an architectural choice, not a requirement. The skill needs to fire to explain this nuance rather than leaving the analyst to apply the table-level pattern incorrectly.; source id: tds-edge-01"
+  }
+]

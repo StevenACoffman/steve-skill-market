@@ -1,68 +1,72 @@
-{
-  "skill_id": "terraform-no-cluster-app-same-module",
-  "book": "Terraform: Up and Running (3rd Edition)",
-  "author": "Yevgeniy Brikman",
-  "generated": "2026-05-05",
-  "prompts": [
-    {
-      "id": "ca-si-01",
-      "type": "should_invoke",
-      "prompt": "I'm getting a Terraform error that says the Kubernetes provider can't be configured because the cluster endpoint is unknown. I have both my EKS cluster and my Kubernetes Deployments in the same Terraform module.",
-      "rationale": "Directly describes the error that results from mixing cluster and app in one module."
-    },
-    {
-      "id": "ca-si-02",
-      "type": "should_invoke",
-      "prompt": "I added depends_on = [aws_eks_cluster.example] to all my Kubernetes resources but I'm still getting the provider configuration error. Why isn't depends_on fixing this?",
-      "rationale": "The canonical mistaken fix — depends_on doesn't affect provider initialization ordering."
-    },
-    {
-      "id": "ca-si-03",
-      "type": "should_invoke",
-      "prompt": "How should I structure my Terraform code for a project that provisions an EKS cluster and also deploys applications into that cluster?",
-      "rationale": "Architecture question about the right module structure for EKS + apps."
-    },
-    {
-      "id": "ca-si-04",
-      "type": "should_invoke",
-      "prompt": "Can I create an EKS cluster and deploy a Helm chart to it in a single terraform apply?",
-      "rationale": "Single-apply question — the answer is no due to provider evaluation ordering; two applies required."
-    },
-    {
-      "id": "ca-sni-01",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure the AWS provider to deploy resources to multiple AWS regions?",
-      "rationale": "Multi-region provider aliases — a related provider topic but not about the cluster/app ordering problem."
-    },
-    {
-      "id": "ca-sni-02",
-      "type": "should_not_invoke",
-      "prompt": "What's the difference between deploying with Helm vs kubectl vs Terraform for Kubernetes applications?",
-      "rationale": "Tooling comparison for Kubernetes deployment — not about the Terraform provider ordering constraint."
-    },
-    {
-      "id": "ca-sni-03",
-      "type": "should_not_invoke",
-      "prompt": "How do I set up RBAC in my EKS cluster using Terraform?",
-      "rationale": "EKS RBAC configuration — a Kubernetes resource Terraform question but not about the ordering/provider issue unless both cluster and RBAC are in the same module."
-    },
-    {
-      "id": "ca-bb-01",
-      "type": "blurred_boundary",
-      "prompt": "My EKS cluster already exists. I created it with a separate Terraform config last week. Now I want to add a new Terraform module to deploy my application into the existing cluster. Is there a provider ordering problem here?",
-      "rationale": "Existing cluster scenario — the ordering problem only occurs when provisioning and deploying are in the same apply; this case is safe."
-    },
-    {
-      "id": "ca-bb-02",
-      "type": "blurred_boundary",
-      "prompt": "I have the same problem as the EKS + Kubernetes issue but with GKE — my Google Kubernetes Engine cluster and my Kubernetes workloads are in the same Terraform module and it's failing.",
-      "rationale": "GKE variant — same root cause, different cloud provider. The skill's boundary explicitly notes this applies to GKE and AKS too."
-    },
-    {
-      "id": "ca-bb-03",
-      "type": "blurred_boundary",
-      "prompt": "I use a data source to look up my existing EKS cluster endpoint and pass it to the Kubernetes provider, but I'm also creating new node groups in the same module. Will the provider ordering issue affect me?",
-      "rationale": "Hybrid case — data source lookup of existing cluster avoids the bootstrap problem, but creating new cluster infrastructure in the same module may reintroduce it."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm getting a Terraform error that says the Kubernetes provider can't be configured because the cluster endpoint is unknown. I have both my EKS cluster and my Kubernetes Deployments in the same Terraform module.",
+    "expected": "Skill activates and explains the two-phase model: providers initialize before any resource is created, so the kubernetes provider's host/cluster_ca_certificate cannot come from an aws_eks_cluster created in the same apply; the fix is to split into two modules (cluster then apps) applied in sequence with outputs passed as inputs.",
+    "notes": "rationale: Directly describes the error that results from mixing cluster and app in one module.; source id: ca-si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I added depends_on = [aws_eks_cluster.example] to all my Kubernetes resources but I'm still getting the provider configuration error. Why isn't depends_on fixing this?",
+    "expected": "Skill activates and explains depends_on only orders resource creation, not provider initialization, which happens in an earlier phase — so it cannot help; the only real fix is architectural separation into two modules with two separate applies, not any dependency hint within one module.",
+    "notes": "rationale: The canonical mistaken fix — depends_on doesn't affect provider initialization ordering.; source id: ca-si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How should I structure my Terraform code for a project that provisions an EKS cluster and also deploys applications into that cluster?",
+    "expected": "Skill activates and recommends two modules: an eks-cluster module that outputs cluster_endpoint and cluster_ca_certificate, and a separate k8s-apps module that takes those as input variables to configure the kubernetes provider; apply cluster first then apps, wiring outputs via remote state or Terragrunt dependency blocks.",
+    "notes": "rationale: Architecture question about the right module structure for EKS + apps.; source id: ca-si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Can I create an EKS cluster and deploy a Helm chart to it in a single terraform apply?",
+    "expected": "Skill activates and answers no: the helm/kubernetes provider must initialize from the cluster endpoint before any resource is created, but that endpoint does not exist until the cluster is created in the same apply; two separate applies (cluster, then chart) are required.",
+    "notes": "rationale: Single-apply question — the answer is no due to provider evaluation ordering; two applies required.; source id: ca-si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure the AWS provider to deploy resources to multiple AWS regions?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Multi-region provider aliases — a related provider topic but not about the cluster/app ordering problem.; source id: ca-sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What's the difference between deploying with Helm vs kubectl vs Terraform for Kubernetes applications?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Tooling comparison for Kubernetes deployment — not about the Terraform provider ordering constraint.; source id: ca-sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up RBAC in my EKS cluster using Terraform?",
+    "expected": "skill should not activate",
+    "notes": "rationale: EKS RBAC configuration — a Kubernetes resource Terraform question but not about the ordering/provider issue unless both cluster and RBAC are in the same module.; source id: ca-sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My EKS cluster already exists. I created it with a separate Terraform config last week. Now I want to add a new Terraform module to deploy my application into the existing cluster. Is there a provider ordering problem here?",
+    "expected": "Skill answers there is no ordering problem: since the cluster already exists, the kubernetes provider can be configured from a data source lookup (read at plan time) or from remote-state outputs, so the endpoint is known before provider init — this is exactly the safe, recommended separation.",
+    "notes": "rationale: Existing cluster scenario — the ordering problem only occurs when provisioning and deploying are in the same apply; this case is safe.; source id: ca-bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I have the same problem as the EKS + Kubernetes issue but with GKE — my Google Kubernetes Engine cluster and my Kubernetes workloads are in the same Terraform module and it's failing.",
+    "expected": "Skill confirms the same root cause applies to GKE (and AKS): the kubernetes provider needs the cluster endpoint at provider-init time, which a google_container_cluster created in the same module cannot supply; split into a cluster module and a workloads module applied in sequence.",
+    "notes": "rationale: GKE variant — same root cause, different cloud provider. The skill's boundary explicitly notes this applies to GKE and AKS too.; source id: ca-bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I use a data source to look up my existing EKS cluster endpoint and pass it to the Kubernetes provider, but I'm also creating new node groups in the same module. Will the provider ordering issue affect me?",
+    "expected": "Skill answers it is safe as configured: the kubernetes provider reads the endpoint from a data source (known at plan time), so provider init succeeds; creating new node groups on the already-existing cluster does not feed the provider config, so it does not reintroduce the ordering problem — the hazard only returns if the cluster itself is being created in this module.",
+    "notes": "rationale: Hybrid case — data source lookup of existing cluster avoids the bootstrap problem, but creating new cluster infrastructure in the same module may reintroduce it.; source id: ca-bb-03"
+  }
+]

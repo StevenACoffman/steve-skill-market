@@ -1,79 +1,72 @@
-{
-  "skill": "error-translation-layer-boundaries",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "My HTTP handler is importing `database/sql` just to check for `sql.ErrNoRows` and return a 404. If we ever switch databases, I'll have to update every handler. Is there a cleaner pattern?",
-      "expected_behavior": "Activate immediately. Explain two-point error translation: repository maps sql.ErrNoRows to domain sentinel ErrNotFound using %w; handler calls a single writeError() mapping function that converts domain errors to HTTP codes. Handler stops importing database/sql.",
-      "notes": "Textbook trigger — handler importing storage package to check storage errors."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I added Redis as a read-through cache in front of Postgres. Now my handler has to check both `sql.ErrNoRows` and `redis.Nil` for the not-found case. This is getting messy.",
-      "expected_behavior": "Activate. This is the exact SQL+Redis case from Case 1 in the SKILL.md. Both storage errors should be caught at the repository boundary and translated to user.ErrNotFound. The handler checks only one domain sentinel via errors.Is.",
-      "notes": "Directly matches the worked example in the skill — cache addition leaking through layers."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "When should I use `%w` vs `%v` in `fmt.Errorf`? I'm never sure which one to use when wrapping errors from the database.",
-      "expected_behavior": "Activate. Explain the API contract distinction: %w exposes the inner error to callers via errors.Is/As — use it only for domain sentinels you own. Use %v for storage errors (pgx.ErrNoRows, sql.ErrNoRows) so callers cannot depend on driver internals. Going from %v to %w is backwards-compatible; the reverse is a breaking change.",
-      "notes": "Explicit trigger signal from SKILL.md — %w vs %v question about database errors."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "I have a function that returns `(bool, error)` — the bool indicates whether the record was found and the error indicates any failure. But callers are confused about what `(false, nil)` means versus `(false, err)`. Should I rethink this signature?",
-      "expected_behavior": "Activate. Explain the (bool, error) anti-pattern: four combinations with only one unambiguous state. Replace with a single error return using sentinel errors to distinguish failure kinds (ErrNotFound vs ErrSystem). Callers use errors.Is on one value.",
-      "notes": "Directly matches the (bool, error) elimination step in the SKILL.md execution steps."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "We have both HTTP and gRPC handlers for the same service. Both handlers import `database/sql` and have identical error-checking code. How do I deduplicate this?",
-      "expected_behavior": "Activate. The multi-transport duplication scenario is explicitly listed in A2. Write a single writeError(w, err) for HTTP and toStatus(err) for gRPC that both map domain sentinels to wire codes. Both handlers import only the domain package. Remove storage imports from all handler files.",
-      "notes": "Multi-transport duplication trigger — explicitly listed in the trigger scenarios."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I add structured logging with slog when an error occurs in my service? I want to include the error message, user ID, and request ID in the log entry.",
-      "expected_behavior": "Explain slog field logging patterns: slog.Error with slog.Any for the error, slog.String for request ID, etc. This is about error presentation and observability, not about architectural error coupling or layer boundaries.",
-      "notes": "Error logging/presentation question — SKILL.md explicitly excludes 'error presentation to end users (logging format, structured slog fields)'."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I add a file and line number to my errors for debugging purposes? I want to know exactly where in the code an error originated.",
-      "expected_behavior": "Explain runtime.Caller() or use of pkg/errors for stack traces, or explain that Go 1.20+ %w captures caller info. This is about debug stack traces, not about layer boundary decoupling — the SKILL.md explicitly mentions this as an exclusion.",
-      "notes": "Stack trace / custom error types for debugging — SKILL.md names this the 'anemic-stack-traces' skill, not this one."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "My CLI tool returns errors all the way up to main() and prints them. Should I be wrapping them with %w everywhere?",
-      "expected_behavior": "For a CLI with no layer boundaries, %w everywhere is correct and appropriate. Error messages are user-facing. The boundary-translation model is for services with repository/service/handler layers, not for CLI tools.",
-      "notes": "CLI tool — SKILL.md explicitly excludes this: '%w everywhere is fine and there are no layer boundaries'."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "I have an HTTP middleware that recovers panics and logs errors. Should it be wrapping errors with %w or %v?",
-      "expected_behavior": "Partial activation. Middleware sits at a layer boundary (service → wire), so translation principles apply. However, panic recovery middleware typically logs and returns a generic 500 — it shouldn't expose internal error chains to clients. Use %v for logging context; don't re-wrap with %w since there's no caller who should inspect the chain.",
-      "notes": "Middleware is a boundary but has different concerns than the repository→service→handler chain. Edge case requiring nuanced answer."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "How do I add context to errors in Go? I want to include the operation name when propagating errors up the call stack.",
-      "expected_behavior": "Partially triggers. Explain %w vs %v for adding context. If the error is a domain sentinel the package owns, wrap with %w. If the error is an infrastructure or driver error crossing a boundary, wrap with %v to preserve message but sever the chain. The key distinction is whether callers should be able to errors.Is through the wrapper.",
-      "notes": "Generic 'how do I add context to errors' could be pure wrapping technique OR boundary design. Answer depends on what kind of error and which layer."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My HTTP handler is importing `database/sql` just to check for `sql.ErrNoRows` and return a 404. If we ever switch databases, I'll have to update every handler. Is there a cleaner pattern?",
+    "expected": "Activate immediately. Explain two-point error translation: repository maps sql.ErrNoRows to domain sentinel ErrNotFound using %w; handler calls a single writeError() mapping function that converts domain errors to HTTP codes. Handler stops importing database/sql.",
+    "notes": "Textbook trigger — handler importing storage package to check storage errors.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I added Redis as a read-through cache in front of Postgres. Now my handler has to check both `sql.ErrNoRows` and `redis.Nil` for the not-found case. This is getting messy.",
+    "expected": "Activate. This is the exact SQL+Redis case from Case 1 in the SKILL.md. Both storage errors should be caught at the repository boundary and translated to user.ErrNotFound. The handler checks only one domain sentinel via errors.Is.",
+    "notes": "Directly matches the worked example in the skill — cache addition leaking through layers.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "When should I use `%w` vs `%v` in `fmt.Errorf`? I'm never sure which one to use when wrapping errors from the database.",
+    "expected": "Activate. Explain the API contract distinction: %w exposes the inner error to callers via errors.Is/As — use it only for domain sentinels you own. Use %v for storage errors (pgx.ErrNoRows, sql.ErrNoRows) so callers cannot depend on driver internals. Going from %v to %w is backwards-compatible; the reverse is a breaking change.",
+    "notes": "Explicit trigger signal from SKILL.md — %w vs %v question about database errors.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I have a function that returns `(bool, error)` — the bool indicates whether the record was found and the error indicates any failure. But callers are confused about what `(false, nil)` means versus `(false, err)`. Should I rethink this signature?",
+    "expected": "Activate. Explain the (bool, error) anti-pattern: four combinations with only one unambiguous state. Replace with a single error return using sentinel errors to distinguish failure kinds (ErrNotFound vs ErrSystem). Callers use errors.Is on one value.",
+    "notes": "Directly matches the (bool, error) elimination step in the SKILL.md execution steps.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We have both HTTP and gRPC handlers for the same service. Both handlers import `database/sql` and have identical error-checking code. How do I deduplicate this?",
+    "expected": "Activate. The multi-transport duplication scenario is explicitly listed in A2. Write a single writeError(w, err) for HTTP and toStatus(err) for gRPC that both map domain sentinels to wire codes. Both handlers import only the domain package. Remove storage imports from all handler files.",
+    "notes": "Multi-transport duplication trigger — explicitly listed in the trigger scenarios.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I add structured logging with slog when an error occurs in my service? I want to include the error message, user ID, and request ID in the log entry.",
+    "expected": "Explain slog field logging patterns: slog.Error with slog.Any for the error, slog.String for request ID, etc. This is about error presentation and observability, not about architectural error coupling or layer boundaries.",
+    "notes": "Error logging/presentation question — SKILL.md explicitly excludes 'error presentation to end users (logging format, structured slog fields)'.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I add a file and line number to my errors for debugging purposes? I want to know exactly where in the code an error originated.",
+    "expected": "Explain runtime.Caller() or use of pkg/errors for stack traces, or explain that Go 1.20+ %w captures caller info. This is about debug stack traces, not about layer boundary decoupling — the SKILL.md explicitly mentions this as an exclusion.",
+    "notes": "Stack trace / custom error types for debugging — SKILL.md names this the 'anemic-stack-traces' skill, not this one.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "My CLI tool returns errors all the way up to main() and prints them. Should I be wrapping them with %w everywhere?",
+    "expected": "For a CLI with no layer boundaries, %w everywhere is correct and appropriate. Error messages are user-facing. The boundary-translation model is for services with repository/service/handler layers, not for CLI tools.",
+    "notes": "CLI tool — SKILL.md explicitly excludes this: '%w everywhere is fine and there are no layer boundaries'.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I have an HTTP middleware that recovers panics and logs errors. Should it be wrapping errors with %w or %v?",
+    "expected": "Partial activation. Middleware sits at a layer boundary (service → wire), so translation principles apply. However, panic recovery middleware typically logs and returns a generic 500 — it shouldn't expose internal error chains to clients. Use %v for logging context; don't re-wrap with %w since there's no caller who should inspect the chain.",
+    "notes": "Middleware is a boundary but has different concerns than the repository→service→handler chain. Edge case requiring nuanced answer.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I add context to errors in Go? I want to include the operation name when propagating errors up the call stack.",
+    "expected": "Partially triggers. Explain %w vs %v for adding context. If the error is a domain sentinel the package owns, wrap with %w. If the error is an infrastructure or driver error crossing a boundary, wrap with %v to preserve message but sever the chain. The key distinction is whether callers should be able to errors.Is through the wrapper.",
+    "notes": "Generic 'how do I add context to errors' could be pure wrapping technique OR boundary design. Answer depends on what kind of error and which layer.; source id: edge-case-02"
+  }
+]

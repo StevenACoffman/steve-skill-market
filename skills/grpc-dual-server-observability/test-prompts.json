@@ -1,65 +1,72 @@
-{
-  "skill_id": "grpc-dual-server-observability",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "How do I run a gRPC server and a Prometheus HTTP metrics server in the same Go process with proper error propagation if either server fails?",
-      "rationale": "Direct match: the errgroup dual-server pattern."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "My Kubernetes pods are getting SIGKILL during rolling deployments because in-flight gRPC RPCs aren't completing. How do I implement graceful shutdown?",
-      "rationale": "Direct match: GracefulStop() on SIGTERM via signal.Notify."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "Should I expose the Prometheus /metrics endpoint on the same port as my gRPC server, or on a separate HTTP port?",
-      "rationale": "Direct match: separate port requirement — gRPC and HTTP/1.1 Prometheus scrapes cannot share a port."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "I'm using two go func() goroutines to run my gRPC server and metrics server but I have no way to detect if either crashes. What pattern should I use?",
-      "rationale": "Direct match: errgroup.WithContext for unified error propagation from concurrent servers."
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "How do I instrument individual gRPC endpoint handlers with custom Prometheus counters?",
-      "rationale": "Custom Prometheus instrumentation in handlers, not the dual-server lifecycle pattern."
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "What is the difference between Prometheus push and pull scraping models?",
-      "rationale": "Prometheus architecture concept, unrelated to the dual-server gRPC+metrics pattern."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure OpenTelemetry tracing for a gRPC service?",
-      "rationale": "OTel tracing setup, not the dual-server lifecycle and graceful shutdown pattern."
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "My gRPC service needs to expose health check, metrics, and pprof endpoints. Should they all share the same HTTP server on a secondary port?",
-      "rationale": "Blurred: extends the dual-server pattern to multiple secondary endpoints — this skill covers the two-server case; combining health/metrics/pprof is a natural extension not explicitly covered."
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "How do I set a timeout for GracefulStop() so it doesn't block forever waiting for long-running streaming RPCs during shutdown?",
-      "rationale": "Blurred: the Boundary section mentions this; it requires context-deadline wrapping around GracefulStop() that extends beyond the basic pattern."
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "I need to add a Kubernetes liveness probe endpoint to my gRPC service. Should it run on the gRPC port or a separate HTTP server?",
-      "rationale": "Blurred: same architectural question as metrics — separate HTTP server — but the liveness probe concern is more Kubernetes deployment topology than dual-server observability."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "How do I run a gRPC server and a Prometheus HTTP metrics server in the same Go process with proper error propagation if either server fails?",
+    "expected": "Skill activates and recommends the errgroup dual-server pattern: create g, ctx := errgroup.WithContext(...), launch each server in its own g.Go, so the first non-nil error cancels the shared context and both servers shut down; main blocks on g.Wait() to detect the failure.",
+    "notes": "rationale: Direct match: the errgroup dual-server pattern.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My Kubernetes pods are getting SIGKILL during rolling deployments because in-flight gRPC RPCs aren't completing. How do I implement graceful shutdown?",
+    "expected": "Skill activates and prescribes a SIGTERM handler: a goroutine blocking on signal.Notify(sigCh, syscall.SIGTERM/SIGINT) that calls grpcServer.GracefulStop() to drain in-flight RPCs, then metricsServer.Shutdown(ctx), so the errgroup goroutines return nil and the pod exits cleanly before Kubernetes sends SIGKILL.",
+    "notes": "rationale: Direct match: GracefulStop() on SIGTERM via signal.Notify.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Should I expose the Prometheus /metrics endpoint on the same port as my gRPC server, or on a separate HTTP port?",
+    "expected": "Skill activates and requires a separate HTTP port: gRPC and the HTTP/1.1 Prometheus scrape cannot share a port because Prometheus would have to scrape through the gRPC proxy, which cannot parse HTTP/1.1 requests; run /metrics on its own containerPort scraped by Prometheus, with the gRPC port behind the headless service.",
+    "notes": "rationale: Direct match: separate port requirement — gRPC and HTTP/1.1 Prometheus scrapes cannot share a port.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm using two go func() goroutines to run my gRPC server and metrics server but I have no way to detect if either crashes. What pattern should I use?",
+    "expected": "Skill activates and replaces the bare go func() goroutines with errgroup.WithContext: each server runs under g.Go returning its error, and g.Wait() in main surfaces a non-nil return when either server crashes while the cancelled context tears down the other.",
+    "notes": "rationale: Direct match: errgroup.WithContext for unified error propagation from concurrent servers.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I instrument individual gRPC endpoint handlers with custom Prometheus counters?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Custom Prometheus instrumentation in handlers, not the dual-server lifecycle pattern.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between Prometheus push and pull scraping models?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Prometheus architecture concept, unrelated to the dual-server gRPC+metrics pattern.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure OpenTelemetry tracing for a gRPC service?",
+    "expected": "skill should not activate",
+    "notes": "rationale: OTel tracing setup, not the dual-server lifecycle and graceful shutdown pattern.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My gRPC service needs to expose health check, metrics, and pprof endpoints. Should they all share the same HTTP server on a secondary port?",
+    "expected": "Defensibly yes: this extends the two-server pattern by mounting /metrics, /healthz, and /debug/pprof on one http.NewServeMux() behind a single secondary HTTP server, kept off the gRPC port and started under its own g.Go. The skill should flag that this goes beyond the strict two-server case and note that beyond a couple of concurrent servers a dedicated lifecycle manager is warranted.",
+    "notes": "rationale: Blurred: extends the dual-server pattern to multiple secondary endpoints — this skill covers the two-server case; combining health/metrics/pprof is a natural extension not explicitly covered.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "How do I set a timeout for GracefulStop() so it doesn't block forever waiting for long-running streaming RPCs during shutdown?",
+    "expected": "Skill surfaces the Boundary caveat that GracefulStop() blocks indefinitely on unfinished streaming RPCs, and recommends wrapping it with a deadline: run GracefulStop() in a goroutine and select against a context.WithTimeout, falling back to Stop() (hard stop) if the timeout fires, so long-lived bidirectional streams cannot stall shutdown forever.",
+    "notes": "rationale: Blurred: the Boundary section mentions this; it requires context-deadline wrapping around GracefulStop() that extends beyond the basic pattern.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I need to add a Kubernetes liveness probe endpoint to my gRPC service. Should it run on the gRPC port or a separate HTTP server?",
+    "expected": "By the same separation rule as /metrics, the HTTP liveness probe belongs on a separate HTTP server/port rather than the gRPC port (which cannot serve HTTP/1.1 probes). The skill should give this architectural answer while flagging that liveness-probe wiring is more Kubernetes deployment topology than the core dual-server observability concern.",
+    "notes": "rationale: Blurred: same architectural question as metrics — separate HTTP server — but the liveness probe concern is more Kubernetes deployment topology than dual-server observability.; source id: tp10"
+  }
+]

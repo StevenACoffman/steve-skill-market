@@ -1,66 +1,58 @@
-{
-  "skill": "grain-decision-four-questions",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I'm building a new events table for our product analytics. Should each row be one event, one user session, or one user per day? I'm not sure what level of detail we actually need.",
-      "expected_behavior": "Invoke grain-decision-four-questions. Walk through all four questions to determine the right grain level, starting from what the most granular stakeholder question is.",
-      "notes": "Classic new-dataset grain ambiguity. The user hasn't decided what one row represents — exactly the Q1 starting point. Language 'what level of detail' and 'not sure' match A2 scenario 1."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our product team and finance team keep arguing. Product wants to keep every raw click event, finance says we only need daily user summaries because storage is expensive. How do I settle this?",
-      "expected_behavior": "Invoke grain-decision-four-questions. The four questions resolve this stakeholder conflict: Q1 identifies the finest analytical need (product's click-level questions), Q2 checks whether daily summaries can answer them, Q3 addresses finance's cost concern.",
-      "notes": "Directly matches A2 scenario 3: stakeholders arguing about coarse vs. fine grain with storage as the objection. The Q2-beats-Q3 tie-breaking rule is the resolution."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "I have a question about our sales data. When I try to answer 'which rep closed the most deals last quarter?' the data isn't there — we're only storing monthly revenue totals per region. Can we fix this?",
-      "expected_behavior": "Invoke grain-decision-four-questions. This is A2 scenario 4: an analytical question that can't be answered because data was pre-aggregated too coarsely. The four questions help decide the correct grain going forward.",
-      "notes": "The symptom is a question that cannot be answered from existing data. Matches A2 language signal 'we might need to drill down into this later' plus scenario 4 explicitly."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're designing a machine learning feature store for churn prediction. Each training example needs customer-level features, but some raw signals come from transaction logs. What should one row in the feature table represent?",
-      "expected_behavior": "Invoke grain-decision-four-questions. Cross-form grain alignment question for a feature store — matches A2 scenario 5 and the language signal 'how fine-grained should the feature table be?'",
-      "notes": "Explicitly uses 'what should one row represent' language from A2 language signals. Feature store + ML grain is A2 scenario 5."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "When I join our customer table to our orders table I get way more rows than I expected — like 3x the customers. I think something is wrong with my join but I'm not sure what.",
-      "expected_behavior": "Invoke grain-decision-four-questions. Row multiplication on join is the fan-out warning sign listed in A2 language signals ('the numbers double when I do this join'). The four questions help the user understand what grain each table should have and why the join is producing fan-out.",
-      "notes": "Matches A2 scenario 2 (grain conflict during integration) and the language signal about numbers multiplying on join. The diagnosis is a grain mismatch."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "We've decided our orders fact table is at order-line grain — one row per product per order. Now I want to calculate total revenue per customer. I know the grain, I just need to write the right aggregation. How should I approach this?",
-      "expected_behavior": "Should NOT invoke grain-decision-four-questions. The grain is already declared (order-line). This is an aggregation design question — should invoke aggregation-workflow-four-steps instead.",
-      "notes": "The user explicitly states 'I know the grain' and asks about aggregation design. B section and A2 distinguishing notes say: if grain is declared and the question is about aggregating over it, use aggregation-workflow-four-steps. Strong decoy because 'grain' appears in the prompt."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "We're about to push our new user_activity table to production. The grain is user_id + date. I want to do a final sanity check — make sure there are no duplicate primary keys and that late-arriving data is handled.",
-      "expected_behavior": "Should NOT invoke grain-decision-four-questions. Grain is already declared and the dataset is pre-deployment. This is exactly the grain-audit-checklist trigger: pre-deployment validation of a declared grain.",
-      "notes": "Matches grain-audit-checklist trigger signals directly ('about to deploy', 'sanity check', 'no duplicate primary keys', 'late-arriving data'). The grain is known; the question is validation. B section of grain-decision-four-questions says: if grain is already known and the question is about validation, use grain-audit-checklist."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "We store one row per order in our orders table. A new analyst says we should split it into order-header and order-line tables but I'm not sure it's worth the refactor. Is the current grain fine?",
-      "expected_behavior": "Ambiguous. Could invoke grain-decision-four-questions (the question 'is the current grain fine?' is asking whether the grain is right), but could also invoke grain-audit-checklist (the table exists and the question is about validating a design). Most likely SHOULD trigger grain-decision-four-questions because the grain is being challenged, not merely validated — the question is whether order-header vs. order-line is the correct choice, which is a grain decision.",
-      "notes": "The table is in use (implying possibly production), but the grain choice itself is being contested. If in production, B section of grain-decision-four-questions says it won't help. However the framing is 'is this right?' not 'validate my implementation'. This is a genuine edge — the answer depends on whether the system is in production or pre-deployment. Judgment: lean toward triggering grain-decision-four-questions since the core question is the grain choice, with a caveat about production constraints."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. All should_not_triggers must pass (decoy tolerance is 0). Decoy 01 uses aggregation-over-declared-grain as the redirect. Decoy 02 uses pre-deployment-validation as the redirect."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm building a new events table for our product analytics. Should each row be one event, one user session, or one user per day? I'm not sure what level of detail we actually need.",
+    "expected": "Invoke grain-decision-four-questions. Walk through all four questions to determine the right grain level, starting from what the most granular stakeholder question is.",
+    "notes": "Classic new-dataset grain ambiguity. The user hasn't decided what one row represents — exactly the Q1 starting point. Language 'what level of detail' and 'not sure' match A2 scenario 1.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our product team and finance team keep arguing. Product wants to keep every raw click event, finance says we only need daily user summaries because storage is expensive. How do I settle this?",
+    "expected": "Invoke grain-decision-four-questions. The four questions resolve this stakeholder conflict: Q1 identifies the finest analytical need (product's click-level questions), Q2 checks whether daily summaries can answer them, Q3 addresses finance's cost concern.",
+    "notes": "Directly matches A2 scenario 3: stakeholders arguing about coarse vs. fine grain with storage as the objection. The Q2-beats-Q3 tie-breaking rule is the resolution.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I have a question about our sales data. When I try to answer 'which rep closed the most deals last quarter?' the data isn't there — we're only storing monthly revenue totals per region. Can we fix this?",
+    "expected": "Invoke grain-decision-four-questions. This is A2 scenario 4: an analytical question that can't be answered because data was pre-aggregated too coarsely. The four questions help decide the correct grain going forward.",
+    "notes": "The symptom is a question that cannot be answered from existing data. Matches A2 language signal 'we might need to drill down into this later' plus scenario 4 explicitly.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're designing a machine learning feature store for churn prediction. Each training example needs customer-level features, but some raw signals come from transaction logs. What should one row in the feature table represent?",
+    "expected": "Invoke grain-decision-four-questions. Cross-form grain alignment question for a feature store — matches A2 scenario 5 and the language signal 'how fine-grained should the feature table be?'",
+    "notes": "Explicitly uses 'what should one row represent' language from A2 language signals. Feature store + ML grain is A2 scenario 5.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "When I join our customer table to our orders table I get way more rows than I expected — like 3x the customers. I think something is wrong with my join but I'm not sure what.",
+    "expected": "Invoke grain-decision-four-questions. Row multiplication on join is the fan-out warning sign listed in A2 language signals ('the numbers double when I do this join'). The four questions help the user understand what grain each table should have and why the join is producing fan-out.",
+    "notes": "Matches A2 scenario 2 (grain conflict during integration) and the language signal about numbers multiplying on join. The diagnosis is a grain mismatch.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We've decided our orders fact table is at order-line grain — one row per product per order. Now I want to calculate total revenue per customer. I know the grain, I just need to write the right aggregation. How should I approach this?",
+    "expected": "Should NOT invoke grain-decision-four-questions. The grain is already declared (order-line). This is an aggregation design question — should invoke aggregation-workflow-four-steps instead.",
+    "notes": "The user explicitly states 'I know the grain' and asks about aggregation design. B section and A2 distinguishing notes say: if grain is declared and the question is about aggregating over it, use aggregation-workflow-four-steps. Strong decoy because 'grain' appears in the prompt.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We're about to push our new user_activity table to production. The grain is user_id + date. I want to do a final sanity check — make sure there are no duplicate primary keys and that late-arriving data is handled.",
+    "expected": "Should NOT invoke grain-decision-four-questions. Grain is already declared and the dataset is pre-deployment. This is exactly the grain-audit-checklist trigger: pre-deployment validation of a declared grain.",
+    "notes": "Matches grain-audit-checklist trigger signals directly ('about to deploy', 'sanity check', 'no duplicate primary keys', 'late-arriving data'). The grain is known; the question is validation. B section of grain-decision-four-questions says: if grain is already known and the question is about validation, use grain-audit-checklist.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We store one row per order in our orders table. A new analyst says we should split it into order-header and order-line tables but I'm not sure it's worth the refactor. Is the current grain fine?",
+    "expected": "Ambiguous. Could invoke grain-decision-four-questions (the question 'is the current grain fine?' is asking whether the grain is right), but could also invoke grain-audit-checklist (the table exists and the question is about validating a design). Most likely SHOULD trigger grain-decision-four-questions because the grain is being challenged, not merely validated — the question is whether order-header vs. order-line is the correct choice, which is a grain decision.",
+    "notes": "The table is in use (implying possibly production), but the grain choice itself is being contested. If in production, B section of grain-decision-four-questions says it won't help. However the framing is 'is this right?' not 'validate my implementation'. This is a genuine edge — the answer depends on whether the system is in production or pre-deployment. Judgment: lean toward triggering grain-decision-four-questions since the core question is the grain choice, with a caveat about production constraints.; source id: edge-case-01"
+  }
+]

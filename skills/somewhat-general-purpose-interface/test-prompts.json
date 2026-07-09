@@ -1,75 +1,72 @@
-{
-  "skill_id": "somewhat-general-purpose-interface",
-  "test_prompts": [
-    {
-      "id": "tp01",
-      "prompt": "My text editor has methods like `deleteSelectedText()`, `backspaceCharacter()`, and `deleteWordForward()`. A colleague says I should replace these with one `delete(range)` method. Is that better?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "This is Ousterhout's exact example. The specific methods mirror UI use cases; the general `delete(range)` approach is better because it hides cursor logic and simplifies the interface."
-    },
-    {
-      "id": "tp02",
-      "prompt": "I'm designing a search API. Should I have `searchByName()`, `searchByEmail()`, and `searchByPhone()` as separate methods, or one `search(criteria)` method?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Classic overly-specific interface vs. somewhat-general-purpose question. Needs Ousterhout's framing on what level of generality is appropriate."
-    },
-    {
-      "id": "tp03",
-      "prompt": "My method is called `saveUserProfileChanges()`. It only ever gets called from the profile edit page. Should I rename it or redesign it to be more general?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Method name mirrors a single use case — a direct signal of over-specific interface design. The skill applies directly."
-    },
-    {
-      "id": "tp04",
-      "prompt": "We have a `renderDashboardWidget()` method. Product keeps asking us to support new widget types with slightly different rendering logic. Should I generalize it now or wait until we have three examples?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "YAGNI vs. somewhat-general-purpose tension. Ousterhout's guidance on avoiding over-specialization is directly applicable."
-    },
-    {
-      "id": "tp05",
-      "prompt": "Our sorting algorithm works for integers, but we need it to also sort strings and dates. How should I make the comparator generic?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Implementation generalization using generics/type parameters, not API interface design. This is about making the internals work for multiple types, not about interface philosophy."
-    },
-    {
-      "id": "tp06",
-      "prompt": "We have duplicate logic in `InvoiceService` and `QuoteService` for calculating line item totals. How do we apply DRY here?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "DRY/code reuse question focused on eliminating duplication in implementation, not on API interface design philosophy."
-    },
-    {
-      "id": "tp07",
-      "prompt": "I extracted a helper method used in three places. Now that I've extracted it, should I also export it as part of the public API?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Code reuse pattern and visibility question, not about appropriate interface generality level."
-    },
-    {
-      "id": "tp08",
-      "prompt": "I'm building an SDK that will be used by third-party developers. I don't know what use cases they'll have. Should I design very general methods or specific ones that cover the known cases?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "SDK design for unknown callers sits right at the edge of Ousterhout's principle — somewhat-general-purpose is the right target, but the unknown caller set complicates the judgment."
-    },
-    {
-      "id": "tp09",
-      "prompt": "Should I add a `format` parameter to my `exportReport()` method to support PDF, CSV, and Excel, or should I keep separate `exportAsPdf()`, `exportAsCsv()`, `exportAsExcel()` methods?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Adding a parameter to generalize is a direct somewhat-general-purpose interface question, but the right answer also depends on whether the implementations diverge significantly."
-    },
-    {
-      "id": "tp10",
-      "prompt": "We're designing a plugin interface for our application. Third-party plugins need to hook into our workflow. Should the hooks be fine-grained (one per event type) or coarse-grained (one generic hook with an event object)?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Plugin interface design involves the general-vs-specific tradeoff, but plugin system design also involves versioning and compatibility concerns beyond Ousterhout's principle."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My text editor has methods like `deleteSelectedText()`, `backspaceCharacter()`, and `deleteWordForward()`. A colleague says I should replace these with one `delete(range)` method. Is that better?",
+    "expected": "invoke",
+    "notes": "rationale: This is Ousterhout's exact example. The specific methods mirror UI use cases; the general `delete(range)` approach is better because it hides cursor logic and simplifies the interface.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm designing a search API. Should I have `searchByName()`, `searchByEmail()`, and `searchByPhone()` as separate methods, or one `search(criteria)` method?",
+    "expected": "invoke",
+    "notes": "rationale: Classic overly-specific interface vs. somewhat-general-purpose question. Needs Ousterhout's framing on what level of generality is appropriate.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My method is called `saveUserProfileChanges()`. It only ever gets called from the profile edit page. Should I rename it or redesign it to be more general?",
+    "expected": "invoke",
+    "notes": "rationale: Method name mirrors a single use case — a direct signal of over-specific interface design. The skill applies directly.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We have a `renderDashboardWidget()` method. Product keeps asking us to support new widget types with slightly different rendering logic. Should I generalize it now or wait until we have three examples?",
+    "expected": "invoke",
+    "notes": "rationale: YAGNI vs. somewhat-general-purpose tension. Ousterhout's guidance on avoiding over-specialization is directly applicable.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our sorting algorithm works for integers, but we need it to also sort strings and dates. How should I make the comparator generic?",
+    "expected": "no_invoke",
+    "notes": "rationale: Implementation generalization using generics/type parameters, not API interface design. This is about making the internals work for multiple types, not about interface philosophy.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We have duplicate logic in `InvoiceService` and `QuoteService` for calculating line item totals. How do we apply DRY here?",
+    "expected": "no_invoke",
+    "notes": "rationale: DRY/code reuse question focused on eliminating duplication in implementation, not on API interface design philosophy.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I extracted a helper method used in three places. Now that I've extracted it, should I also export it as part of the public API?",
+    "expected": "no_invoke",
+    "notes": "rationale: Code reuse pattern and visibility question, not about appropriate interface generality level.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I'm building an SDK that will be used by third-party developers. I don't know what use cases they'll have. Should I design very general methods or specific ones that cover the known cases?",
+    "expected": "invoke",
+    "notes": "rationale: SDK design for unknown callers sits right at the edge of Ousterhout's principle — somewhat-general-purpose is the right target, but the unknown caller set complicates the judgment.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I add a `format` parameter to my `exportReport()` method to support PDF, CSV, and Excel, or should I keep separate `exportAsPdf()`, `exportAsCsv()`, `exportAsExcel()` methods?",
+    "expected": "invoke",
+    "notes": "rationale: Adding a parameter to generalize is a direct somewhat-general-purpose interface question, but the right answer also depends on whether the implementations diverge significantly.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're designing a plugin interface for our application. Third-party plugins need to hook into our workflow. Should the hooks be fine-grained (one per event type) or coarse-grained (one generic hook with an event object)?",
+    "expected": "invoke",
+    "notes": "rationale: Plugin interface design involves the general-vs-specific tradeoff, but plugin system design also involves versioning and compatibility concerns beyond Ousterhout's principle.; source id: tp10"
+  }
+]

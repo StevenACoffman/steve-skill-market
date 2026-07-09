@@ -1,62 +1,58 @@
-{
-  "skill": "playbook-as-mttr-reduction",
-  "description": "Use this skill when designing an on-call program, when an on-call team is experiencing high MTTR on recurring alerts, or when allocating limited time to improve reliability documentation.",
-  "test_prompts": [
-    {
-      "id": "playbook-as-mttr-reduction-should-01",
-      "category": "should_invoke",
-      "prompt": "We have about 120 alerts in PagerDuty and none of them have runbooks attached. My manager is asking me to write runbooks but I can't do all 120 — realistically I have time for maybe 15-20. How do I decide which ones to do first?",
-      "expected": "invoke",
-      "rationale": "Exact match to the skill's Scenario 1 (100-alert system with no playbooks, limited budget). The user needs the frequency × MTTR prioritization formula."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-should-02",
-      "category": "should_invoke",
-      "prompt": "We keep getting paged for the same disk-full alert on our Kafka brokers. Some engineers clear it in 8 minutes, others fumble around for an hour because they don't know which partition to check first or how to safely expand the volume without losing messages. We've had this alert fire 40+ times this quarter. What do we do?",
-      "expected": "invoke",
-      "rationale": "This is Scenario 2 (inconsistent on-call resolution) with a realistic messy detail layer. The 5x MTTR gap between experts and novices for a known, recurring alert is precisely what a playbook solves."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-should-03",
-      "category": "should_invoke",
-      "prompt": "We did a postmortem on last week's outage and found the engineer on call spent 35 minutes just trying to figure out what the 'upstream_latency_spike' alert even meant before they could start debugging. We have a dozen similar alert names that are equally cryptic. How do we prevent this from repeating?",
-      "expected": "invoke",
-      "rationale": "High MTTR from a known, recurring alert class with no documented response procedure. This is the canonical playbook trigger: time lost to comprehension rather than diagnosis, under stress, during an incident."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We had a cascading failure yesterday where our auth service started rejecting tokens after a cert rotation and it caused a total brownout across six downstream services. Nobody had ever seen this failure mode before. How do we figure out what happened and why the cert rotation caused token rejections?",
-      "expected": "skip",
-      "rationale": "This is a novel, unseen failure mode — no playbook exists for it yet. The right skill is hypothetico-deductive-troubleshooting-loop for investigating the root cause. A playbook can be written from the postmortem afterward."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "Our on-call rotation has one person covering 24x7 for a week at a time and they're burning out. Last month our primary was paged 18 times in a single shift. We need to figure out how to restructure who's on call and when.",
-      "expected": "skip",
-      "rationale": "This is an on-call sustainability and rotation structure problem, not an MTTR problem. The right frame is the on-call sustainability model (paging rate, rotation design, 2-incidents-per-shift bound) — not playbook creation, which addresses response quality not incident volume."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We want to add monitoring for our new payment processing service. What metrics should we be tracking and what thresholds should we set for alerting?",
-      "expected": "skip",
-      "rationale": "This is a monitoring and alerting design question (SLI/SLO selection, four golden signals) — not a playbook question. Playbooks are written for existing alerts that already fire; this service has no alert history yet."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-boundary-01",
-      "category": "boundary",
-      "prompt": "We're planning a migration from MySQL to Postgres next quarter. I want to write a runbook so whoever does the cutover has step-by-step instructions to follow and doesn't have to wing it.",
-      "expected": "skip",
-      "rationale": "The skill explicitly warns against applying playbooks to stateful data operations (database migrations) without decision points for engineer judgment — mechanical execution of a migration runbook can cause data loss. This is better handled as a migration plan with explicit judgment gates rather than a prescriptive playbook. The skill boundary calls this out directly."
-    },
-    {
-      "id": "playbook-as-mttr-reduction-boundary-02",
-      "category": "boundary",
-      "prompt": "Our playbooks are getting stale — engineers are reporting that the steps don't match the current system and one runbook told someone to restart a service that was decommissioned six months ago. How do we keep them current?",
-      "expected": "invoke",
-      "rationale": "This is Scenario 3 (the never-updated playbook) from the skill's A2 section. The skill covers playbook maintenance discipline explicitly: post-incident review, Wheel of Misfortune exercises, and update-on-consult policy. Invoking is correct even though the immediate problem is staleness rather than MTTR."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have about 120 alerts in PagerDuty and none of them have runbooks attached. My manager is asking me to write runbooks but I can't do all 120 — realistically I have time for maybe 15-20. How do I decide which ones to do first?",
+    "expected": "invoke",
+    "notes": "rationale: Exact match to the skill's Scenario 1 (100-alert system with no playbooks, limited budget). The user needs the frequency × MTTR prioritization formula.; source id: playbook-as-mttr-reduction-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We keep getting paged for the same disk-full alert on our Kafka brokers. Some engineers clear it in 8 minutes, others fumble around for an hour because they don't know which partition to check first or how to safely expand the volume without losing messages. We've had this alert fire 40+ times this quarter. What do we do?",
+    "expected": "invoke",
+    "notes": "rationale: This is Scenario 2 (inconsistent on-call resolution) with a realistic messy detail layer. The 5x MTTR gap between experts and novices for a known, recurring alert is precisely what a playbook solves.; source id: playbook-as-mttr-reduction-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We did a postmortem on last week's outage and found the engineer on call spent 35 minutes just trying to figure out what the 'upstream_latency_spike' alert even meant before they could start debugging. We have a dozen similar alert names that are equally cryptic. How do we prevent this from repeating?",
+    "expected": "invoke",
+    "notes": "rationale: High MTTR from a known, recurring alert class with no documented response procedure. This is the canonical playbook trigger: time lost to comprehension rather than diagnosis, under stress, during an incident.; source id: playbook-as-mttr-reduction-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We had a cascading failure yesterday where our auth service started rejecting tokens after a cert rotation and it caused a total brownout across six downstream services. Nobody had ever seen this failure mode before. How do we figure out what happened and why the cert rotation caused token rejections?",
+    "expected": "skip",
+    "notes": "rationale: This is a novel, unseen failure mode — no playbook exists for it yet. The right skill is hypothetico-deductive-troubleshooting-loop for investigating the root cause. A playbook can be written from the postmortem afterward.; source id: playbook-as-mttr-reduction-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our on-call rotation has one person covering 24x7 for a week at a time and they're burning out. Last month our primary was paged 18 times in a single shift. We need to figure out how to restructure who's on call and when.",
+    "expected": "skip",
+    "notes": "rationale: This is an on-call sustainability and rotation structure problem, not an MTTR problem. The right frame is the on-call sustainability model (paging rate, rotation design, 2-incidents-per-shift bound) — not playbook creation, which addresses response quality not incident volume.; source id: playbook-as-mttr-reduction-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We want to add monitoring for our new payment processing service. What metrics should we be tracking and what thresholds should we set for alerting?",
+    "expected": "skip",
+    "notes": "rationale: This is a monitoring and alerting design question (SLI/SLO selection, four golden signals) — not a playbook question. Playbooks are written for existing alerts that already fire; this service has no alert history yet.; source id: playbook-as-mttr-reduction-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're planning a migration from MySQL to Postgres next quarter. I want to write a runbook so whoever does the cutover has step-by-step instructions to follow and doesn't have to wing it.",
+    "expected": "skip",
+    "notes": "rationale: The skill explicitly warns against applying playbooks to stateful data operations (database migrations) without decision points for engineer judgment — mechanical execution of a migration runbook can cause data loss. This is better handled as a migration plan with explicit judgment gates rather than a prescriptive playbook. The skill boundary calls this out directly.; source id: playbook-as-mttr-reduction-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our playbooks are getting stale — engineers are reporting that the steps don't match the current system and one runbook told someone to restart a service that was decommissioned six months ago. How do we keep them current?",
+    "expected": "invoke",
+    "notes": "rationale: This is Scenario 3 (the never-updated playbook) from the skill's A2 section. The skill covers playbook maintenance discipline explicitly: post-incident review, Wheel of Misfortune exercises, and update-on-consult policy. Invoking is correct even though the immediate problem is staleness rather than MTTR.; source id: playbook-as-mttr-reduction-boundary-02"
+  }
+]

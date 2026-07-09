@@ -1,75 +1,72 @@
-{
-  "skill_id": "pull-complexity-downward",
-  "test_prompts": [
-    {
-      "id": "tp01",
-      "prompt": "My cache class has a `maxSize` parameter that every caller has to pass in. Most callers just pass 1000. Should I pick a sensible default and let callers override it only when needed?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Classic pull-complexity-downward: the module should absorb the decision with a good default rather than pushing it onto every caller."
-    },
-    {
-      "id": "tp02",
-      "prompt": "Our HTTP client exposes `connectionTimeout`, `readTimeout`, `retryCount`, `retryDelay`, and `backoffMultiplier` as constructor parameters. Most services just want 'sensible retry behavior'. Is this too much to ask callers to configure?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Bloated options struct pushing complexity onto callers. The module should own the retry policy complexity and expose a simpler interface."
-    },
-    {
-      "id": "tp03",
-      "prompt": "The team keeps saying 'let the caller decide' whenever we debate a design choice. Now every module has a dozen config knobs and callers just copy-paste the same values everywhere. What's wrong with this pattern?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Directly names the anti-pattern Ousterhout warns against. This is the core use case for the skill."
-    },
-    {
-      "id": "tp04",
-      "prompt": "Should my logger accept a `flushOnEveryWrite` boolean, or should it always buffer and flush periodically? I don't want to make the wrong call for all callers.",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Uncertainty about pushing a config choice onto callers vs. owning the decision in the implementation. Pull-complexity-downward applies directly."
-    },
-    {
-      "id": "tp05",
-      "prompt": "We want to let users of our SaaS product configure their notification preferences — email digest vs. instant, quiet hours, and channel preferences. How should we design the settings UI?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "User-facing configuration UI design, not internal API complexity distribution. End-user preferences must be exposed; this isn't a module interface question."
-    },
-    {
-      "id": "tp06",
-      "prompt": "Should we use environment variables or a config file to control whether our service runs in debug mode?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Deployment/ops configuration mechanism question, not about API interface design or pulling complexity into a module."
-    },
-    {
-      "id": "tp07",
-      "prompt": "We're implementing feature flags for A/B testing. Should the flag evaluation logic live in the SDK or be computed server-side and pushed to clients?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Feature flag architecture for A/B testing is a product/infrastructure concern, not a module interface design question about avoiding pushing complexity to callers."
-    },
-    {
-      "id": "tp08",
-      "prompt": "Should my database connection pool expose a `minConnections` setting, or should it manage that internally based on observed load?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Boundary case: the principle says pull complexity down, but `minConnections` may reflect a legitimate operational constraint callers must own. Context matters."
-    },
-    {
-      "id": "tp09",
-      "prompt": "I'm building a library that needs to be testable. To inject test doubles I need to expose internal dependencies as constructor parameters. Is that okay even though it complicates the interface?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Testability sometimes requires exposing parameters that would otherwise be internal — a genuine tension with pull-complexity-downward that needs nuanced handling."
-    },
-    {
-      "id": "tp10",
-      "prompt": "Our gRPC client has a `deadline` parameter on every call. Should we set a default deadline in the client constructor, or keep it per-call?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Timeout configuration sits at the boundary: per-call deadlines may be legitimately caller-specific (microservice SLAs differ), but a sensible default could reduce boilerplate."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My cache class has a `maxSize` parameter that every caller has to pass in. Most callers just pass 1000. Should I pick a sensible default and let callers override it only when needed?",
+    "expected": "invoke",
+    "notes": "rationale: Classic pull-complexity-downward: the module should absorb the decision with a good default rather than pushing it onto every caller.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our HTTP client exposes `connectionTimeout`, `readTimeout`, `retryCount`, `retryDelay`, and `backoffMultiplier` as constructor parameters. Most services just want 'sensible retry behavior'. Is this too much to ask callers to configure?",
+    "expected": "invoke",
+    "notes": "rationale: Bloated options struct pushing complexity onto callers. The module should own the retry policy complexity and expose a simpler interface.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "The team keeps saying 'let the caller decide' whenever we debate a design choice. Now every module has a dozen config knobs and callers just copy-paste the same values everywhere. What's wrong with this pattern?",
+    "expected": "invoke",
+    "notes": "rationale: Directly names the anti-pattern Ousterhout warns against. This is the core use case for the skill.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Should my logger accept a `flushOnEveryWrite` boolean, or should it always buffer and flush periodically? I don't want to make the wrong call for all callers.",
+    "expected": "invoke",
+    "notes": "rationale: Uncertainty about pushing a config choice onto callers vs. owning the decision in the implementation. Pull-complexity-downward applies directly.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We want to let users of our SaaS product configure their notification preferences — email digest vs. instant, quiet hours, and channel preferences. How should we design the settings UI?",
+    "expected": "no_invoke",
+    "notes": "rationale: User-facing configuration UI design, not internal API complexity distribution. End-user preferences must be exposed; this isn't a module interface question.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Should we use environment variables or a config file to control whether our service runs in debug mode?",
+    "expected": "no_invoke",
+    "notes": "rationale: Deployment/ops configuration mechanism question, not about API interface design or pulling complexity into a module.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We're implementing feature flags for A/B testing. Should the flag evaluation logic live in the SDK or be computed server-side and pushed to clients?",
+    "expected": "no_invoke",
+    "notes": "rationale: Feature flag architecture for A/B testing is a product/infrastructure concern, not a module interface design question about avoiding pushing complexity to callers.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Should my database connection pool expose a `minConnections` setting, or should it manage that internally based on observed load?",
+    "expected": "invoke",
+    "notes": "rationale: Boundary case: the principle says pull complexity down, but `minConnections` may reflect a legitimate operational constraint callers must own. Context matters.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm building a library that needs to be testable. To inject test doubles I need to expose internal dependencies as constructor parameters. Is that okay even though it complicates the interface?",
+    "expected": "invoke",
+    "notes": "rationale: Testability sometimes requires exposing parameters that would otherwise be internal — a genuine tension with pull-complexity-downward that needs nuanced handling.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our gRPC client has a `deadline` parameter on every call. Should we set a default deadline in the client constructor, or keep it per-call?",
+    "expected": "invoke",
+    "notes": "rationale: Timeout configuration sits at the boundary: per-call deadlines may be legitimately caller-specific (microservice SLAs differ), but a sensible default could reduce boilerplate.; source id: tp10"
+  }
+]

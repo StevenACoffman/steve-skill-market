@@ -1,75 +1,72 @@
-{
-  "skill_id": "design-it-twice",
-  "test_prompts": [
-    {
-      "id": "tp01",
-      "prompt": "I've come up with an API design for our new payments module. I think it's pretty solid. Should I just go ahead and implement it?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Single proposed design with no mention of alternatives. Design-it-twice says to generate and compare at least two approaches before committing."
-    },
-    {
-      "id": "tp02",
-      "prompt": "We're about to finalize the interface for our new event bus. I have one design that feels clean. My team wants to start building. Is there a reason to slow down here?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Finalization pressure with only one design on the table. Ousterhout's advice is to explicitly explore alternatives before locking in."
-    },
-    {
-      "id": "tp03",
-      "prompt": "Here's my proposed class hierarchy for the reporting engine. I've thought it through carefully and I'm confident. Can you review it?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Design review with a single proposal and no mention of alternatives considered — design-it-twice would inject the question of what other approaches were evaluated."
-    },
-    {
-      "id": "tp04",
-      "prompt": "I went straight from requirements to implementation last sprint and now the API feels clunky. My teammates keep finding edge cases I didn't plan for. What should I do differently next time?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Retrospective on skipping design exploration, exactly the failure mode design-it-twice prevents."
-    },
-    {
-      "id": "tp05",
-      "prompt": "We have two competing proposals for our caching strategy — an LRU cache vs. a TTL-based cache. How do we run an A/B test to pick the winner?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "A/B testing is a runtime experiment mechanism. Two designs already exist; the skill is about generating alternatives, not running experiments."
-    },
-    {
-      "id": "tp06",
-      "prompt": "What should be on our code review checklist? We want to make sure reviewers catch common issues before merge.",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Code review process question, not about the design exploration phase before implementation."
-    },
-    {
-      "id": "tp07",
-      "prompt": "Should I build a prototype before committing to the architecture? The new messaging system is pretty complex.",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Prototyping strategy question. Related but distinct — prototyping validates a single design, while design-it-twice is about generating multiple design candidates and comparing them."
-    },
-    {
-      "id": "tp08",
-      "prompt": "I'm stuck between two approaches for my repository layer: one uses a generic `Repository<T>` interface, the other has specific `UserRepository`, `OrderRepository` classes. How do I pick?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Two alternatives already exist, so design-it-twice's generative phase is done. The skill's comparison framework is still useful, but the prompt is more about decision criteria."
-    },
-    {
-      "id": "tp09",
-      "prompt": "Should I use a UUID or an auto-increment integer as the primary key for this table?",
-      "expected": "no_invoke",
-      "category": "boundary",
-      "rationale": "Implementation detail decision that probably doesn't warrant full design-it-twice treatment. Boundary because it is a design choice, but the scope is narrow enough that alternatives may be obvious."
-    },
-    {
-      "id": "tp10",
-      "prompt": "Should I call this parameter `timeout` or `timeoutMillis`? I want to be consistent with the rest of the codebase.",
-      "expected": "no_invoke",
-      "category": "boundary",
-      "rationale": "Minor naming decision. Design-it-twice is intended for significant interface and structural choices, not for naming conventions."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I've come up with an API design for our new payments module. I think it's pretty solid. Should I just go ahead and implement it?",
+    "expected": "invoke",
+    "notes": "rationale: Single proposed design with no mention of alternatives. Design-it-twice says to generate and compare at least two approaches before committing.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're about to finalize the interface for our new event bus. I have one design that feels clean. My team wants to start building. Is there a reason to slow down here?",
+    "expected": "invoke",
+    "notes": "rationale: Finalization pressure with only one design on the table. Ousterhout's advice is to explicitly explore alternatives before locking in.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Here's my proposed class hierarchy for the reporting engine. I've thought it through carefully and I'm confident. Can you review it?",
+    "expected": "invoke",
+    "notes": "rationale: Design review with a single proposal and no mention of alternatives considered — design-it-twice would inject the question of what other approaches were evaluated.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I went straight from requirements to implementation last sprint and now the API feels clunky. My teammates keep finding edge cases I didn't plan for. What should I do differently next time?",
+    "expected": "invoke",
+    "notes": "rationale: Retrospective on skipping design exploration, exactly the failure mode design-it-twice prevents.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have two competing proposals for our caching strategy — an LRU cache vs. a TTL-based cache. How do we run an A/B test to pick the winner?",
+    "expected": "no_invoke",
+    "notes": "rationale: A/B testing is a runtime experiment mechanism. Two designs already exist; the skill is about generating alternatives, not running experiments.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What should be on our code review checklist? We want to make sure reviewers catch common issues before merge.",
+    "expected": "no_invoke",
+    "notes": "rationale: Code review process question, not about the design exploration phase before implementation.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Should I build a prototype before committing to the architecture? The new messaging system is pretty complex.",
+    "expected": "no_invoke",
+    "notes": "rationale: Prototyping strategy question. Related but distinct — prototyping validates a single design, while design-it-twice is about generating multiple design candidates and comparing them.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I'm stuck between two approaches for my repository layer: one uses a generic `Repository\u003cT\u003e` interface, the other has specific `UserRepository`, `OrderRepository` classes. How do I pick?",
+    "expected": "invoke",
+    "notes": "rationale: Two alternatives already exist, so design-it-twice's generative phase is done. The skill's comparison framework is still useful, but the prompt is more about decision criteria.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I use a UUID or an auto-increment integer as the primary key for this table?",
+    "expected": "no_invoke",
+    "notes": "rationale: Implementation detail decision that probably doesn't warrant full design-it-twice treatment. Boundary because it is a design choice, but the scope is narrow enough that alternatives may be obvious.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Should I call this parameter `timeout` or `timeoutMillis`? I want to be consistent with the rest of the codebase.",
+    "expected": "no_invoke",
+    "notes": "rationale: Minor naming decision. Design-it-twice is intended for significant interface and structural choices, not for naming conventions.; source id: tp10"
+  }
+]

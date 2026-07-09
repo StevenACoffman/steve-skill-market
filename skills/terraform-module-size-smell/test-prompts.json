@@ -1,68 +1,72 @@
-{
-  "skill_id": "terraform-module-size-smell",
-  "book": "Terraform: Up and Running (3rd Edition)",
-  "author": "Yevgeniy Brikman",
-  "generated": "2026-05-05",
-  "prompts": [
-    {
-      "id": "ms-si-01",
-      "type": "should_invoke",
-      "prompt": "Our terraform plan takes 8 minutes to run. The module has about 250 resources in it. Is there a way to make it faster?",
-      "rationale": "Slow plan is harm #1 from large modules — the direct symptom that this skill diagnoses."
-    },
-    {
-      "id": "ms-si-02",
-      "type": "should_invoke",
-      "prompt": "Every time I make a small Terraform change, I'm nervous about applying it because the plan shows potential changes to dozens of unrelated resources. How do I reduce this risk?",
-      "rationale": "Describes blast radius anxiety — harm #2 of large modules."
-    },
-    {
-      "id": "ms-si-03",
-      "type": "should_invoke",
-      "prompt": "We're trying to write Terratest tests for our Terraform module but each test takes 25 minutes and costs $50 in AWS resources. Is this normal?",
-      "rationale": "Testability harm — the 20-30 minute test cycle that makes tests impractical is a named harm of large modules."
-    },
-    {
-      "id": "ms-si-04",
-      "type": "should_invoke",
-      "prompt": "When should I extract a Terraform resource or group of resources into its own module?",
-      "rationale": "Direct module extraction decision question — the core question this skill answers."
-    },
-    {
-      "id": "ms-sni-01",
-      "type": "should_not_invoke",
-      "prompt": "How do I publish a Terraform module to the Terraform Registry?",
-      "rationale": "Module publishing and versioning — unrelated to module size and decomposition."
-    },
-    {
-      "id": "ms-sni-02",
-      "type": "should_not_invoke",
-      "prompt": "What's the difference between a root module and a child module in Terraform?",
-      "rationale": "Basic Terraform module terminology — not about module size or the six harms."
-    },
-    {
-      "id": "ms-sni-03",
-      "type": "should_not_invoke",
-      "prompt": "How do I pass a list of objects as a variable to a Terraform module?",
-      "rationale": "Module variable type syntax — unrelated to module size."
-    },
-    {
-      "id": "ms-bb-01",
-      "type": "blurred_boundary",
-      "prompt": "Our team is just getting started with Terraform and we have a single main.tf with 20 resources for our entire application. Should we split it into modules now or wait?",
-      "rationale": "Early-stage single-module question — the skill's boundary acknowledges that small modules may be premature; judgment about when pain appears."
-    },
-    {
-      "id": "ms-bb-02",
-      "type": "blurred_boundary",
-      "prompt": "If I split my large Terraform module into smaller modules, won't I have to apply them in the right order and manage dependencies between them? That seems harder than one big apply.",
-      "rationale": "Coordination overhead of decomposition — the skill's boundary notes this tradeoff explicitly."
-    },
-    {
-      "id": "ms-bb-03",
-      "type": "blurred_boundary",
-      "prompt": "Another team wants to reuse part of my Terraform module — just the networking resources. Can they just call my module and ignore the compute and database resources?",
-      "rationale": "Partial reuse harm — the questioner is experiencing harm #6 directly; the answer leads to module extraction."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our terraform plan takes 8 minutes to run. The module has about 250 resources in it. Is there a way to make it faster?",
+    "expected": "Skill activates and diagnoses slow plan as harm #1 of oversized modules (every resource requires a provider API call during plan); recommend decomposing into small single-responsibility modules along natural seams (networking, compute, data-stores) so each plan touches far fewer resources.",
+    "notes": "rationale: Slow plan is harm #1 from large modules — the direct symptom that this skill diagnoses.; source id: ms-si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Every time I make a small Terraform change, I'm nervous about applying it because the plan shows potential changes to dozens of unrelated resources. How do I reduce this risk?",
+    "expected": "Skill activates and names this as blast-radius (harm #2): a bug anywhere in a large module can affect every resource in it; recommend splitting into small focused modules with independent state so a change to one concern cannot touch unrelated resources, using moved blocks to extract safely.",
+    "notes": "rationale: Describes blast radius anxiety — harm #2 of large modules.; source id: ms-si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're trying to write Terratest tests for our Terraform module but each test takes 25 minutes and costs $50 in AWS resources. Is this normal?",
+    "expected": "Skill activates and identifies the testability harm: Terratest deploys real infrastructure, so a 300-resource module produces 20-30 minute, expensive test cycles that make tests impractical; the fix is decomposition so a test against a single small module (e.g. compute/) deploys in under 5 minutes.",
+    "notes": "rationale: Testability harm — the 20-30 minute test cycle that makes tests impractical is a named harm of large modules.; source id: ms-si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "When should I extract a Terraform resource or group of resources into its own module?",
+    "expected": "Skill activates and gives the single-responsibility heuristic: extract when a module mixes concerns from two architectural layers or exceeds roughly 10-15 resources, or when any of the six harms (slow plan, blast radius, complex graph, hard testing/review, partial-reuse bottleneck) appears; extract along natural seams starting with the lowest-dependency component and use moved blocks.",
+    "notes": "rationale: Direct module extraction decision question — the core question this skill answers.; source id: ms-si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I publish a Terraform module to the Terraform Registry?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Module publishing and versioning — unrelated to module size and decomposition.; source id: ms-sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What's the difference between a root module and a child module in Terraform?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Basic Terraform module terminology — not about module size or the six harms.; source id: ms-sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I pass a list of objects as a variable to a Terraform module?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Module variable type syntax — unrelated to module size.; source id: ms-sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our team is just getting started with Terraform and we have a single main.tf with 20 resources for our entire application. Should we split it into modules now or wait?",
+    "expected": "Skill acknowledges that in an early-stage project a single module for one service may be acceptable temporarily, so splitting can be premature; the defensible answer is to watch for the harms (slow plan, painful test times, blast-radius fear) and decompose once they appear, since the cost of splitting is paid back quickly then.",
+    "notes": "rationale: Early-stage single-module question — the skill's boundary acknowledges that small modules may be premature; judgment about when pain appears.; source id: ms-bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "If I split my large Terraform module into smaller modules, won't I have to apply them in the right order and manage dependencies between them? That seems harder than one big apply.",
+    "expected": "Skill affirms the tradeoff is real — decomposition adds coordination overhead (dependency-ordered applies, terraform_remote_state wiring) — but weighs it against the six harms of the monolith; it should note teams wanting to apply everything together can use Terragrunt run-all to keep ordered applies manageable.",
+    "notes": "rationale: Coordination overhead of decomposition — the skill's boundary notes this tradeoff explicitly.; source id: ms-bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Another team wants to reuse part of my Terraform module — just the networking resources. Can they just call my module and ignore the compute and database resources?",
+    "expected": "Skill identifies this as the partial-reuse harm (#6): they cannot cleanly take just the networking resources from a mixed module without taking everything or forking it; the answer is to extract networking into its own small module so it can be reused independently, avoiding a single-owner bottleneck.",
+    "notes": "rationale: Partial reuse harm — the questioner is experiencing harm #6 directly; the answer leads to module extraction.; source id: ms-bb-03"
+  }
+]

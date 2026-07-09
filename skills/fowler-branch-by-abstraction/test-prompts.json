@@ -1,168 +1,86 @@
-{
-  "skill": "fowler-branch-by-abstraction",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "tp01",
-      "type": "should_trigger",
-      "label": "HTTP client replacement across 200 call sites",
-      "prompt": "We need to replace our HTTP client library across 200 call sites in a live production service. We can't take a feature freeze to do it. What's the approach?",
-      "expected_skill_use": "Branch By Abstraction: (1) introduce a thin HTTPClient interface that wraps the current library; (2) migrate all 200 call sites to use the interface incrementally; (3) implement the new library behind the interface; (4) remove the old library. The code is never broken. Migration can span weeks distributed across normal work.",
-      "must_include": [
-        "abstraction",
-        "interface",
-        "incrementally",
-        "never broken"
-      ],
-      "must_not_include": [
-        "feature freeze",
-        "git branch"
-      ]
-    },
-    {
-      "id": "tp02",
-      "type": "should_trigger",
-      "label": "Logging framework used everywhere",
-      "prompt": "We're using a deprecated logging library that's imported in 80 packages. We want to switch to slog but can't do it in one PR. How do we manage this migration?",
-      "expected_skill_use": "Branch By Abstraction: define a Logger interface matching how callers use the current library; implement it with the current library; gradually migrate packages to inject/use the interface; then swap the implementation to slog; remove the old library.",
-      "must_include": [
-        "interface",
-        "incremental",
-        "abstraction"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp03",
-      "type": "should_trigger",
-      "label": "Framework migration without a freeze",
-      "prompt": "We want to migrate from Gin to a newer web framework. We have 60 route handlers. We can't stop feature work for a month to do a big-bang migration. What's the strategy?",
-      "expected_skill_use": "Branch By Abstraction: define a handler interface decoupled from Gin's types; implement the interface with a Gin adapter; migrate handlers one by one through the interface; then replace the adapter with the new framework. Feature work continues throughout.",
-      "must_include": [
-        "interface",
-        "incremental",
-        "abstraction"
-      ],
-      "must_not_include": [
-        "big-bang"
-      ]
-    },
-    {
-      "id": "tp04",
-      "type": "should_trigger",
-      "label": "Developer asks how to do long-term refactoring without a dedicated sprint",
-      "prompt": "We have a messy subsystem that needs to be rewritten. Management won't give us a refactoring sprint. How do we make progress on it without stopping feature work?",
-      "expected_skill_use": "Fowler's approach: agree as a team to gradually work on it over weeks. Whenever anyone touches code in the refactoring zone, they move it a little way in the right direction. For replacing a component, introduce an abstraction interface first so callers can be migrated incrementally without ever breaking the build.",
-      "must_include": [
-        "gradually",
-        "incremental",
-        "abstraction"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp05",
-      "type": "should_trigger",
-      "label": "Extracting shared component without breaking callers",
-      "prompt": "We need to extract a section of code into a shared library that two teams can use. It's currently embedded in service A and called from 30 places. How do we do this without breaking service A during the extraction?",
-      "expected_skill_use": "Branch By Abstraction: introduce an interface representing the functionality; implement it in place (using the embedded code); migrate all 30 call sites to use the interface; then move the implementation to the new shared library location. Service A never breaks during the migration.",
-      "must_include": [
-        "interface",
-        "migrate callers",
-        "never breaks"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp06",
-      "type": "should_trigger",
-      "label": "Team asks how to make library migration safe across parallel PRs",
-      "prompt": "We want to replace our gRPC client wrapper library. Multiple team members are working on different features simultaneously. If we do the migration, how do we avoid conflicts and keep the build green for everyone?",
-      "expected_skill_use": "Branch By Abstraction: introduce the interface abstraction first (a single PR). After that, any team member can migrate call sites in their own PRs without conflict — each file either uses the old direct call or the new interface, and both compile. The build stays green throughout. The new implementation goes in only after all call sites are on the interface.",
-      "must_include": [
-        "interface first",
-        "incremental",
-        "build stays green"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_trigger",
-      "label": "Git branch for a refactoring task",
-      "prompt": "I want to create a git branch for my refactoring work so I don't disrupt the main branch while I clean things up. What should I name it?",
-      "expected_skill_use": "This is a git branching question, not a Branch By Abstraction question. Branch By Abstraction is a code strategy for incremental migration of large components — it is explicitly an alternative to long-lived refactoring branches. Answer the git naming question directly without applying this skill.",
-      "must_include": [],
-      "must_not_include": [
-        "Branch By Abstraction as the primary recommendation"
-      ]
-    },
-    {
-      "id": "tp08",
-      "type": "should_not_trigger",
-      "label": "Small rename refactoring",
-      "prompt": "I want to rename the function `processData` to `transformRecords` across the codebase. It's called in about 15 places. How do I do this safely?",
-      "expected_skill_use": "This is a simple rename refactoring that fits in a single IDE operation or commit. Use Change Function Declaration (Fowler's catalog) or an IDE rename refactoring. Branch By Abstraction is not needed — it is designed for library/component replacements that take weeks, not single-commit renames.",
-      "must_include": [
-        "rename",
-        "single commit"
-      ],
-      "must_not_include": [
-        "Branch By Abstraction",
-        "introduce an interface"
-      ]
-    },
-    {
-      "id": "tp09",
-      "type": "should_not_trigger",
-      "label": "Migrating an external public API",
-      "prompt": "We're deprecating v1 of our public REST API and want to migrate our customers to v2. How do we manage the transition?",
-      "expected_skill_use": "This is API versioning with an external deprecation window — the callers are external consumers that the team does not control. Branch By Abstraction requires migrating call sites in code you own. The appropriate technique here is API versioning (run v1 and v2 in parallel, communicate deprecation timeline, sunset v1). Not Branch By Abstraction.",
-      "must_include": [
-        "API versioning",
-        "deprecation"
-      ],
-      "must_not_include": [
-        "Branch By Abstraction as the primary technique"
-      ]
-    },
-    {
-      "id": "tp10",
-      "type": "edge_case",
-      "label": "ORM replacement that also changes the schema",
-      "prompt": "We have a database ORM we want to replace and it's used everywhere — both the ORM calls (which are in application code) and the schema (which needs to change as part of the migration to the new ORM's conventions). How do we approach this?",
-      "expected_skill_use": "This needs both skills. Branch By Abstraction handles the code side: introduce a repository interface, implement it with the current ORM, migrate callers, then implement it with the new ORM. The schema migration side — adding new columns, supporting old+new columns simultaneously, migrating data, removing old columns — requires fowler-database-parallel-change (expand-contract). These two techniques are complementary and both apply here.",
-      "must_include": [
-        "repository interface",
-        "incremental",
-        "schema"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp11",
-      "type": "edge_case",
-      "label": "Replacing a component that crosses a service boundary",
-      "prompt": "We want to replace our internal payment processing service with a third-party provider. Our application makes gRPC calls to the internal service from about 40 places. How do we migrate?",
-      "expected_skill_use": "Branch By Abstraction applies to the code side: define a PaymentProcessor interface; implement it with the current gRPC client; migrate all 40 call sites to the interface; then implement the interface with the third-party SDK. However, this crosses a network boundary — the implementation swap involves production traffic to a live external service, not just an in-process library swap. Additional concerns apply: traffic shadowing, rollback strategy, monitoring the new provider before full cutover. Branch By Abstraction handles the code migration; network-level migration safety requires additional patterns.",
-      "must_include": [
-        "interface",
-        "incremental",
-        "network boundary"
-      ],
-      "must_not_include": []
-    },
-    {
-      "id": "tp12",
-      "type": "edge_case",
-      "label": "Partial migration already underway",
-      "prompt": "We started migrating from our old HTTP client to a new one six months ago. We're about 60% through the call sites. The migration has stalled and now we have a mix of old and new code in the codebase. What should we do?",
-      "expected_skill_use": "This is a stalled Branch By Abstraction migration. The partially-migrated state is a known failure mode of the technique. Options: (a) recommit — assign ownership, use CI to track remaining direct usages of the old library, complete the migration; (b) if the migration cannot be completed, standardize on one or the other rather than living permanently in the in-between state. The worst outcome is leaving the migration permanently partial — callers split across two paths make both libraries hard to reason about and impossible to safely remove.",
-      "must_include": [
-        "complete the migration",
-        "track remaining"
-      ],
-      "must_not_include": []
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We need to replace our HTTP client library across 200 call sites in a live production service. We can't take a feature freeze to do it. What's the approach?",
+    "expected": "Applies Branch By Abstraction: introduce a thin HTTPClient interface wrapping the current library, migrate all 200 call sites to the interface incrementally, then implement the new library behind the interface and remove the old one. The code is never broken and the migration spans normal work over weeks with no feature freeze or git migration branch.",
+    "notes": "must include: abstraction, interface, incrementally, never broken; must not include: feature freeze, git branch; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're using a deprecated logging library that's imported in 80 packages. We want to switch to slog but can't do it in one PR. How do we manage this migration?",
+    "expected": "Applies Branch By Abstraction: define a Logger interface shaped around how callers use logging, implement it with the current library, incrementally migrate packages to the interface, then swap the implementation to slog and remove the old library.",
+    "notes": "must include: interface, incremental, abstraction; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We want to migrate from Gin to a newer web framework. We have 60 route handlers. We can't stop feature work for a month to do a big-bang migration. What's the strategy?",
+    "expected": "Applies Branch By Abstraction: define a handler interface decoupled from Gin's types, back it with a Gin adapter, migrate the 60 handlers through the interface one by one, then replace the adapter with the new framework. Rejects a big-bang cutover; feature work continues throughout.",
+    "notes": "must include: interface, incremental, abstraction; must not include: big-bang; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We have a messy subsystem that needs to be rewritten. Management won't give us a refactoring sprint. How do we make progress on it without stopping feature work?",
+    "expected": "Advises gradually working on the subsystem over weeks — whenever anyone touches code in the refactoring zone, move it a little toward the target state — and, for replacing a component, introduce an abstraction interface first so callers migrate incrementally without ever breaking the build. No dedicated sprint is needed.",
+    "notes": "must include: gradually, incremental, abstraction; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We need to extract a section of code into a shared library that two teams can use. It's currently embedded in service A and called from 30 places. How do we do this without breaking service A during the extraction?",
+    "expected": "Applies Branch By Abstraction: introduce an interface representing the functionality, implement it in place using the embedded code, migrate all 30 call sites to the interface, then move the implementation to the new shared library location. Service A never breaks during the extraction.",
+    "notes": "must include: interface, migrate callers, never breaks; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "We want to replace our gRPC client wrapper library. Multiple team members are working on different features simultaneously. If we do the migration, how do we avoid conflicts and keep the build green for everyone?",
+    "expected": "Applies Branch By Abstraction: land the interface abstraction first in a single PR, after which any member can migrate call sites incrementally in their own PRs — each file compiles whether it uses the old direct call or the new interface, so the build stays green. The new implementation is wired in only after all call sites are on the interface.",
+    "notes": "must include: interface first, incremental, build stays green; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I want to create a git branch for my refactoring work so I don't disrupt the main branch while I clean things up. What should I name it?",
+    "expected": "Skill should not activate: this is a git branch-naming question, not Branch By Abstraction (which is a code-level migration strategy and is explicitly an alternative to long-lived refactoring branches). Answer the git naming question directly.",
+    "notes": "must not include: Branch By Abstraction as the primary recommendation; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I want to rename the function `processData` to `transformRecords` across the codebase. It's called in about 15 places. How do I do this safely?",
+    "expected": "Skill should not activate: this is a simple rename that fits a single IDE refactoring or single commit (Change Function Declaration), not a weeks-long component replacement. No abstraction interface or migration plan is needed.",
+    "notes": "must include: rename, single commit; must not include: Branch By Abstraction, introduce an interface; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "We're deprecating v1 of our public REST API and want to migrate our customers to v2. How do we manage the transition?",
+    "expected": "Skill should not activate: the callers are external consumers the team does not control, so call sites cannot be migrated. The right technique is API versioning with a deprecation window (run v1 and v2 in parallel, communicate the timeline, sunset v1), not Branch By Abstraction.",
+    "notes": "must include: API versioning, deprecation; must not include: Branch By Abstraction as the primary technique; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We have a database ORM we want to replace and it's used everywhere — both the ORM calls (which are in application code) and the schema (which needs to change as part of the migration to the new ORM's conventions). How do we approach this?",
+    "expected": "Both skills apply and are complementary: Branch By Abstraction handles the code side (introduce a repository interface, back it with the current ORM, migrate callers, then implement with the new ORM), while the schema change — add columns, support old+new simultaneously, migrate data, drop old columns — requires fowler-database-parallel-change (expand-contract).",
+    "notes": "must include: repository interface, incremental, schema; source id: tp10"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "We want to replace our internal payment processing service with a third-party provider. Our application makes gRPC calls to the internal service from about 40 places. How do we migrate?",
+    "expected": "Branch By Abstraction applies to the code side — define a PaymentProcessor interface, back it with the current gRPC client, migrate the 40 call sites, then implement with the third-party SDK — but the swap crosses a network boundary, so additional network-level concerns apply (traffic shadowing, rollback, monitoring the new provider before full cutover) beyond the standard in-process technique.",
+    "notes": "must include: interface, incremental, network boundary; source id: tp11"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "We started migrating from our old HTTP client to a new one six months ago. We're about 60% through the call sites. The migration has stalled and now we have a mix of old and new code in the codebase. What should we do?",
+    "expected": "Names this as the known partial-migration failure mode of Branch By Abstraction: either recommit — assign ownership and use CI/grep gates to track and eliminate remaining direct usages of the old library, completing the migration — or, if completion is impossible, standardize on one path. The worst outcome is living permanently in the split in-between state.",
+    "notes": "must include: complete the migration, track remaining; source id: tp12"
+  }
+]

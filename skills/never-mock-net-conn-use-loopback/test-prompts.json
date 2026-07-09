@@ -1,190 +1,86 @@
 [
   {
-    "id": "tp01",
-    "segment": "A2",
-    "trigger_type": "direct_question",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "I'm writing a Go package that implements a custom line-based protocol (think Redis RESP but simplified). I need to test the parser. My colleague says I should create a MockConn struct that wraps a bytes.Buffer and implements net.Conn. Is that the right approach?",
-    "expected_skill_elements": [
-      "Reject the bytes.Buffer mock approach explicitly",
-      "Explain why bytes.Buffer cannot reproduce TCP semantics (partial reads, blocking, connection close)",
-      "Provide or describe the testConn helper pattern using net.Listen('tcp', '127.0.0.1:0') and net.Dial",
-      "Note that port 0 assigns an unused port — no hardcoded ports",
-      "Show how to use both ends of the loopback pair in the test"
-    ],
-    "anti_patterns_to_avoid": [
-      "Suggesting bytes.Buffer, strings.NewReader, or io.Pipe as a net.Conn substitute",
-      "Recommending a mock framework to generate a MockConn",
-      "Suggesting the test only needs bytes.Buffer because 'it's just unit testing'",
-      "Omitting the goroutine pattern for Accept"
-    ]
+    "expected": "Reject the bytes.Buffer mock explicitly, explaining it cannot reproduce TCP semantics (partial reads, blocking on empty, connection-close errors). Direct the user to the testConn helper using net.Listen(\"tcp\", \"127.0.0.1:0\") plus net.Dial with an Accept goroutine, noting port 0 gives an OS-assigned port and both loopback ends are usable in the test.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "segment": "A2",
-    "trigger_type": "code_review",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "Please review this Go test:\n\n```go\ntype mockConn struct {\n    readBuf  *bytes.Buffer\n    writeBuf *bytes.Buffer\n}\n\nfunc (m *mockConn) Read(b []byte) (int, error)  { return m.readBuf.Read(b) }\nfunc (m *mockConn) Write(b []byte) (int, error) { return m.writeBuf.Write(b) }\nfunc (m *mockConn) Close() error               { return nil }\nfunc (m *mockConn) LocalAddr() net.Addr         { return nil }\nfunc (m *mockConn) RemoteAddr() net.Addr        { return nil }\nfunc (m *mockConn) SetDeadline(t time.Time) error      { return nil }\nfunc (m *mockConn) SetReadDeadline(t time.Time) error  { return nil }\nfunc (m *mockConn) SetWriteDeadline(t time.Time) error { return nil }\n\nfunc TestProtocolParser(t *testing.T) {\n    conn := &mockConn{\n        readBuf:  bytes.NewBuffer([]byte(\"*3\\r\\n$3\\r\\nSET\\r\\n$3\\r\\nkey\\r\\n$5\\r\\nvalue\\r\\n\")),\n        writeBuf: &bytes.Buffer{},\n    }\n    parser := NewParser(conn)\n    cmd, err := parser.ReadCommand()\n    if err != nil {\n        t.Fatal(err)\n    }\n    // assertions...\n}\n```\n\nIs there anything wrong with this approach?",
-    "expected_skill_elements": [
-      "Identify the mockConn as the problem — it cannot reproduce TCP connection semantics",
-      "Name specific failure modes: partial reads return all bytes at once from Buffer, blocking reads return EOF on empty buffer instead of blocking, connection close is a no-op",
-      "Replace with testConn helper using net.Listen + net.Dial",
-      "Show revised test structure with real loopback pair",
-      "Mention port 0 and the goroutine for Accept"
-    ],
-    "anti_patterns_to_avoid": [
-      "Approving the mockConn approach",
-      "Only suggesting minor improvements to the mock (e.g. 'add SetDeadline behavior')",
-      "Suggesting io.Pipe as an improvement — it is better than bytes.Buffer but still not TCP",
-      "Not providing the concrete replacement"
-    ]
+    "expected": "Identify the mockConn itself as the problem: it cannot reproduce TCP semantics — the buffer returns all bytes at once instead of partial reads, returns EOF instead of blocking when empty, and Close is a no-op. Provide the concrete replacement (testConn using net.Listen + net.Dial with an Accept goroutine and port 0), not minor tweaks to the mock or an io.Pipe substitute.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "segment": "E",
-    "trigger_type": "implementation_request",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "Write a testConn helper function in Go that I can use in my tests to get a real TCP connection pair. I want both the client and server ends returned so I can test my protocol code. Show me how to use it in a test too.",
-    "expected_skill_elements": [
-      "net.Listen('tcp', '127.0.0.1:0') — loopback with OS-assigned port",
-      "Goroutine calling ln.Accept()",
-      "ln.Close() after accepting one connection",
-      "net.Dial connecting to ln.Addr().String()",
-      "Function signature: func testConn(t *testing.T) (net.Conn, net.Conn)",
-      "t.Fatalf (not error return) on any failure",
-      "Usage example showing defer client.Close() and defer server.Close()",
-      "Usage example writing to one end and reading from the other"
-    ],
-    "anti_patterns_to_avoid": [
-      "Returning an error from testConn instead of calling t.Fatalf",
-      "Hardcoding a port number instead of using :0",
-      "Not using a goroutine for Accept (which would deadlock)",
-      "Missing the ln.Close() after Accept",
-      "Not showing usage in a test"
-    ]
+    "expected": "Produce func testConn(t *testing.T) (net.Conn, net.Conn) that calls net.Listen(\"tcp\", \"127.0.0.1:0\"), accepts in a goroutine, closes the listener after one connection, dials ln.Addr().String(), and uses t.Fatalf (not error returns) on every failure. Include a usage example with defer client.Close()/defer server.Close() that writes to one end and reads from the other.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "segment": "B",
-    "trigger_type": "boundary_probe",
+    "id": 4,
+    "type": "edge_case",
     "prompt": "I have an HTTP handler I want to unit test. Should I use the testConn pattern with net.Listen and net.Dial?",
-    "expected_skill_elements": [
-      "No — for HTTP, use net/http/httptest.NewServer() or httptest.NewRecorder()",
-      "Explain that testConn is for net.Conn (TCP/protocol level) code specifically",
-      "httptest is the standard library's equivalent for HTTP",
-      "Brief explanation of why: HTTP has its own higher-level test infrastructure"
-    ],
-    "anti_patterns_to_avoid": [
-      "Recommending testConn for HTTP handlers",
-      "Not mentioning net/http/httptest at all",
-      "Suggesting mockConn or bytes.Buffer for HTTP testing"
-    ]
+    "expected": "No — testConn is for net.Conn (TCP/protocol-level) code. For HTTP use net/http/httptest: httptest.NewRecorder() for handler unit tests or httptest.NewServer() for server tests, because HTTP has its own higher-level standard-library test infrastructure that handles headers, keep-alive, and TLS.",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "segment": "B",
-    "trigger_type": "boundary_probe",
+    "id": 5,
+    "type": "edge_case",
     "prompt": "I'm testing a gRPC service. Can I use the loopback testConn pattern?",
-    "expected_skill_elements": [
-      "The loopback principle applies but gRPC has its own dedicated in-memory connection helper",
-      "Reference google.golang.org/grpc/test/bufconn as the gRPC-specific tool",
-      "Explain that bufconn is the gRPC equivalent — real in-memory connection, not a mock",
-      "testConn works at the raw net.Conn level; gRPC has its own abstraction layer"
-    ],
-    "anti_patterns_to_avoid": [
-      "Saying testConn is the right tool for gRPC without mentioning bufconn",
-      "Recommending mocking the gRPC client/server interface",
-      "Ignoring the gRPC-specific tooling entirely"
-    ]
+    "expected": "The loopback principle (real connection, not a mock) applies, but gRPC has its own dedicated in-memory helper: google.golang.org/grpc/test/bufconn. Recommend bufconn as the gRPC-specific equivalent — a real in-memory connection rather than a mock — since testConn works at the raw net.Conn level and gRPC adds its own abstraction layer.",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "segment": "I",
-    "trigger_type": "conceptual_question",
+    "id": 6,
+    "type": "should_trigger",
     "prompt": "net.Conn is a Go interface. Why can't I just mock it with a struct that has the right methods? I do this for other interfaces all the time.",
-    "expected_skill_elements": [
-      "Acknowledge the technical point: you can implement the interface syntactically",
-      "Explain what the mock cannot reproduce: TCP partial reads, blocking on empty, connection-close error propagation, half-close",
-      "The mock tests the mock, not the protocol code",
-      "A real loopback pair is ~10 lines — the cost of 'just mock it' is not saved, it is spent on an inadequate substitute",
-      "Port 0 and the goroutine pattern make the real thing just as easy"
-    ],
-    "anti_patterns_to_avoid": [
-      "Agreeing that mocking is fine here",
-      "Saying io.Pipe is equivalent to a TCP connection",
-      "Not explaining the specific TCP semantics that are lost in a mock",
-      "Overstating the cost of the real loopback approach"
-    ]
+    "expected": "Acknowledge you can satisfy the interface syntactically, but the mock cannot reproduce TCP partial reads, blocking on empty, connection-close error propagation, or half-close — so it tests the mock, not the protocol code. Note that a real loopback pair is ~10 lines (port 0 + an Accept goroutine), so \"just mock it\" saves nothing and spends effort on an inadequate substitute.",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "segment": "A1",
-    "trigger_type": "real_world_case",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "How does HashiCorp's Packer test SSH connection handling? Walk me through the approach.",
-    "expected_skill_elements": [
-      "Real in-process SSH server — not a mock",
-      "net.Listen on loopback, goroutine running SSH server handshake on accepted connection",
-      "Test dials with real SSH client",
-      "Both ends of the authenticated session returned to the test",
-      "Tests actual protocol behavior: key exchange, authentication, channel negotiation",
-      "Contrast with what a mock would test (nothing real about the protocol)"
-    ],
-    "anti_patterns_to_avoid": [
-      "Describing a mock SSH connection",
-      "Suggesting a pre-recorded bytes.Buffer response",
-      "Not connecting the Packer case to the general testConn principle"
-    ]
+    "expected": "Describe a real in-process SSH server, not a mock: net.Listen on loopback, a goroutine running the SSH server handshake on the accepted connection, the test dialing with a real SSH client, and both ends of the authenticated session returned to the test. Emphasize it exercises actual protocol behavior (key exchange, authentication, channel negotiation) and ties back to the general testConn loopback principle.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "segment": "R",
-    "trigger_type": "policy_question",
+    "id": 8,
+    "type": "should_trigger",
     "prompt": "What is HashiCorp's policy on mocking net.Conn in tests?",
-    "expected_skill_elements": [
-      "Direct quote or close paraphrase: 'There is no reason to ever mock net.Conn'",
-      "The policy applies across all HashiCorp projects",
-      "The alternative is the loopback TCP pair helper (~10 lines)",
-      "The reasoning: real TCP tests real behavior; mocks test the mock"
-    ],
-    "anti_patterns_to_avoid": [
-      "Softening the policy ('it depends')",
-      "Not providing the loopback alternative",
-      "Attributing the policy to something other than Hashimoto/HashiCorp"
-    ]
+    "expected": "State the policy directly (Hashimoto: \"There is no reason to ever mock net.Conn\"), applied across HashiCorp projects, without softening it to \"it depends.\" Give the alternative — the ~10-line loopback TCP pair helper — and the reasoning that real TCP tests real behavior while mocks test the mock.",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "segment": "E",
-    "trigger_type": "debugging_scenario",
+    "id": 9,
+    "type": "should_trigger",
     "prompt": "My protocol test passes locally but fails in CI with a race detector error. I'm using a bytes.Buffer mock for net.Conn. The mock's Read method is called from two goroutines simultaneously. How do I fix this?",
-    "expected_skill_elements": [
-      "Root cause: the bytes.Buffer mock is not goroutine-safe AND is not a real TCP connection",
-      "The fix is not to add a mutex to the mock — the fix is to use a real loopback connection",
-      "net.Conn implementations from net.Listen/net.Dial are goroutine-safe by the Go net package guarantee",
-      "Provide or describe the testConn helper",
-      "The race detector error is a symptom of the deeper problem: using a mock instead of the real thing"
-    ],
-    "anti_patterns_to_avoid": [
-      "Suggesting adding a sync.Mutex to the mock as the solution",
-      "Not replacing the mock with a real loopback",
-      "Saying 'just protect the buffer with a mutex and you're done'"
-    ]
+    "expected": "Root-cause the race in the non-goroutine-safe bytes.Buffer mock and reject adding a mutex to it; the fix is replacing the mock with a real loopback connection, whose net.Listen/net.Dial net.Conn ends are goroutine-safe by the Go net package guarantee. Provide the testConn helper and frame the race error as a symptom of using a mock instead of the real thing.",
+    "notes": "source id: tp09"
   },
   {
-    "id": "tp10",
-    "segment": "A2",
-    "trigger_type": "tcp_server_test",
+    "id": 10,
+    "type": "should_trigger",
     "prompt": "I have a TCP server that accepts connections and speaks a custom binary protocol. How do I write a unit test for the server's connection handler without starting a full server?",
-    "expected_skill_elements": [
-      "testConn helper provides a real TCP pair without starting a full server",
-      "Pass the server-side connection end directly to the handler function under test",
-      "Write the protocol bytes from the client-side connection end",
-      "net.Listen('tcp', '127.0.0.1:0') — OS assigns port",
-      "t.Fatalf on errors, not error returns from the helper",
-      "defer both connections' Close()"
-    ],
-    "anti_patterns_to_avoid": [
-      "Starting a full server (net.Listen in the main test, not in the helper)",
-      "Using bytes.Buffer or io.Pipe",
-      "Hardcoding a port",
-      "Returning an error from the helper"
-    ]
+    "expected": "Use the testConn helper to get a real TCP pair (net.Listen(\"tcp\", \"127.0.0.1:0\") inside the helper, OS-assigned port) rather than starting a full server: pass the server-side connection end directly to the handler under test and drive the protocol bytes from the client-side end. Use t.Fatalf on errors, no error returns from the helper, and defer both connections' Close(); avoid bytes.Buffer/io.Pipe and hardcoded ports.",
+    "notes": "source id: tp10"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "My Go code calls a third-party payment provider's REST API over HTTPS. In tests I don't want to hit their real servers. What's the idiomatic way to fake the HTTP responses so I can assert on how my client handles a 429 or a malformed body?",
+    "expected": "skill should not activate — this is about faking an outbound HTTP client at the application/HTTP level (httptest.NewServer or a RoundTripper), not about testing raw net.Conn protocol code with a loopback TCP pair.",
+    "notes": "decoy: adjacent Go testing/networking topic, but HTTP-level test doubles are explicitly outside this skill's net.Conn scope (skill points to httptest instead)."
+  },
+  {
+    "id": 12,
+    "type": "should_not_trigger",
+    "prompt": "I'm testing a Go repository layer that talks to Postgres. Should I spin up a real database with testcontainers, or use a fake/in-memory implementation of my repository interface?",
+    "expected": "skill should not activate — this is a database/repository test-double strategy question (real container vs. in-memory fake), with no net.Conn, TCP protocol, or loopback-connection concern.",
+    "notes": "decoy: same 'real dependency vs. mock' testing philosophy but a different domain (DB/repository), unrelated to the net.Conn loopback pattern."
   }
 ]

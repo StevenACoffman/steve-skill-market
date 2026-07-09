@@ -1,48 +1,51 @@
-{
-  "skill_id": "strong-consistency-across-bounded-contexts",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "When a customer places an order, should I decrement inventory synchronously inside the order transaction, or should I publish an event?",
-      "expected_behavior": "Apply the strong/eventual rule: Orders and Inventory are separate bounded contexts. The Order aggregate commits atomically; an OrderPlaced domain event is published after commit; the Inventory context subscribes and decrements asynchronously. Synchronous inclusion in the order transaction would couple the two contexts and is incorrect per the rule."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "I have a code review comment flagging that my service updates two different aggregate types in a single database transaction. Is that a problem?",
-      "expected_behavior": "Yes, this is likely a problem. Apply the one-aggregate-per-transaction rule: if the two aggregates must stay consistent, they probably belong in the same aggregate (shared transactional invariant). If they belong to different bounded contexts, the coordination should be event-driven. Prompt the reviewer to clarify the boundary and diagnose whether to merge the aggregates or introduce an event."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "My Payments service needs the customer's current subscription tier before calculating a price. Should it call the Subscriptions service synchronously or hold a local projection?",
-      "expected_behavior": "Apply the eventual consistency principle: Payments should maintain a local projection of subscription state updated via domain events from Subscriptions. Synchronous RPC creates a runtime dependency that degrades Payments' availability when Subscriptions is slow or down. Eventual consistency is both acceptable and architecturally preferable here."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_not_invoke",
-      "prompt": "How do I implement a Kafka consumer in Go using the confluent-kafka-go library?",
-      "expected_behavior": "No invocation of the consistency rule. This is a library-specific implementation question about Kafka consumer setup, not an architectural decision about consistency boundaries."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "Should I use PostgreSQL or MongoDB for my Go service?",
-      "expected_behavior": "No invocation of the consistency rule. This is a database technology selection question unrelated to bounded context consistency guarantees."
-    },
-    {
-      "id": "tp-06",
-      "category": "blurred_boundary",
-      "prompt": "The business requires that when a payment fails, the order must be cancelled atomically — they must both happen or neither should. Does this require a distributed transaction?",
-      "expected_behavior": "Apply the rule with nuance: the requirement appears to demand cross-context atomicity, but challenge it with the domain expert. In practice, the Saga pattern with compensating transactions achieves the same business outcome without a distributed transaction: Order commits with 'payment pending' status; Payment fails and emits PaymentFailed; Order consumes it and transitions to Cancelled. Eventual consistency within a guaranteed delivery window satisfies the business requirement. Flag the outbox pattern gap."
-    },
-    {
-      "id": "tp-07",
-      "category": "blurred_boundary",
-      "prompt": "We're not sure if Inventory and Orders are separate bounded contexts or if they belong together. How does the consistency rule help us decide?",
-      "expected_behavior": "Use the consistency rule as a boundary diagnostic: if completing an order requires modifying inventory in the same transaction (and the business says that invariant must be atomic), they may belong in the same bounded context. If the business says 'inventory can lag by a few seconds' and the domains have separate teams, separate ubiquitous languages, or separate lifecycles, they are separate contexts. The consistency requirement is a signal about boundary placement, not a given that forces a distributed transaction."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "When a customer places an order, should I decrement inventory synchronously inside the order transaction, or should I publish an event?",
+    "expected": "Apply the strong/eventual rule: Orders and Inventory are separate bounded contexts. The Order aggregate commits atomically; an OrderPlaced domain event is published after commit; the Inventory context subscribes and decrements asynchronously. Synchronous inclusion in the order transaction would couple the two contexts and is incorrect per the rule.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I have a code review comment flagging that my service updates two different aggregate types in a single database transaction. Is that a problem?",
+    "expected": "Yes, this is likely a problem. Apply the one-aggregate-per-transaction rule: if the two aggregates must stay consistent, they probably belong in the same aggregate (shared transactional invariant). If they belong to different bounded contexts, the coordination should be event-driven. Prompt the reviewer to clarify the boundary and diagnose whether to merge the aggregates or introduce an event.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My Payments service needs the customer's current subscription tier before calculating a price. Should it call the Subscriptions service synchronously or hold a local projection?",
+    "expected": "Apply the eventual consistency principle: Payments should maintain a local projection of subscription state updated via domain events from Subscriptions. Synchronous RPC creates a runtime dependency that degrades Payments' availability when Subscriptions is slow or down. Eventual consistency is both acceptable and architecturally preferable here.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement a Kafka consumer in Go using the confluent-kafka-go library?",
+    "expected": "No invocation of the consistency rule. This is a library-specific implementation question about Kafka consumer setup, not an architectural decision about consistency boundaries.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Should I use PostgreSQL or MongoDB for my Go service?",
+    "expected": "No invocation of the consistency rule. This is a database technology selection question unrelated to bounded context consistency guarantees.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "The business requires that when a payment fails, the order must be cancelled atomically — they must both happen or neither should. Does this require a distributed transaction?",
+    "expected": "Apply the rule with nuance: the requirement appears to demand cross-context atomicity, but challenge it with the domain expert. In practice, the Saga pattern with compensating transactions achieves the same business outcome without a distributed transaction: Order commits with 'payment pending' status; Payment fails and emits PaymentFailed; Order consumes it and transitions to Cancelled. Eventual consistency within a guaranteed delivery window satisfies the business requirement. Flag the outbox pattern gap.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're not sure if Inventory and Orders are separate bounded contexts or if they belong together. How does the consistency rule help us decide?",
+    "expected": "Use the consistency rule as a boundary diagnostic: if completing an order requires modifying inventory in the same transaction (and the business says that invariant must be atomic), they may belong in the same bounded context. If the business says 'inventory can lag by a few seconds' and the domains have separate teams, separate ubiquitous languages, or separate lifecycles, they are separate contexts. The consistency requirement is a signal about boundary placement, not a given that forces a distributed transaction.",
+    "notes": "source id: tp-07"
+  }
+]

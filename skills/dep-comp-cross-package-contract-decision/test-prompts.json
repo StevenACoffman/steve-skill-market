@@ -1,90 +1,79 @@
-{
-  "skill": "dep-comp-cross-package-contract-decision",
-  "version": "0.1.0",
-  "source_book": "Dependency Composition (Go Adaptation) — Daniel Somerfield",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "trigger-01",
-      "category": "should_trigger",
-      "prompt": "My billing package needs to use the User struct from my auth package. Should I import the auth package directly, extract User to a shared types package, or do something else?",
-      "expected": "trigger",
-      "rationale": "Direct match to trigger signal 5: 'My billing package needs to use the User type from the auth package.' This is exactly the cross-package type sharing question the skill is designed to answer."
-    },
-    {
-      "id": "trigger-02",
-      "category": "should_trigger",
-      "prompt": "We have a types package in our Go monorepo and everything imports it. It started small but now it has 40 structs and every change to any type forces a recompile of half the codebase. How do we fix this?",
-      "expected": "trigger",
-      "rationale": "Direct match to trigger signal 3: 'My types package is getting huge and everything depends on it.' This is the premature-shared-types coupling-hub failure mode explicitly addressed in the skill."
-    },
-    {
-      "id": "trigger-03",
-      "category": "should_trigger",
-      "prompt": "I keep getting import cycle errors in Go. Package A imports package B for a type, and package B needs to import package A. How do I break this cycle?",
-      "expected": "trigger",
-      "rationale": "Direct match to trigger signal 4: 'How do I avoid import cycles in Go?' The skill explains that import cycles are a symptom of incidental coupling and provides concrete options (local interface, duplicate types, function field) to break them."
-    },
-    {
-      "id": "trigger-04",
-      "category": "should_trigger",
-      "prompt": "Two of my Go packages — an HTTP controller and a domain service — both have a Restaurant struct. They're currently identical. Should I extract it to a shared domain package, or keep them separate?",
-      "expected": "trigger",
-      "rationale": "Direct match to trigger signal 2: 'Two of my packages need the same struct — should I extract it to a shared package?' This is Case 1 from the book (controller and toprated packages), the divergence confidence test is the exact tool to apply here."
-    },
-    {
-      "id": "trigger-05",
-      "category": "should_trigger",
-      "prompt": "In our Go service, the provider package defines a UserServiceInterface that all callers import and reference. Some callers only use one method out of eight. This feels wrong but I'm not sure why or how to fix it.",
-      "expected": "trigger",
-      "rationale": "This is the provider-defines-interface anti-pattern described in the skill's Boundary section. The skill explicitly corrects this: the caller defines what it needs (local interface or function field), not the provider. The question has a cross-package contract ownership component."
-    },
-    {
-      "id": "no-trigger-01",
-      "category": "should_not_trigger",
-      "prompt": "Should I use dependency injection in my Go service at all, or is it overkill for a small project with only a database and a cache?",
-      "expected": "no_trigger",
-      "rationale": "The question is whether to use DI at all, not how two packages should share a type. SKILL.md description explicitly states: 'Do NOT invoke when the question is whether to use dependency injection at all — that is dep-comp-function-first-composition.'"
-    },
-    {
-      "id": "no-trigger-02",
-      "category": "should_not_trigger",
-      "prompt": "I'm writing a TypeScript service and trying to decide whether to share types via a shared library or duplicate them in each service. What's the trade-off?",
-      "expected": "no_trigger",
-      "rationale": "Non-Go language. SKILL.md description explicitly states: 'Do NOT invoke for non-Go languages; Go's structural interface typing is the mechanism that makes options 1 and 4 work without ceremony.' TypeScript has its own type sharing mechanisms."
-    },
-    {
-      "id": "no-trigger-03",
-      "category": "should_not_trigger",
-      "prompt": "What's the best testing strategy for a Go service? Should I write unit tests, integration tests, or end-to-end tests? How should I organize my test files?",
-      "expected": "no_trigger",
-      "rationale": "Testing strategy question with no type-sharing or cross-package contract component. The skill is about where shared types live and how package boundaries are crossed, not about test organization or testing philosophy."
-    },
-    {
-      "id": "edge-01",
-      "category": "edge_case",
-      "prompt": "Should I define an interface for my repository in Go? I want to be able to swap out implementations in tests.",
-      "expected": "trigger",
-      "rationale": "Key lure: superficially sounds like a dep-comp-function-first-composition question ('how do I test?'), but it asks about defining an interface for a repository — which is inherently a cross-package contract question about option 1 (local interface) vs. option 4 (function field). The repository with multiple methods (Find, Save, Delete) is a multi-method contract, making this the cross-package-contract-decision skill.",
-      "notes": "This is flagged as a lure in the task instructions. It IS in scope for this skill when framed as cross-package sharing. Should trigger."
-    },
-    {
-      "id": "edge-02",
-      "category": "edge_case",
-      "prompt": "How do I inject dependencies in Go without writing a lot of boilerplate interfaces?",
-      "expected": "no_trigger",
-      "rationale": "Cross-lure: this phrasing matches dep-comp-function-first-composition trigger signals more closely ('I'm tired of writing interfaces', 'how should I inject dependencies'). It is asking about wiring mechanics and reducing ceremony, not about where a shared type should live or whether two packages need a contract between them. The cross-package contract skill assumes the question of DI mechanics is settled.",
-      "notes": "Cross-lure that should trigger function-first-composition, NOT this skill. Validates the distinction between the two skills."
-    },
-    {
-      "id": "edge-03",
-      "category": "edge_case",
-      "prompt": "My order package and my notification package both have a concept of a 'Customer' with ID, email, and name. They look the same today but orders might need billing address later and notifications might need preferences. Should I share the type or keep them separate?",
-      "expected": "trigger",
-      "rationale": "Divergence confidence test scenario: two packages have structurally similar types, the developer is uncertain about future divergence. This is a direct application of the option 2 vs. option 3 decision. The explicit mention of potential divergence signals option 3 is the right answer (duplicate + adapter). The skill's decision heuristic applies directly.",
-      "notes": "Valid trigger that requires the divergence confidence test. The developer's own description of future divergence ('might need billing address later') signals option 3."
-    }
-  ],
-  "minimum_pass_rate": 0.85,
-  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass. Edge cases: edge-01 and edge-03 should trigger; edge-02 is a cross-lure that should NOT trigger (routes to dep-comp-function-first-composition instead)."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My billing package needs to use the User struct from my auth package. Should I import the auth package directly, extract User to a shared types package, or do something else?",
+    "expected": "trigger",
+    "notes": "rationale: Direct match to trigger signal 5: 'My billing package needs to use the User type from the auth package.' This is exactly the cross-package type sharing question the skill is designed to answer.; source id: trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have a types package in our Go monorepo and everything imports it. It started small but now it has 40 structs and every change to any type forces a recompile of half the codebase. How do we fix this?",
+    "expected": "trigger",
+    "notes": "rationale: Direct match to trigger signal 3: 'My types package is getting huge and everything depends on it.' This is the premature-shared-types coupling-hub failure mode explicitly addressed in the skill.; source id: trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I keep getting import cycle errors in Go. Package A imports package B for a type, and package B needs to import package A. How do I break this cycle?",
+    "expected": "trigger",
+    "notes": "rationale: Direct match to trigger signal 4: 'How do I avoid import cycles in Go?' The skill explains that import cycles are a symptom of incidental coupling and provides concrete options (local interface, duplicate types, function field) to break them.; source id: trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Two of my Go packages — an HTTP controller and a domain service — both have a Restaurant struct. They're currently identical. Should I extract it to a shared domain package, or keep them separate?",
+    "expected": "trigger",
+    "notes": "rationale: Direct match to trigger signal 2: 'Two of my packages need the same struct — should I extract it to a shared package?' This is Case 1 from the book (controller and toprated packages), the divergence confidence test is the exact tool to apply here.; source id: trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "In our Go service, the provider package defines a UserServiceInterface that all callers import and reference. Some callers only use one method out of eight. This feels wrong but I'm not sure why or how to fix it.",
+    "expected": "trigger",
+    "notes": "rationale: This is the provider-defines-interface anti-pattern described in the skill's Boundary section. The skill explicitly corrects this: the caller defines what it needs (local interface or function field), not the provider. The question has a cross-package contract ownership component.; source id: trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Should I use dependency injection in my Go service at all, or is it overkill for a small project with only a database and a cache?",
+    "expected": "no_trigger",
+    "notes": "rationale: The question is whether to use DI at all, not how two packages should share a type. SKILL.md description explicitly states: 'Do NOT invoke when the question is whether to use dependency injection at all — that is dep-comp-function-first-composition.'; source id: no-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I'm writing a TypeScript service and trying to decide whether to share types via a shared library or duplicate them in each service. What's the trade-off?",
+    "expected": "no_trigger",
+    "notes": "rationale: Non-Go language. SKILL.md description explicitly states: 'Do NOT invoke for non-Go languages; Go's structural interface typing is the mechanism that makes options 1 and 4 work without ceremony.' TypeScript has its own type sharing mechanisms.; source id: no-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What's the best testing strategy for a Go service? Should I write unit tests, integration tests, or end-to-end tests? How should I organize my test files?",
+    "expected": "no_trigger",
+    "notes": "rationale: Testing strategy question with no type-sharing or cross-package contract component. The skill is about where shared types live and how package boundaries are crossed, not about test organization or testing philosophy.; source id: no-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I define an interface for my repository in Go? I want to be able to swap out implementations in tests.",
+    "expected": "trigger",
+    "notes": "This is flagged as a lure in the task instructions. It IS in scope for this skill when framed as cross-package sharing. Should trigger.; rationale: Key lure: superficially sounds like a dep-comp-function-first-composition question ('how do I test?'), but it asks about defining an interface for a repository — which is inherently a cross-package contract question about option 1 (local interface) vs. option 4 (function field). The repository with multiple methods (Find, Save, Delete) is a multi-method contract, making this the cross-package-contract-decision skill.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I inject dependencies in Go without writing a lot of boilerplate interfaces?",
+    "expected": "no_trigger",
+    "notes": "Cross-lure that should trigger function-first-composition, NOT this skill. Validates the distinction between the two skills.; rationale: Cross-lure: this phrasing matches dep-comp-function-first-composition trigger signals more closely ('I'm tired of writing interfaces', 'how should I inject dependencies'). It is asking about wiring mechanics and reducing ceremony, not about where a shared type should live or whether two packages need a contract between them. The cross-package contract skill assumes the question of DI mechanics is settled.; source id: edge-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My order package and my notification package both have a concept of a 'Customer' with ID, email, and name. They look the same today but orders might need billing address later and notifications might need preferences. Should I share the type or keep them separate?",
+    "expected": "trigger",
+    "notes": "Valid trigger that requires the divergence confidence test. The developer's own description of future divergence ('might need billing address later') signals option 3.; rationale: Divergence confidence test scenario: two packages have structurally similar types, the developer is uncertain about future divergence. This is a direct application of the option 2 vs. option 3 decision. The explicit mention of potential divergence signals option 3 is the right answer (duplicate + adapter). The skill's decision heuristic applies directly.; source id: edge-03"
+  }
+]

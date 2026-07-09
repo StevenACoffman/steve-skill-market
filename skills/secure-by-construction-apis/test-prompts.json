@@ -1,62 +1,58 @@
-{
-  "skill": "secure-by-construction-apis",
-  "description": "Use this skill when designing an API or framework that will be used by many developers and where a class of security vulnerability (injection, XSS, command injection, LDAP injection) would be introduced by passing unsanitized user input to a sensitive sink.",
-  "test_prompts": [
-    {
-      "id": "secure-by-construction-apis-should-01",
-      "category": "should_invoke",
-      "prompt": "We've had three separate SQL injection findings in the last two quarters — all in different microservices, all written by different teams. We do mandatory code review but the bugs keep slipping through. Our security team is asking whether there's a way to make it impossible to introduce SQLi rather than just trying to catch it in review. What's the approach?",
-      "expected": "invoke",
-      "rationale": "Explicitly asks for structural prevention of a recurring injection class rather than point-fixes or review improvements. 'Make it impossible to introduce' is the canonical trigger phrase for secure-by-construction — eliminating the vulnerability class via type contracts rather than defending at each call site."
-    },
-    {
-      "id": "secure-by-construction-apis-should-02",
-      "category": "should_invoke",
-      "prompt": "We're building a shared internal SDK that 200+ engineers across 15 teams will use to send transactional emails. The emails include user-supplied content rendered into HTML. How do we design the SDK so that XSS is structurally impossible regardless of how individual teams use it — without relying on them to remember to escape things?",
-      "expected": "invoke",
-      "rationale": "Designing a shared SDK used at scale with injection-prone sinks (HTML rendering of user content) and explicitly rejecting 'remember to escape' as the control — this is the secure-by-construction design problem. SafeHtml / SafeEmailHtml type approach applies directly."
-    },
-    {
-      "id": "secure-by-construction-apis-should-03",
-      "category": "should_invoke",
-      "prompt": "Our GraphQL API lets users specify filter criteria that get compiled into LDAP queries for our Active Directory integration. We have a sanitization function but it's opt-in — devs have to remember to call it. Last month someone forgot and we had an LDAP injection. How do we redesign this so forgetting isn't an option?",
-      "expected": "invoke",
-      "rationale": "Opt-in sanitization that can be skipped is exactly the failure pattern the skill describes. The fix — making the sink accept only a safe type whose constructor enforces sanitization — is the secure-by-construction solution. The LDAP injection context maps directly to the GraphQL/LDAP scenario in the skill's A2 section."
-    },
-    {
-      "id": "secure-by-construction-apis-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We found a specific XSS vulnerability in our profile page where we're rendering user display names without escaping. Can you help me fix this — I think we need to HTML-encode the displayName before we pass it to the template?",
-      "expected": "skip",
-      "rationale": "This is a point fix for a single known injection bug, not class elimination. The skill's boundary explicitly says not to apply when 'fixing a single known injection bug.' The right response is a targeted code fix (HTML-encode the value at the call site), not designing a SafeHtml type system."
-    },
-    {
-      "id": "secure-by-construction-apis-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We have a race condition in our order processing service — two concurrent requests can both pass the inventory check and double-decrement stock. We've already added a mutex but it's only protecting one code path. How do we find all the paths where this can happen?",
-      "expected": "skip",
-      "rationale": "Race conditions are not type-encodable injection patterns. The skill's boundary explicitly excludes 'logic bugs, race conditions, business logic errors — these cannot be type-encoded.' The right approach is concurrency analysis and lock auditing, not secure-by-construction API design."
-    },
-    {
-      "id": "secure-by-construction-apis-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're running semgrep on our Python Django codebase to catch injection patterns before they reach production. We keep getting false positives on our ORM calls and missing some raw SQL in legacy code. How do we tune the rules to get better signal?",
-      "expected": "skip",
-      "rationale": "Tuning static analysis rules is adjacent but different — it's improving detective coverage, not making vulnerable patterns unrepresentable. The skill also notes that dynamic languages like Python require different enforcement mechanisms and lose the compiler-enforcement guarantee. The right skill here is security static analysis / SAST tuning, not secure-by-construction type design."
-    },
-    {
-      "id": "secure-by-construction-apis-boundary-01",
-      "category": "boundary",
-      "prompt": "We have a parameterized query helper in our Go data layer that most teams use, but it accepts both parameterized and raw string inputs. Some legacy services still pass raw SQL strings. We want to enforce that new code can only use the parameterized path — is this a type system problem or a linting problem?",
-      "expected": "invoke",
-      "rationale": "The team is at the decision point between type enforcement and linting enforcement — this is exactly the tradeoff the skill addresses. Making the raw-string overload unreachable (changing the sink API to accept only a safe type) vs. using a linter to detect misuse. The skill provides the framework for this decision. Invoke to explain why type enforcement is preferred and how to migrate the legacy callers."
-    },
-    {
-      "id": "secure-by-construction-apis-boundary-02",
-      "category": "boundary",
-      "prompt": "We're writing a script to scan our entire codebase for all the places user input flows into shell.Exec calls. We've found 23 call sites across 8 services. Is this the kind of thing we should fix per-site or design around?",
-      "expected": "invoke",
-      "rationale": "23 shell injection call sites across 8 services is a recurring-class problem, not a point bug — the 'fix per-site or design around' framing is exactly the question secure-by-construction answers. Invoke to recommend designing a SafeShellArg type so compiler errors identify call sites instead of manual scanning, and the sanitizer is audited once rather than per-site."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We've had three separate SQL injection findings in the last two quarters — all in different microservices, all written by different teams. We do mandatory code review but the bugs keep slipping through. Our security team is asking whether there's a way to make it impossible to introduce SQLi rather than just trying to catch it in review. What's the approach?",
+    "expected": "invoke",
+    "notes": "rationale: Explicitly asks for structural prevention of a recurring injection class rather than point-fixes or review improvements. 'Make it impossible to introduce' is the canonical trigger phrase for secure-by-construction — eliminating the vulnerability class via type contracts rather than defending at each call site.; source id: secure-by-construction-apis-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're building a shared internal SDK that 200+ engineers across 15 teams will use to send transactional emails. The emails include user-supplied content rendered into HTML. How do we design the SDK so that XSS is structurally impossible regardless of how individual teams use it — without relying on them to remember to escape things?",
+    "expected": "invoke",
+    "notes": "rationale: Designing a shared SDK used at scale with injection-prone sinks (HTML rendering of user content) and explicitly rejecting 'remember to escape' as the control — this is the secure-by-construction design problem. SafeHtml / SafeEmailHtml type approach applies directly.; source id: secure-by-construction-apis-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our GraphQL API lets users specify filter criteria that get compiled into LDAP queries for our Active Directory integration. We have a sanitization function but it's opt-in — devs have to remember to call it. Last month someone forgot and we had an LDAP injection. How do we redesign this so forgetting isn't an option?",
+    "expected": "invoke",
+    "notes": "rationale: Opt-in sanitization that can be skipped is exactly the failure pattern the skill describes. The fix — making the sink accept only a safe type whose constructor enforces sanitization — is the secure-by-construction solution. The LDAP injection context maps directly to the GraphQL/LDAP scenario in the skill's A2 section.; source id: secure-by-construction-apis-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We found a specific XSS vulnerability in our profile page where we're rendering user display names without escaping. Can you help me fix this — I think we need to HTML-encode the displayName before we pass it to the template?",
+    "expected": "skip",
+    "notes": "rationale: This is a point fix for a single known injection bug, not class elimination. The skill's boundary explicitly says not to apply when 'fixing a single known injection bug.' The right response is a targeted code fix (HTML-encode the value at the call site), not designing a SafeHtml type system.; source id: secure-by-construction-apis-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have a race condition in our order processing service — two concurrent requests can both pass the inventory check and double-decrement stock. We've already added a mutex but it's only protecting one code path. How do we find all the paths where this can happen?",
+    "expected": "skip",
+    "notes": "rationale: Race conditions are not type-encodable injection patterns. The skill's boundary explicitly excludes 'logic bugs, race conditions, business logic errors — these cannot be type-encoded.' The right approach is concurrency analysis and lock auditing, not secure-by-construction API design.; source id: secure-by-construction-apis-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're running semgrep on our Python Django codebase to catch injection patterns before they reach production. We keep getting false positives on our ORM calls and missing some raw SQL in legacy code. How do we tune the rules to get better signal?",
+    "expected": "skip",
+    "notes": "rationale: Tuning static analysis rules is adjacent but different — it's improving detective coverage, not making vulnerable patterns unrepresentable. The skill also notes that dynamic languages like Python require different enforcement mechanisms and lose the compiler-enforcement guarantee. The right skill here is security static analysis / SAST tuning, not secure-by-construction type design.; source id: secure-by-construction-apis-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We have a parameterized query helper in our Go data layer that most teams use, but it accepts both parameterized and raw string inputs. Some legacy services still pass raw SQL strings. We want to enforce that new code can only use the parameterized path — is this a type system problem or a linting problem?",
+    "expected": "invoke",
+    "notes": "rationale: The team is at the decision point between type enforcement and linting enforcement — this is exactly the tradeoff the skill addresses. Making the raw-string overload unreachable (changing the sink API to accept only a safe type) vs. using a linter to detect misuse. The skill provides the framework for this decision. Invoke to explain why type enforcement is preferred and how to migrate the legacy callers.; source id: secure-by-construction-apis-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We're writing a script to scan our entire codebase for all the places user input flows into shell.Exec calls. We've found 23 call sites across 8 services. Is this the kind of thing we should fix per-site or design around?",
+    "expected": "invoke",
+    "notes": "rationale: 23 shell injection call sites across 8 services is a recurring-class problem, not a point bug — the 'fix per-site or design around' framing is exactly the question secure-by-construction answers. Invoke to recommend designing a SafeShellArg type so compiler errors identify call sites instead of manual scanning, and the sanitizer is audited once rather than per-site.; source id: secure-by-construction-apis-boundary-02"
+  }
+]

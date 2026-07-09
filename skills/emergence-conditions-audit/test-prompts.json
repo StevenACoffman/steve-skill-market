@@ -1,66 +1,72 @@
-{
-  "skill_id": "emergence-conditions-audit",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "We just completed phase one of a large digital services transformation. All nine projects came in on schedule. Seven came in under budget. The program board is happy with delivery performance. But six months after go-live, the operational metrics we promised — reduced case processing time, lower error rates, improved customer satisfaction — are basically flat. The sponsor is asking me to explain the gap. What's the diagnosis?",
-      "expected_behavior": "Invoke emergence-conditions-audit. This is the structural signature Williams identifies as the unowned interaction layer: strong component performance, weak benefits realization. The audit should examine whether the program-level outcome required interaction between projects (likely yes), whether anyone owned that interaction layer, and which of the four emergence conditions were absent. The Healthcare.gov/EVM pattern applies directly."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "I'm setting up governance for a new program with six workstreams. I've drafted a governance charter: each workstream has a PM, there's a PMO providing consolidated reporting to the steering committee, and we have monthly steering committee meetings. My director thinks this looks complete. I'm not sure why, but something feels missing. What am I not seeing?",
-      "expected_behavior": "Invoke emergence-conditions-audit. The governance structure described is complete at the component level (workstream PMs, PMO, steering committee) but silent on the interaction layer. The audit should walk through the ownership question: who owns cross-workstream dependencies, integration risks, emergent behavior, and cross-project learning? The four emergence conditions should be checked against the proposed structure to identify what governance instruments are missing before the program starts."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "The steering committee wants to add more oversight controls to our struggling program. We already have detailed weekly status reports, biweekly risk reviews, and monthly steering committee briefings. The projects are all reporting amber or green. But the program-level outcomes aren't moving. Adding more reporting feels like it won't help but I can't articulate why.",
-      "expected_behavior": "Invoke emergence-conditions-audit. The intuition is correct and the framework provides the articulation: more oversight of components cannot fix a problem located at the interaction layer. The audit should diagnose whether the struggling is due to insufficient component oversight (which more reporting might address) or absent interaction-layer governance (which more reporting will not address). The EVM pattern — rigorous component reporting coexisting with weak benefits realization — is directly applicable."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_invoke",
-      "prompt": "Three months into a program, my teams are in conflict. The infrastructure team and the application team have incompatible assumptions about the integration architecture. The data team is doing things the other teams didn't expect. The steering committee is telling me to resolve these conflicts quickly and get the program stabilized. Should I?",
-      "expected_behavior": "Invoke emergence-conditions-audit. This requires the disequilibrium reframe. The conflicts described may be productive instability — the interaction between projects that precedes emergence — rather than dysfunction requiring immediate elimination. The audit should distinguish between instability that needs boundary conditions (stabilizing feedback) and instability that needs elimination. The governance question is how to hold the boundary without prematurely collapsing the productive tension. Acting on the steering committee's instruction without this distinction risks foreclosing emergence."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "My project team is delivering their sprint commitments but the velocity has been declining for three sprints in a row. How do I diagnose and address declining team velocity?",
-      "expected_behavior": "Do not invoke emergence-conditions-audit. This is a single-project performance problem — sprint velocity decline in one team. The emergence conditions concept requires multi-project interaction scale. This problem calls for team performance diagnostic, capacity analysis, or agile process review, not an interaction-layer audit."
-    },
-    {
-      "id": "tp-06",
-      "category": "should_not_invoke",
-      "prompt": "My project sponsor keeps changing the requirements. We've had four significant scope changes in three months. How do I manage scope creep from an executive sponsor?",
-      "expected_behavior": "Do not invoke emergence-conditions-audit. This is a scope management and stakeholder alignment problem on a single project. The emergence conditions framework is for diagnosing ungoverned interaction layers between multiple projects in a program, not for managing executive scope changes. Change control and stakeholder management tools apply."
-    },
-    {
-      "id": "tp-07",
-      "category": "should_not_invoke",
-      "prompt": "I need to build a benefits realization plan for my project. What should it include and how should I measure success?",
-      "expected_behavior": "Do not invoke emergence-conditions-audit. This is a request for benefits realization planning methodology for a single project. While the emergence conditions framework is relevant to program-level benefits realization, the question is asking for a planning tool, not a governance diagnostic. Standard benefits realization planning approaches apply. The skill would only be relevant if the question revealed that program-level benefits were not materializing despite strong project performance."
-    },
-    {
-      "id": "tp-08",
-      "category": "blurred_boundary",
-      "prompt": "We have a program with eight projects. The program has been running for a year. Projects are delivering. But when we look at what the projects are actually producing versus what we expected, there's a lot of drift — each project is optimizing for its own outcomes, and the projects aren't fitting together the way the original design intended. Is this an integration management problem or something else?",
-      "expected_behavior": "Judgment required. The symptom — projects optimizing for their own outcomes, components not fitting together as designed — could be an integration management problem (Complicated domain, analyzable through integration planning and interface control) or an emergence conditions problem (absent recombination and self-organization governance, no interaction-layer owner). The emergence-conditions-audit applies as part of the diagnosis, particularly checking whether recombination permission and stabilizing feedback conditions are present. But the cynefin-pm-domain-identification skill is also potentially relevant for classifying whether the integration challenge is Complicated or Complex."
-    },
-    {
-      "id": "tp-09",
-      "category": "blurred_boundary",
-      "prompt": "My program is six months in. We have a PMO, we have project PMs, and we have a steering committee. The PMO keeps escalating cross-project dependency conflicts to me, but I don't have enough context to make good decisions about them, and the project PMs are not resolving them with each other. Everything lands on my desk. What structure is missing?",
-      "expected_behavior": "Judgment required. The symptom — escalation of cross-project conflicts to the program director without resolution — suggests the interaction layer governance structure is broken or absent. The emergence-conditions-audit applies to identify which condition is missing (likely stabilizing feedback: no mechanism that owns boundary conditions at the interaction layer, so conflicts escalate rather than resolving). But the question is structural/governance design and the answer may also draw on program governance design frameworks. The audit provides the diagnostic frame; implementation requires additional judgment."
-    },
-    {
-      "id": "tp-10",
-      "category": "blurred_boundary",
-      "prompt": "We're about to start a large program. The CIO is concerned that the program will generate a lot of early-stage chaos and wants governance to stabilize the program environment quickly in the first three months. The program is genuinely novel — nothing like it has been attempted in this organization. How should I respond to the CIO's concern?",
-      "expected_behavior": "Judgment required. The CIO's concern is legitimate (governance should provide stability) but the response requires the disequilibrium reframe from emergence-conditions-audit: for a genuinely novel program, some early-stage instability is the precondition for emergence, not a failure signal. The audit's distinction between stabilizing feedback (hold boundary conditions) and eliminating disequilibrium (foreclose emergence) is directly applicable. However, the novelty of the program also triggers cynefin-pm-domain-identification — a novel program may sit in Complex domain, where act-sense-respond governance is more appropriate than the stabilize-early instinct. Both skills inform the response to the CIO."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We just completed phase one of a large digital services transformation. All nine projects came in on schedule. Seven came in under budget. The program board is happy with delivery performance. But six months after go-live, the operational metrics we promised — reduced case processing time, lower error rates, improved customer satisfaction — are basically flat. The sponsor is asking me to explain the gap. What's the diagnosis?",
+    "expected": "Invoke emergence-conditions-audit. This is the structural signature Williams identifies as the unowned interaction layer: strong component performance, weak benefits realization. The audit should examine whether the program-level outcome required interaction between projects (likely yes), whether anyone owned that interaction layer, and which of the four emergence conditions were absent. The Healthcare.gov/EVM pattern applies directly.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm setting up governance for a new program with six workstreams. I've drafted a governance charter: each workstream has a PM, there's a PMO providing consolidated reporting to the steering committee, and we have monthly steering committee meetings. My director thinks this looks complete. I'm not sure why, but something feels missing. What am I not seeing?",
+    "expected": "Invoke emergence-conditions-audit. The governance structure described is complete at the component level (workstream PMs, PMO, steering committee) but silent on the interaction layer. The audit should walk through the ownership question: who owns cross-workstream dependencies, integration risks, emergent behavior, and cross-project learning? The four emergence conditions should be checked against the proposed structure to identify what governance instruments are missing before the program starts.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "The steering committee wants to add more oversight controls to our struggling program. We already have detailed weekly status reports, biweekly risk reviews, and monthly steering committee briefings. The projects are all reporting amber or green. But the program-level outcomes aren't moving. Adding more reporting feels like it won't help but I can't articulate why.",
+    "expected": "Invoke emergence-conditions-audit. The intuition is correct and the framework provides the articulation: more oversight of components cannot fix a problem located at the interaction layer. The audit should diagnose whether the struggling is due to insufficient component oversight (which more reporting might address) or absent interaction-layer governance (which more reporting will not address). The EVM pattern — rigorous component reporting coexisting with weak benefits realization — is directly applicable.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Three months into a program, my teams are in conflict. The infrastructure team and the application team have incompatible assumptions about the integration architecture. The data team is doing things the other teams didn't expect. The steering committee is telling me to resolve these conflicts quickly and get the program stabilized. Should I?",
+    "expected": "Invoke emergence-conditions-audit. This requires the disequilibrium reframe. The conflicts described may be productive instability — the interaction between projects that precedes emergence — rather than dysfunction requiring immediate elimination. The audit should distinguish between instability that needs boundary conditions (stabilizing feedback) and instability that needs elimination. The governance question is how to hold the boundary without prematurely collapsing the productive tension. Acting on the steering committee's instruction without this distinction risks foreclosing emergence.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "My project team is delivering their sprint commitments but the velocity has been declining for three sprints in a row. How do I diagnose and address declining team velocity?",
+    "expected": "Do not invoke emergence-conditions-audit. This is a single-project performance problem — sprint velocity decline in one team. The emergence conditions concept requires multi-project interaction scale. This problem calls for team performance diagnostic, capacity analysis, or agile process review, not an interaction-layer audit.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My project sponsor keeps changing the requirements. We've had four significant scope changes in three months. How do I manage scope creep from an executive sponsor?",
+    "expected": "Do not invoke emergence-conditions-audit. This is a scope management and stakeholder alignment problem on a single project. The emergence conditions framework is for diagnosing ungoverned interaction layers between multiple projects in a program, not for managing executive scope changes. Change control and stakeholder management tools apply.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I need to build a benefits realization plan for my project. What should it include and how should I measure success?",
+    "expected": "Do not invoke emergence-conditions-audit. This is a request for benefits realization planning methodology for a single project. While the emergence conditions framework is relevant to program-level benefits realization, the question is asking for a planning tool, not a governance diagnostic. Standard benefits realization planning approaches apply. The skill would only be relevant if the question revealed that program-level benefits were not materializing despite strong project performance.",
+    "notes": "source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have a program with eight projects. The program has been running for a year. Projects are delivering. But when we look at what the projects are actually producing versus what we expected, there's a lot of drift — each project is optimizing for its own outcomes, and the projects aren't fitting together the way the original design intended. Is this an integration management problem or something else?",
+    "expected": "Judgment required. The symptom — projects optimizing for their own outcomes, components not fitting together as designed — could be an integration management problem (Complicated domain, analyzable through integration planning and interface control) or an emergence conditions problem (absent recombination and self-organization governance, no interaction-layer owner). The emergence-conditions-audit applies as part of the diagnosis, particularly checking whether recombination permission and stabilizing feedback conditions are present. But the cynefin-pm-domain-identification skill is also potentially relevant for classifying whether the integration challenge is Complicated or Complex.",
+    "notes": "source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My program is six months in. We have a PMO, we have project PMs, and we have a steering committee. The PMO keeps escalating cross-project dependency conflicts to me, but I don't have enough context to make good decisions about them, and the project PMs are not resolving them with each other. Everything lands on my desk. What structure is missing?",
+    "expected": "Judgment required. The symptom — escalation of cross-project conflicts to the program director without resolution — suggests the interaction layer governance structure is broken or absent. The emergence-conditions-audit applies to identify which condition is missing (likely stabilizing feedback: no mechanism that owns boundary conditions at the interaction layer, so conflicts escalate rather than resolving). But the question is structural/governance design and the answer may also draw on program governance design frameworks. The audit provides the diagnostic frame; implementation requires additional judgment.",
+    "notes": "source id: tp-09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're about to start a large program. The CIO is concerned that the program will generate a lot of early-stage chaos and wants governance to stabilize the program environment quickly in the first three months. The program is genuinely novel — nothing like it has been attempted in this organization. How should I respond to the CIO's concern?",
+    "expected": "Judgment required. The CIO's concern is legitimate (governance should provide stability) but the response requires the disequilibrium reframe from emergence-conditions-audit: for a genuinely novel program, some early-stage instability is the precondition for emergence, not a failure signal. The audit's distinction between stabilizing feedback (hold boundary conditions) and eliminating disequilibrium (foreclose emergence) is directly applicable. However, the novelty of the program also triggers cynefin-pm-domain-identification — a novel program may sit in Complex domain, where act-sense-respond governance is more appropriate than the stabilize-early instinct. Both skills inform the response to the CIO.",
+    "notes": "source id: tp-10"
+  }
+]

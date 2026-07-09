@@ -1,52 +1,44 @@
-{
-  "skill": "productland-vs-enterpriseland-selling",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "pvs-t01",
-      "type": "should_trigger",
-      "prompt": "We have a meeting with the CTO and VP of Product next week to pitch our new data modeling initiative for the personalization engine. They keep deprioritizing it. How do I make the case so they actually say yes?",
-      "expected": "trigger",
-      "rationale": "Explicit pitch preparation for identified stakeholders (CTO, VP of Product) in a Productland context (personalization engine). Matches 'I need to pitch this' signal and the project-keeps-getting-deprioritized language signal."
-    },
-    {
-      "id": "pvs-t02",
-      "type": "should_trigger",
-      "prompt": "I already pitched our data quality initiative to the CFO and got a flat no. She said 'that sounds like an IT project, not a finance priority.' I don't understand what went wrong — the business case is solid. How do I diagnose this and fix my pitch?",
-      "expected": "trigger",
-      "rationale": "Failed pitch diagnosis — a CFO (Enterpriseland) rejected a pitch likely framed incorrectly (abstract 'data quality' language instead of concrete cost/risk numbers). Directly matches the skill's 'can't get buy-in' diagnosis use case."
-    },
-    {
-      "id": "pvs-t03",
-      "type": "should_trigger",
-      "prompt": "My manager just said we have 15 minutes with the CEO to justify continued investment in our data modeling program. How do I explain what data modeling is and why it matters to someone who doesn't think in technical terms?",
-      "expected": "trigger",
-      "rationale": "Pre-pitch preparation for a non-technical decision-maker (CEO). Matches 'how do I explain the value of data modeling to a non-technical stakeholder?' and 'we got a meeting with the CEO — what do we say?' signals."
-    },
-    {
-      "id": "pvs-d01",
-      "type": "should_not_trigger",
-      "prompt": "I'm starting a data platform initiative and I need to figure out who should be involved. There's a VP of Engineering, a Director of Analytics, several data consumers across teams, and the COO. How do I prioritize who to engage first?",
-      "expected": "no_trigger",
-      "rationale": "Audience identification and engagement sequencing — this is what the power-interest grid does. The question is about WHO to involve and in what order, not about what to say to them. No pitch is being prepared yet."
-    },
-    {
-      "id": "pvs-d02",
-      "type": "should_not_trigger",
-      "prompt": "We have a fact table with orders and a dimension table with customers. I'm not sure whether to normalize the customer attributes into multiple dimensions or keep them as a wide table. What's the right design decision for our analytics use case?",
-      "expected": "no_trigger",
-      "rationale": "Pure technical data modeling design question. No stakeholder, no pitch, no buy-in challenge. The pitch framing framework is entirely irrelevant here."
-    },
-    {
-      "id": "pvs-e01",
-      "type": "edge_case",
-      "prompt": "I need to pitch the same data catalog initiative this week to two different groups: the Head of Product (who is worried about feature velocity for our consumer app) and the Head of Compliance (who is worried about our upcoming SOC 2 audit). Should I use the same pitch for both?",
-      "expected": "trigger",
-      "rationale": "Edge case: multi-audience week where the same initiative needs to be pitched to audiences in different contexts — Productland (Head of Product, consumer app, feature velocity) and Enterpriseland (Head of Compliance, audit, risk). The skill explicitly covers this as Case 2 in A1 and in the B section as 'mixed audience.' The answer should be: no, these require separate context-calibrated pitches."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoys distinguish WHO to involve (power-interest-grid) vs WHAT TO SAY (this skill), and technical design questions that don't require any pitch framing."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have a meeting with the CTO and VP of Product next week to pitch our new data modeling initiative for the personalization engine. They keep deprioritizing it. How do I make the case so they actually say yes?",
+    "expected": "trigger",
+    "notes": "rationale: Explicit pitch preparation for identified stakeholders (CTO, VP of Product) in a Productland context (personalization engine). Matches 'I need to pitch this' signal and the project-keeps-getting-deprioritized language signal.; source id: pvs-t01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I already pitched our data quality initiative to the CFO and got a flat no. She said 'that sounds like an IT project, not a finance priority.' I don't understand what went wrong — the business case is solid. How do I diagnose this and fix my pitch?",
+    "expected": "trigger",
+    "notes": "rationale: Failed pitch diagnosis — a CFO (Enterpriseland) rejected a pitch likely framed incorrectly (abstract 'data quality' language instead of concrete cost/risk numbers). Directly matches the skill's 'can't get buy-in' diagnosis use case.; source id: pvs-t02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My manager just said we have 15 minutes with the CEO to justify continued investment in our data modeling program. How do I explain what data modeling is and why it matters to someone who doesn't think in technical terms?",
+    "expected": "trigger",
+    "notes": "rationale: Pre-pitch preparation for a non-technical decision-maker (CEO). Matches 'how do I explain the value of data modeling to a non-technical stakeholder?' and 'we got a meeting with the CEO — what do we say?' signals.; source id: pvs-t03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "I'm starting a data platform initiative and I need to figure out who should be involved. There's a VP of Engineering, a Director of Analytics, several data consumers across teams, and the COO. How do I prioritize who to engage first?",
+    "expected": "no_trigger",
+    "notes": "rationale: Audience identification and engagement sequencing — this is what the power-interest grid does. The question is about WHO to involve and in what order, not about what to say to them. No pitch is being prepared yet.; source id: pvs-d01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have a fact table with orders and a dimension table with customers. I'm not sure whether to normalize the customer attributes into multiple dimensions or keep them as a wide table. What's the right design decision for our analytics use case?",
+    "expected": "no_trigger",
+    "notes": "rationale: Pure technical data modeling design question. No stakeholder, no pitch, no buy-in challenge. The pitch framing framework is entirely irrelevant here.; source id: pvs-d02"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "I need to pitch the same data catalog initiative this week to two different groups: the Head of Product (who is worried about feature velocity for our consumer app) and the Head of Compliance (who is worried about our upcoming SOC 2 audit). Should I use the same pitch for both?",
+    "expected": "trigger",
+    "notes": "rationale: Edge case: multi-audience week where the same initiative needs to be pitched to audiences in different contexts — Productland (Head of Product, consumer app, feature velocity) and Enterpriseland (Head of Compliance, audit, risk). The skill explicitly covers this as Case 2 in A1 and in the B section as 'mixed audience.' The answer should be: no, these require separate context-calibrated pitches.; source id: pvs-e01"
+  }
+]

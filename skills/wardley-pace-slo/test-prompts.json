@@ -1,76 +1,72 @@
-{
-  "skill": "wardley-pace-slo",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We're launching an experimental AI-powered recommendation feature next quarter. The product manager is asking what reliability level we should commit to. We're still iterating fast — shipping multiple times a week. What SLO should we set?",
-      "expected_behavior": "Invokes wardley-pace-slo, classifies the feature as System of Innovation (SOI) due to high change rate and experimental nature, recommends starting at ~95% SLO, and explains that higher reliability targets would strangle the team's ability to iterate.",
-      "notes": "Positive scenario: new experimental feature, high deployment cadence — classic SOI classification."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our platform team's authentication service is being held to the same 99.5% SLO as our product teams' feature services. The platform team says this is too low for what they own. How should we think about this?",
-      "expected_behavior": "Invokes wardley-pace-slo, classifies auth infrastructure as System of Record (SOR) requiring ~99.99%, explains that authentication is foundational and rarely changes, and contrasts it with product feature teams (SOD or SOI). Validates the platform team's concern.",
-      "notes": "Positive scenario: strategic mismatch between system type and assigned SLO — SOR being held to SOD or SOI standards."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We have five teams each setting their own SLOs and there's no consistency across the organization. One team is at 99% for a payments backend and another is at 99.9% for a prototype analytics dashboard. Leadership wants a framework to rationalize this. Where do we start?",
-      "expected_behavior": "Invokes wardley-pace-slo, introduces the SOI/SOD/SOR classification framework as the strategic starting point, identifies the inverted example (payments at 99% is too low for SOR; prototype dashboard at 99.9% is too high for SOI), and provides a rationalization approach based on system evolution stage.",
-      "notes": "Positive scenario: organization-wide SLO standardization problem — multiple teams with inconsistent targets."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "Our CTO is demanding five-nines availability for our consumer streaming product. We're shipping new features weekly and constantly iterating on the UX. Is that a realistic target?",
-      "expected_behavior": "Invokes wardley-pace-slo, classifies the consumer streaming product as SOD (medium change rate, competitive differentiation), explains that 99.999% is an SOR-level commitment that would require near-freezing feature development, and suggests ~99.6% as a defensible starting point with a principled business rationale.",
-      "notes": "Positive scenario: mismatch between product evolution stage and executive SLO demand — direct parallel to the book's CTO five-nines case."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "A service that started as an internal prototype two years ago is now used by most of our enterprise customers. We've never revisited its SLO from the 95% we set at launch. Should we change it?",
-      "expected_behavior": "Invokes wardley-pace-slo, identifies the evolution from Genesis/SOI to SOD or SOR depending on current usage and change rate, recommends renegotiating the SLO upward to match the evolved system classification, and uses the pace layering logic to justify the change.",
-      "notes": "Positive scenario: SLO renegotiation as a system evolves along the Wardley axis — a common lifecycle event."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "What is a Wardley Map and how do I create one?",
-      "expected_behavior": "Definitional question about Wardley Maps in general — should provide a high-level explanation without invoking wardley-pace-slo, which is specifically about applying Wardley Map positioning to SLO target setting.",
-      "notes": "Decoy: definition request about the underlying tool, not an SLO-setting question."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How should I organize my microservices? We have about 30 services and I'm trying to figure out which ones are core vs. peripheral.",
-      "expected_behavior": "Architecture and service categorization question — should not invoke wardley-pace-slo because there is no SLO-setting intent. May discuss service classification in general terms but the skill's strategic SLO-setting logic is not required.",
-      "notes": "Decoy: service architecture question, not SLO planning — classification without a reliability target question."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "Our service is at 99.7% SLO and we're burning through the error budget too fast. How do we slow the burn?",
-      "expected_behavior": "Error budget burn rate management question — should use lagom-slo or multi-tier-slo framing. The SLO target is already set; the question is about managing deployment pace relative to it. Does not require wardley-pace-slo classification.",
-      "notes": "Decoy: error budget operational question, not strategic SLO target setting."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "We have a service that's foundational (never changes, every team depends on it) but it only serves internal tools — not customer-facing at all. What SLO should we set for it?",
-      "expected_behavior": "Ambiguous: the stability and wide dependency suggest SOR classification (~99.99%), but internal-only scope might argue for less. The skill should apply the classification criteria — rate of change (low → SOR), dependency breadth (high → SOR), and note that 'internal' vs 'external' is less relevant than the cost of failure and change rate.",
-      "notes": "Boundary: SOR by change rate but lower visibility — tests whether the classification applies to non-customer-facing services."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "We're building an AI-powered feature where the model integration changes frequently as we swap providers, but the surrounding product experience is stable and used by paying customers. How do we set an SLO?",
-      "expected_behavior": "Ambiguous: the product surface is SOD (stable, paying customers) but the AI integration layer is SOI (rapidly changing). The skill should recommend decomposing the SLO — the AI model integration layer gets an SOI-level SLO (~95%) while the user-facing product layer gets an SOD-level SLO (~99.6%), with the IOC pattern as the architectural companion.",
-      "notes": "Boundary: mixed-pace system where SOI and SOD layers coexist in one product — tests whether the skill handles pace layer decomposition."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're launching an experimental AI-powered recommendation feature next quarter. The product manager is asking what reliability level we should commit to. We're still iterating fast — shipping multiple times a week. What SLO should we set?",
+    "expected": "Invokes wardley-pace-slo, classifies the feature as System of Innovation (SOI) due to high change rate and experimental nature, recommends starting at ~95% SLO, and explains that higher reliability targets would strangle the team's ability to iterate.",
+    "notes": "Positive scenario: new experimental feature, high deployment cadence — classic SOI classification.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our platform team's authentication service is being held to the same 99.5% SLO as our product teams' feature services. The platform team says this is too low for what they own. How should we think about this?",
+    "expected": "Invokes wardley-pace-slo, classifies auth infrastructure as System of Record (SOR) requiring ~99.99%, explains that authentication is foundational and rarely changes, and contrasts it with product feature teams (SOD or SOI). Validates the platform team's concern.",
+    "notes": "Positive scenario: strategic mismatch between system type and assigned SLO — SOR being held to SOD or SOI standards.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We have five teams each setting their own SLOs and there's no consistency across the organization. One team is at 99% for a payments backend and another is at 99.9% for a prototype analytics dashboard. Leadership wants a framework to rationalize this. Where do we start?",
+    "expected": "Invokes wardley-pace-slo, introduces the SOI/SOD/SOR classification framework as the strategic starting point, identifies the inverted example (payments at 99% is too low for SOR; prototype dashboard at 99.9% is too high for SOI), and provides a rationalization approach based on system evolution stage.",
+    "notes": "Positive scenario: organization-wide SLO standardization problem — multiple teams with inconsistent targets.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our CTO is demanding five-nines availability for our consumer streaming product. We're shipping new features weekly and constantly iterating on the UX. Is that a realistic target?",
+    "expected": "Invokes wardley-pace-slo, classifies the consumer streaming product as SOD (medium change rate, competitive differentiation), explains that 99.999% is an SOR-level commitment that would require near-freezing feature development, and suggests ~99.6% as a defensible starting point with a principled business rationale.",
+    "notes": "Positive scenario: mismatch between product evolution stage and executive SLO demand — direct parallel to the book's CTO five-nines case.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "A service that started as an internal prototype two years ago is now used by most of our enterprise customers. We've never revisited its SLO from the 95% we set at launch. Should we change it?",
+    "expected": "Invokes wardley-pace-slo, identifies the evolution from Genesis/SOI to SOD or SOR depending on current usage and change rate, recommends renegotiating the SLO upward to match the evolved system classification, and uses the pace layering logic to justify the change.",
+    "notes": "Positive scenario: SLO renegotiation as a system evolves along the Wardley axis — a common lifecycle event.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is a Wardley Map and how do I create one?",
+    "expected": "Definitional question about Wardley Maps in general — should provide a high-level explanation without invoking wardley-pace-slo, which is specifically about applying Wardley Map positioning to SLO target setting.",
+    "notes": "Decoy: definition request about the underlying tool, not an SLO-setting question.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How should I organize my microservices? We have about 30 services and I'm trying to figure out which ones are core vs. peripheral.",
+    "expected": "Architecture and service categorization question — should not invoke wardley-pace-slo because there is no SLO-setting intent. May discuss service classification in general terms but the skill's strategic SLO-setting logic is not required.",
+    "notes": "Decoy: service architecture question, not SLO planning — classification without a reliability target question.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our service is at 99.7% SLO and we're burning through the error budget too fast. How do we slow the burn?",
+    "expected": "Error budget burn rate management question — should use lagom-slo or multi-tier-slo framing. The SLO target is already set; the question is about managing deployment pace relative to it. Does not require wardley-pace-slo classification.",
+    "notes": "Decoy: error budget operational question, not strategic SLO target setting.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We have a service that's foundational (never changes, every team depends on it) but it only serves internal tools — not customer-facing at all. What SLO should we set for it?",
+    "expected": "Ambiguous: the stability and wide dependency suggest SOR classification (~99.99%), but internal-only scope might argue for less. The skill should apply the classification criteria — rate of change (low → SOR), dependency breadth (high → SOR), and note that 'internal' vs 'external' is less relevant than the cost of failure and change rate.",
+    "notes": "Boundary: SOR by change rate but lower visibility — tests whether the classification applies to non-customer-facing services.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're building an AI-powered feature where the model integration changes frequently as we swap providers, but the surrounding product experience is stable and used by paying customers. How do we set an SLO?",
+    "expected": "Ambiguous: the product surface is SOD (stable, paying customers) but the AI integration layer is SOI (rapidly changing). The skill should recommend decomposing the SLO — the AI model integration layer gets an SOI-level SLO (~95%) while the user-facing product layer gets an SOD-level SLO (~99.6%), with the IOC pattern as the architectural companion.",
+    "notes": "Boundary: mixed-pace system where SOI and SOD layers coexist in one product — tests whether the skill handles pace layer decomposition.; source id: edge-02"
+  }
+]

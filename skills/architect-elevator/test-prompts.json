@@ -1,101 +1,114 @@
-{
-  "skill": "architect-elevator",
-  "prompts": [
-    {
-      "id": "ae-invoke-01",
-      "type": "should_invoke",
-      "prompt": "Our EA team keeps producing architecture principles and roadmaps but the engineering teams say they're disconnected from what we actually build. How should I think about fixing this?",
-      "reason": "Canonical penthouse-engine-room disconnect — EA stuck on one floor"
-    },
-    {
-      "id": "ae-invoke-02",
-      "type": "should_invoke",
-      "prompt": "I need to present our decision to adopt AWS DynamoDB to the CFO. How do I explain why a NoSQL database choice has financial and strategic implications?",
-      "reason": "Core elevator behavior: communicating engine-room technical choice with penthouse ramifications"
-    },
-    {
-      "id": "ae-invoke-03",
-      "type": "should_invoke",
-      "prompt": "Our CTO announced we'll be 'fully cloud-native in 18 months' but I can see from the engineering work that this is impossible given our current architecture. What should I do?",
-      "reason": "Gap between penthouse commitment and engine-room reality — elevator posture needed"
-    },
-    {
-      "id": "ae-invoke-04",
-      "type": "should_invoke",
-      "prompt": "A vendor is pitching us their Kubernetes platform. The feature checklist looks great but I feel like we're missing something. How should we evaluate it?",
-      "reason": "Reverse-engineering vendor product assumptions — core elevator technique"
-    },
-    {
-      "id": "ae-invoke-05",
-      "type": "should_invoke",
-      "prompt": "Engineers keep making managed-service vs. self-hosted database decisions on technical grounds alone. Leadership is later surprised by lock-in and cost implications. How do we fix this?",
-      "reason": "Engine-room decisions with unnoticed penthouse consequences — elevator gap"
-    },
-    {
-      "id": "ae-invoke-06",
-      "type": "should_invoke",
-      "prompt": "I'm asked to create an architecture decision record that works for both the engineering team and the executive steering committee. How do I build something that works at both levels?",
-      "reason": "Multi-level decision model — elevator artifact creation"
-    },
-    {
-      "id": "ae-invoke-07",
-      "type": "should_invoke",
-      "prompt": "How do I explain to our board why moving to serverless functions matters for our competitive position, without losing them in technical details?",
-      "reason": "Translating engine-room decision to penthouse consequence — elevator communication"
-    },
-    {
-      "id": "ae-invoke-08",
-      "type": "should_invoke",
-      "prompt": "We just had a major outage that engineering says was predictable given known architectural debt. Executive leadership says they were blindsided. How do we prevent this kind of gap?",
-      "reason": "Classic penthouse-engine-room disconnect surfacing in an incident — elevator failure to ride upward"
-    },
-    {
-      "id": "ae-no-invoke-01",
-      "type": "should_not_invoke",
-      "prompt": "Which Kubernetes version should we upgrade to, 1.28 or 1.29?",
-      "reason": "Pure engine-room decision with no penthouse dimension — no elevator needed"
-    },
-    {
-      "id": "ae-no-invoke-02",
-      "type": "should_not_invoke",
-      "prompt": "How do I write a JIRA ticket for a bug in our CI/CD pipeline?",
-      "reason": "Operational task with no cross-level trade-off — no elevator skill needed"
-    },
-    {
-      "id": "ae-no-invoke-03",
-      "type": "should_not_invoke",
-      "prompt": "What is the best naming convention for Terraform resource names?",
-      "reason": "Implementation-level technical convention — no penthouse dimension"
-    },
-    {
-      "id": "ae-no-invoke-04",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure Prometheus alerting rules for high CPU utilization?",
-      "reason": "Operational configuration task — no multi-level trade-off involved"
-    },
-    {
-      "id": "ae-no-invoke-05",
-      "type": "should_not_invoke",
-      "prompt": "What is Conway's Law and how does it relate to microservices design?",
-      "reason": "Conceptual question about a named law — informational, not an elevator decision situation"
-    },
-    {
-      "id": "ae-blur-01",
-      "type": "blurred_boundary",
-      "prompt": "I'm a senior engineer and I don't have formal access to executive leadership. How do I make technical trade-offs visible to business stakeholders when there's no organizational channel for me to ride the elevator?",
-      "reason": "Elevator posture is correct but organizational structure blocks it — boundary condition where the skill surfaces a systemic problem rather than providing an immediate solution"
-    },
-    {
-      "id": "ae-blur-02",
-      "type": "blurred_boundary",
-      "prompt": "Our startup has only 12 engineers and everyone talks to everyone. Should we still worry about the architect elevator?",
-      "reason": "Boundary of applicability — flat org with minimal penthouse-engine-room gap; the book explicitly notes the skill is most valuable in large enterprises"
-    },
-    {
-      "id": "ae-blur-03",
-      "type": "blurred_boundary",
-      "prompt": "We've evaluated three container orchestration options and I want to present the recommendation to our CTO. How detailed should I go?",
-      "reason": "Elevator communication task but the decision may or may not have genuine penthouse consequences — depends on whether the choice has strategic lock-in or cost implications that warrant executive awareness"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our EA team keeps producing architecture principles and roadmaps but the engineering teams say they're disconnected from what we actually build. How should I think about fixing this?",
+    "expected": "Skill activates and diagnoses the canonical penthouse/engine-room disconnect: the EA team is stuck on the top floor producing governance documents nobody references. It prescribes the elevator posture — architects who ride between floors in both directions — and validating connectivity so principles are load-bearing rather than decorative.",
+    "notes": "source id: ae-invoke-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I need to present our decision to adopt AWS DynamoDB to the CFO. How do I explain why a NoSQL database choice has financial and strategic implications?",
+    "expected": "Skill activates and models the core elevator move — riding up to communicate an engine-room choice with its penthouse ramifications. It guides surfacing cost structure, lock-in, and vendor-relationship consequences of the managed database to the CFO, removing noise without dumbing the decision down, and presenting ramifications rather than just a recommendation.",
+    "notes": "source id: ae-invoke-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our CTO announced we'll be 'fully cloud-native in 18 months' but I can see from the engineering work that this is impossible given our current architecture. What should I do?",
+    "expected": "Skill activates and frames this as a gap between a penthouse commitment and engine-room reality (Hohpe's cloud-provider advisory case). It prescribes riding up to make the contradiction visible before it becomes a failed transformation — surfacing what the current architecture actually rules out — rather than silently working around the mismatch.",
+    "notes": "source id: ae-invoke-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "A vendor is pitching us their Kubernetes platform. The feature checklist looks great but I feel like we're missing something. How should we evaluate it?",
+    "expected": "Skill activates and applies the reverse-engineering technique: instead of scoring features, ask what assumptions and constraints the product's designers baked in (team size, deployment frequency, budget model, failure tolerance), then map each to whether your organization shares them and where friction arises.",
+    "notes": "source id: ae-invoke-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Engineers keep making managed-service vs. self-hosted database decisions on technical grounds alone. Leadership is later surprised by lock-in and cost implications. How do we fix this?",
+    "expected": "Skill activates and names the elevator gap: engine-room decisions with unnoticed penthouse consequences. It prescribes a mechanism to ride ramifications upward — surfacing pricing, lock-in, and operational trade-offs of managed vs. self-hosted to leadership at decision time so executives are not blindsided after the fact.",
+    "notes": "source id: ae-invoke-05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "I'm asked to create an architecture decision record that works for both the engineering team and the executive steering committee. How do I build something that works at both levels?",
+    "expected": "Skill activates and prescribes building a single multi-level decision model (like Hohpe's 5-option table) — one artifact an engineer can interrogate for technical depth and an executive can use for strategic trade-offs — presenting named alternatives with what each forecloses, not two separate documents.",
+    "notes": "source id: ae-invoke-06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "How do I explain to our board why moving to serverless functions matters for our competitive position, without losing them in technical details?",
+    "expected": "Skill activates and models translating an engine-room decision to its penthouse consequence: frame serverless in terms of speed-to-ship, operational leverage, and cost structure that affect competitive position. It stresses removing noise rather than reducing precision — surfacing what actually matters at the board's level, not dumbing it down.",
+    "notes": "source id: ae-invoke-07"
+  },
+  {
+    "id": 8,
+    "type": "should_trigger",
+    "prompt": "We just had a major outage that engineering says was predictable given known architectural debt. Executive leadership says they were blindsided. How do we prevent this kind of gap?",
+    "expected": "Skill activates and identifies a classic penthouse/engine-room disconnect surfacing as an incident — the elevator failed to ride upward, so a constraint visible in the engine room for months never reached leadership. It prescribes a standing mechanism to surface engine-room risk (architectural debt, MTBF/MTTR trade-offs) to executives before it becomes an outage.",
+    "notes": "source id: ae-invoke-08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "Which Kubernetes version should we upgrade to, 1.28 or 1.29?",
+    "expected": "skill should not activate",
+    "notes": "source id: ae-no-invoke-01"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "How do I write a JIRA ticket for a bug in our CI/CD pipeline?",
+    "expected": "skill should not activate",
+    "notes": "source id: ae-no-invoke-02"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "What is the best naming convention for Terraform resource names?",
+    "expected": "skill should not activate",
+    "notes": "source id: ae-no-invoke-03"
+  },
+  {
+    "id": 12,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure Prometheus alerting rules for high CPU utilization?",
+    "expected": "skill should not activate",
+    "notes": "source id: ae-no-invoke-04"
+  },
+  {
+    "id": 13,
+    "type": "should_not_trigger",
+    "prompt": "What is Conway's Law and how does it relate to microservices design?",
+    "expected": "skill should not activate",
+    "notes": "source id: ae-no-invoke-05"
+  },
+  {
+    "id": 14,
+    "type": "edge_case",
+    "prompt": "I'm a senior engineer and I don't have formal access to executive leadership. How do I make technical trade-offs visible to business stakeholders when there's no organizational channel for me to ride the elevator?",
+    "expected": "Skill activates but surfaces the boundary condition that the elevator requires organizational permission to ride: without a reporting channel the individual cannot bridge the gap alone. The defensible outcome is naming the structural blocker as the real problem and seeking leadership to empower the elevator (or a proxy sponsor), rather than pretending an individual can overcome a fiefdom split by effort alone.",
+    "notes": "source id: ae-blur-01"
+  },
+  {
+    "id": 15,
+    "type": "edge_case",
+    "prompt": "Our startup has only 12 engineers and everyone talks to everyone. Should we still worry about the architect elevator?",
+    "expected": "Skill activates but reaches the boundary that the elevator's marginal value is low in a flat organization: with only 12 engineers there is little genuine penthouse/engine-room gap because everyone already operates across the full stack. The defensible outcome is that the skill is most acute in large enterprises and here it is largely unnecessary, while noting to revisit as the org grows and a real gap emerges.",
+    "notes": "source id: ae-blur-02"
+  },
+  {
+    "id": 16,
+    "type": "edge_case",
+    "prompt": "We've evaluated three container orchestration options and I want to present the recommendation to our CTO. How detailed should I go?",
+    "expected": "Skill activates but conditions its answer on whether the choice carries genuine penthouse consequences: if the options differ in strategic lock-in, cost, or speed-to-change, present a cross-level decision model with what each forecloses; if it is a routine implementation choice with no cross-level trade-off, elevator treatment adds noise and a concise recommendation suffices. The reasoning surfaced is that depth depends on whether ramifications reach the executive floor.",
+    "notes": "source id: ae-blur-03"
+  }
+]

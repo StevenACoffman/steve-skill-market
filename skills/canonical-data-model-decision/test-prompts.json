@@ -1,95 +1,107 @@
-{
-  "skill": "canonical-data-model-decision",
-  "prompts": [
-    {
-      "id": "t01",
-      "type": "should_invoke",
-      "prompt": "We're integrating 8 internal systems and the number of custom adapters is exploding. Every time we add a new system we have to write integrations to all the existing ones. Is there a better approach?",
-      "why": "Classic N² translator problem with N=8; CDM decision is the direct answer"
-    },
-    {
-      "id": "t02",
-      "type": "should_invoke",
-      "prompt": "Should we use a canonical data model for our integration layer? We have 5 systems that all need to share customer and order data.",
-      "why": "Direct CDM adoption question with N=5 (above break-even)"
-    },
-    {
-      "id": "t03",
-      "type": "should_invoke",
-      "prompt": "Our CRM calls it 'contact', our ERP calls it 'account', and our billing system calls it 'payer'. They all mean roughly the same thing. How should we handle this in our integration layer?",
-      "why": "Semantic conflict across systems — the governance problem at the heart of CDM design"
-    },
-    {
-      "id": "t04",
-      "type": "should_invoke",
-      "prompt": "We're replacing our legacy ERP system next year. We have 6 other systems that currently talk directly to it. What's the cleanest way to manage that migration?",
-      "why": "Legacy replacement isolation — CDM insulates other systems from the swap; the framework's key use case"
-    },
-    {
-      "id": "t05",
-      "type": "should_invoke",
-      "prompt": "We only have 2 systems that need to exchange data right now, but we expect to add 4 more over the next 18 months. Should we design a canonical format now or wait?",
-      "why": "Growth trajectory question — N=2 today but N=6 expected; CDM break-even analysis"
-    },
-    {
-      "id": "t06",
-      "type": "should_invoke",
-      "prompt": "Someone on our team is proposing a 'universal enterprise data model' that all our applications should store their data in. Is this a good idea?",
-      "why": "CDM-vs-Shared-Database confusion — the boundary condition requires explaining what CDM is and is not"
-    },
-    {
-      "id": "t07",
-      "type": "should_invoke",
-      "prompt": "We're worried that going through a canonical format will add too much latency to our integration layer. How do we evaluate that concern?",
-      "why": "Latency objection to CDM — the framework addresses this directly with the measure-before-ruling-out advice"
-    },
-    {
-      "id": "t08",
-      "type": "should_invoke",
-      "prompt": "We have 3 packaged applications (Salesforce, SAP, Workday) and 2 custom-built services. Where should the translation to canonical format happen — inside the apps or in the integration layer?",
-      "why": "Messaging Mapper vs. Message Translator implementation choice — the framework's implementation section"
-    },
-    {
-      "id": "t09",
-      "type": "should_not_invoke",
-      "prompt": "How should I design the database schema for a multi-tenant SaaS application?",
-      "why": "Application database design — not an integration translation architecture question"
-    },
-    {
-      "id": "t10",
-      "type": "should_not_invoke",
-      "prompt": "What's the best way to serialize messages between microservices — JSON, Protobuf, or Avro?",
-      "why": "Serialization format selection — a data format and technology coupling question, not a CDM adoption decision"
-    },
-    {
-      "id": "t11",
-      "type": "should_not_invoke",
-      "prompt": "How do I set up Apache Camel to route messages between two queues?",
-      "why": "Routing tool configuration — operational, not a CDM or translator architecture decision"
-    },
-    {
-      "id": "t12",
-      "type": "should_not_invoke",
-      "prompt": "Should we use REST or messaging to integrate our two main services?",
-      "why": "Integration style selection (RPC vs. Messaging) — a different framework; not a CDM adoption question"
-    },
-    {
-      "id": "t13",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement a GraphQL federation layer across multiple microservices?",
-      "why": "API federation pattern — not an integration translation architecture decision"
-    },
-    {
-      "id": "t14",
-      "type": "blurred_boundary",
-      "prompt": "We're building a data integration platform to connect 10 systems. Should we build point-to-point connectors between systems that need to share data, or build a hub-and-spoke with a shared format?",
-      "why": "Blurred: this is the CDM decision (hub-and-spoke with canonical format vs. N² point-to-point) but could also be framed as an integration style selection or message bus architecture question"
-    },
-    {
-      "id": "t15",
-      "type": "blurred_boundary",
-      "prompt": "We use a message broker to decouple our services. Each service publishes messages in its own internal format and other services transform what they receive. Is this a good pattern?",
-      "why": "Blurred: describes the N² problem without the CDM — could invoke CDM decision or EDA coupling diagnosis depending on whether the focus is on translation count or coupling dimensions"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're integrating 8 internal systems and the number of custom adapters is exploding. Every time we add a new system we have to write integrations to all the existing ones. Is there a better approach?",
+    "expected": "Skill activates and names the N×(N-1) translator explosion (8 systems = 56 directional translators). It prescribes a Canonical Data Model to collapse this to 2N (one inbound and one outbound translator per system), so each new system costs 2 translators instead of one per existing system.",
+    "notes": "source id: t01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Should we use a canonical data model for our integration layer? We have 5 systems that all need to share customer and order data.",
+    "expected": "Skill activates and answers yes: with N=5 (above the N=3 break-even) CDM cuts translators from 20 to 10 and makes each future addition cost 2. It walks the decision — count relationships, assess latency budget, and map semantic conflicts on customer/order fields as the real governance work.",
+    "notes": "source id: t02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our CRM calls it 'contact', our ERP calls it 'account', and our billing system calls it 'payer'. They all mean roughly the same thing. How should we handle this in our integration layer?",
+    "expected": "Skill activates and frames this as the CDM governance problem: resolve the contact/account/payer semantic conflict once in the canonical format rather than in every pairwise translator. It notes this business-level naming dispute is unavoidable work that CDM forces to happen once, not a technical failure.",
+    "notes": "source id: t03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're replacing our legacy ERP system next year. We have 6 other systems that currently talk directly to it. What's the cleanest way to manage that migration?",
+    "expected": "Skill activates and prescribes a Canonical Data Model to insulate the 6 connected systems from the swap: they talk to the canonical format, so replacing the ERP requires rewriting only its two translators rather than forcing rewrites in all N-1 connected systems.",
+    "notes": "source id: t04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We only have 2 systems that need to exchange data right now, but we expect to add 4 more over the next 18 months. Should we design a canonical format now or wait?",
+    "expected": "Skill activates and applies the growth-trajectory analysis: N=2 today is below break-even, but a credible path to N=6 makes this a CDM candidate now because retrofitting CDM later is harder than designing it upfront and each addition then costs only 2 translators.",
+    "notes": "source id: t05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "Someone on our team is proposing a 'universal enterprise data model' that all our applications should store their data in. Is this a good idea?",
+    "expected": "Skill activates and distinguishes CDM from a shared storage schema: a CDM governs only messages exchanged across application boundaries, while forcing all apps to store data in one universal model is the Shared Database anti-pattern that recreates its coupling problems. It advises keeping each app's storage schema its own and applying canonical format only at the integration layer.",
+    "notes": "source id: t06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "We're worried that going through a canonical format will add too much latency to our integration layer. How do we evaluate that concern?",
+    "expected": "Skill activates and addresses the latency objection with Hohpe's measure-before-ruling-out advice: the double-translation hop (source→canonical→target) is stateless and parallelizable and usually negligible for enterprise integration. It prescribes measuring the actual overhead against the path's latency budget before rejecting CDM, reserving direct translation only for genuinely tight real-time budgets.",
+    "notes": "source id: t07"
+  },
+  {
+    "id": 8,
+    "type": "should_trigger",
+    "prompt": "We have 3 packaged applications (Salesforce, SAP, Workday) and 2 custom-built services. Where should the translation to canonical format happen — inside the apps or in the integration layer?",
+    "expected": "Skill activates and prescribes a per-application choice: use a Messaging Mapper inside the two custom services you control (it can resolve object-graph complexity before serialization), and external Message Translators in the integration layer for the packaged apps (Salesforce, SAP, Workday) you cannot modify. It notes most real systems use both.",
+    "notes": "source id: t08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "How should I design the database schema for a multi-tenant SaaS application?",
+    "expected": "skill should not activate",
+    "notes": "source id: t09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "What's the best way to serialize messages between microservices — JSON, Protobuf, or Avro?",
+    "expected": "skill should not activate",
+    "notes": "source id: t10"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up Apache Camel to route messages between two queues?",
+    "expected": "skill should not activate",
+    "notes": "source id: t11"
+  },
+  {
+    "id": 12,
+    "type": "should_not_trigger",
+    "prompt": "Should we use REST or messaging to integrate our two main services?",
+    "expected": "skill should not activate",
+    "notes": "source id: t12"
+  },
+  {
+    "id": 13,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement a GraphQL federation layer across multiple microservices?",
+    "expected": "skill should not activate",
+    "notes": "source id: t13"
+  },
+  {
+    "id": 14,
+    "type": "edge_case",
+    "prompt": "We're building a data integration platform to connect 10 systems. Should we build point-to-point connectors between systems that need to share data, or build a hub-and-spoke with a shared format?",
+    "expected": "Skill activates and treats this as the CDM decision at N=10: point-to-point is the N×(N-1) trap (up to 90 directional translators), while hub-and-spoke with a canonical format is 2N (20). The defensible outcome is the shared-format hub, with the reasoning that translator count and each future addition's cost drive the choice; it may note the framing also touches integration-style/message-bus selection.",
+    "notes": "source id: t14"
+  },
+  {
+    "id": 15,
+    "type": "edge_case",
+    "prompt": "We use a message broker to decouple our services. Each service publishes messages in its own internal format and other services transform what they receive. Is this a good pattern?",
+    "expected": "Skill activates and points out that a broker decouples topology but not data format: each consumer transforming each producer's private format is the N×(N-1) translator problem in disguise. The defensible outcome is introducing a canonical format on the bus so services translate once in/out, with reasoning about data-format coupling that overlaps EDA coupling diagnosis.",
+    "notes": "source id: t15"
+  }
+]

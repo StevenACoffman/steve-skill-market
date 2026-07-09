@@ -1,79 +1,72 @@
-{
-  "skill": "transport-agnostic-service-functions",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We started with a REST API and now need to expose the same functionality over gRPC for internal services. Every handler is basically copy-pasted with different wire logic. How should I structure this?",
-      "expected_behavior": "Skill explains separating pure service functions from transport handlers, so gRPC and HTTP both call the same core logic with no duplication.",
-      "notes": "Classic dual-transport migration scenario."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "My HTTP handlers have tons of business logic in them and I want to add a gRPC endpoint that does the same thing. What's the cleanest way to share that logic?",
-      "expected_behavior": "Skill recommends extracting business logic into transport-agnostic service functions that both the HTTP handler and gRPC handler delegate to.",
-      "notes": "Direct ask about sharing logic between HTTP and gRPC."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "I have a generated gRPC client from a protobuf definition. I want to wrap it so the rest of my code doesn't care whether it's talking gRPC or HTTP under the hood. How do I do that?",
-      "expected_behavior": "Skill covers wrapping generated gRPC clients behind a service interface so callers are transport-agnostic.",
-      "notes": "Wrapping generated client to hide transport detail."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "Every time we add a new feature, we have to write the same logic twice — once in the HTTP handler and once in the gRPC handler. There must be a better pattern for this.",
-      "expected_behavior": "Skill demonstrates the transport-agnostic service layer pattern that eliminates the duplication by having a single function that both handlers call.",
-      "notes": "Pain point is duplication across transports."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "How do I structure Go service functions so they're not coupled to net/http? I want to be able to call them from CLI commands, background workers, and HTTP handlers without rewriting anything.",
-      "expected_behavior": "Skill explains writing plain Go functions with no HTTP dependencies, then thin adapters at each transport boundary.",
-      "notes": "Explicitly decoupling from net/http for multiple callers including non-HTTP."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I add a new route to my Go HTTP server using the standard library ServeMux?",
-      "expected_behavior": "This is basic HTTP routing setup, not a transport-coupling design question. The skill should not activate.",
-      "notes": "Pure HTTP routing — no dual-transport concern."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "What's the best way to parse and validate a JSON request body in a Go HTTP handler?",
-      "expected_behavior": "This is about wire-format parsing within a single transport, not sharing logic across transports. Skill should not activate.",
-      "notes": "JSON parsing is in-handler wire plumbing, not a transport-agnostic design question."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "How do I set up a gRPC server in Go with TLS and reflection enabled?",
-      "expected_behavior": "This is infrastructure/configuration for gRPC, not about how to structure service logic to be transport-agnostic. Skill should not activate.",
-      "notes": "gRPC server setup is infrastructure, not service-layer design."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "I want the same handler logic to work for both HTTP and WebSocket connections. The HTTP path is request/response but WebSocket is long-lived. How should I share the core logic?",
-      "expected_behavior": "Partial trigger. The unary (request/response) part of the pattern applies directly. The skill should engage for the shared function pattern but note that streaming/long-lived connections require additional design beyond simple function extraction.",
-      "notes": "WebSocket streaming diverges from the unary transport-agnostic pattern; skill applies partially."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "How do I validate request bodies consistently across my API endpoints regardless of whether they come in as JSON or form data?",
-      "expected_behavior": "Edge case: validation is part of wire plumbing but the underlying validation logic can be extracted as a transport-agnostic function. Skill may partially apply to the extraction concept but the main concern is parsing/validation, not dual-transport service design.",
-      "notes": "Validation extraction touches the same pattern but is not the canonical dual-transport use case."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We started with a REST API and now need to expose the same functionality over gRPC for internal services. Every handler is basically copy-pasted with different wire logic. How should I structure this?",
+    "expected": "Skill explains separating pure service functions from transport handlers, so gRPC and HTTP both call the same core logic with no duplication.",
+    "notes": "Classic dual-transport migration scenario.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My HTTP handlers have tons of business logic in them and I want to add a gRPC endpoint that does the same thing. What's the cleanest way to share that logic?",
+    "expected": "Skill recommends extracting business logic into transport-agnostic service functions that both the HTTP handler and gRPC handler delegate to.",
+    "notes": "Direct ask about sharing logic between HTTP and gRPC.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I have a generated gRPC client from a protobuf definition. I want to wrap it so the rest of my code doesn't care whether it's talking gRPC or HTTP under the hood. How do I do that?",
+    "expected": "Skill covers wrapping generated gRPC clients behind a service interface so callers are transport-agnostic.",
+    "notes": "Wrapping generated client to hide transport detail.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Every time we add a new feature, we have to write the same logic twice — once in the HTTP handler and once in the gRPC handler. There must be a better pattern for this.",
+    "expected": "Skill demonstrates the transport-agnostic service layer pattern that eliminates the duplication by having a single function that both handlers call.",
+    "notes": "Pain point is duplication across transports.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "How do I structure Go service functions so they're not coupled to net/http? I want to be able to call them from CLI commands, background workers, and HTTP handlers without rewriting anything.",
+    "expected": "Skill explains writing plain Go functions with no HTTP dependencies, then thin adapters at each transport boundary.",
+    "notes": "Explicitly decoupling from net/http for multiple callers including non-HTTP.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I add a new route to my Go HTTP server using the standard library ServeMux?",
+    "expected": "This is basic HTTP routing setup, not a transport-coupling design question. The skill should not activate.",
+    "notes": "Pure HTTP routing — no dual-transport concern.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What's the best way to parse and validate a JSON request body in a Go HTTP handler?",
+    "expected": "This is about wire-format parsing within a single transport, not sharing logic across transports. Skill should not activate.",
+    "notes": "JSON parsing is in-handler wire plumbing, not a transport-agnostic design question.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up a gRPC server in Go with TLS and reflection enabled?",
+    "expected": "This is infrastructure/configuration for gRPC, not about how to structure service logic to be transport-agnostic. Skill should not activate.",
+    "notes": "gRPC server setup is infrastructure, not service-layer design.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I want the same handler logic to work for both HTTP and WebSocket connections. The HTTP path is request/response but WebSocket is long-lived. How should I share the core logic?",
+    "expected": "Partial trigger. The unary (request/response) part of the pattern applies directly. The skill should engage for the shared function pattern but note that streaming/long-lived connections require additional design beyond simple function extraction.",
+    "notes": "WebSocket streaming diverges from the unary transport-agnostic pattern; skill applies partially.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I validate request bodies consistently across my API endpoints regardless of whether they come in as JSON or form data?",
+    "expected": "Edge case: validation is part of wire plumbing but the underlying validation logic can be extracted as a transport-agnostic function. Skill may partially apply to the extraction concept but the main concern is parsing/validation, not dual-transport service design.",
+    "notes": "Validation extraction touches the same pattern but is not the canonical dual-transport use case.; source id: edge-case-02"
+  }
+]
