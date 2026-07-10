@@ -50,9 +50,9 @@
   },
   {
     "id": 8,
-    "type": "should_trigger",
+    "type": "edge_case",
     "prompt": "What session cookie settings are required for a production Go web app to prevent session hijacking?",
-    "expected": "Skill directs setting sessionManager.Cookie.Secure = true (and HttpOnly) plus a bounded Lifetime (e.g., 12*time.Hour) and serving over HTTPS; it notes this is about post-authentication token theft, distinct from the session-fixation renewal concern.",
+    "expected": "Defensible/nuanced: the skill sets secure cookie attributes (Secure, HttpOnly, short Lifetime) during SCS setup, but its Boundary explicitly scopes post-authentication token theft / hijacking out of the skill — so the agent should give the cookie-hardening settings while noting that hijacking prevention is broader than this skill's session-fixation focus.",
     "notes": "source id: tp-f07-08"
   },
   {

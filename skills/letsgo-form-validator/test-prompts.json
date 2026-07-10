@@ -43,7 +43,7 @@
   },
   {
     "id": 7,
-    "type": "edge_case",
+    "type": "should_trigger",
     "prompt": "Should I use go-playground/validator or build my own validator struct for a Go web app? What are the tradeoffs?",
     "expected": "Skill favors the explicit CheckField Validator for this pattern: struct-tag libraries are terser but the explicit rules are more readable and debuggable, and it notes the Validator does not do automatic struct-tag validation, file-upload, or JSON-body validation.",
     "notes": "source id: tp-f06-07"
@@ -75,5 +75,12 @@
     "prompt": "How do I handle a multipart file-upload form in Go using r.FormFile and save the file to disk?",
     "expected": "skill should not activate — this is multipart file-upload handling, not field validation and error display",
     "notes": "decoy: file upload, outside the form-validation scope"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "My signup form needs a 'password' matches 'confirm password' rule — validation spanning two fields. Does the embedded Validator's CheckField pattern cover cross-field checks, or should that logic live elsewhere?",
+    "expected": "Defensible/nuanced: CheckField takes an arbitrary bool, so a cross-field rule like CheckField(form.Password==form.ConfirmPassword, ...) fits the pattern, but whether it should be a field error or an AddNonFieldError, and whether cross-field rules belong in the Validator vs the handler, is a design judgment the agent should surface rather than answer rigidly.",
+    "notes": "edge: cross-field validation sits at the boundary of the single-field CheckField pattern"
   }
 ]

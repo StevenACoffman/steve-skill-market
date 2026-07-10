@@ -43,7 +43,7 @@
   },
   {
     "id": 7,
-    "type": "edge_case",
+    "type": "should_trigger",
     "prompt": "If I use gorilla/schema or go-playground/form to decode form data, do I still need to call r.ParseForm() first?",
     "expected": "Skill answers yes: those decoders do not call ParseForm() automatically; you must call r.ParseForm() (checking its error) first and pass r.PostForm to decoder.Decode(&form, r.PostForm), since r.PostForm is only populated after parsing.",
     "notes": "source id: tp-p02p10-07"
@@ -72,8 +72,15 @@
   {
     "id": 11,
     "type": "should_not_trigger",
-    "prompt": "How do I write HTTP middleware that logs the method and duration of every request in a Go app?",
-    "expected": "skill should not activate — this is request-logging middleware, unrelated to form-value reading or internal/ package layout",
-    "notes": "decoy: middleware, outside scope"
+    "prompt": "How do I set up request routing with chi or httprouter and define URL path parameters like /snippet/view/{id} in a Go web app?",
+    "expected": "skill should not activate — this is HTTP routing and path-parameter setup, not reading POST form values or the internal/ package-encapsulation rule",
+    "notes": "decoy: routing/handlers, adjacent to where forms are read but outside this skill's two topics"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "My form includes a file upload (multipart/form-data) alongside text fields. Does the r.ParseForm() + r.PostForm.Get() approach read those, or do I need something different for the file parts?",
+    "expected": "Defensible/nuanced: ParseForm still populates r.PostForm for the text fields of a multipart request, so PostForm.Get works for those, but the file parts require r.ParseMultipartForm and r.FormFile — the agent should separate the in-scope text-field reading from file handling, which the skill does not cover.",
+    "notes": "edge: multipart text fields are in scope via PostForm, but file parts fall outside the skill"
   }
 ]

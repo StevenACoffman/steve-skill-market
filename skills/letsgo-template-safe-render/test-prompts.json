@@ -50,7 +50,7 @@
   },
   {
     "id": 8,
-    "type": "edge_case",
+    "type": "should_trigger",
     "prompt": "How do I support template hot-reloading in development while using a startup cache in production?",
     "expected": "Skill directs gating on an environment/debug flag: in development skip the cache and call newTemplateCache() (rebuild templates) on each request, while production uses the startup-built cache; the two-stage buffered render is unchanged either way.",
     "notes": "source id: tp-f05-08"
@@ -65,8 +65,15 @@
   {
     "id": 10,
     "type": "should_not_trigger",
-    "prompt": "How do I serve static CSS and JavaScript files in a Go web app using http.FileServer?",
-    "expected": "skill should not activate — this is static file serving, unrelated to the template render helper and partial-200 failure mode",
-    "notes": "decoy: static assets, outside scope"
+    "prompt": "How do I structure base layouts with {{define}}/{{block}} so all my pages share a common header and footer in Go's html/template?",
+    "expected": "skill should not activate — this is template inheritance/composition structure, which the skill's Boundary explicitly lists as out of scope; it's not about the two-stage safe-render or the partial-200 status problem",
+    "notes": "decoy: template inheritance strategy, named as out-of-scope in the skill's Boundary"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My JSON API sometimes sends a 200 and then fails partway through json.NewEncoder(w).Encode() on a large payload, leaving truncated JSON. Is that the same problem this two-stage render pattern solves?",
+    "expected": "Defensible/nuanced: it's the same partial-200 failure mode, and the skill's Boundary explicitly notes JSON encoding shares it, but the fix differs — encode to a bytes.Buffer then copy, rather than the html/template two-stage render() helper — so the agent should confirm the shared failure while pointing to the buffer-then-write variant.",
+    "notes": "edge: same partial-write failure mode named in the Boundary, but JSON (not HTML templates) is the adjacent case"
   }
 ]

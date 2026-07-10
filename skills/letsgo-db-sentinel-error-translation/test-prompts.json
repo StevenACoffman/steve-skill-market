@@ -8,7 +8,7 @@
   },
   {
     "id": 2,
-    "type": "edge_case",
+    "type": "should_trigger",
     "prompt": "My Go program panics with 'nil pointer dereference' when a database query fails. I have `defer rows.Close()` right after the Query call. What's wrong?",
     "expected": "Skill identifies that defer rows.Close() is placed before the error check: when db.Query() fails, rows is nil and deferring Close() on a nil *sql.Rows panics and masks the original error. Correct order is Query(), check the error, then defer rows.Close(), then iterate.",
     "notes": "source id: tp-f04-02"
@@ -75,5 +75,12 @@
     "prompt": "How do I write a SQL migration to add an index to my snippets table in a Go project?",
     "expected": "skill should not activate — this is schema migration/DDL, not model-layer error translation",
     "notes": "decoy: DB migrations, outside error-handling scope"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "My handler calls an external payment API that returns HTTP 404 when a charge isn't found. Should I translate that into a domain sentinel error the way SnippetModel.Get translates sql.ErrNoRows, or just handle the HTTP status in the handler?",
+    "expected": "Defensible either way: the skill's Boundary extends the translate-at-the-persistence-boundary pattern to external HTTP APIs (return a domain ErrNotFound from the API-client layer so handlers don't depend on HTTP status codes), but for a single call site handling the 404 inline is reasonable too — the agent should surface the isolation trade-off, not mandate one answer.",
+    "notes": "edge: the skill's Boundary says the pattern applies to non-SQL sources (HTTP APIs, Redis, S3), so applying it to one external call is a judgment call"
   }
 ]
