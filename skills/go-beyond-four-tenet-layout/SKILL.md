@@ -15,10 +15,7 @@ description: |
 
   Key trigger: user is deciding where code lives across multiple packages — especially
   when they ask about "structure" or when they describe a circular import error.
-source_book: "Go Beyond" Ben B. Johnson
-source_chapter: standard-package-layout.md, packages-as-layers.md
 tags: [package-layout, architecture, domain-design, go, dependency-management]
-related_skills: []
 ---
 
 # Four-Tenet Domain-First Package Layout
@@ -163,9 +160,9 @@ ______________________________________________________________________
 
 ## Related Skills (Stage 3 Filling)
 
-- depends-on: [go-beyond-packages-as-layers](../go-beyond-packages-as-layers/SKILL.md) — layers model is the conceptual foundation for the four-tenet structure
-- composes-with: [go-beyond-three-consumer-error](../go-beyond-three-consumer-error/SKILL.md) — error type lives in the root package per tenet 1
-- composes-with: [go-beyond-service-transaction-boundary](../go-beyond-service-transaction-boundary/SKILL.md) — tenet 2 (subpackages as adapters) is where transaction boundaries live
+- depends-on: go-beyond-packages-as-layers — layers model is the conceptual foundation for the four-tenet structure
+- composes-with: go-beyond-three-consumer-error — error type lives in the root package per tenet 1
+- composes-with: go-beyond-service-transaction-boundary — tenet 2 (subpackages as adapters) is where transaction boundaries live
 
 ______________________________________________________________________
 
@@ -174,3 +171,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: See test-prompts.json
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Beyond" Ben B. Johnson

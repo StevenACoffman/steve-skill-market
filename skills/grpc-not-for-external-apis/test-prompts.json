@@ -1,74 +1,79 @@
 [
   {
-    "id": "tp01",
-    "segment": "A2",
-    "trigger": "browser client can't call gRPC",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "Our backend is gRPC. The frontend team says their React app can't call our service. What's the problem and how do we fix it?",
-    "expected_behavior": "Should explain that standard browser JavaScript cannot call gRPC directly — browsers do not expose HTTP/2 binary framing via fetch or XMLHttpRequest. This is one of the core reasons gRPC is not suitable for external/browser clients. Should describe two fix options: (1) gRPC gateway — generates a REST/HTTP-JSON proxy from the proto, exposing standard HTTP endpoints that the browser can call; (2) gRPC-Web — a browser-compatible protocol variant requiring an Envoy proxy sidecar. Should note the book recommends gRPC gateway as the standard solution; gRPC-Web is not covered in the book.",
-    "should_not": "Should not suggest the browser can call gRPC directly with any library without a proxy. Should not omit that the gRPC gateway requires no backend changes."
+    "expected": "Should explain that standard browser JavaScript cannot call gRPC directly — browsers do not expose HTTP/2 binary framing via fetch or XMLHttpRequest. This is one of the core reasons gRPC is not suitable for external/browser clients. Should describe two fix options: (1) gRPC gateway — generates a REST/HTTP-JSON proxy from the proto, exposing standard HTTP endpoints that the browser can call; (2) gRPC-Web — a browser-compatible protocol variant requiring an Envoy proxy sidecar. Should note the book recommends gRPC gateway as the standard solution; gRPC-Web is not covered in the book.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "segment": "R",
-    "trigger": "source quote — external consumers",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "What specific reasons does gRPC Up and Running give for not using gRPC as an external-facing API?",
-    "expected_behavior": "Should quote or closely paraphrase: 'most of the external consumers are quite new to gRPC and REST/HTTP'; 'The contract-driven, strongly typed nature of gRPC services may hinder the flexibility of the services that you expose to the external parties'; 'consumers get far less control (unlike protocols such as GraphQL).' Should identify the three failure modes from the book: consumer unfamiliarity with gRPC, rigidity vs. REST/HTTP flexibility, inability to match GraphQL's client-controlled field selection.",
-    "should_not": "Should not attribute a neutral or positive position on external gRPC to the book. Should not conflate browser incompatibility (an additional reason not in the quote) with the book's explicitly stated reasons."
+    "expected": "Should quote or closely paraphrase: 'most of the external consumers are quite new to gRPC and REST/HTTP'; 'The contract-driven, strongly typed nature of gRPC services may hinder the flexibility of the services that you expose to the external parties'; 'consumers get far less control (unlike protocols such as GraphQL).' Should identify the three failure modes from the book: consumer unfamiliarity with gRPC, rigidity vs. REST/HTTP flexibility, inability to match GraphQL's client-controlled field selection.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "segment": "I",
-    "trigger": "why proto tooling is a problem for external consumers",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "Why is requiring external API consumers to use protobuf/gRPC tooling problematic?",
-    "expected_behavior": "Should explain the friction points: external consumers must install the protoc compiler and language-specific protoc plugins, add .proto files to their build system, regenerate client stubs on every server-side schema change, and integrate the generated code into their build pipeline. For internal teams this is a one-time setup coordinated by the same organization. For external developers on diverse tech stacks (Python, Ruby, PHP, JavaScript, etc.) who are not part of the organization, it creates adoption friction and tight release coupling — every proto change forces a consumer build step. REST/JSON clients need only an HTTP library and JSON parser, which every language ships with its standard library.",
-    "should_not": "Should not say the tooling burden is trivial. Should not argue that generated gRPC clients are easier than HTTP client libraries."
+    "expected": "Should explain the friction points: external consumers must install the protoc compiler and language-specific protoc plugins, add .proto files to their build system, regenerate client stubs on every server-side schema change, and integrate the generated code into their build pipeline. For internal teams this is a one-time setup coordinated by the same organization. For external developers on diverse tech stacks (Python, Ruby, PHP, JavaScript, etc.) who are not part of the organization, it creates adoption friction and tight release coupling — every proto change forces a consumer build step. REST/JSON clients need only an HTTP library and JSON parser, which every language ships with its standard library.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "segment": "I",
-    "trigger": "why gRPC can't satisfy GraphQL's field selection",
+    "id": 4,
+    "type": "should_trigger",
     "prompt": "A third-party consumer says they need an API that returns only the specific fields they request — sometimes 3 fields, sometimes 30. Can gRPC support this?",
-    "expected_behavior": "Should explain that gRPC cannot satisfy client-controlled field selection natively. A gRPC method returns a fixed proto message type; the server always returns the entire message. The client receives all fields regardless of which ones it needs. Application-level field masking is possible but defeats the purpose of the typed proto contract. GraphQL was designed specifically for this: the client's query specifies exactly which fields to return and the server resolves only those. Should recommend: GraphQL for this external consumer; gRPC for the internal services that GraphQL resolves against.",
-    "should_not": "Should not say gRPC FieldMask is equivalent to GraphQL field selection without explaining the friction of FieldMask usage."
+    "expected": "Should explain that gRPC cannot satisfy client-controlled field selection natively. A gRPC method returns a fixed proto message type; the server always returns the entire message. The client receives all fields regardless of which ones it needs. Application-level field masking is possible but defeats the purpose of the typed proto contract. GraphQL was designed specifically for this: the client's query specifies exactly which fields to return and the server resolves only those. Should recommend: GraphQL for this external consumer; gRPC for the internal services that GraphQL resolves against.",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "segment": "E",
-    "trigger": "implementation — gRPC gateway proto annotations",
+    "id": 5,
+    "type": "should_trigger",
     "prompt": "What do the proto annotations look like to expose a gRPC service via the gRPC gateway?",
-    "expected_behavior": "Should show the google.api.http annotation syntax on a service definition: importing google/api/annotations.proto, adding the option block to each RPC method with the HTTP method and URL template. Should show examples for at least GET (for queries with ID in path) and POST (for creates with body). Should note that field names in the URL template (e.g., {value}) must match proto message field names. Should mention the protoc-gen-grpc-gateway plugin generates the translation proxy from these annotations.",
-    "should_not": "Should not show the gateway being configured without annotations in the proto. Should not omit that the gRPC backend service code is unchanged."
+    "expected": "Should show the google.api.http annotation syntax on a service definition: importing google/api/annotations.proto, adding the option block to each RPC method with the HTTP method and URL template. Should show examples for at least GET (for queries with ID in path) and POST (for creates with body). Should note that field names in the URL template (e.g., {value}) must match proto message field names. Should mention the protoc-gen-grpc-gateway plugin generates the translation proxy from these annotations.",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "segment": "A2",
-    "trigger": "partner API scenario",
+    "id": 6,
+    "type": "should_trigger",
     "prompt": "We need to expose a subset of our service to a B2B partner company. They use a mix of Python, JavaScript, and Java. Should we give them access to our gRPC services?",
-    "expected_behavior": "Should recommend providing REST/HTTP-JSON access via gRPC gateway or Envoy transcoding, not direct gRPC access. The partner is an external consumer: they are not part of your organization, they have their own build systems, they may not have proto tooling set up for all their languages, and every proto schema change creates a coordination requirement across organizational boundaries. Should note the hybrid architecture: gRPC stays internal; the partner gets REST endpoints generated by the gateway with OpenAPI documentation. May note this is a gray area if the partner explicitly requests and can handle gRPC.",
-    "should_not": "Should not recommend gRPC as the first choice for external B2B APIs. Should not ignore the cross-organizational coordination cost of proto changes."
+    "expected": "Should recommend providing REST/HTTP-JSON access via gRPC gateway or Envoy transcoding, not direct gRPC access. The partner is an external consumer: they are not part of your organization, they have their own build systems, they may not have proto tooling set up for all their languages, and every proto schema change creates a coordination requirement across organizational boundaries. Should note the hybrid architecture: gRPC stays internal; the partner gets REST endpoints generated by the gateway with OpenAPI documentation. May note this is a gray area if the partner explicitly requests and can handle gRPC.",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "segment": "A1",
-    "trigger": "book architecture — where gRPC gateway fits",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "Where in the architecture does the gRPC gateway live, and does it require changes to the gRPC backend service?",
-    "expected_behavior": "Should explain that the gRPC gateway is a separate reverse proxy that sits between external HTTP clients and the gRPC backend. The gateway is generated from the same proto file as the backend, using HTTP annotation options. It translates incoming REST/JSON requests into gRPC calls and forwards them to the gRPC backend. The backend service requires no changes — it continues to serve gRPC on its existing port. External REST clients talk to the gateway port; internal gRPC clients bypass the gateway entirely and connect directly to the backend gRPC port.",
-    "should_not": "Should not say the gRPC backend must be modified to support REST. Should not say the gateway is deployed inside the gRPC server."
+    "expected": "Should explain that the gRPC gateway is a separate reverse proxy that sits between external HTTP clients and the gRPC backend. The gateway is generated from the same proto file as the backend, using HTTP annotation options. It translates incoming REST/JSON requests into gRPC calls and forwards them to the gRPC backend. The backend service requires no changes — it continues to serve gRPC on its existing port. External REST clients talk to the gateway port; internal gRPC clients bypass the gateway entirely and connect directly to the backend gRPC port.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "segment": "B",
-    "trigger": "boundary — gRPC-Web for browsers",
+    "id": 8,
+    "type": "edge_case",
     "prompt": "Is there a way for browsers to call gRPC directly without using the gRPC gateway?",
-    "expected_behavior": "Should describe gRPC-Web as the browser-compatible gRPC protocol variant. gRPC-Web requires an Envoy proxy that translates between the gRPC-Web framing (which browsers can use) and standard gRPC framing (which gRPC servers speak). Should note this is not covered in the book — the book notes browser support is primitive but does not present gRPC-Web as a solution. Should note gRPC-Web does not support full bidirectional streaming from browsers (only server streaming). Should present gRPC-Web and gRPC gateway as alternatives: gRPC-Web preserves the gRPC API surface for browser clients; gRPC gateway exposes REST.",
-    "should_not": "Should not say gRPC-Web requires no proxy. Should not claim the book covers gRPC-Web. Should not say gRPC-Web supports all four gRPC streaming patterns from the browser."
+    "expected": "Should describe gRPC-Web as the browser-compatible gRPC protocol variant. gRPC-Web requires an Envoy proxy that translates between the gRPC-Web framing (which browsers can use) and standard gRPC framing (which gRPC servers speak). Should note this is not covered in the book — the book notes browser support is primitive but does not present gRPC-Web as a solution. Should note gRPC-Web does not support full bidirectional streaming from browsers (only server streaming). Should present gRPC-Web and gRPC gateway as alternatives: gRPC-Web preserves the gRPC API surface for browser clients; gRPC gateway exposes REST.",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "segment": "B",
-    "trigger": "boundary — when external gRPC is acceptable",
+    "id": 9,
+    "type": "edge_case",
     "prompt": "Are there cases where exposing gRPC directly to external consumers is acceptable?",
-    "expected_behavior": "Should acknowledge that 'external' in the book's context means third-party consumers with no organizational proto tooling coordination. If all consumers are controlled by the same organization (even different teams), gRPC is appropriate. For genuine external exposure, gRPC is acceptable when: the consuming team explicitly agrees to adopt proto tooling, both parties coordinate on proto schema changes as part of their release process, and browser or REST tooling is not a requirement. Should note this is a gray area for enterprise B2B integrations where the partner can establish a proto build pipeline. Should contrast with public developer APIs (thousands of unknown consumers with diverse tooling) where gRPC is clearly wrong.",
-    "should_not": "Should not say gRPC is always wrong for any external use. Should not omit the organizational coordination requirement that makes it workable in some B2B scenarios."
+    "expected": "Should acknowledge that 'external' in the book's context means third-party consumers with no organizational proto tooling coordination. If all consumers are controlled by the same organization (even different teams), gRPC is appropriate. For genuine external exposure, gRPC is acceptable when: the consuming team explicitly agrees to adopt proto tooling, both parties coordinate on proto schema changes as part of their release process, and browser or REST tooling is not a requirement. Should note this is a gray area for enterprise B2B integrations where the partner can establish a proto build pipeline. Should contrast with public developer APIs (thousands of unknown consumers with diverse tooling) where gRPC is clearly wrong.",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "Two of our internal microservices both consume our gRPC ProductInfo service. I need to add a field to the Product proto without breaking the older internal service during a rolling deploy. What are the backward-compatibility rules for evolving the proto?",
+    "expected": "skill should not activate — this is about proto schema evolution and backward compatibility for internal consumers, not whether to expose gRPC to external/third-party consumers.",
+    "notes": "Decoy: both consumers are internal, so the external-boundary question never arises; this is a schema-versioning concern."
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "Our gRPC services are all internal and talk to each other. How do I set up mTLS between them so each service authenticates its peer's certificate?",
+    "expected": "skill should not activate — this is about internal service-to-service mTLS credential setup, not the decision to keep gRPC internal and place a REST/gateway boundary in front of external consumers.",
+    "notes": "Decoy: security credential composition between internal services is adjacent, but there is no external-facing exposure decision here."
   }
 ]

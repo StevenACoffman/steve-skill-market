@@ -1,83 +1,93 @@
-{
-  "skill": "competing-consumers-vs-dispatcher",
-  "prompts": [
-    {
-      "id": "ccd-01",
-      "category": "should_invoke",
-      "prompt": "We have a single Lambda processing messages from SQS and it can't keep up with the volume. We want to add more workers. Should we just increase the Lambda concurrency limit, or do we need to do something different architecturally?",
-      "rationale": "Classic throughput bottleneck — triggers the competing consumers question. Lambda concurrency on SQS is competing consumers in cloud terms."
-    },
-    {
-      "id": "ccd-02",
-      "category": "should_invoke",
-      "prompt": "Our message queue has two types of messages: priority orders that need fast processing and bulk reports that can wait. We want specialists for each type. Should we have one queue with a dispatcher, or separate queues with separate consumers?",
-      "rationale": "Specialization requirement — Datatype Channel (separate queues) vs. Message Dispatcher tradeoff."
-    },
-    {
-      "id": "ccd-03",
-      "category": "should_invoke",
-      "prompt": "We're seeing duplicate processing in our competing consumers setup — the same message gets processed by two workers sometimes. Our messaging library documentation is sparse on how it handles multiple consumers on one queue. What should we do?",
-      "rationale": "Unreliable multi-consumer support → consider Message Dispatcher (single consumer avoids the duplication race)."
-    },
-    {
-      "id": "ccd-04",
-      "category": "should_invoke",
-      "prompt": "We need transactional message processing — consume a message and update the database atomically. We're using JMS. Is it safe to use an event-driven consumer for this?",
-      "rationale": "Polling Consumer + Transactional Client is the safest combination; Event-Driven Consumer + Transactional is problematic in JMS."
-    },
-    {
-      "id": "ccd-05",
-      "category": "should_invoke",
-      "prompt": "A production JMS system is crashing because the Dead Letter Channel is overflowing. The channel is Pub-Sub, not Point-to-Point, so we can't add competing consumers. How do we get more throughput from a single consumer?",
-      "rationale": "Bond trading case study — Pub-Sub channel prevents Competing Consumers; Message Dispatcher is the solution."
-    },
-    {
-      "id": "ccd-06",
-      "category": "should_invoke",
-      "prompt": "We're building a message processing system that needs to scale to 50 application servers. Should we use a Message Dispatcher or Competing Consumers?",
-      "rationale": "Cross-machine horizontal scale → only Competing Consumers; Message Dispatcher performers are in-process."
-    },
-    {
-      "id": "ccd-07",
-      "category": "should_invoke",
-      "prompt": "The question is whether we should let the messaging system do the load balancing or whether we should write our own routing logic inside the application. What are the tradeoffs?",
-      "rationale": "Direct paraphrase of the book's own framing: 'whether you wish to let the messaging system do the dispatching or whether you want to implement it yourself.'"
-    },
-    {
-      "id": "ccd-08",
-      "category": "should_not_invoke",
-      "prompt": "We have an SQS queue that's growing faster than our consumers can drain it. We need to decide what to do when the queue fills up — should we drop old messages, reject new ones, or slow down the producers?",
-      "rationale": "Queue flow control decision (S07) — TTL vs. tail drop vs. backpressure, not the parallelism architecture."
-    },
-    {
-      "id": "ccd-09",
-      "category": "should_not_invoke",
-      "prompt": "Should our new microservice receive events via SNS push or poll from SQS? We're trying to understand the latency and throughput implications of each.",
-      "rationale": "Control-flow model question (S06) — push vs. pull decision, not competing consumers vs. dispatcher."
-    },
-    {
-      "id": "ccd-10",
-      "category": "should_not_invoke",
-      "prompt": "We have six services that all need to react to the same order-placed event. Should we use a content-based router or a publish-subscribe channel?",
-      "rationale": "Routing decision (Content-Based Router vs. Pub-Sub) — not a parallelism/consumer design question."
-    },
-    {
-      "id": "ccd-11",
-      "category": "should_not_invoke",
-      "prompt": "We're worried that if we add more Kafka consumer instances, messages for the same customer key might be processed out of order. How do we preserve ordering?",
-      "rationale": "Kafka partition ordering — overlaps with order concerns from S06 but is primarily a Kafka consumer group design question, not the EIP competing consumers vs. dispatcher choice."
-    },
-    {
-      "id": "ccd-12",
-      "category": "blurred_boundary",
-      "prompt": "We need to process payment messages in strict order per customer, but we also need to parallelize processing across customers. Multiple worker threads are fine as long as messages for the same customer ID are handled sequentially. What's the right design?",
-      "rationale": "Blurs S06 (order preservation — competing consumers destroys order) and S08 (parallelism via dispatcher could assign per-customer performers). Both skills contribute."
-    },
-    {
-      "id": "ccd-13",
-      "category": "blurred_boundary",
-      "prompt": "Our message dispatcher has a pool of performers, and we want each performer to process its message transactionally with a database update. How do we set up the JMS sessions so that a rollback in one performer doesn't affect others?",
-      "rationale": "Deep inside Message Dispatcher implementation — per-performer session design. Blurs S08 (architecture) and Transactional Client pattern (p20). Primarily S08 but requires p20 context."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have a single Lambda processing messages from SQS and it can't keep up with the volume. We want to add more workers. Should we just increase the Lambda concurrency limit, or do we need to do something different architecturally?",
+    "expected": "Skill activates and identifies that if all workers are interchangeable, raising Lambda concurrency is Competing Consumers in cloud terms — the platform load-balances each SQS message to one worker and scales across instances. It confirms this is the right default (no custom dispatcher needed) unless the messages need specialist handlers or strict ordering.",
+    "notes": "rationale: Classic throughput bottleneck — triggers the competing consumers question. Lambda concurrency on SQS is competing consumers in cloud terms.; source id: ccd-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our message queue has two types of messages: priority orders that need fast processing and bulk reports that can wait. We want specialists for each type. Should we have one queue with a dispatcher, or separate queues with separate consumers?",
+    "expected": "Skill activates and weighs Message Dispatcher against the simpler Datatype Channel alternative: prefer separate channels (priority orders vs. bulk reports), each with its own Competing Consumer pool, so the two types scale independently without building and operating a custom dispatcher. Reserve a dispatcher only if a single-consumer constraint forces it.",
+    "notes": "rationale: Specialization requirement — Datatype Channel (separate queues) vs. Message Dispatcher tradeoff.; source id: ccd-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're seeing duplicate processing in our competing consumers setup — the same message gets processed by two workers sometimes. Our messaging library documentation is sparse on how it handles multiple consumers on one queue. What should we do?",
+    "expected": "Skill activates and diagnoses unreliable multi-consumer support: when the messaging system may deliver a message to more than one consumer, switch to a Message Dispatcher — a single consumer as far as the messaging system is concerned, routing to in-process performers — which eliminates the duplication race entirely.",
+    "notes": "rationale: Unreliable multi-consumer support → consider Message Dispatcher (single consumer avoids the duplication race).; source id: ccd-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We need transactional message processing — consume a message and update the database atomically. We're using JMS. Is it safe to use an event-driven consumer for this?",
+    "expected": "Skill activates and warns that Event-Driven Consumer + Transactional Client is problematic in JMS outside container-managed transactions because the transaction lifecycle is tied to message receipt. It prescribes the safest combination — Polling Consumer + Transactional Client (Competing Consumers, each managing its own session) — or EJB Message-Driven Beans where the container coordinates the session-per-consumer transaction.",
+    "notes": "rationale: Polling Consumer + Transactional Client is the safest combination; Event-Driven Consumer + Transactional is problematic in JMS.; source id: ccd-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "A production JMS system is crashing because the Dead Letter Channel is overflowing. The channel is Pub-Sub, not Point-to-Point, so we can't add competing consumers. How do we get more throughput from a single consumer?",
+    "expected": "Skill activates and gives the bond-trading case answer: because the Pub-Sub channel cannot host competing consumers, use a Message Dispatcher — a single JMSListener that delegates each message to a pool of Performer threads and returns immediately from onMessage — to raise throughput regardless of per-message processing time, without changing the channel topology.",
+    "notes": "rationale: Bond trading case study — Pub-Sub channel prevents Competing Consumers; Message Dispatcher is the solution.; source id: ccd-05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "We're building a message processing system that needs to scale to 50 application servers. Should we use a Message Dispatcher or Competing Consumers?",
+    "expected": "Skill activates and answers Competing Consumers: cross-machine horizontal scale to 50 servers requires independent consumer processes. A Message Dispatcher's performers are threads in one process and cannot span machines, so it is a throughput ceiling and a dead end for this requirement.",
+    "notes": "rationale: Cross-machine horizontal scale → only Competing Consumers; Message Dispatcher performers are in-process.; source id: ccd-06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "The question is whether we should let the messaging system do the load balancing or whether we should write our own routing logic inside the application. What are the tradeoffs?",
+    "expected": "Skill activates and lays out the core tradeoff: letting the messaging system dispatch (Competing Consumers) gives free load balancing and cross-machine scale but no per-message specialization or ordering; writing your own routing (Message Dispatcher) gives control over specialization and single-consumer reliability but caps throughput at one process and adds thread/session/error-handling burden.",
+    "notes": "rationale: Direct paraphrase of the book's own framing: 'whether you wish to let the messaging system do the dispatching or whether you want to implement it yourself.'; source id: ccd-07"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We have an SQS queue that's growing faster than our consumers can drain it. We need to decide what to do when the queue fills up — should we drop old messages, reject new ones, or slow down the producers?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Queue flow control decision (S07) — TTL vs. tail drop vs. backpressure, not the parallelism architecture.; source id: ccd-08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "Should our new microservice receive events via SNS push or poll from SQS? We're trying to understand the latency and throughput implications of each.",
+    "expected": "skill should not activate",
+    "notes": "rationale: Control-flow model question (S06) — push vs. pull decision, not competing consumers vs. dispatcher.; source id: ccd-09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "We have six services that all need to react to the same order-placed event. Should we use a content-based router or a publish-subscribe channel?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Routing decision (Content-Based Router vs. Pub-Sub) — not a parallelism/consumer design question.; source id: ccd-10"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "We're worried that if we add more Kafka consumer instances, messages for the same customer key might be processed out of order. How do we preserve ordering?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Kafka partition ordering — overlaps with order concerns from S06 but is primarily a Kafka consumer group design question, not the EIP competing consumers vs. dispatcher choice.; source id: ccd-11"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "We need to process payment messages in strict order per customer, but we also need to parallelize processing across customers. Multiple worker threads are fine as long as messages for the same customer ID are handled sequentially. What's the right design?",
+    "expected": "Skill activates and surfaces the tension: plain Competing Consumers destroys per-customer order, so it prescribes a Message Dispatcher that assigns each customer ID to a dedicated Performer (or partition-per-key), giving cross-customer parallelism while keeping same-customer messages sequential. The reasoning it surfaces is that ordering must be preserved within a key while parallelizing across keys.",
+    "notes": "rationale: Blurs S06 (order preservation — competing consumers destroys order) and S08 (parallelism via dispatcher could assign per-customer performers). Both skills contribute.; source id: ccd-12"
+  },
+  {
+    "id": 13,
+    "type": "edge_case",
+    "prompt": "Our message dispatcher has a pool of performers, and we want each performer to process its message transactionally with a database update. How do we set up the JMS sessions so that a rollback in one performer doesn't affect others?",
+    "expected": "Skill activates and prescribes the per-Performer session boundary: the Dispatcher runs as a Polling Consumer with its own session, and each Performer gets an independent JMS session so its transaction commits or rolls back in isolation. The reasoning it surfaces is that sharing the Dispatcher's session across performers would couple all their transactions — the exact failure mode to avoid.",
+    "notes": "rationale: Deep inside Message Dispatcher implementation — per-performer session design. Blurs S08 (architecture) and Transactional Client pattern (p20). Primarily S08 but requires p20 context.; source id: ccd-13"
+  }
+]

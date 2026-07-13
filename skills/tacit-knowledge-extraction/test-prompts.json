@@ -1,58 +1,44 @@
-{
-  "skill": "tacit-knowledge-extraction",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "tke-trigger-01",
-      "type": "should_trigger",
-      "prompt": "The data engineer who built our inventory management model left the company eight months ago. We inherited the schema but there's no documentation. When we try to interview the warehouse team they all describe the process differently — one person says orders get picked before they're verified, another says verification happens first, and there's an Excel file called WAREHOUSE_EXCEPTIONS_V12_FINAL.xlsx on the shared drive that seems to track something the official system doesn't. How do we figure out what's actually happening?",
-      "expected_behavior": "Skill triggers. Three tacit knowledge signals present simultaneously: SME departure (A2 trigger #2), contradictory interviews (A2 trigger #3), and shadow spreadsheet (A2 trigger #4). Apply all three techniques: Gemba Walk (sit with warehouse workers to observe actual picking/verification order in practice); Artifact Archaeology (examine WAREHOUSE_EXCEPTIONS_V12_FINAL.xlsx — what columns does it have? what states/entities does it track that the official schema doesn't?); Unhappy Path Interviews (what happens when an item is missing? when the verification system is down? when an exception requires a manager override?). Output feeds the five-component discovery framework.",
-      "should_trigger": true,
-      "rationale": "Multiple A2 trigger signals: departed SME, contradictory interviews, shadow spreadsheet with FINAL_V[n] naming pattern. All three techniques are indicated."
-    },
-    {
-      "id": "tke-trigger-02",
-      "type": "should_trigger",
-      "prompt": "We're trying to build a data model for our loan underwriting process. The official process documentation was last updated in 2022. Our data counts from the existing model are always lower than what the underwriting team reports in their manual tallies — sometimes by 20%. The underwriters say the official system 'doesn't capture everything.' What should we do before we start redesigning the schema?",
-      "expected_behavior": "Skill triggers. Two trigger signals: stale documentation (2022, 3+ years old, exceeds the 12-month warning threshold from ce11) and systematically low counts (the failure mode of modeling the documented process, not the real one). Apply Gemba Walk (sit with underwriters during actual case processing — what manual steps, external tools, or workarounds are they performing?); Artifact Archaeology (what files, spreadsheets, or shadow trackers maintain the 20% that's not in the official count?); Unhappy Path Interviews (what happens when required documentation is missing? when an applicant is borderline? when an underwriter disagrees with the credit score system?). Do not redesign the schema until the real process is surfaced.",
-      "should_trigger": true,
-      "rationale": "Matches A2 trigger #1 (stale documentation > 12 months) and #5 (official schema systematically undercounts). Language matches 'The data model numbers are always lower than what the business reports.'"
-    },
-    {
-      "id": "tke-trigger-03",
-      "type": "should_trigger",
-      "prompt": "I'm interviewing stakeholders to understand our customer refund process for data modeling purposes. I've talked to five people and gotten five completely different descriptions of how it works. The customer service manager says it's a three-step process. The individual agents describe a totally different sequence. One agent mentioned they have a personal spreadsheet they use for 'edge cases' because 'the system can't handle them.' The official documentation says the process should take 2-3 days but everyone I talk to says it usually takes 2-3 weeks. What's going on?",
-      "expected_behavior": "Skill triggers. Contradictory interviews (A2 trigger #3) with additional confirmation signals: shadow spreadsheet (A2 trigger #4) and gap between documented SLA and actual behavior (A2 trigger #5 — official model doesn't match reality). The contradiction between manager's three-step description and agents' descriptions is a classic happy-path vs. reality gap. The 'edge case' spreadsheet is a diagnostic artifact. Apply Gemba Walk (observe an agent processing an actual refund from start to finish); Artifact Archaeology (examine the 'edge case' spreadsheet — what states or conditions does it track?); Unhappy Path Interviews with the agents specifically about the cases that take 2-3 weeks instead of 2-3 days.",
-      "should_trigger": true,
-      "rationale": "Matches A2 trigger #3 (contradictory interviews), #4 (shadow spreadsheets), and #5 (documented process doesn't match reality). Multiple simultaneous signals."
-    },
-    {
-      "id": "tke-decoy-01",
-      "type": "should_not_trigger",
-      "prompt": "We've completed the Gemba Walk and Unhappy Path Interviews for our accounts payable process. We've recovered all the tacit knowledge — we found three states the official documentation missed and two actors who weren't in the schema. We've updated the five-component description and the process workers confirmed it's accurate when we read it back to them. Now I need to design the actual table structures for this process. How do I do that?",
-      "expected_behavior": "Skill does NOT trigger. The tacit knowledge extraction is complete. The five-component description has been updated and validated. The next step is process-to-model-translation to apply the four mapping rules and convert the discovery output into entity, event records, state history table, and relationship changes. The B boundary section says: 'Once the process has been fully discovered (with tacit knowledge integrated), the question shifts to translation and design. Use process-to-model-translation for that phase.'",
-      "should_trigger": false,
-      "rationale": "B boundary explicit exclusion: 'The question is about the data model design, not the process.' Discovery is complete. This is now process-to-model-translation territory."
-    },
-    {
-      "id": "tke-decoy-02",
-      "type": "should_not_trigger",
-      "prompt": "I need to get approval to run a Gemba Walk with the operations team but their department head is blocking access. He says the operations team can't spend time on 'data projects.' The CEO supports what we're doing but hasn't weighed in on the access issue. How do I get past the department head?",
-      "expected_behavior": "Skill does NOT trigger. This is a power-interest-grid-stakeholders scenario. Access to the workers and their artifacts is blocked by organizational politics — this is the prerequisite condition that must be resolved before any of the three tacit knowledge extraction techniques can proceed. The B boundary says: 'If access is blocked, address the organizational prerequisite first using power-interest-grid-stakeholders.' The question is about stakeholder engagement strategy (CEO has power but hasn't acted; department head has power and is actively blocking), not about extraction technique selection.",
-      "should_trigger": false,
-      "rationale": "B boundary explicit exclusion: access is blocked. The decoy design spec says: 'A prompt about stakeholder management or getting buy-in should NOT trigger this — it triggers power-interest-grid-stakeholders.' CEO authority and blocked department access = classic HIPPO intervention setup."
-    },
-    {
-      "id": "tke-edge-01",
-      "type": "edge_case",
-      "prompt": "Our HR team says their onboarding process documentation is up to date — they refreshed it six months ago. But when we started designing the data model from it, an HR coordinator casually mentioned 'oh, but that document doesn't include the background check vendor step because they're a third party and it's complicated.' We haven't done a Gemba Walk yet. Should we just add the background check vendor as an actor and move on?",
-      "expected_behavior": "Edge case: documentation appears current (6 months old, under the 12-month warning threshold) but a single Gemba Walk-style observation already surfaced a missing actor ('background check vendor — a third party — it's complicated') that the documentation excluded. This is an early-stage tacit knowledge gap signal. The correct answer is: do not just add the actor and move on. The phrase 'it's complicated' combined with a third party not in the official documentation is exactly the kind of signal that warrants applying at least Artifact Archaeology (what tracking exists for the background check step? is there a shadow system?) and an Unhappy Path Interview (what happens when background check takes longer than expected? when it comes back with a flag?). The coordinator's aside is modeling evidence, not a minor note.",
-      "should_trigger": true,
-      "rationale": "Documentation appears current on the surface (6 months) but a single incidental observation has already revealed a missing actor. This tests whether the skill recognizes early-stage tacit knowledge gap signals before the full suite of warning signs (shadow spreadsheets, FINAL_V[n]) is visible. One 'it's complicated' from an actual worker is enough to warrant investigation."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy-01 tests the extraction-complete/translation-handoff boundary. Decoy-02 tests the access-blocked/stakeholder-management boundary (power-interest-grid-stakeholders territory). Edge case tests early-stage tacit knowledge signal detection before full FINAL_V[n] symptoms are visible."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "The data engineer who built our inventory management model left the company eight months ago. We inherited the schema but there's no documentation. When we try to interview the warehouse team they all describe the process differently — one person says orders get picked before they're verified, another says verification happens first, and there's an Excel file called WAREHOUSE_EXCEPTIONS_V12_FINAL.xlsx on the shared drive that seems to track something the official system doesn't. How do we figure out what's actually happening?",
+    "expected": "Skill triggers. Three tacit knowledge signals present simultaneously: SME departure (A2 trigger #2), contradictory interviews (A2 trigger #3), and shadow spreadsheet (A2 trigger #4). Apply all three techniques: Gemba Walk (sit with warehouse workers to observe actual picking/verification order in practice); Artifact Archaeology (examine WAREHOUSE_EXCEPTIONS_V12_FINAL.xlsx — what columns does it have? what states/entities does it track that the official schema doesn't?); Unhappy Path Interviews (what happens when an item is missing? when the verification system is down? when an exception requires a manager override?). Output feeds the five-component discovery framework.",
+    "notes": "rationale: Multiple A2 trigger signals: departed SME, contradictory interviews, shadow spreadsheet with FINAL_V[n] naming pattern. All three techniques are indicated.; source id: tke-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're trying to build a data model for our loan underwriting process. The official process documentation was last updated in 2022. Our data counts from the existing model are always lower than what the underwriting team reports in their manual tallies — sometimes by 20%. The underwriters say the official system 'doesn't capture everything.' What should we do before we start redesigning the schema?",
+    "expected": "Skill triggers. Two trigger signals: stale documentation (2022, 3+ years old, exceeds the 12-month warning threshold from ce11) and systematically low counts (the failure mode of modeling the documented process, not the real one). Apply Gemba Walk (sit with underwriters during actual case processing — what manual steps, external tools, or workarounds are they performing?); Artifact Archaeology (what files, spreadsheets, or shadow trackers maintain the 20% that's not in the official count?); Unhappy Path Interviews (what happens when required documentation is missing? when an applicant is borderline? when an underwriter disagrees with the credit score system?). Do not redesign the schema until the real process is surfaced.",
+    "notes": "rationale: Matches A2 trigger #1 (stale documentation \u003e 12 months) and #5 (official schema systematically undercounts). Language matches 'The data model numbers are always lower than what the business reports.'; source id: tke-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm interviewing stakeholders to understand our customer refund process for data modeling purposes. I've talked to five people and gotten five completely different descriptions of how it works. The customer service manager says it's a three-step process. The individual agents describe a totally different sequence. One agent mentioned they have a personal spreadsheet they use for 'edge cases' because 'the system can't handle them.' The official documentation says the process should take 2-3 days but everyone I talk to says it usually takes 2-3 weeks. What's going on?",
+    "expected": "Skill triggers. Contradictory interviews (A2 trigger #3) with additional confirmation signals: shadow spreadsheet (A2 trigger #4) and gap between documented SLA and actual behavior (A2 trigger #5 — official model doesn't match reality). The contradiction between manager's three-step description and agents' descriptions is a classic happy-path vs. reality gap. The 'edge case' spreadsheet is a diagnostic artifact. Apply Gemba Walk (observe an agent processing an actual refund from start to finish); Artifact Archaeology (examine the 'edge case' spreadsheet — what states or conditions does it track?); Unhappy Path Interviews with the agents specifically about the cases that take 2-3 weeks instead of 2-3 days.",
+    "notes": "rationale: Matches A2 trigger #3 (contradictory interviews), #4 (shadow spreadsheets), and #5 (documented process doesn't match reality). Multiple simultaneous signals.; source id: tke-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We've completed the Gemba Walk and Unhappy Path Interviews for our accounts payable process. We've recovered all the tacit knowledge — we found three states the official documentation missed and two actors who weren't in the schema. We've updated the five-component description and the process workers confirmed it's accurate when we read it back to them. Now I need to design the actual table structures for this process. How do I do that?",
+    "expected": "Skill does NOT trigger. The tacit knowledge extraction is complete. The five-component description has been updated and validated. The next step is process-to-model-translation to apply the four mapping rules and convert the discovery output into entity, event records, state history table, and relationship changes. The B boundary section says: 'Once the process has been fully discovered (with tacit knowledge integrated), the question shifts to translation and design. Use process-to-model-translation for that phase.'",
+    "notes": "rationale: B boundary explicit exclusion: 'The question is about the data model design, not the process.' Discovery is complete. This is now process-to-model-translation territory.; source id: tke-decoy-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I need to get approval to run a Gemba Walk with the operations team but their department head is blocking access. He says the operations team can't spend time on 'data projects.' The CEO supports what we're doing but hasn't weighed in on the access issue. How do I get past the department head?",
+    "expected": "Skill does NOT trigger. This is a power-interest-grid-stakeholders scenario. Access to the workers and their artifacts is blocked by organizational politics — this is the prerequisite condition that must be resolved before any of the three tacit knowledge extraction techniques can proceed. The B boundary says: 'If access is blocked, address the organizational prerequisite first using power-interest-grid-stakeholders.' The question is about stakeholder engagement strategy (CEO has power but hasn't acted; department head has power and is actively blocking), not about extraction technique selection.",
+    "notes": "rationale: B boundary explicit exclusion: access is blocked. The decoy design spec says: 'A prompt about stakeholder management or getting buy-in should NOT trigger this — it triggers power-interest-grid-stakeholders.' CEO authority and blocked department access = classic HIPPO intervention setup.; source id: tke-decoy-02"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "Our HR team says their onboarding process documentation is up to date — they refreshed it six months ago. But when we started designing the data model from it, an HR coordinator casually mentioned 'oh, but that document doesn't include the background check vendor step because they're a third party and it's complicated.' We haven't done a Gemba Walk yet. Should we just add the background check vendor as an actor and move on?",
+    "expected": "Edge case: documentation appears current (6 months old, under the 12-month warning threshold) but a single Gemba Walk-style observation already surfaced a missing actor ('background check vendor — a third party — it's complicated') that the documentation excluded. This is an early-stage tacit knowledge gap signal. The correct answer is: do not just add the actor and move on. The phrase 'it's complicated' combined with a third party not in the official documentation is exactly the kind of signal that warrants applying at least Artifact Archaeology (what tracking exists for the background check step? is there a shadow system?) and an Unhappy Path Interview (what happens when background check takes longer than expected? when it comes back with a flag?). The coordinator's aside is modeling evidence, not a minor note.",
+    "notes": "rationale: Documentation appears current on the surface (6 months) but a single incidental observation has already revealed a missing actor. This tests whether the skill recognizes early-stage tacit knowledge gap signals before the full suite of warning signs (shadow spreadsheets, FINAL_V[n]) is visible. One 'it's complicated' from an actual worker is enough to warrant investigation.; source id: tke-edge-01"
+  }
+]

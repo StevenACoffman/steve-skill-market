@@ -18,17 +18,7 @@ description: |
   (recoverability of post-deployment defects) and transient/long-lived
   (expected code lifetime). Test investment calibrates to both axes, not
   to a universal standard.
-
-  Do NOT invoke for questions that are purely about test mechanics (how to
-  write a table-driven test, how to mock a dependency) with no strategy
-  dimension. Do NOT invoke when the user is asking about a specific test
-  technique they have already decided to use; this skill applies upstream,
-  at the strategy decision point.
-
-source_book: '"Working Effectively with Legacy Code" by Michael Feathers + "Testing Patience" talks (GeekFest, YOW! 2016)'
-source_chapter: Testing Patience talks — tended/untended binary (f12, p18) + transience calibration (f16)
 tags: [testing-strategy, risk-analysis, deployment-model, transience, firmware, cloud]
-related_skills: [welc-three-goals-of-testing, welc-legacy-code-change-algorithm, welc-characterization-test, welc-sprout-wrap-decision]
 ---
 
 # Tended Vs. Untended Systems — Testing Strategy Calibration
@@ -444,3 +434,9 @@ profile), and the mechanisms chosen (which test types, at which layers).
 - Verified entry: `/Users/steve/Documents/agent-orange/books/welc/verified.md`, id: f12 (merged_from: [f12, p18, f16])
 - Pipeline stage: Phase 2 (RIA++)
 - Version: 0.1.0
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Working Effectively with Legacy Code" by Michael Feathers + "Testing Patience" talks (GeekFest, YOW! 2016) — Testing Patience talks — tended/untended binary (f12, p18) + transience calibration (f16)

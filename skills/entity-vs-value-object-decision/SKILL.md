@@ -1,9 +1,9 @@
 ---
-id: entity-vs-value-object-decision
-title: Entity vs Value Object Decision Framework
-description: Apply when classifying a new domain type during modeling or code review — specifically when a developer is uncertain whether a struct should have an identity field (UUID), pointer semantics, and mutable state (entity) or value-type semantics, unexported fields, and immutability (value object).
-source: Domain-Driven Design with Golang, Matthew Boyle, 2022
+name: entity-vs-value-object-decision
+description: |
+  Apply when classifying a new domain type during modeling or code review — specifically when a developer is uncertain whether a struct should have an identity field (UUID), pointer semantics, and mutable state (entity) or value-type semantics, unexported fields, and immutability (value object).
 ---
+# Entity vs Value Object Decision Framework
 
 ## R — Reading
 
@@ -52,6 +52,12 @@ Boyle does not discuss the complication introduced when a value object must be p
 
 ## Related Skills
 
-- **[ddd-fitness-scorecard](../ddd-fitness-scorecard/SKILL.md)** — prerequisite for: run the scorecard first to confirm DDD adoption is warranted before investing in tactical modeling decisions like entity vs value object.
-- **[go-value-object-immutability](../go-value-object-immutability/SKILL.md)** — prerequisite for: once this framework classifies a type as a value object, go-value-object-immutability provides the Go-specific implementation mechanics (unexported fields, value receivers, replacement semantics).
-- **[domain-service-interface-composition](../domain-service-interface-composition/SKILL.md)** — informs: the domain types produced by this classification (entity vs value object) become the method signatures in domain service interfaces.
+- **ddd-fitness-scorecard** — prerequisite for: run the scorecard first to confirm DDD adoption is warranted before investing in tactical modeling decisions like entity vs value object.
+- **go-value-object-immutability** — prerequisite for: once this framework classifies a type as a value object, go-value-object-immutability provides the Go-specific implementation mechanics (unexported fields, value receivers, replacement semantics).
+- **domain-service-interface-composition** — informs: the domain types produced by this classification (entity vs value object) become the method signatures in domain service interfaces.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Domain-Driven Design with Golang, Matthew Boyle, 2022

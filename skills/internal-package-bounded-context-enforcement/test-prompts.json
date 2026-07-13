@@ -1,48 +1,51 @@
-{
-  "skill_id": "internal-package-bounded-context-enforcement",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "I'm building a monorepo with three bounded contexts: Orders, Inventory, Payments. How do I prevent the Orders code from importing Inventory domain types at compile time?",
-      "expected_behavior": "Apply the internal/ pattern: place each service at `services/<context>/` as its own Go module with domain code under `services/<context>/internal/domain/`. The Go toolchain rejects any import of `services/inventory/internal/...` from `services/orders/` at compile time. Emphasise that each service needs its own go.mod for cross-module enforcement to work."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "Where should I put my domain entities and value objects in a Go microservice project structure?",
-      "expected_behavior": "Place them under `internal/domain/` (or `internal/<context-name>/`). This makes domain types private to the service module, prevents accidental public API exposure, and signals that domain code is not a reusable library. Describe the full structure: `internal/domain/`, `internal/infrastructure/`, `internal/transport/` as the standard layout."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "A code review shows `import \"mycompany/orders/internal/domain\"` in the shipping service. Is this a problem?",
-      "expected_behavior": "Yes — this import violates the internal/ boundary if orders and shipping are separate modules. The Go toolchain should have caught this as a compile error. Investigate: if they are in the same module, the boundary is not enforced (needs separate modules or a lint rule). If separate modules, the developer somehow bypassed the check. In either case, the coupling is wrong: cross-context communication must go through published interfaces (HTTP, gRPC, events), not direct domain type imports."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_not_invoke",
-      "prompt": "How do I set up a GitHub Actions CI pipeline for a Go project?",
-      "expected_behavior": "No invocation of the internal/ bounded context enforcement pattern. This is a CI/CD configuration question unrelated to Go package structure or DDD boundaries."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "What is the difference between a Go module and a Go package?",
-      "expected_behavior": "No invocation of the bounded context enforcement skill specifically. This is a fundamental Go language concepts question; answer with the module/package distinction (module = go.mod unit, package = directory of .go files) without narrowing to the DDD application unless the user follows up."
-    },
-    {
-      "id": "tp-06",
-      "category": "blurred_boundary",
-      "prompt": "All three of my bounded contexts are in the same Go module (one go.mod at the repo root). Does internal/ still enforce the boundaries between them?",
-      "expected_behavior": "Clarify the limitation: within a single Go module, any package can import any `internal/` package belonging to the same module. `internal/` prevents external module imports but not intra-module cross-context imports. To get true compile-time enforcement in a monorepo, each bounded context needs its own go.mod (separate modules). Alternatively, use a lint rule (`depguard` or `gomodguard`) to enforce the boundary at the tool level. This is a significant caveat in Boyle's claim."
-    },
-    {
-      "id": "tp-07",
-      "category": "blurred_boundary",
-      "prompt": "My services don't share Go type imports but they share the same PostgreSQL database and some tables. Are my bounded contexts properly isolated?",
-      "expected_behavior": "Flag that internal/ enforces import-time code coupling, not runtime data coupling. Sharing a database schema is a different and often more serious form of coupling: schema changes in one context can break another at runtime regardless of Go package boundaries. Proper bounded context isolation requires each context to own its own data store or its own schema/namespace within a shared store. The internal/ pattern is necessary but not sufficient for bounded context isolation."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm building a monorepo with three bounded contexts: Orders, Inventory, Payments. How do I prevent the Orders code from importing Inventory domain types at compile time?",
+    "expected": "Apply the internal/ pattern: place each service at `services/\u003ccontext\u003e/` as its own Go module with domain code under `services/\u003ccontext\u003e/internal/domain/`. The Go toolchain rejects any import of `services/inventory/internal/...` from `services/orders/` at compile time. Emphasise that each service needs its own go.mod for cross-module enforcement to work.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Where should I put my domain entities and value objects in a Go microservice project structure?",
+    "expected": "Place them under `internal/domain/` (or `internal/\u003ccontext-name\u003e/`). This makes domain types private to the service module, prevents accidental public API exposure, and signals that domain code is not a reusable library. Describe the full structure: `internal/domain/`, `internal/infrastructure/`, `internal/transport/` as the standard layout.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "A code review shows `import \"mycompany/orders/internal/domain\"` in the shipping service. Is this a problem?",
+    "expected": "Yes — this import violates the internal/ boundary if orders and shipping are separate modules. The Go toolchain should have caught this as a compile error. Investigate: if they are in the same module, the boundary is not enforced (needs separate modules or a lint rule). If separate modules, the developer somehow bypassed the check. In either case, the coupling is wrong: cross-context communication must go through published interfaces (HTTP, gRPC, events), not direct domain type imports.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up a GitHub Actions CI pipeline for a Go project?",
+    "expected": "No invocation of the internal/ bounded context enforcement pattern. This is a CI/CD configuration question unrelated to Go package structure or DDD boundaries.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between a Go module and a Go package?",
+    "expected": "No invocation of the bounded context enforcement skill specifically. This is a fundamental Go language concepts question; answer with the module/package distinction (module = go.mod unit, package = directory of .go files) without narrowing to the DDD application unless the user follows up.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "All three of my bounded contexts are in the same Go module (one go.mod at the repo root). Does internal/ still enforce the boundaries between them?",
+    "expected": "Clarify the limitation: within a single Go module, any package can import any `internal/` package belonging to the same module. `internal/` prevents external module imports but not intra-module cross-context imports. To get true compile-time enforcement in a monorepo, each bounded context needs its own go.mod (separate modules). Alternatively, use a lint rule (`depguard` or `gomodguard`) to enforce the boundary at the tool level. This is a significant caveat in Boyle's claim.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "My services don't share Go type imports but they share the same PostgreSQL database and some tables. Are my bounded contexts properly isolated?",
+    "expected": "Flag that internal/ enforces import-time code coupling, not runtime data coupling. Sharing a database schema is a different and often more serious form of coupling: schema changes in one context can break another at runtime regardless of Go package boundaries. Proper bounded context isolation requires each context to own its own data store or its own schema/namespace within a shared store. The internal/ pattern is necessary but not sufficient for bounded context isolation.",
+    "notes": "source id: tp-07"
+  }
+]

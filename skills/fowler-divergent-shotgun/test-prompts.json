@@ -1,90 +1,86 @@
-{
-  "skill": "fowler-divergent-shotgun",
-  "description": "Invoke when a developer is diagnosing why a module is painful to change for multiple unrelated reasons (Divergent Change), or why a single logical change requires edits scattered across many classes (Shotgun Surgery). These are inverse modularity failures with opposite treatments.",
-  "test_prompts": [
-    {
-      "id": "fowler-divergent-shotgun-should-01",
-      "category": "should_invoke",
-      "prompt": "My OrderService class needs to change whenever we change the database schema, AND whenever we add a new product type. My PaymentService needs to change in three different classes whenever we change the payment flow. Are these the same problem?",
-      "expected": "invoke",
-      "rationale": "This is the canonical V2 novel question from Phase 1.5. OrderService has Divergent Change (one module, two change axes: schema and product type). PaymentService has Shotgun Surgery (one concept, three modules). The skill directly answers 'no, they are inverse problems' and gives the opposite treatments for each."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-02",
-      "category": "should_invoke",
-      "prompt": "In our last sprint, to add a new payment method we had to edit PaymentProcessor, PaymentLogger, PaymentNotifier, PaymentAudit, and PaymentConfig. It took much longer than estimated because we kept finding more files that needed updating. What's going on structurally?",
-      "expected": "invoke",
-      "rationale": "Classic Shotgun Surgery: one logical change (new payment method) scattered across five classes. The change surface is invisible until mid-change, causing consistent underestimation. The skill identifies this as Shotgun Surgery and prescribes Move Function/Move Field to consolidate toward one module."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-03",
-      "category": "should_invoke",
-      "prompt": "I'm reviewing a PR and the `UserAccountService` class was modified for two completely different reasons: one commit changed it because the authentication provider changed to OAuth, and another changed it because the billing plan model was updated. Should I flag this?",
-      "expected": "invoke",
-      "rationale": "Divergent Change caught during code review. The module has two unrelated change axes: authentication infrastructure and billing domain logic. The skill explains this is Divergent Change and recommends splitting the module by axis."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-04",
-      "category": "should_invoke",
-      "prompt": "A new developer on my team asked 'where does the discount calculation actually live?' and the honest answer is 'it's in four places: the cart service, the checkout service, the invoice service, and a shared utility class, and they all have slightly different logic.' How do I fix this?",
-      "expected": "invoke",
-      "rationale": "Shotgun Surgery symptom: a concept is scattered and its location is unknown. The four-class answer with diverging logic is the canonical form of Shotgun Surgery. The skill prescribes consolidation using Move Function, Combine Functions into Class, or Inline Class as an intermediate step."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-05",
-      "category": "should_invoke",
-      "prompt": "We're deciding whether to split our `ReportingService` into two services. It seems to change both when our data warehouse schema changes (every few months) and when the business adds new report types (every few weeks). The change frequencies are different. Is this a signal we should split?",
-      "expected": "invoke",
-      "rationale": "Divergent Change analysis applied at service boundary. The service has two axes of change (data warehouse infrastructure vs. report domain logic) with different frequencies. The skill's Divergent Change treatment applies at service granularity, with the caveat that service splits are more expensive than class splits."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-06",
-      "category": "should_invoke",
-      "prompt": "I forgot to update the `NotificationTemplateRegistry` again when I added a new notification type. My team has a checklist item: 'Did you remember to update the Registry?' That checklist item has been there for 18 months. Is there a structural fix?",
-      "expected": "invoke",
-      "rationale": "A long-lived checklist reminder for a scattered change is a reliable Shotgun Surgery signal. The 'Did you remember to update X?' checklist item exists precisely because the concept is not co-located with the trigger. The skill prescribes consolidation to eliminate the need for the reminder."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "My `processOrder` function is 200 lines long. It has too many comments and deeply nested conditionals. How should I break it up?",
-      "expected": "skip",
-      "rationale": "This is the Long Function smell — the concern is size and readability, not change-axis diagnosis. Divergent Change and Shotgun Surgery are about the pattern of changes over time, not line count. The appropriate response is Extract Function to decompose the long function, not a Divergent Change/Shotgun Surgery analysis."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "I started refactoring the checkout flow and then I noticed the code was a mess so I started adding a new feature at the same time. Now my tests are failing and I'm not sure if it's from my refactoring or the new feature. What do I do?",
-      "expected": "skip",
-      "rationale": "This is the Two Hats problem — the developer has mixed refactoring and functionality work in the same session and lost the ability to locate errors. The structural diagnosis (Divergent Change vs Shotgun Surgery) is not the issue here; the session discipline is. The fowler-two-hats skill is the correct response."
-    },
-    {
-      "id": "fowler-divergent-shotgun-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're doing a code smell review of our whole codebase. Can you walk me through the full catalog of code smells from Fowler's Refactoring book so we can check each one?",
-      "expected": "skip",
-      "rationale": "This requests the full catalog of 22+ smells — a broad survey task. The fowler-code-smells skill covers the complete vocabulary. This skill is a deep-dive into one specific pair; invoking it for a full-catalog review would give an incomplete and misleadingly narrow response."
-    },
-    {
-      "id": "fowler-divergent-shotgun-boundary-01",
-      "category": "boundary",
-      "prompt": "My service is changing both because of business logic changes and infrastructure changes. Every major release includes both new features and database migration work. Is this Divergent Change or is this just normal full-stack development?",
-      "expected": "invoke",
-      "rationale": "This is the Phase 1.5 specified edge case: it could be Divergent Change or it could be an intentionally layered architecture. The skill should invoke because the pattern (one service, two change axes) matches Divergent Change — but the answer includes the boundary condition: if the service is an orchestrator layer and both axes always move together in the same release, it may be intentional layering rather than a smell. The classification depends on whether the two axes are independently varying."
-    },
-    {
-      "id": "fowler-divergent-shotgun-boundary-02",
-      "category": "boundary",
-      "prompt": "Our `HttpHandler` class changes whenever we add a new API endpoint AND whenever we change how request validation works. It also changes when we update the response serialization format. Should I split this into three classes?",
-      "expected": "invoke",
-      "rationale": "Three distinct change axes (new endpoints, validation logic, serialization format) in one class is textbook Divergent Change. However, the boundary question is whether the handler is an intentional orchestrator. The skill should invoke and walk through the 'are these genuinely independent axes?' test: if validation and serialization always change together when endpoints change, they may not be truly independent axes."
-    },
-    {
-      "id": "fowler-divergent-shotgun-boundary-03",
-      "category": "boundary",
-      "prompt": "We have a `Strategy` pattern where adding a new payment strategy requires updating the `PaymentStrategyFactory`, the `PaymentStrategyRegistry`, and the strategy interface. Is this Shotgun Surgery?",
-      "expected": "invoke",
-      "rationale": "This is an intentional design pattern that superficially resembles Shotgun Surgery (one change, multiple files). The skill should invoke because the user is explicitly asking whether this is the smell — the answer is 'this looks like Shotgun Surgery but is probably intentional Strategy pattern scattering.' The boundary condition in the B section directly addresses this: the smell applies to accidental scattering, not intentional pattern structure. The skill provides the diagnostic to distinguish the two."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My OrderService class needs to change whenever we change the database schema, AND whenever we add a new product type. My PaymentService needs to change in three different classes whenever we change the payment flow. Are these the same problem?",
+    "expected": "invoke",
+    "notes": "rationale: This is the canonical V2 novel question from Phase 1.5. OrderService has Divergent Change (one module, two change axes: schema and product type). PaymentService has Shotgun Surgery (one concept, three modules). The skill directly answers 'no, they are inverse problems' and gives the opposite treatments for each.; source id: fowler-divergent-shotgun-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "In our last sprint, to add a new payment method we had to edit PaymentProcessor, PaymentLogger, PaymentNotifier, PaymentAudit, and PaymentConfig. It took much longer than estimated because we kept finding more files that needed updating. What's going on structurally?",
+    "expected": "invoke",
+    "notes": "rationale: Classic Shotgun Surgery: one logical change (new payment method) scattered across five classes. The change surface is invisible until mid-change, causing consistent underestimation. The skill identifies this as Shotgun Surgery and prescribes Move Function/Move Field to consolidate toward one module.; source id: fowler-divergent-shotgun-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm reviewing a PR and the `UserAccountService` class was modified for two completely different reasons: one commit changed it because the authentication provider changed to OAuth, and another changed it because the billing plan model was updated. Should I flag this?",
+    "expected": "invoke",
+    "notes": "rationale: Divergent Change caught during code review. The module has two unrelated change axes: authentication infrastructure and billing domain logic. The skill explains this is Divergent Change and recommends splitting the module by axis.; source id: fowler-divergent-shotgun-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "A new developer on my team asked 'where does the discount calculation actually live?' and the honest answer is 'it's in four places: the cart service, the checkout service, the invoice service, and a shared utility class, and they all have slightly different logic.' How do I fix this?",
+    "expected": "invoke",
+    "notes": "rationale: Shotgun Surgery symptom: a concept is scattered and its location is unknown. The four-class answer with diverging logic is the canonical form of Shotgun Surgery. The skill prescribes consolidation using Move Function, Combine Functions into Class, or Inline Class as an intermediate step.; source id: fowler-divergent-shotgun-should-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We're deciding whether to split our `ReportingService` into two services. It seems to change both when our data warehouse schema changes (every few months) and when the business adds new report types (every few weeks). The change frequencies are different. Is this a signal we should split?",
+    "expected": "invoke",
+    "notes": "rationale: Divergent Change analysis applied at service boundary. The service has two axes of change (data warehouse infrastructure vs. report domain logic) with different frequencies. The skill's Divergent Change treatment applies at service granularity, with the caveat that service splits are more expensive than class splits.; source id: fowler-divergent-shotgun-should-05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "I forgot to update the `NotificationTemplateRegistry` again when I added a new notification type. My team has a checklist item: 'Did you remember to update the Registry?' That checklist item has been there for 18 months. Is there a structural fix?",
+    "expected": "invoke",
+    "notes": "rationale: A long-lived checklist reminder for a scattered change is a reliable Shotgun Surgery signal. The 'Did you remember to update X?' checklist item exists precisely because the concept is not co-located with the trigger. The skill prescribes consolidation to eliminate the need for the reminder.; source id: fowler-divergent-shotgun-should-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "My `processOrder` function is 200 lines long. It has too many comments and deeply nested conditionals. How should I break it up?",
+    "expected": "skip",
+    "notes": "rationale: This is the Long Function smell — the concern is size and readability, not change-axis diagnosis. Divergent Change and Shotgun Surgery are about the pattern of changes over time, not line count. The appropriate response is Extract Function to decompose the long function, not a Divergent Change/Shotgun Surgery analysis.; source id: fowler-divergent-shotgun-should-not-01"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I started refactoring the checkout flow and then I noticed the code was a mess so I started adding a new feature at the same time. Now my tests are failing and I'm not sure if it's from my refactoring or the new feature. What do I do?",
+    "expected": "skip",
+    "notes": "rationale: This is the Two Hats problem — the developer has mixed refactoring and functionality work in the same session and lost the ability to locate errors. The structural diagnosis (Divergent Change vs Shotgun Surgery) is not the issue here; the session discipline is. The fowler-two-hats skill is the correct response.; source id: fowler-divergent-shotgun-should-not-02"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "We're doing a code smell review of our whole codebase. Can you walk me through the full catalog of code smells from Fowler's Refactoring book so we can check each one?",
+    "expected": "skip",
+    "notes": "rationale: This requests the full catalog of 22+ smells — a broad survey task. The fowler-code-smells skill covers the complete vocabulary. This skill is a deep-dive into one specific pair; invoking it for a full-catalog review would give an incomplete and misleadingly narrow response.; source id: fowler-divergent-shotgun-should-not-03"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "My service is changing both because of business logic changes and infrastructure changes. Every major release includes both new features and database migration work. Is this Divergent Change or is this just normal full-stack development?",
+    "expected": "invoke",
+    "notes": "rationale: This is the Phase 1.5 specified edge case: it could be Divergent Change or it could be an intentionally layered architecture. The skill should invoke because the pattern (one service, two change axes) matches Divergent Change — but the answer includes the boundary condition: if the service is an orchestrator layer and both axes always move together in the same release, it may be intentional layering rather than a smell. The classification depends on whether the two axes are independently varying.; source id: fowler-divergent-shotgun-boundary-01"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "Our `HttpHandler` class changes whenever we add a new API endpoint AND whenever we change how request validation works. It also changes when we update the response serialization format. Should I split this into three classes?",
+    "expected": "invoke",
+    "notes": "rationale: Three distinct change axes (new endpoints, validation logic, serialization format) in one class is textbook Divergent Change. However, the boundary question is whether the handler is an intentional orchestrator. The skill should invoke and walk through the 'are these genuinely independent axes?' test: if validation and serialization always change together when endpoints change, they may not be truly independent axes.; source id: fowler-divergent-shotgun-boundary-02"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "We have a `Strategy` pattern where adding a new payment strategy requires updating the `PaymentStrategyFactory`, the `PaymentStrategyRegistry`, and the strategy interface. Is this Shotgun Surgery?",
+    "expected": "invoke",
+    "notes": "rationale: This is an intentional design pattern that superficially resembles Shotgun Surgery (one change, multiple files). The skill should invoke because the user is explicitly asking whether this is the smell — the answer is 'this looks like Shotgun Surgery but is probably intentional Strategy pattern scattering.' The boundary condition in the B section directly addresses this: the smell applies to accidental scattering, not intentional pattern structure. The skill provides the diagnostic to distinguish the two.; source id: fowler-divergent-shotgun-boundary-03"
+  }
+]

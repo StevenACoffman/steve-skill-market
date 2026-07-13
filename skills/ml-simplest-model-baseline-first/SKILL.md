@@ -1,9 +1,8 @@
 ---
-id: ml-simplest-model-baseline-first
-title: ML Simplest Model Baseline First — Justify Complexity with Measured Metric Improvement
+name: ml-simplest-model-baseline-first
 description: Trigger when considering adding model complexity (more features, nonlinear terms, ensemble layers); require a measured improvement in the pre-defined metric to justify each addition.
-source: [Machine Learning with Go, Daniel Whitenack, Packt, 2017]
 ---
+# ML Simplest Model Baseline First — Justify Complexity with Measured Metric Improvement
 
 ## R — Reading
 
@@ -52,4 +51,10 @@ Chapters 3 and 4 of the book trace three successive regression models on the adv
 ## Related Skills
 
 - **ml-pipeline-integrity-pre-training** — depends on: the pre-defined metric and acceptance threshold from this skill are the only valid gate for accepting or rejecting a complexity step-up.
-- **[ml-data-pipeline-type-integrity](../ml-data-pipeline-type-integrity/SKILL.md)** — combines: baseline model metrics are only trustworthy if the data feeding them is type-enforced and versioned; run both together at project start.
+- **ml-data-pipeline-type-integrity** — combines: baseline model metrics are only trustworthy if the data feeding them is type-enforced and versioned; run both together at project start.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [Machine Learning with Go, Daniel Whitenack, Packt, 2017]

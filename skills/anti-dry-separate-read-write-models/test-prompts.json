@@ -1,59 +1,65 @@
-{
-  "skill_id": "anti-dry-separate-read-write-models",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "type": "should_invoke",
-      "prompt": "I have a Go struct with both `json:` and `firestore:` tags used as both the API response and the database model. A new internal field is needed for auditing — it must be in the DB but must not appear in API responses. What's the right approach?",
-      "rationale": "Directly describes the Susan/LastIP scenario — shared struct, new field needed in one concern but not the other."
-    },
-    {
-      "id": "tp-02",
-      "type": "should_invoke",
-      "prompt": "My OpenAPI spec and database schema are always in sync because they share the same struct. But every API change requires a DB migration. Is this a problem?",
-      "rationale": "Describes the coupling symptom: API change requires DB migration because concerns are shared through one struct."
-    },
-    {
-      "id": "tp-03",
-      "type": "should_invoke",
-      "prompt": "A code reviewer says my Order struct violates the DRY principle because the API model, DB model, and domain entity all have the same fields. Should I merge them?",
-      "rationale": "Wrong application of DRY to data structures — the skill's core counterintuitive argument."
-    },
-    {
-      "id": "tp-04",
-      "type": "should_invoke",
-      "prompt": "My CQRS query handler returns the same domain entity struct that the command handler writes. The query loads 20 fields but the read model only needs 4. Should I create a separate read model struct?",
-      "rationale": "CQRS read model — the anti-DRY principle applied to separate write model (domain entity) from read model (query projection)."
-    },
-    {
-      "id": "tp-05",
-      "type": "should_not_invoke",
-      "prompt": "How do I avoid duplicating validation logic across multiple command handlers in Go?",
-      "rationale": "Asks about behavior duplication (validation logic) — DRY applies here and the answer is to extract to a shared function, not to use separate structs."
-    },
-    {
-      "id": "tp-06",
-      "type": "should_not_invoke",
-      "prompt": "How do I generate Go structs from my OpenAPI spec?",
-      "rationale": "Tooling question about code generation — not about struct separation or data model coupling."
-    },
-    {
-      "id": "tp-07",
-      "type": "blurred_boundary",
-      "prompt": "Is it OK to use the same struct for both the gRPC protobuf response and the domain entity, since protobuf generates the struct anyway?",
-      "rationale": "Protobuf-generated structs-as-domain-entities is the same concern separation problem — domain should not be shaped by transport protocol — but the generated-code context makes it less obvious."
-    },
-    {
-      "id": "tp-08",
-      "type": "blurred_boundary",
-      "prompt": "We have a User struct that's used in 15 places. Every time we add a field we have to update all 15 usages. Should we split it or find a better way to share it?",
-      "rationale": "Struct shared across many usages — the right question is whether those 15 usages change for the same reasons (if so, sharing is fine; if not, split). The anti-DRY principle's decision rule applies."
-    },
-    {
-      "id": "tp-09",
-      "type": "blurred_boundary",
-      "prompt": "I'm writing explicit mapping functions between my domain entity and my DB model. A senior engineer says this is unnecessary boilerplate. How do I justify it?",
-      "rationale": "The pushback developers get when implementing separate models — needs the 'independent axes of change' argument from the anti-DRY principle."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I have a Go struct with both `json:` and `firestore:` tags used as both the API response and the database model. A new internal field is needed for auditing — it must be in the DB but must not appear in API responses. What's the right approach?",
+    "expected": "Skill activates and identifies this as the Susan/LastIP anti-DRY scenario: the struct serves two independent concerns. It prescribes splitting into a separate firestore DB model (in adapters/, holding the new audit field) and an explicitly constructed API response struct, wired with a mapping function, rather than niling the field out in the handler.",
+    "notes": "rationale: Directly describes the Susan/LastIP scenario — shared struct, new field needed in one concern but not the other.; source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My OpenAPI spec and database schema are always in sync because they share the same struct. But every API change requires a DB migration. Is this a problem?",
+    "expected": "Skill activates and names this as data-structure coupling: forced sync is the symptom, not a benefit. It explains the API contract and DB schema are independent axes of change and prescribes separate structs with explicit conversion functions so an API change no longer forces a DB migration.",
+    "notes": "rationale: Describes the coupling symptom: API change requires DB migration because concerns are shared through one struct.; source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "A code reviewer says my Order struct violates the DRY principle because the API model, DB model, and domain entity all have the same fields. Should I merge them?",
+    "expected": "Skill activates and gives the counterintuitive anti-DRY answer: do not merge. DRY applies to behavior, not data shapes; three structs with identical fields today are three concerns that will diverge. Keep them separate because they change for independent reasons (HTTP contract, schema, business rule).",
+    "notes": "rationale: Wrong application of DRY to data structures — the skill's core counterintuitive argument.; source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My CQRS query handler returns the same domain entity struct that the command handler writes. The query loads 20 fields but the read model only needs 4. Should I create a separate read model struct?",
+    "expected": "Skill activates and says yes: apply anti-DRY to separate the write model (domain entity) from the read model (query projection). Create a dedicated 4-field read struct for the query handler so the projection is not shaped by the write entity and the query stops loading unnecessary fields.",
+    "notes": "rationale: CQRS read model — the anti-DRY principle applied to separate write model (domain entity) from read model (query projection).; source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I avoid duplicating validation logic across multiple command handlers in Go?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Asks about behavior duplication (validation logic) — DRY applies here and the answer is to extract to a shared function, not to use separate structs.; source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I generate Go structs from my OpenAPI spec?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Tooling question about code generation — not about struct separation or data model coupling.; source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "Is it OK to use the same struct for both the gRPC protobuf response and the domain entity, since protobuf generates the struct anyway?",
+    "expected": "Skill activates and surfaces that generated code does not change the concern-separation problem: the domain entity must not be shaped by the transport protocol. The defensible outcome is a separate domain struct with mapping to/from the protobuf type, since a protobuf schema change and a business-rule change are independent axes; the generated-struct convenience is not a reason to couple them.",
+    "notes": "rationale: Protobuf-generated structs-as-domain-entities is the same concern separation problem — domain should not be shaped by transport protocol — but the generated-code context makes it less obvious.; source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have a User struct that's used in 15 places. Every time we add a field we have to update all 15 usages. Should we split it or find a better way to share it?",
+    "expected": "Skill activates and applies the decision rule: ask whether those 15 usages change for the same reasons. If they represent distinct concerns (API/DB/domain) that change on independent axes, split them per concern with mapping functions; if they genuinely evolve together, a shared struct is fine. The reasoning it surfaces is that the answer turns on independent-axes-of-change, not on the raw count of usages.",
+    "notes": "rationale: Struct shared across many usages — the right question is whether those 15 usages change for the same reasons (if so, sharing is fine; if not, split). The anti-DRY principle's decision rule applies.; source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm writing explicit mapping functions between my domain entity and my DB model. A senior engineer says this is unnecessary boilerplate. How do I justify it?",
+    "expected": "Skill activates and supplies the independent-axes-of-change justification: the mapping is not boilerplate but the decoupling that lets the DB schema change without touching domain rules (and vice versa). The defensible outcome is keeping the explicit conversion functions, acknowledging the real cost in extra types/files as the deliberate price of removing coupling.",
+    "notes": "rationale: The pushback developers get when implementing separate models — needs the 'independent axes of change' argument from the anti-DRY principle.; source id: tp-09"
+  }
+]

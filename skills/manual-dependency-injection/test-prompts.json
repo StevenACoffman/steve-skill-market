@@ -1,86 +1,79 @@
-{
-  "skill": "manual-dependency-injection",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Should I use Google Wire or Uber Fx for dependency injection in my Go service? I've heard both recommended and I'm not sure which to choose.",
-      "expected_behavior": "Challenge the premise. Explain that both Wire (codegen) and Fx (reflection) add a layer between the developer and the dependency graph that the Go compiler already enforces. A manual main() calling constructors in dependency order IS the DI container — and it's compiler-checked. Show a simple explicit wiring example and compare with the framework equivalent.",
-      "notes": "Should I use wire/FX — explicit trigger signal from SKILL.md."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I removed a provider from my dig container and the code still compiled fine, but the service panicked at startup with a long confusing error about missing types. Is this a dig issue?",
-      "expected_behavior": "Explain exactly what happened: dig resolves its graph at runtime via reflection. Removing a Provide() call is invisible at compile time. The error manifests only when Invoke() runs — after deploy. With manual wiring, removing a constructor call produces a compile error at the call site ('not enough arguments in call to NewService'). Recommend migrating to explicit wiring.",
-      "notes": "dig missing provider — exactly Case 1 from SKILL.md (ce03, ce12). The compile-time vs runtime error surface is the core argument."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "My dependency graph is getting complex — about 15 dependencies in main(). Is that a sign I need a DI framework?",
-      "expected_behavior": "No — 15 dependencies in main() is manageable and preferable. Explain the alternative to frameworks: extract buildInfra(cfg) and buildService(cfg) helper functions that group related constructors. Each helper is a plain Go function, readable without a framework manual. The compiler still validates the complete graph. 20 dependencies on one constructor is the signal to split the helper, not to add a framework.",
-      "notes": "Complex dependency graph question — explicit trigger. The 'should I split into helpers' answer is in SKILL.md step 5."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're using global variables for our database connection and config object. Tests are becoming unreliable because global state from one test bleeds into another. How do I fix this?",
-      "expected_behavior": "Refactor from global variables to constructor injection. Pass db and cfg as parameters to constructors. Wire explicitly in main(). Tests pass FakeDB and test config directly to constructors — no global state, no test bleed. This is the core DI concept: pass values into constructors instead of creating or accessing them inside.",
-      "notes": "Global variable to DI refactoring — core use case for the skill."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "The LLM keeps generating tests that use gomock and mockery. The test setup code is longer than the actual test. Is this a known problem?",
-      "expected_behavior": "Yes — LLMs default to mock libraries because they're overrepresented in training data. Explain that generated mocks (mockery, gomock) are the testing equivalent of DI frameworks: both hide the dependency graph behind codegen or reflection. Replace with handwritten fakes passed directly to constructors. The test body shrinks to constructor call + assertion.",
-      "notes": "LLM-generated test bloat with mocking libraries — ce11 in SKILL.md. The skill covers both DI frameworks AND mocking libraries as the same anti-pattern."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I install the `pgx` Postgres driver in my Go project? What do I add to go.mod?",
-      "expected_behavior": "Explain go get github.com/jackc/pgx/v5 and how it updates go.mod. This is a package installation and module management question — nothing to do with dependency injection architecture.",
-      "notes": "How to install a package — module management, explicitly excluded from the skill."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I manage go.mod when I have multiple modules in the same repository? I'm getting confused about replace directives.",
-      "expected_behavior": "Explain go.mod replace directives for monorepo multi-module setups, workspace mode (go work), and when to use each. This is module management, not dependency injection.",
-      "notes": "go.mod / module management — explicitly excluded from the skill."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "I have a function that accepts both a Logger and a DB interface. The interfaces are defined in the same package as the function. Should I move them somewhere else?",
-      "expected_behavior": "This is an interface placement question — activate consumer-side-interface-segregation. The interfaces should be defined in the consumer package (the one that uses them), not the producer package. The manual-DI skill handles the wiring mechanism; this skill handles where interfaces live.",
-      "notes": "Interface placement question — consumer-side-interface-segregation handles this. SKILL.md explicitly distinguishes: 'interface design questions (consumer-side-interface-segregation handles that)'."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "I have 20 dependencies being passed into main() — database, redis, kafka producer, feature flags, Stripe client, config, logger, and more. Is this too many? Should I use a DI container?",
-      "expected_behavior": "Validates the concern but counters the framework conclusion. 20 dependencies in main() is fine — extract buildInfra(cfg) and buildAppServices(cfg, infra) helper functions. Each is a plain function readable in 30 seconds. No framework needed. The skill explicitly validates this pattern as correct and scalable.",
-      "notes": "'I have 20 dependencies in main, is that too many?' — the prompt from the task description. Answer is: validate the pattern, show helper function extraction as the right solution."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "Should I use a service locator pattern to manage dependencies in my Go application? I want a central registry that components can pull dependencies from.",
-      "expected_behavior": "Explain why service locator is the wrong approach: it hides dependencies (pulled, not pushed), makes the dependency graph invisible to the compiler, and produces runtime-only errors. Contrast with constructor injection (explicit, compiler-verified) and explain manual DI as the Go-idiomatic alternative.",
-      "notes": "'Should I use a service locator?' — SKILL.md explicitly covers this in 'Easily Confused With' as the anti-pattern opposite of injection."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "We're at Uber-scale, 200+ services. Doesn't a DI framework like Fx make sense at that scale to enforce consistency across teams?",
-      "expected_behavior": "Acknowledge the legitimate tradeoff — SKILL.md explicitly covers this in the Blind Spots section. At Uber scale, framework-enforced consistency may outweigh local readability benefits. However, explain what you give up (compile-time verification, LSP navigation) and suggest that even at that scale, manual wiring for smaller services is worth considering.",
-      "notes": "The Uber-scale counterargument — SKILL.md acknowledges this as a genuine exception. The skill should not simply dismiss it but explain the tradeoff honestly."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Should I use Google Wire or Uber Fx for dependency injection in my Go service? I've heard both recommended and I'm not sure which to choose.",
+    "expected": "Challenge the premise. Explain that both Wire (codegen) and Fx (reflection) add a layer between the developer and the dependency graph that the Go compiler already enforces. A manual main() calling constructors in dependency order IS the DI container — and it's compiler-checked. Show a simple explicit wiring example and compare with the framework equivalent.",
+    "notes": "Should I use wire/FX — explicit trigger signal from SKILL.md.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I removed a provider from my dig container and the code still compiled fine, but the service panicked at startup with a long confusing error about missing types. Is this a dig issue?",
+    "expected": "Explain exactly what happened: dig resolves its graph at runtime via reflection. Removing a Provide() call is invisible at compile time. The error manifests only when Invoke() runs — after deploy. With manual wiring, removing a constructor call produces a compile error at the call site ('not enough arguments in call to NewService'). Recommend migrating to explicit wiring.",
+    "notes": "dig missing provider — exactly Case 1 from SKILL.md (ce03, ce12). The compile-time vs runtime error surface is the core argument.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My dependency graph is getting complex — about 15 dependencies in main(). Is that a sign I need a DI framework?",
+    "expected": "No — 15 dependencies in main() is manageable and preferable. Explain the alternative to frameworks: extract buildInfra(cfg) and buildService(cfg) helper functions that group related constructors. Each helper is a plain Go function, readable without a framework manual. The compiler still validates the complete graph. 20 dependencies on one constructor is the signal to split the helper, not to add a framework.",
+    "notes": "Complex dependency graph question — explicit trigger. The 'should I split into helpers' answer is in SKILL.md step 5.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're using global variables for our database connection and config object. Tests are becoming unreliable because global state from one test bleeds into another. How do I fix this?",
+    "expected": "Refactor from global variables to constructor injection. Pass db and cfg as parameters to constructors. Wire explicitly in main(). Tests pass FakeDB and test config directly to constructors — no global state, no test bleed. This is the core DI concept: pass values into constructors instead of creating or accessing them inside.",
+    "notes": "Global variable to DI refactoring — core use case for the skill.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "The LLM keeps generating tests that use gomock and mockery. The test setup code is longer than the actual test. Is this a known problem?",
+    "expected": "Yes — LLMs default to mock libraries because they're overrepresented in training data. Explain that generated mocks (mockery, gomock) are the testing equivalent of DI frameworks: both hide the dependency graph behind codegen or reflection. Replace with handwritten fakes passed directly to constructors. The test body shrinks to constructor call + assertion.",
+    "notes": "LLM-generated test bloat with mocking libraries — ce11 in SKILL.md. The skill covers both DI frameworks AND mocking libraries as the same anti-pattern.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I install the `pgx` Postgres driver in my Go project? What do I add to go.mod?",
+    "expected": "Explain go get github.com/jackc/pgx/v5 and how it updates go.mod. This is a package installation and module management question — nothing to do with dependency injection architecture.",
+    "notes": "How to install a package — module management, explicitly excluded from the skill.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I manage go.mod when I have multiple modules in the same repository? I'm getting confused about replace directives.",
+    "expected": "Explain go.mod replace directives for monorepo multi-module setups, workspace mode (go work), and when to use each. This is module management, not dependency injection.",
+    "notes": "go.mod / module management — explicitly excluded from the skill.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I have a function that accepts both a Logger and a DB interface. The interfaces are defined in the same package as the function. Should I move them somewhere else?",
+    "expected": "This is an interface placement question — activate consumer-side-interface-segregation. The interfaces should be defined in the consumer package (the one that uses them), not the producer package. The manual-DI skill handles the wiring mechanism; this skill handles where interfaces live.",
+    "notes": "Interface placement question — consumer-side-interface-segregation handles this. SKILL.md explicitly distinguishes: 'interface design questions (consumer-side-interface-segregation handles that)'.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I have 20 dependencies being passed into main() — database, redis, kafka producer, feature flags, Stripe client, config, logger, and more. Is this too many? Should I use a DI container?",
+    "expected": "Validates the concern but counters the framework conclusion. 20 dependencies in main() is fine — extract buildInfra(cfg) and buildAppServices(cfg, infra) helper functions. Each is a plain function readable in 30 seconds. No framework needed. The skill explicitly validates this pattern as correct and scalable.",
+    "notes": "'I have 20 dependencies in main, is that too many?' — the prompt from the task description. Answer is: validate the pattern, show helper function extraction as the right solution.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Should I use a service locator pattern to manage dependencies in my Go application? I want a central registry that components can pull dependencies from.",
+    "expected": "Explain why service locator is the wrong approach: it hides dependencies (pulled, not pushed), makes the dependency graph invisible to the compiler, and produces runtime-only errors. Contrast with constructor injection (explicit, compiler-verified) and explain manual DI as the Go-idiomatic alternative.",
+    "notes": "'Should I use a service locator?' — SKILL.md explicitly covers this in 'Easily Confused With' as the anti-pattern opposite of injection.; source id: edge-case-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "We're at Uber-scale, 200+ services. Doesn't a DI framework like Fx make sense at that scale to enforce consistency across teams?",
+    "expected": "Acknowledge the legitimate tradeoff — SKILL.md explicitly covers this in the Blind Spots section. At Uber scale, framework-enforced consistency may outweigh local readability benefits. However, explain what you give up (compile-time verification, LSP navigation) and suggest that even at that scale, manual wiring for smaller services is worth considering.",
+    "notes": "The Uber-scale counterargument — SKILL.md acknowledges this as a genuine exception. The skill should not simply dismiss it but explain the tradeoff honestly.; source id: edge-case-03"
+  }
+]

@@ -1,79 +1,72 @@
-{
-  "skill": "context-cancellation-cause",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "My logs are full of 'context canceled' errors but I have no idea whether it was a timeout, the client disconnecting, or something else canceling it. How do I tell them apart?",
-      "expected_behavior": "Skill explains context.WithCancelCause / context.Cause to attach a distinguishing error when canceling, so callers can inspect the cause rather than seeing a generic 'context canceled'.",
-      "notes": "The exact pain point the skill addresses — opaque cancellation source."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I'm using context.WithTimeout but when the deadline fires I just get 'context deadline exceeded'. Is there a way to attach more information about what timed out?",
-      "expected_behavior": "Skill shows using context.WithCancelCause alongside the timeout so you can cancel with a richer error that names the operation that timed out.",
-      "notes": "Timeout + wanting richer diagnostic info — core use case."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "How do I know WHY a context was canceled in Go? I want to distinguish between a user-initiated cancel and a deadline expiry in my error handling.",
-      "expected_behavior": "Skill explains context.WithCancelCause and context.Cause — cancel with a typed error that describes the reason, then retrieve it with Cause at the handling site.",
-      "notes": "Direct 'why was it canceled' question."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We have a pipeline with multiple stages and sometimes context gets canceled mid-way. We need structured logs that say which stage triggered the cancellation, not just that it was canceled.",
-      "expected_behavior": "Skill demonstrates attaching a stage-specific error as the cancellation cause so structured logs can capture the source stage via context.Cause.",
-      "notes": "Pipeline observability — needs cause attribution across stages."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I use context.WithTimeout to limit the duration of an HTTP request in Go?",
-      "expected_behavior": "This is basic WithTimeout usage — creating a deadline context, not distinguishing cancellation causes. Skill should not activate.",
-      "notes": "Basic WithTimeout setup, not cause-inspection."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How should I manage goroutine lifetimes so they don't leak when the parent is done?",
-      "expected_behavior": "Goroutine lifetime management via context propagation is a structured-concurrency concern, not about inspecting cancellation cause. Skill should not activate.",
-      "notes": "Goroutine leak prevention — different concern from cause disambiguation."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "What's the right way to pass a context through a chain of function calls in Go?",
-      "expected_behavior": "Propagating context through call chains is a basic context usage question. Skill should not activate.",
-      "notes": "Context propagation — not cancellation cause inspection."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "My context is getting canceled but I don't know why. It seems random.",
-      "expected_behavior": "Yes — should trigger. This is precisely the use case for context.WithCancelCause: the developer cannot diagnose the cancellation source. Skill should activate and explain how to attach causes.",
-      "notes": "Textbook trigger — vague cancellation with no diagnostic info."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "Should I use context.WithValue to store configuration like database credentials?",
-      "expected_behavior": "No — should not trigger. This is about context.WithValue misuse for configuration, a completely different concern from cancellation causes. Skill should not activate.",
-      "notes": "context.WithValue for config is a separate anti-pattern; not a cancellation concern."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "I wrap several API calls and want to cancel all of them if one fails, but I also want to know which one failed. How do I do that?",
-      "expected_behavior": "Partial trigger. The cancellation-with-cause pattern applies: cancel the shared context with an error identifying the failing call. Skill should activate as the primary tool, possibly alongside errgroup patterns.",
-      "notes": "Fan-out cancellation with attribution — cause pattern applies, though errgroup may also be relevant."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My logs are full of 'context canceled' errors but I have no idea whether it was a timeout, the client disconnecting, or something else canceling it. How do I tell them apart?",
+    "expected": "Skill explains context.WithCancelCause / context.Cause to attach a distinguishing error when canceling, so callers can inspect the cause rather than seeing a generic 'context canceled'.",
+    "notes": "The exact pain point the skill addresses — opaque cancellation source.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm using context.WithTimeout but when the deadline fires I just get 'context deadline exceeded'. Is there a way to attach more information about what timed out?",
+    "expected": "Skill shows using context.WithCancelCause alongside the timeout so you can cancel with a richer error that names the operation that timed out.",
+    "notes": "Timeout + wanting richer diagnostic info — core use case.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How do I know WHY a context was canceled in Go? I want to distinguish between a user-initiated cancel and a deadline expiry in my error handling.",
+    "expected": "Skill explains context.WithCancelCause and context.Cause — cancel with a typed error that describes the reason, then retrieve it with Cause at the handling site.",
+    "notes": "Direct 'why was it canceled' question.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We have a pipeline with multiple stages and sometimes context gets canceled mid-way. We need structured logs that say which stage triggered the cancellation, not just that it was canceled.",
+    "expected": "Skill demonstrates attaching a stage-specific error as the cancellation cause so structured logs can capture the source stage via context.Cause.",
+    "notes": "Pipeline observability — needs cause attribution across stages.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I use context.WithTimeout to limit the duration of an HTTP request in Go?",
+    "expected": "This is basic WithTimeout usage — creating a deadline context, not distinguishing cancellation causes. Skill should not activate.",
+    "notes": "Basic WithTimeout setup, not cause-inspection.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How should I manage goroutine lifetimes so they don't leak when the parent is done?",
+    "expected": "Goroutine lifetime management via context propagation is a structured-concurrency concern, not about inspecting cancellation cause. Skill should not activate.",
+    "notes": "Goroutine leak prevention — different concern from cause disambiguation.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What's the right way to pass a context through a chain of function calls in Go?",
+    "expected": "Propagating context through call chains is a basic context usage question. Skill should not activate.",
+    "notes": "Context propagation — not cancellation cause inspection.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My context is getting canceled but I don't know why. It seems random.",
+    "expected": "Yes — should trigger. This is precisely the use case for context.WithCancelCause: the developer cannot diagnose the cancellation source. Skill should activate and explain how to attach causes.",
+    "notes": "Textbook trigger — vague cancellation with no diagnostic info.; source id: edge-case-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I use context.WithValue to store configuration like database credentials?",
+    "expected": "No — should not trigger. This is about context.WithValue misuse for configuration, a completely different concern from cancellation causes. Skill should not activate.",
+    "notes": "context.WithValue for config is a separate anti-pattern; not a cancellation concern.; source id: edge-case-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I wrap several API calls and want to cancel all of them if one fails, but I also want to know which one failed. How do I do that?",
+    "expected": "Partial trigger. The cancellation-with-cause pattern applies: cancel the shared context with an error identifying the failing call. Skill should activate as the primary tool, possibly alongside errgroup patterns.",
+    "notes": "Fan-out cancellation with attribution — cause pattern applies, though errgroup may also be relevant.; source id: edge-case-03"
+  }
+]

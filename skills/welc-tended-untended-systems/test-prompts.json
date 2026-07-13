@@ -1,166 +1,72 @@
-{
-  "skill": "welc-tended-untended-systems",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "label": "Startup deciding testing investment before first product launch",
-      "prompt": "Our startup is building a cloud-hosted SaaS product. We're approaching our first launch and debating how much testing to invest in before we go live. Some engineers want a comprehensive pre-release test suite. Others say we're moving too fast for that. How should we decide?",
-      "expected_skill_use": "Classify the system as tended (cloud-hosted, can push hotfixes, can roll back). Estimate the code lifetime of each major component: core business logic is long-lived; the early experimental features may be transient. For a tended+long-lived system at launch, invest in tests for high-risk components (billing, auth, data integrity) but do not require aerospace-level coverage before shipping. Production with progressive rollout is a legitimate feedback mechanism. Reserve exhaustive pre-release verification for untended deployments.",
-      "must_include": [
-        "tended vs. untended classification",
-        "cloud / tended system can use production as feedback",
-        "calibrate investment to component risk and lifetime"
-      ],
-      "must_not_include": [
-        "universal coverage target as the answer",
-        "treat the cloud app like firmware"
-      ]
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "label": "Firmware team asking whether their testing practices are appropriate",
-      "prompt": "We ship firmware to cardiac pacemakers. Our QA process requires formal specification, code review against preconditions and postconditions, and a six-month certification cycle before any release. A consultant told us we're over-investing in pre-release testing and should adopt continuous delivery like the web teams do. Are they right?",
-      "expected_skill_use": "The consultant is applying tended-system thinking to an untended system. Pacemaker firmware cannot be patched in a patient's body. Post-deployment defects are potentially fatal and legally catastrophic. The system is definitionally untended. Exhaustive pre-deployment verification — formal specification, contract tests, characterization tests, code review — is the correct response. CD practices from web development are not transferable without first establishing an equivalent safety net for the untended context.",
-      "must_include": [
-        "untended system classification",
-        "pre-deployment verification is the only defect-detection layer",
-        "CD advice does not transfer to untended systems without equivalent safeguards"
-      ],
-      "must_not_include": [
-        "adopt CD practices without qualification",
-        "testing investment is excessive for this system type"
-      ]
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "label": "Should we write tests for a one-time data migration script?",
-      "prompt": "We need to write a script to migrate 5 million user records to a new schema. It will run once, we'll verify the output, and then it will be deleted. A teammate says we should write a full test suite for it. Another says it's a one-time script and we're wasting time. Who's right?",
-      "expected_skill_use": "The script is transient (one-time, will be deleted) and the system is tended (cloud DB, can roll back or re-run with corrections). However, a bad migration can corrupt 5 million records — the defect cost is high even for a short lifetime. This places it in the tended+transient quadrant with an elevated risk profile. The right calibration: skip comprehensive behavioral coverage, but explicitly test the catastrophic failure paths (data corruption, silent truncation, foreign key violations on partial runs, idempotency if re-run). Do not skip testing entirely; skip coverage of the low-risk paths.",
-      "must_include": [
-        "transient code classification",
-        "test the catastrophic paths even for transient code",
-        "skip comprehensive coverage",
-        "data corruption or irreversibility raises the risk threshold"
-      ],
-      "must_not_include": [
-        "full test suite required",
-        "skip all testing because it is transient"
-      ]
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "label": "Team treating slow pre-release pipeline as a fixed cost",
-      "prompt": "Our web application release process takes three weeks because we run a full manual QA cycle, a complete integration test suite, and a two-week soak period before every deployment. We have rollback capability, feature flags, and a 24/7 on-call team. Is there a way to justify cutting this down?",
-      "expected_skill_use": "Classify the system as tended: rollback, feature flags, and on-call are all tended-system capabilities. The three-week cycle is applying untended-system verification to a tended deployment model. The current investment may be creating slow, fragile pipelines that slow iteration without proportional safety gains. The correct approach: identify which components are genuinely high-risk (billing, auth, data integrity) and maintain rigorous testing there; use progressive rollout and feature flags to catch regressions in lower-risk components that slip through pre-release testing. The three-week soak period is likely not calibrated to actual incident rate or recovery time.",
-      "must_include": [
-        "system is tended — rollback and feature flags are key indicators",
-        "untended-system verification applied to tended deployment",
-        "production feedback is a legitimate mechanism",
-        "calibrate by component risk, not uniform pipeline stage"
-      ],
-      "must_not_include": [
-        "three-week cycle is appropriate for a tended web app",
-        "maintain the full manual QA cycle without qualification"
-      ]
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "label": "How to write a table-driven test in Go",
-      "prompt": "I'm writing a test for a Go function that parses duration strings. I want to cover valid inputs like '2h30m', edge cases like '0s', and invalid inputs like 'abc'. What's the best way to structure the test?",
-      "expected_skill_use": "This is a test mechanics question, not a strategy question. The user has already decided to write tests. Answer with the appropriate Go test structure (map-keyed table-driven test). Do not invoke the tended/untended framework — the decision to test has already been made and the question is about implementation pattern.",
-      "must_include": [
-        "table-driven test structure",
-        "map[string]struct or t.Run with named cases"
-      ],
-      "must_not_include": [
-        "classify the system as tended or untended as the primary response",
-        "question whether tests are warranted"
-      ]
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "label": "How to mock a database dependency in unit tests",
-      "prompt": "I have a Go service that calls a PostgreSQL database in several methods. In my unit tests I want to avoid hitting a real database. What's the best approach — interface mocking, a test database, or something else?",
-      "expected_skill_use": "This is a test isolation mechanics question. The user has decided to write unit tests and wants to know how to handle the database dependency. Answer with interface-based mocking or seam injection. The tended/untended strategy framework does not apply — the strategic decision to test has been made; this is an implementation question.",
-      "must_include": [
-        "interface-based mocking or test double",
-        "inject the dependency via interface"
-      ],
-      "must_not_include": [
-        "tended vs. untended classification as the primary response",
-        "question whether unit tests are the right investment"
-      ]
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "label": "How to run tests faster with parallelism",
-      "prompt": "Our Go test suite takes 8 minutes to run locally. I've heard about t.Parallel() and running tests with -count=1. What are the best techniques to speed up our test suite?",
-      "expected_skill_use": "This is a test execution mechanics and performance question. The user has an existing test suite and wants to speed it up. Answer with t.Parallel, test binary compilation, parallel package testing, and related Go techniques. The tended/untended framework is not relevant — the investment decision has been made and is in the past.",
-      "must_include": [
-        "t.Parallel",
-        "go test -p flag or parallel package execution"
-      ],
-      "must_not_include": [
-        "tended vs. untended as the primary answer",
-        "question whether the test suite should exist"
-      ]
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "label": "IoT device with OTA update capability — is it tended?",
-      "prompt": "We ship software to industrial sensors that are deployed in remote oil field locations. The devices support over-the-air firmware updates, but the update process requires a field engineer to approve and schedule each update — it's not automatic. A typical update cycle from defect discovery to deployment takes 4–6 weeks. How should we calibrate our testing for these devices?",
-      "expected_skill_use": "This sits between tended and untended. OTA capability exists (tended indicator), but the 4–6 week cycle and manual approval process mean post-deployment defects are not quickly recoverable (untended indicator). The classification should lean toward untended: a 4–6 week recovery window for a critical defect is effectively unavailable for most defect types. Apply untended-system testing investment — exhaustive pre-deployment verification — but acknowledge that the OTA path provides a recovery lane for non-critical defects. Identify which defect classes are tolerable at a 4–6 week recovery lag vs. which require zero-defect standards.",
-      "must_include": [
-        "acknowledge the boundary — OTA exists but recovery is slow",
-        "lean toward untended investment level given the recovery window",
-        "distinguish defect classes by recovery tolerance"
-      ],
-      "must_not_include": [
-        "classify definitively as fully tended because OTA exists",
-        "classify definitively as untended without acknowledging the OTA path"
-      ]
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "label": "Feature-flag experiment with no confirmed retirement date",
-      "prompt": "We're building a new recommendation engine behind a feature flag. It's experimental — we expect to either validate and promote it or kill it within two months. If it works, it will replace our existing engine entirely and live indefinitely. Should we treat this as transient or long-lived code?",
-      "expected_skill_use": "This is a genuinely ambiguous case. The code is currently transient (experiment, two-month window, may be deleted) but has a conditional long-lived path (if validated, it becomes core infrastructure). The correct calibration: invest in test coverage for the core logic that would survive promotion (the algorithm, the data model, the API contract) while treating the feature-flag wiring and experiment scaffolding as transient. Design the core engine as if it will be long-lived, because it may be. Do not invest heavily in testing the scaffolding that will be removed if the experiment succeeds.",
-      "must_include": [
-        "ambiguous transience — has a conditional long-lived path",
-        "invest in the core logic that would survive promotion",
-        "treat the scaffolding as transient"
-      ],
-      "must_not_include": [
-        "treat all of it as transient and skip testing",
-        "treat all of it as long-lived and require comprehensive coverage of experiment scaffolding"
-      ]
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "label": "Regulated SaaS with slow release but rollback capability",
-      "prompt": "We build healthcare data analytics software (HIPAA-regulated, but not FDA Class II/III medical devices). We have to go through a compliance review before every release, which takes 3–4 weeks. However, if a critical bug is found post-release, we can issue an emergency patch through a fast-track compliance path that takes 48–72 hours. How do we classify this for testing strategy?",
-      "expected_skill_use": "This is between tended and untended. The 48–72 hour emergency path makes it more tended than firmware shipped to a device with no update path, but the 3–4 week standard release cycle creates significant pressure to get it right before the standard release — most defects will not qualify for the emergency path. The right approach: apply untended-system investment standards to the components under each standard release (pre-deployment verification because the standard recovery window is weeks), but acknowledge that the emergency path provides a tended-system recovery lane for genuinely critical defects. Prioritize test investment on the compliance-sensitive components (data handling, access control, audit logging) where a defect has both functional and regulatory consequence.",
-      "must_include": [
-        "partially tended — emergency path exists but with high friction",
-        "standard release cycle creates effective untended pressure",
-        "invest heavily in compliance-sensitive components",
-        "the emergency path does not eliminate the need for pre-deployment rigor"
-      ],
-      "must_not_include": [
-        "classify as fully tended because emergency path exists",
-        "classify as fully untended without acknowledging the 48-72 hour emergency path"
-      ]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our startup is building a cloud-hosted SaaS product. We're approaching our first launch and debating how much testing to invest in before we go live. Some engineers want a comprehensive pre-release test suite. Others say we're moving too fast for that. How should we decide?",
+    "expected": "Skill activates and classifies the system as tended (cloud-hosted, hotfixes, rollback), so production with progressive rollout is a legitimate feedback mechanism; invest in tests for high-risk, long-lived components (billing, auth, data integrity) calibrated to component risk and lifetime rather than demanding aerospace-level coverage before shipping.",
+    "notes": "must include: tended vs. untended classification, cloud / tended system can use production as feedback, calibrate investment to component risk and lifetime; must not include: universal coverage target as the answer, treat the cloud app like firmware; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We ship firmware to cardiac pacemakers. Our QA process requires formal specification, code review against preconditions and postconditions, and a six-month certification cycle before any release. A consultant told us we're over-investing in pre-release testing and should adopt continuous delivery like the web teams do. Are they right?",
+    "expected": "Skill activates and classifies pacemaker firmware as definitionally untended (cannot patch in a patient; defects potentially fatal), so exhaustive pre-deployment verification is the correct and only defect-detection layer; the consultant is wrongly applying tended-system thinking, and CD advice does not transfer without an equivalent safety net.",
+    "notes": "must include: untended system classification, pre-deployment verification is the only defect-detection layer, CD advice does not transfer to untended systems without equivalent safeguards; must not include: adopt CD practices without qualification, testing investment is excessive for this system type; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We need to write a script to migrate 5 million user records to a new schema. It will run once, we'll verify the output, and then it will be deleted. A teammate says we should write a full test suite for it. Another says it's a one-time script and we're wasting time. Who's right?",
+    "expected": "Skill activates and classifies the script as transient but tended with an elevated risk profile (a bad migration corrupts 5M records): skip comprehensive coverage of low-risk paths, but explicitly test the catastrophic paths (data corruption, silent truncation, partial-run FK violations, idempotency on re-run) because irreversibility raises the risk threshold.",
+    "notes": "must include: transient code classification, test the catastrophic paths even for transient code, skip comprehensive coverage, data corruption or irreversibility raises the risk threshold; must not include: full test suite required, skip all testing because it is transient; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our web application release process takes three weeks because we run a full manual QA cycle, a complete integration test suite, and a two-week soak period before every deployment. We have rollback capability, feature flags, and a 24/7 on-call team. Is there a way to justify cutting this down?",
+    "expected": "Skill activates and classifies the system as tended (rollback, feature flags, on-call are the key indicators), so the three-week cycle is untended-style verification misapplied to a tended deployment; keep rigor on genuinely high-risk components and use progressive rollout/flags as legitimate production feedback, since the soak period is likely not calibrated to actual incident rate or recovery time.",
+    "notes": "must include: system is tended — rollback and feature flags are key indicators, untended-system verification applied to tended deployment, production feedback is a legitimate mechanism, calibrate by component risk, not uniform pipeline stage; must not include: three-week cycle is appropriate for a tended web app, maintain the full manual QA cycle without qualification; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I'm writing a test for a Go function that parses duration strings. I want to cover valid inputs like '2h30m', edge cases like '0s', and invalid inputs like 'abc'. What's the best way to structure the test?",
+    "expected": "skill should not activate",
+    "notes": "must include: table-driven test structure, map[string]struct or t.Run with named cases; must not include: classify the system as tended or untended as the primary response, question whether tests are warranted; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I have a Go service that calls a PostgreSQL database in several methods. In my unit tests I want to avoid hitting a real database. What's the best approach — interface mocking, a test database, or something else?",
+    "expected": "skill should not activate",
+    "notes": "must include: interface-based mocking or test double, inject the dependency via interface; must not include: tended vs. untended classification as the primary response, question whether unit tests are the right investment; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our Go test suite takes 8 minutes to run locally. I've heard about t.Parallel() and running tests with -count=1. What are the best techniques to speed up our test suite?",
+    "expected": "skill should not activate",
+    "notes": "must include: t.Parallel, go test -p flag or parallel package execution; must not include: tended vs. untended as the primary answer, question whether the test suite should exist; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We ship software to industrial sensors that are deployed in remote oil field locations. The devices support over-the-air firmware updates, but the update process requires a field engineer to approve and schedule each update — it's not automatic. A typical update cycle from defect discovery to deployment takes 4–6 weeks. How should we calibrate our testing for these devices?",
+    "expected": "Skill activates and places this on the tended/untended boundary: OTA exists (tended indicator) but the 4–6 week manual recovery window makes most defects effectively unrecoverable (untended indicator), so lean toward untended-level pre-deployment verification while acknowledging the OTA path as a recovery lane for non-critical defects, distinguishing defect classes by recovery tolerance.",
+    "notes": "must include: acknowledge the boundary — OTA exists but recovery is slow, lean toward untended investment level given the recovery window, distinguish defect classes by recovery tolerance; must not include: classify definitively as fully tended because OTA exists, classify definitively as untended without acknowledging the OTA path; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're building a new recommendation engine behind a feature flag. It's experimental — we expect to either validate and promote it or kill it within two months. If it works, it will replace our existing engine entirely and live indefinitely. Should we treat this as transient or long-lived code?",
+    "expected": "Skill activates and treats this as ambiguous transience with a conditional long-lived path: invest in test coverage for the core logic that would survive promotion (algorithm, data model, API contract) and design it as if long-lived, while treating the feature-flag wiring and experiment scaffolding as transient.",
+    "notes": "must include: ambiguous transience — has a conditional long-lived path, invest in the core logic that would survive promotion, treat the scaffolding as transient; must not include: treat all of it as transient and skip testing, treat all of it as long-lived and require comprehensive coverage of experiment scaffolding; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We build healthcare data analytics software (HIPAA-regulated, but not FDA Class II/III medical devices). We have to go through a compliance review before every release, which takes 3–4 weeks. However, if a critical bug is found post-release, we can issue an emergency patch through a fast-track compliance path that takes 48–72 hours. How do we classify this for testing strategy?",
+    "expected": "Skill activates and classifies as partially tended: the 48–72h emergency path is a real recovery lane, but the 3–4 week standard release cycle creates effective untended pressure for most defects, so apply untended-level pre-deployment rigor — especially on compliance-sensitive components (data handling, access control, audit logging) — while acknowledging the emergency path does not eliminate that need.",
+    "notes": "must include: partially tended — emergency path exists but with high friction, standard release cycle creates effective untended pressure, invest heavily in compliance-sensitive components, the emergency path does not eliminate the need for pre-deployment rigor; must not include: classify as fully tended because emergency path exists, classify as fully untended without acknowledging the 48-72 hour emergency path; source id: tp10"
+  }
+]

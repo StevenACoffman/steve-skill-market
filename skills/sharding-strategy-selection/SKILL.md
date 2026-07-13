@@ -1,16 +1,11 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: sharding-strategy-selection
 description: |
   Invoke this skill when a system's data volume or write throughput has grown beyond what a single node can handle and you must decide how to distribute data across multiple machines. Specific triggers: the team is choosing between key-range and hash-based sharding; a single shard is overloaded while others are idle (hot spot); a new compound key design is being evaluated; a time-series or sequential-ID partitioning scheme is under consideration.
 
   Do NOT invoke when: the problem is read throughput only (use read replicas instead of sharding); the data fits comfortably on one node with replication (single-node first); you are choosing a replication topology (see `replication-topology-selection`); the question is about within-machine PostgreSQL table partitioning rather than cross-machine distribution.
-
-  Key signals: "all writes are going to one node," "we're hitting write throughput limits," "do we use the timestamp or the user ID as the partition key," "consistent hashing vs. range sharding," "celebrity/hot key problem," "we need range queries but also even write distribution."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 7: Sharding'
 tags: [sharding, partitioning, hot-spot, distributed-systems, scalability, partition-key]
-related_skills: [storage-engine-workload-selection, replication-topology-selection, consistency-model-selection]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Sharding Strategy Selection
@@ -175,3 +170,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 7: Sharding

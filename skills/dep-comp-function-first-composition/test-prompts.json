@@ -1,90 +1,79 @@
-{
-  "skill": "dep-comp-function-first-composition",
-  "version": "0.1.0",
-  "source_book": "Dependency Composition (Go Adaptation) — Daniel Somerfield",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "trigger-01",
-      "category": "should_trigger",
-      "prompt": "I'm building a Go service and want to know the idiomatic way to inject dependencies. Right now I'm passing concrete structs into constructors but I've heard there are better patterns.",
-      "expected": "trigger",
-      "rationale": "Direct match to trigger signal 'What's the idiomatic way to handle dependencies in Go?' — open question from a Go developer who has not committed to a pattern yet."
-    },
-    {
-      "id": "trigger-02",
-      "category": "should_trigger",
-      "prompt": "Every time I add a dependency in Go I end up having to declare an interface, write a mock struct, and configure the mock in every test. For a function that just looks up a user from a database it feels like way too much ceremony. Is there a simpler way?",
-      "expected": "trigger",
-      "rationale": "Matches 'I have to write an interface for every external call' and 'My tests require a lot of mock setup for a simple function' — exactly the pattern the Dependencies struct with function fields eliminates."
-    },
-    {
-      "id": "trigger-03",
-      "category": "should_trigger",
-      "prompt": "I have an HTTP handler in Go that talks to a Postgres database. How do I write a unit test for the handler without spinning up a real database or a test container?",
-      "expected": "trigger",
-      "rationale": "Exact match to trigger signal 4: 'I want to test my HTTP handler without spinning up a real database.' Case 1 in the SKILL.md is precisely this scenario."
-    },
-    {
-      "id": "trigger-04",
-      "category": "should_trigger",
-      "prompt": "Our Go codebase is a mess — some packages use constructor injection with interfaces, some call init() to set up globals, and some use package-level variables. Tests for each module need completely different setups. How do we standardize?",
-      "expected": "trigger",
-      "rationale": "Exact match to trigger signal 5: hodgepodge DI with inconsistent patterns across the codebase. The Dependencies struct pattern is the standardization fix."
-    },
-    {
-      "id": "trigger-05",
-      "category": "should_trigger",
-      "prompt": "I'm coming from a Java/Spring background and just started writing Go. Do I need a dependency injection container like Dig or Wire, or is there a more Go-idiomatic approach for wiring dependencies?",
-      "expected": "trigger",
-      "rationale": "Matches trigger signal 6: developer new to Go asking about DI with Java/Spring assumptions. Also directly addresses 'Do I need a DI framework in Go?' language signal."
-    },
-    {
-      "id": "no-trigger-01",
-      "category": "should_not_trigger",
-      "prompt": "My two packages both use a Restaurant struct. Should I extract it to a shared types package or keep duplicates in each package?",
-      "expected": "no_trigger",
-      "rationale": "This is explicitly the dep-comp-cross-package-contract-decision skill. The SKILL.md boundary section states: 'Do NOT invoke for should I define an interface between packages? — that is the dep-comp-cross-package-contract-decision skill.'"
-    },
-    {
-      "id": "no-trigger-02",
-      "category": "should_not_trigger",
-      "prompt": "I'm writing a Python service with FastAPI and want to know the best way to inject dependencies into my route handlers. Should I use a dependency injection library or roll my own?",
-      "expected": "no_trigger",
-      "rationale": "Non-Go language. SKILL.md boundary section explicitly states: 'Non-Go codebases: The mechanism depends on Go's structural typing for function values. Other languages require different approaches.'"
-    },
-    {
-      "id": "no-trigger-03",
-      "category": "should_not_trigger",
-      "prompt": "I'm designing a repository abstraction in Go. My UserRepository needs FindByID, Save, Delete, FindByEmail, FindByOrg, CountByStatus, ListPaged, and SoftDelete — should I put all of these in one interface?",
-      "expected": "no_trigger",
-      "rationale": "Dependency with 8+ methods. SKILL.md boundary section: 'Dependency with many methods (8+): declare a local minimal interface (option 1) instead. A Dependencies struct with 8+ fields becomes a maintenance burden.' This should route to dep-comp-cross-package-contract-decision or golang-dependency-injection, not here."
-    },
-    {
-      "id": "edge-01",
-      "category": "edge_case",
-      "prompt": "Should I use gomock or mockery for generating mocks in my Go tests? I'm not sure which mock generation tool is better.",
-      "expected": "no_trigger",
-      "rationale": "Lure: sounds adjacent to testing and mocks, but the question is about which mock *tool* to use, not about the architecture of dependency injection. The skill addresses eliminating mock generation entirely, not choosing among generators. A tool-comparison question does not have the signal 'I want to reduce ceremony' — it assumes ceremony is mandatory.",
-      "notes": "Key lure: wrong-tool question vs. architecture question. Should NOT trigger."
-    },
-    {
-      "id": "edge-02",
-      "category": "edge_case",
-      "prompt": "In Go, what's the difference between defining an interface in the provider package versus the consumer package? I've seen both patterns and I'm confused about which is correct.",
-      "expected": "no_trigger",
-      "rationale": "Cross-lure: this question is about interface direction/ownership, which is squarely the dep-comp-cross-package-contract-decision skill (provider-defines-interface anti-pattern in its Boundary section). It is NOT about the mechanics of wiring and testing a single-responsibility module.",
-      "notes": "Cross-lure: could appear to touch DI but is actually about cross-package contract ownership. Should trigger cross-package skill, not this one."
-    },
-    {
-      "id": "edge-03",
-      "category": "edge_case",
-      "prompt": "I want to test a Go function that calls three external services: a database lookup, a cache read, and an email sender. Each test case should control each dependency independently. How should I structure this?",
-      "expected": "trigger",
-      "rationale": "Borderline: the developer has 3 dependencies (within the 3–6 typical range the skill describes) and wants independent per-test control. This is a direct fit for Case 2 in SKILL.md — domain layer with three function dependencies. The request is about test structure and wiring mechanics, not about cross-package type sharing.",
-      "notes": "Boundary case: 3 dependencies with independent stubbing is exactly the multi-dependency use case in Case 2. Should trigger."
-    }
-  ],
-  "minimum_pass_rate": 0.85,
-  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass. Edge cases: edge-01 and edge-02 are lures (should NOT trigger); edge-03 is a valid trigger (should trigger)."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm building a Go service and want to know the idiomatic way to inject dependencies. Right now I'm passing concrete structs into constructors but I've heard there are better patterns.",
+    "expected": "trigger",
+    "notes": "rationale: Direct match to trigger signal 'What's the idiomatic way to handle dependencies in Go?' — open question from a Go developer who has not committed to a pattern yet.; source id: trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Every time I add a dependency in Go I end up having to declare an interface, write a mock struct, and configure the mock in every test. For a function that just looks up a user from a database it feels like way too much ceremony. Is there a simpler way?",
+    "expected": "trigger",
+    "notes": "rationale: Matches 'I have to write an interface for every external call' and 'My tests require a lot of mock setup for a simple function' — exactly the pattern the Dependencies struct with function fields eliminates.; source id: trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I have an HTTP handler in Go that talks to a Postgres database. How do I write a unit test for the handler without spinning up a real database or a test container?",
+    "expected": "trigger",
+    "notes": "rationale: Exact match to trigger signal 4: 'I want to test my HTTP handler without spinning up a real database.' Case 1 in the SKILL.md is precisely this scenario.; source id: trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our Go codebase is a mess — some packages use constructor injection with interfaces, some call init() to set up globals, and some use package-level variables. Tests for each module need completely different setups. How do we standardize?",
+    "expected": "trigger",
+    "notes": "rationale: Exact match to trigger signal 5: hodgepodge DI with inconsistent patterns across the codebase. The Dependencies struct pattern is the standardization fix.; source id: trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I'm coming from a Java/Spring background and just started writing Go. Do I need a dependency injection container like Dig or Wire, or is there a more Go-idiomatic approach for wiring dependencies?",
+    "expected": "trigger",
+    "notes": "rationale: Matches trigger signal 6: developer new to Go asking about DI with Java/Spring assumptions. Also directly addresses 'Do I need a DI framework in Go?' language signal.; source id: trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My two packages both use a Restaurant struct. Should I extract it to a shared types package or keep duplicates in each package?",
+    "expected": "no_trigger",
+    "notes": "rationale: This is explicitly the dep-comp-cross-package-contract-decision skill. The SKILL.md boundary section states: 'Do NOT invoke for should I define an interface between packages? — that is the dep-comp-cross-package-contract-decision skill.'; source id: no-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I'm writing a Python service with FastAPI and want to know the best way to inject dependencies into my route handlers. Should I use a dependency injection library or roll my own?",
+    "expected": "no_trigger",
+    "notes": "rationale: Non-Go language. SKILL.md boundary section explicitly states: 'Non-Go codebases: The mechanism depends on Go's structural typing for function values. Other languages require different approaches.'; source id: no-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I'm designing a repository abstraction in Go. My UserRepository needs FindByID, Save, Delete, FindByEmail, FindByOrg, CountByStatus, ListPaged, and SoftDelete — should I put all of these in one interface?",
+    "expected": "no_trigger",
+    "notes": "rationale: Dependency with 8+ methods. SKILL.md boundary section: 'Dependency with many methods (8+): declare a local minimal interface (option 1) instead. A Dependencies struct with 8+ fields becomes a maintenance burden.' This should route to dep-comp-cross-package-contract-decision or golang-dependency-injection, not here.; source id: no-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I use gomock or mockery for generating mocks in my Go tests? I'm not sure which mock generation tool is better.",
+    "expected": "no_trigger",
+    "notes": "Key lure: wrong-tool question vs. architecture question. Should NOT trigger.; rationale: Lure: sounds adjacent to testing and mocks, but the question is about which mock *tool* to use, not about the architecture of dependency injection. The skill addresses eliminating mock generation entirely, not choosing among generators. A tool-comparison question does not have the signal 'I want to reduce ceremony' — it assumes ceremony is mandatory.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "In Go, what's the difference between defining an interface in the provider package versus the consumer package? I've seen both patterns and I'm confused about which is correct.",
+    "expected": "no_trigger",
+    "notes": "Cross-lure: could appear to touch DI but is actually about cross-package contract ownership. Should trigger cross-package skill, not this one.; rationale: Cross-lure: this question is about interface direction/ownership, which is squarely the dep-comp-cross-package-contract-decision skill (provider-defines-interface anti-pattern in its Boundary section). It is NOT about the mechanics of wiring and testing a single-responsibility module.; source id: edge-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "I want to test a Go function that calls three external services: a database lookup, a cache read, and an email sender. Each test case should control each dependency independently. How should I structure this?",
+    "expected": "trigger",
+    "notes": "Boundary case: 3 dependencies with independent stubbing is exactly the multi-dependency use case in Case 2. Should trigger.; rationale: Borderline: the developer has 3 dependencies (within the 3–6 typical range the skill describes) and wants independent per-test control. This is a direct fit for Case 2 in SKILL.md — domain layer with three function dependencies. The request is about test structure and wiring mechanics, not about cross-package type sharing.; source id: edge-03"
+  }
+]

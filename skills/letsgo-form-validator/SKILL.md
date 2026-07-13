@@ -1,9 +1,8 @@
 ---
-id: letsgo-form-validator
-title: Embedded Validator for Form Struct Validation
+name: letsgo-form-validator
 description: Invoke when implementing HTML form handling in Go — specifically when validation errors and original input values must travel together through a handler's re-render path.
-source: Let's Go, Alex Edwards, 2023
 ---
+# Embedded Validator for Form Struct Validation
 
 ## R — Reading
 
@@ -93,8 +92,14 @@ The `Validator` does not perform automatic struct-tag-based validation. Every ru
 
 ## Related Skills
 
-- **[letsgo-postform-not-postformvalue](../letsgo-postform-not-postformvalue/SKILL.md)** — depends on: explicit `r.ParseForm()` must be called and checked before `app.formDecoder.Decode(&form, r.PostForm)` can populate the form struct
-- **[letsgo-template-safe-render](../letsgo-template-safe-render/SKILL.md)** — combines: on validation failure, the form struct (carrying errors and original values) is passed to `render()` as `data.Form`; the two patterns are always active together on the re-render path
-- **[letsgo-db-sentinel-error-translation](../letsgo-db-sentinel-error-translation/SKILL.md)** — informs: model sentinels (e.g., `ErrInvalidCredentials`, `ErrDuplicateEmail`) are translated into `form.AddNonFieldError(...)` calls, bridging model errors into the form validation display
-- **[go-http-service-di-composition](../go-http-service-di-composition/SKILL.md)** — depends on: `formDecoder` is a struct field on `application`; the embedded Validator pattern is made available to handlers through the `*application` receiver
+- **letsgo-postform-not-postformvalue** — depends on: explicit `r.ParseForm()` must be called and checked before `app.formDecoder.Decode(&form, r.PostForm)` can populate the form struct
+- **letsgo-template-safe-render** — combines: on validation failure, the form struct (carrying errors and original values) is passed to `render()` as `data.Form`; the two patterns are always active together on the re-render path
+- **letsgo-db-sentinel-error-translation** — informs: model sentinels (e.g., `ErrInvalidCredentials`, `ErrDuplicateEmail`) are translated into `form.AddNonFieldError(...)` calls, bridging model errors into the form validation display
+- **go-http-service-di-composition** — depends on: `formDecoder` is a struct field on `application`; the embedded Validator pattern is made available to handlers through the `*application` receiver
 - **go-http-service-test-strategy** — informs: end-to-end form tests must extract the CSRF token and re-submit it; the `Valid()`/`FieldErrors` contract is what test assertions verify in the response HTML
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Let's Go, Alex Edwards, 2023

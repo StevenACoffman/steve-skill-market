@@ -1,9 +1,9 @@
 ---
-id: ddd-fitness-scorecard
-title: DDD Fitness Scorecard
-description: Apply when a team or individual needs to make a defensible, shared decision about whether to adopt full DDD for a project — specifically at project inception, architecture review, or when someone challenges whether DDD overhead is justified for a given system.
-source: Domain-Driven Design with Golang, Matthew Boyle, 2022
+name: ddd-fitness-scorecard
+description: |
+  Apply when a team or individual needs to make a defensible, shared decision about whether to adopt full DDD for a project — specifically at project inception, architecture review, or when someone challenges whether DDD overhead is justified for a given system.
 ---
+# DDD Fitness Scorecard
 
 ## R — Reading
 
@@ -57,7 +57,13 @@ The claim that a score over 7 makes a system a "great candidate" does not accoun
 
 ## Related Skills
 
-- **[entity-vs-value-object-decision](../entity-vs-value-object-decision/SKILL.md)** — prerequisite for: the scorecard determines whether to adopt DDD tactical patterns at all; if the score clears the threshold, entity-vs-value-object-decision is the first tactical modeling tool to reach for.
-- **[internal-package-bounded-context-enforcement](../internal-package-bounded-context-enforcement/SKILL.md)** — prerequisite for: a positive scorecard result commits the team to bounded contexts; internal-package-bounded-context-enforcement provides the Go structural mechanism to enforce those boundaries.
-- **[strong-consistency-across-bounded-contexts](../strong-consistency-across-bounded-contexts/SKILL.md)** — prerequisite for: DDD adoption implies multiple bounded contexts; the consistency asymmetry rule must be understood before designing inter-context communication.
-- **[domain-service-interface-composition](../domain-service-interface-composition/SKILL.md)** — prerequisite for: the layered domain/application service pattern is only justified by the complexity DDD is adopted to manage; the scorecard establishes that justification.
+- **entity-vs-value-object-decision** — prerequisite for: the scorecard determines whether to adopt DDD tactical patterns at all; if the score clears the threshold, entity-vs-value-object-decision is the first tactical modeling tool to reach for.
+- **internal-package-bounded-context-enforcement** — prerequisite for: a positive scorecard result commits the team to bounded contexts; internal-package-bounded-context-enforcement provides the Go structural mechanism to enforce those boundaries.
+- **strong-consistency-across-bounded-contexts** — prerequisite for: DDD adoption implies multiple bounded contexts; the consistency asymmetry rule must be understood before designing inter-context communication.
+- **domain-service-interface-composition** — prerequisite for: the layered domain/application service pattern is only justified by the complexity DDD is adopted to manage; the scorecard establishes that justification.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Domain-Driven Design with Golang, Matthew Boyle, 2022

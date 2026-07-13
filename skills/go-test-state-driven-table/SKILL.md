@@ -1,24 +1,9 @@
 ---
 name: go-test-state-driven-table
-allowed-tools: Bash, Read, Edit
-id: go-test-state-driven-table
-description: Use when writing a Go test for a function that has stateful external dependencies AND multiple input scenarios. Combines a map[string]struct{} table (so every failure names the scenario) with a handwritten fake collaborator (so every assertion checks observable state, not call sequences). The composition makes failures simultaneously identifiable by name and behaviorally meaningful by state — neither source describes this pattern; it emerges from applying both.
-type: merged-skill
-source_skills:
-  - slug: rednafi/test-state-not-interactions
-    book: Go Advice
-    author: Redowan Delowar (rednafi)
-  - slug: hashimoto/table-driven-named-cases
-    book: Advanced Testing with Go
-    author: Mitchell Hashimoto
-related_skills:
-  - slug: rednafi/test-state-not-interactions
-    relation: supersedes
-    note: Merged skill adds table-driven structure; use this for functions with multiple input cases
-  - slug: hashimoto/table-driven-named-cases
-    relation: supersedes
-    note: Merged skill adds handwritten fake pattern; use this for functions with stateful dependencies
+description: |
+  Use when writing a Go test for a function that has stateful external dependencies AND multiple input scenarios. Combines a map[string]struct{} table (so every failure names the scenario) with a handwritten fake collaborator (so every assertion checks observable state, not call sequences). The composition makes failures simultaneously identifiable by name and behaviorally meaningful by state — neither source describes this pattern; it emerges from applying both.
 tags: [go, testing, quality, mocking, fakes, table-driven]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Go State-Driven Table Test — Map-Keyed Cases with Handwritten Fakes
@@ -405,3 +390,10 @@ ______________________________________________________________________
 - **Merge date:** 2026-05-05
 - **Revised 2026-05-08**: E section Step 5 — stdlib `assert`/`ok`/`equals` helper equivalents noted alongside testify examples
 - **Revised 2026-05-09**: All testify code examples replaced with stdlib helpers (`assert`, `ok`, `reflect.DeepEqual` inline); I and A1 inline references updated; testify redirect note removed; T1 tension fully resolved
+
+______________________________________________________________________
+
+## Provenance
+
+- **Merged from:** Go Advice (Redowan Delowar (rednafi)); Advanced Testing with Go (Mitchell Hashimoto)
+- **Type:** merged-skill

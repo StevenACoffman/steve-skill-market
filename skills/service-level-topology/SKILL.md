@@ -4,20 +4,7 @@ description: |
   Use this skill when a team needs to derive meaningful SLIs and SLOs for a service from first principles — starting from system architecture and working through to metrics worth alerting on. The core trigger is a service that has no SLIs yet, has only Stage 1 (vanity/infrastructure) SLIs, or whose SLIs are consistently ignored because they don't map to real consumer failures.
 
   Call this skill when: (1) You are running or preparing a service level workshop. (2) A team asks "what should our SLI actually measure?" (3) Existing alerts are noisy and generate no meaningful action. (4) There is disagreement about which team owns which metric. (5) An SLO is being set and no one has identified the consumers or their tasks.
-
-  Do not call this skill when: (a) SLIs are already at Stage 3 or 4 maturity and the team needs calibration rather than derivation — use `slo-definition-calibration-framework` instead. (b) The question is purely about SLO math (composite, multi-tier). (c) The team is asking about alert burn-rate thresholds — those require an existing SLI.
-
-  Key trigger signal: Someone says "we monitor availability/latency but our alerts don't capture real problems" or "we don't know who our consumers are."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20250803_112619_service-level-topology.md, 20250827_123438_sli-evolution-stages.md, 20240220_185447_responsible-for-control.md
 tags: [sli, slo, service-topology, consumer-journey, assessment, ownership]
-related_skills:
-  - slug: sli-monitoring-design-maturity
-    relation: composes-with
-  - slug: sli-compass
-    relation: composes-with
-  - slug: consumer-journey-org
-    relation: composes-with
 ---
 
 # Service Level Topology Assessment (Offer → Use → Risk → Metrics)
@@ -164,8 +151,8 @@ ______________________________________________________________________
 ## Related Skills
 
 - **composes-with** → `sli-monitoring-design-maturity`: The topology methodology is the structural scaffold for Stage 3 and Stage 4 SLI design; traversing Offer→Use→Risk→Metrics is how you identify consumer tasks and failures.
-- **composes-with** → [`sli-compass`](../sli-compass/SKILL.md): The topology identifies which SLIs to derive; the compass evaluates how to instrument them and guides the fidelity/granularity investment.
-- **composes-with** → [`consumer-journey-org`](../consumer-journey-org/SKILL.md): The consumer journey is the starting point for the topology's Use section; consumer-journey-org determines which topology to draw, while topology provides the SLI derivation methodology.
+- **composes-with** → `sli-compass`: The topology identifies which SLIs to derive; the compass evaluates how to instrument them and guides the fidelity/granularity investment.
+- **composes-with** → `consumer-journey-org`: The consumer journey is the starting point for the topology's Use section; consumer-journey-org determines which topology to draw, while topology provides the SLI derivation methodology.
 
 ______________________________________________________________________
 
@@ -173,3 +160,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

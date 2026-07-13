@@ -1,62 +1,58 @@
-{
-  "skill": "least-privilege-tooling-enforced",
-  "description": "Use this skill when designing or auditing an access control system where the question is not just 'who should have access?' but 'how do we prevent excess access from being used, even under pressure?' The skill applies when access is granted permanently or broadly and the enforcement mechanism is policy documents, training, or human honor rather than tooling.",
-  "test_prompts": [
-    {
-      "id": "least-privilege-tooling-enforced-should-01",
-      "category": "should_invoke",
-      "prompt": "Our data engineering team shares a single GCP service account with editor access to all production BigQuery datasets and GCS buckets. A junior engineer just joined. Our security team flagged this in an audit. What's the right way to restructure this?",
-      "expected": "invoke",
-      "rationale": "Shared service account with broad permanent access is the canonical least-privilege failure pattern. The skill applies directly: classify access by risk tier, decompose into per-pipeline narrow service accounts, replace permanent grants with short-lived tokens scoped to each job run."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-should-02",
-      "category": "should_invoke",
-      "prompt": "We document in our runbook that engineers should only access customer data when they have an open support ticket for that customer. But in practice, support reps just query the database directly whenever they need to look something up. The policy isn't being followed. How do we fix this?",
-      "expected": "invoke",
-      "rationale": "Honor-enforced least privilege failing in practice is the core trigger. The answer is tooling enforcement: block direct database access, grant access only when a machine-verifiable open ticket exists, time-bound the grant to ticket closure. The policy document approach has already demonstrated it fails under pressure."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-should-03",
-      "category": "should_invoke",
-      "prompt": "We give all on-call engineers full admin access to production 24/7, not just during their rotation, because we worried about losing time during an incident. Now we're growing fast and that approach feels increasingly risky. How should we scope production access as we scale?",
-      "expected": "invoke",
-      "rationale": "Permanent ambient authority is the failure mode this skill addresses. The fix is time-bounded access tied to on-call rotation windows — elevated access auto-expires at rotation end. The concern about incident response time is addressed by making the access provisioning fast and automatic, not by making it permanent."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We need to give our new contractor access to the staging environment. They'll be working on the frontend for six weeks. What access should we provision and how should we handle revoking it when their contract ends?",
-      "expected": "skip",
-      "rationale": "This is a specific access provisioning and lifecycle management question for a known, bounded scope — not a systemic access model design question. The access model already exists; the question is about a specific access decision within it. The skill boundary explicitly excludes cases where the question is about a specific access decision rather than the access design."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We're implementing hardware security keys for all admin access. How do we handle engineers who lose or forget their key during an incident? We need a recovery path that doesn't create a security hole.",
-      "expected": "skip",
-      "rationale": "This is a breakglass design question: the security control (hardware key enforcement) is strict and the question is about designing the emergency bypass for legitimate lockout scenarios. The skill here is breakglass-design, not least-privilege-tooling-enforced, which deals with the normal access model."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're implementing SAML SSO with Okta for our internal tools. I need to decide how to handle session timeout and what to do if our Okta instance is unreachable. Should we fail open or closed?",
-      "expected": "skip",
-      "rationale": "This is a fail-safe vs. fail-secure question about authentication dependency failure behavior. The question is about what the system does automatically when a dependency fails — not about designing the authorization access model or enforcing it via tooling."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-boundary-01",
-      "category": "boundary",
-      "prompt": "We're a 12-person startup. Every engineer has SSH access to all production servers because we move fast and incidents need immediate response. Our investors are pushing us to tighten security before Series A. Is now the right time to implement fine-grained least-privilege access controls?",
-      "expected": "invoke",
-      "rationale": "The skill boundary acknowledges early-stage systems where operational cost may outweigh benefit — but it says to document the debt explicitly and set a timeline, not simply defer indefinitely. With Series A pressure and investor scrutiny, the skill should be invoked to give the framework (classify, narrow, time-bound) along with honest guidance about the implementation cost and what to prioritize first, rather than either blindly applying Google-scale tooling or dismissing the concern."
-    },
-    {
-      "id": "least-privilege-tooling-enforced-boundary-02",
-      "category": "boundary",
-      "prompt": "Our engineers use breakglass credentials to restart specific microservices roughly 8-10 times a week when those services get stuck. The breakglass is properly logged, alerted, and reviewed. My security team says this frequency is fine since the audit trail is clean. Is it?",
-      "expected": "invoke",
-      "rationale": "High breakglass frequency with a clean audit trail is not fine — it is a design signal that the normal access model is mis-specified for that restart operation. The skill's non-obvious insight directly applies: breakglass frequency is feedback that a normal API should exist for this operation. The security team conflating 'audit trail is clean' with 'control is working' is the failure pattern the skill warns against."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our data engineering team shares a single GCP service account with editor access to all production BigQuery datasets and GCS buckets. A junior engineer just joined. Our security team flagged this in an audit. What's the right way to restructure this?",
+    "expected": "invoke",
+    "notes": "rationale: Shared service account with broad permanent access is the canonical least-privilege failure pattern. The skill applies directly: classify access by risk tier, decompose into per-pipeline narrow service accounts, replace permanent grants with short-lived tokens scoped to each job run.; source id: least-privilege-tooling-enforced-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We document in our runbook that engineers should only access customer data when they have an open support ticket for that customer. But in practice, support reps just query the database directly whenever they need to look something up. The policy isn't being followed. How do we fix this?",
+    "expected": "invoke",
+    "notes": "rationale: Honor-enforced least privilege failing in practice is the core trigger. The answer is tooling enforcement: block direct database access, grant access only when a machine-verifiable open ticket exists, time-bound the grant to ticket closure. The policy document approach has already demonstrated it fails under pressure.; source id: least-privilege-tooling-enforced-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We give all on-call engineers full admin access to production 24/7, not just during their rotation, because we worried about losing time during an incident. Now we're growing fast and that approach feels increasingly risky. How should we scope production access as we scale?",
+    "expected": "invoke",
+    "notes": "rationale: Permanent ambient authority is the failure mode this skill addresses. The fix is time-bounded access tied to on-call rotation windows — elevated access auto-expires at rotation end. The concern about incident response time is addressed by making the access provisioning fast and automatic, not by making it permanent.; source id: least-privilege-tooling-enforced-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We need to give our new contractor access to the staging environment. They'll be working on the frontend for six weeks. What access should we provision and how should we handle revoking it when their contract ends?",
+    "expected": "skip",
+    "notes": "rationale: This is a specific access provisioning and lifecycle management question for a known, bounded scope — not a systemic access model design question. The access model already exists; the question is about a specific access decision within it. The skill boundary explicitly excludes cases where the question is about a specific access decision rather than the access design.; source id: least-privilege-tooling-enforced-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We're implementing hardware security keys for all admin access. How do we handle engineers who lose or forget their key during an incident? We need a recovery path that doesn't create a security hole.",
+    "expected": "skip",
+    "notes": "rationale: This is a breakglass design question: the security control (hardware key enforcement) is strict and the question is about designing the emergency bypass for legitimate lockout scenarios. The skill here is breakglass-design, not least-privilege-tooling-enforced, which deals with the normal access model.; source id: least-privilege-tooling-enforced-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're implementing SAML SSO with Okta for our internal tools. I need to decide how to handle session timeout and what to do if our Okta instance is unreachable. Should we fail open or closed?",
+    "expected": "skip",
+    "notes": "rationale: This is a fail-safe vs. fail-secure question about authentication dependency failure behavior. The question is about what the system does automatically when a dependency fails — not about designing the authorization access model or enforcing it via tooling.; source id: least-privilege-tooling-enforced-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're a 12-person startup. Every engineer has SSH access to all production servers because we move fast and incidents need immediate response. Our investors are pushing us to tighten security before Series A. Is now the right time to implement fine-grained least-privilege access controls?",
+    "expected": "invoke",
+    "notes": "rationale: The skill boundary acknowledges early-stage systems where operational cost may outweigh benefit — but it says to document the debt explicitly and set a timeline, not simply defer indefinitely. With Series A pressure and investor scrutiny, the skill should be invoked to give the framework (classify, narrow, time-bound) along with honest guidance about the implementation cost and what to prioritize first, rather than either blindly applying Google-scale tooling or dismissing the concern.; source id: least-privilege-tooling-enforced-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our engineers use breakglass credentials to restart specific microservices roughly 8-10 times a week when those services get stuck. The breakglass is properly logged, alerted, and reviewed. My security team says this frequency is fine since the audit trail is clean. Is it?",
+    "expected": "invoke",
+    "notes": "rationale: High breakglass frequency with a clean audit trail is not fine — it is a design signal that the normal access model is mis-specified for that restart operation. The skill's non-obvious insight directly applies: breakglass frequency is feedback that a normal API should exist for this operation. The security team conflating 'audit trail is clean' with 'control is working' is the failure pattern the skill warns against.; source id: least-privilege-tooling-enforced-boundary-02"
+  }
+]

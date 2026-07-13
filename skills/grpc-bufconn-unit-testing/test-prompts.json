@@ -1,65 +1,72 @@
-{
-  "skill_id": "grpc-bufconn-unit-testing",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "How do I write a unit test for a gRPC server in Go without starting a real TCP listener or dealing with port conflicts?",
-      "rationale": "Direct match: asking for the bufconn pattern explicitly."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "I need a fake database implementation for gRPC tests that can be put into an error state for specific test cases without using global variables. What's the idiomatic Go pattern?",
-      "rationale": "Direct match: FakeDb with functional options TestOption pattern."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "How do I connect a test gRPC client to an in-memory server using bufconn? What dial options do I need?",
-      "rationale": "Direct match: grpc.WithContextDialer(bufDialer) + insecure credentials."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "My gRPC unit tests are flaky because they bind to a port that's sometimes already in use. Is there a way to run gRPC tests without any network port?",
-      "rationale": "Direct match: the bufconn motivation is exactly this problem."
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure TLS for a gRPC server in production?",
-      "rationale": "TLS configuration in production, not test harness setup."
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "What is the best way to load test a gRPC service to find throughput limits?",
-      "rationale": "Load testing (ghz), not unit test harness setup."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "How do I use testify/mock to mock a database interface in Go tests?",
-      "rationale": "testify/mock is an alternative mocking approach, not the bufconn/FakeDb pattern from this book."
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "I want to test both my gRPC endpoint logic and my authentication interceptor. Should I use the same test harness for both?",
-      "rationale": "Blurred: this skill covers endpoint-only bufconn tests; the answer is no — interceptors belong in integration tests — which spans both this skill and the testing-level-selection skill."
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "How do I structure my gRPC test package so that the server starts once and is shared across multiple test functions, but each test gets a clean database state?",
-      "rationale": "Blurred: involves the init() goroutine pattern and Reset() contract from this skill, but also touches test package organization."
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "I'm using Testcontainers to spin up a MySQL container for my gRPC integration tests. Is there a simpler approach for unit tests?",
-      "rationale": "Blurred: comparing Testcontainers (Book B skill) with bufconn — the answer points to this skill as the unit test alternative."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "How do I write a unit test for a gRPC server in Go without starting a real TCP listener or dealing with port conflicts?",
+    "expected": "The skill activates and recommends the bufconn in-memory harness: use google.golang.org/grpc/test/bufconn with lis = bufconn.Listen(bufSize), start the server via go s.Serve(lis), and dial with grpc.WithContextDialer(bufDialer) so no OS port is ever allocated.",
+    "notes": "rationale: Direct match: asking for the bufconn pattern explicitly.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I need a fake database implementation for gRPC tests that can be put into an error state for specific test cases without using global variables. What's the idiomatic Go pattern?",
+    "expected": "The skill activates and recommends the FakeDb functional-options pattern: NewFakeDb(opts ...TestOption) with a TestOption interface implementing apply(*FakeDb), where IsAvailable(false) injects a per-test failure mode without global mutable state or test-order dependencies.",
+    "notes": "rationale: Direct match: FakeDb with functional options TestOption pattern.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How do I connect a test gRPC client to an in-memory server using bufconn? What dial options do I need?",
+    "expected": "The skill activates and specifies grpc.DialContext(ctx, \"bufnet\", grpc.WithContextDialer(bufDialer), grpc.WithTransportCredentials(insecure.NewCredentials())), where bufDialer returns lis.Dial(); insecure credentials are correct because the connection never leaves the process.",
+    "notes": "rationale: Direct match: grpc.WithContextDialer(bufDialer) + insecure credentials.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My gRPC unit tests are flaky because they bind to a port that's sometimes already in use. Is there a way to run gRPC tests without any network port?",
+    "expected": "The skill activates and prescribes replacing the TCP socket with bufconn.Listen, which allocates no OS port and makes tests deterministic with no port cleanup or network access, eliminating the port-conflict flakiness entirely.",
+    "notes": "rationale: Direct match: the bufconn motivation is exactly this problem.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure TLS for a gRPC server in production?",
+    "expected": "skill should not activate",
+    "notes": "rationale: TLS configuration in production, not test harness setup.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is the best way to load test a gRPC service to find throughput limits?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Load testing (ghz), not unit test harness setup.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I use testify/mock to mock a database interface in Go tests?",
+    "expected": "skill should not activate",
+    "notes": "rationale: testify/mock is an alternative mocking approach, not the bufconn/FakeDb pattern from this book.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I want to test both my gRPC endpoint logic and my authentication interceptor. Should I use the same test harness for both?",
+    "expected": "No — the skill should explain that the bufconn harness deliberately uses insecure credentials and no interceptor stack, so it owns endpoint logic only; the auth interceptor belongs in an integration test with real credentials, a separate level.",
+    "notes": "rationale: Blurred: this skill covers endpoint-only bufconn tests; the answer is no — interceptors belong in integration tests — which spans both this skill and the testing-level-selection skill.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "How do I structure my gRPC test package so that the server starts once and is shared across multiple test functions, but each test gets a clean database state?",
+    "expected": "The skill should recommend starting the server once via an init() goroutine with a package-level bufconn listener shared across tests, then relying on the FakeDb.Reset() contract (called in t.Cleanup or at the start of any state-mutating test) to restore clean state per test.",
+    "notes": "rationale: Blurred: involves the init() goroutine pattern and Reset() contract from this skill, but also touches test package organization.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm using Testcontainers to spin up a MySQL container for my gRPC integration tests. Is there a simpler approach for unit tests?",
+    "expected": "For unit tests the skill should point to the bufconn + FakeDb harness as the simpler alternative: an in-memory server plus a fake storage double needs no container, network, or external dependency; Testcontainers remains appropriate for integration tests that exercise the real database.",
+    "notes": "rationale: Blurred: comparing Testcontainers (Book B skill) with bufconn — the answer points to this skill as the unit test alternative.; source id: tp10"
+  }
+]

@@ -13,24 +13,7 @@ description: |
   - Any schema design question involving more than one time-related column
   - A column named "created_at", "timestamp", or "date" is being used to answer
     multiple distinct time-based questions
-
-  Do NOT use this skill when:
-  - The grain of time-related columns is already explicitly named and separated
-    (use temporal-depth-selection to decide how many axes to track)
-  - The question is about how to aggregate over a time axis that is already correctly
-    modeled (use aggregation-workflow-four-steps or six-aggregation-properties)
-  - The question is about time zone representation or UTC formatting only
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 10 — Why Time Matters
-  in Data Modeling.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 10 — Why Time Matters in Data Modeling
 tags: [time, temporal-modeling, event-time, valid-time, data-modeling, ML-features]
-related_skills:
-  - slug: temporal-depth-selection
-    relation: composes-with
-  - slug: synthesis-checklist-cross-form
-    relation: composes-with
 ---
 
 # Four Types of Time — Identification and Separation
@@ -340,8 +323,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`temporal-depth-selection`](../temporal-depth-selection/SKILL.md): This skill identifies which time types exist in a dataset; temporal-depth-selection then decides how many of those axes to store — the two skills run in sequence whenever a new temporal schema is designed.
-- **composes-with** [`synthesis-checklist-cross-form`](../synthesis-checklist-cross-form/SKILL.md): Question 5 of the synthesis checklist (time alignment) is answered by applying this skill's classification across all data forms being integrated to designate a common event-time reference.
+- **composes-with** `temporal-depth-selection`: This skill identifies which time types exist in a dataset; temporal-depth-selection then decides how many of those axes to store — the two skills run in sequence whenever a new temporal schema is designed.
+- **composes-with** `synthesis-checklist-cross-form`: Question 5 of the synthesis checklist (time alignment) is answered by applying this skill's classification across all data forms being integrated to designate a common event-time reference.
 
 ______________________________________________________________________
 
@@ -351,3 +334,9 @@ ______________________________________________________________________
 - **Source IDs**: f12+p23+p24 (framework + two principles merged at Phase 1.5)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 10 — Why Time Matters in Data Modeling

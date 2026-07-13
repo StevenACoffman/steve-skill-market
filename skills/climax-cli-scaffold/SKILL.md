@@ -1,6 +1,5 @@
 ---
 name: climax-cli-scaffold
-allowed-tools: Bash, Read, Edit
 description: |
   Invoke when initializing a new Go CLI application using the climax scaffold generator,
   when adding new subcommands to an existing climax app, or when a climax app has drifted
@@ -13,9 +12,8 @@ description: |
 
   Do NOT invoke for: CLIs built with cobra, kong, urfave/cli, or other frameworks;
   flag-only programs with no subcommand dispatch; non-Go CLIs.
-source: climax (github.com/StevenACoffman/climax — ff/v4-based scaffold generator)
 tags: [go, cli, scaffold, ff, flags-first]
-related_skills: [go-constructor-option-pattern-selection, go-http-service-di-composition]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Climax CLI Scaffold
@@ -421,3 +419,9 @@ ______________________________________________________________________
 
 - **composes_with**: `go-constructor-option-pattern-selection` — the `New()` factory pattern climax generates is an instance of the constructor pattern; functional options can extend it for complex flag sets.
 - **composes_with**: `go-http-service-di-composition` — a climax `serve` command's `exec()` is the natural place to wire up an HTTP server using the `run()`/application-struct DI pattern.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** climax (github.com/StevenACoffman/climax — ff/v4-based scaffold generator)

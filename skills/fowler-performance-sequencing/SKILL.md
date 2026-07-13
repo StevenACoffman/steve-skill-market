@@ -6,16 +6,7 @@ description: |
   Trigger signals: "should we optimize this as we go?", "this feels slow", "we need to make this faster", "should I use a more efficient algorithm here?", "my team wants to optimize every endpoint", "the system is running slowly in production."
 
   The skill provides Fowler's three-approach taxonomy for performance work — time-budget (hard real-time), constant-attention (rejected), and profile-then-tune (endorsed) — and explains why the constant-attention approach is both ineffective and harmful. The core insight: 90% of execution time is in 10% of code, so optimizing everywhere wastes effort; even experts with deep system knowledge guess the hot spot wrong.
-
-  Not suitable for: pure algorithmic complexity analysis (O(n²) by inspection is a design issue, not a hot-spot question), greenfield architecture decisions about data structures, or situations where a profiler has already identified the bottleneck (skip to optimization).
-source_book: 'Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)'
-source_chapter: Chapter 2
 tags: [performance, optimization, profiling, workflow]
-related_skills:
-  - slug: fowler-two-hats
-    relation: composes-with
-  - slug: fowler-design-stamina
-    relation: composes-with
 ---
 
 # Performance Optimization Sequencing — Profile-Guided Hot-Spot Tuning
@@ -153,3 +144,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code — Martin Fowler (2018) — Chapter 2

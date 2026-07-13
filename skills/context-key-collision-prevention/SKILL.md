@@ -14,12 +14,7 @@ description: |
   WithX / XFromContext accessor functions to hide the key type and eliminate repeated type
   assertions at call sites. This is the pattern used by net/http, net/http/httptrace,
   runtime/pprof, and the OpenTelemetry Go SDK.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: avoid_context_key_collisions
 tags: [go, context, concurrency, api-design, safety]
-related_skills:
-  - slug: context-cancellation-cause
-    relation: composes-with
 ---
 
 # Context Key Collision Prevention via Typed Keys
@@ -232,7 +227,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`context-cancellation-cause`](../context-cancellation-cause/SKILL.md): Both skills address correct usage of `context.Context` within the same request lifecycle. A middleware layer typically adds both typed value keys (request ID, auth token) via `WithValue` and cancellation tracking via `WithCancelCause`. Typed context keys prevent value shadowing across middleware packages; `WithCancelCause` preserves the specific cancellation reason. Apply both when building request context instrumentation.
+- **composes-with** `context-cancellation-cause`: Both skills address correct usage of `context.Context` within the same request lifecycle. A middleware layer typically adds both typed value keys (request ID, auth token) via `WithValue` and cancellation tracking via `WithCancelCause`. Typed context keys prevent value shadowing across middleware packages; `WithCancelCause` preserves the specific cancellation reason. Apply both when building request context instrumentation.
 
 ______________________________________________________________________
 
@@ -242,3 +237,9 @@ ______________________________________________________________________
 - **Counter-example**: ce20 — context keys collide silently (string key "user" in two packages)
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — avoid_context_key_collisions

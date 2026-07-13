@@ -1,66 +1,72 @@
-{
-  "skill_id": "program-governance-ecological-design",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "I'm running a large transformation program — six workstreams, eighteen months in. Project reporting is solid, every workstream is green or amber, but we're nine months from target and the business outcomes we promised the board are nowhere close to materializing. The steering committee keeps asking me to tighten milestone tracking. I don't think that's the problem. What is?",
-      "expected_behavior": "Invoke program-governance-ecological-design. This is the canonical signature: strong component reporting, weak benefits realization. The steering committee's instinct (tighten oversight) is the oversight model applied more rigorously to a problem that lives at the interaction layer, not the component level. Diagnose the unowned interaction layer. Apply the three audit questions. The governance function needs to shift from monitoring components to stewarding the conditions at the integration points between workstreams."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "We're setting up governance for a new enterprise platform program — five departments, each with their own workstream, all building toward a shared capability that requires all five to integrate. The PMO template is a steering committee plus weekly status reports from each workstream lead. Is there anything missing from this model?",
-      "expected_behavior": "Invoke program-governance-ecological-design. The PMO template is the oversight model applied to what is structurally a program with interaction-dependent outcomes. Walk through the three design questions: Who owns the interaction layer? How do weak signals from integration points reach decision-makers? Do workstreams have slack to adapt? The template has no answer to any of these — it monitors components and has no governance function for the emergent layer where the shared capability will or will not materialize."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "We keep having the same problem: integration issues surface as crises, not as risks. Workstream leads say they're on track. Dependencies get flagged in workstream meetings but never reach the steering committee until they've already forced a decision. Our reporting cadence is weekly. What's wrong with our governance?",
-      "expected_behavior": "Invoke program-governance-ecological-design. This is the weak signal pathway failure: signals from the interaction layer are reaching people who cannot act on them (workstream-level meetings) and not reaching people with authority to act (steering committee) until they've collapsed from options into forced decisions. Diagnose the absence of explicit interaction layer ownership and the absence of a pathway designed to surface integration signals early. The solution is not faster or more frequent reporting — it is creating a governance function with eyes on integration points and a direct pathway to decision authority."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_invoke",
-      "prompt": "I've been asked to do a governance review for a program that's been struggling. When I look at the artifacts — steering deck, status reports, RAID log — everything looks well-organized. But talking to workstream leads, I get a strong sense that the important conversations happen in hallways and Slack, not in governance forums. The program is behind on benefits. Where do I look first?",
-      "expected_behavior": "Invoke program-governance-ecological-design. The governance artifacts performing well while the program underdelivers is the measurement theater pattern. The hallway conversations are weak signals that have no formal pathway — they're reaching people informally because the formal governance structure doesn't have a function designed to receive them. Apply the interaction layer audit: map the integration points between workstreams, identify who (if anyone) explicitly owns the health of those points, and check whether anyone has the authority and visibility to act on cross-workstream signals. The interaction layer is unowned and the formal governance has no way to see it."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "One of my project managers is consistently late with status reports and their milestone tracking is unreliable. How do I address this performance issue?",
-      "expected_behavior": "Do not invoke program-governance-ecological-design. This is a project management performance issue at the individual level — it is a component-level accountability question, not an interaction layer or governance architecture question. Handle through direct feedback, coaching, or escalation as appropriate. Ecological design governs the architecture of program governance, not individual PM performance."
-    },
-    {
-      "id": "tp-06",
-      "category": "should_not_invoke",
-      "prompt": "We're designing a governance model for a single large infrastructure project — one team, one delivery scope, clear accountabilities. We need a RACI, a steering committee structure, and an escalation path. Where do I start?",
-      "expected_behavior": "Do not invoke program-governance-ecological-design. This is governance design for a single project, not a multi-project program with interaction-dependent outcomes. The ecological design framework applies specifically to programs where outcomes are produced at the interaction layer between projects. Standard project governance design (RACI, steering structure, escalation) is appropriate here."
-    },
-    {
-      "id": "tp-07",
-      "category": "should_not_invoke",
-      "prompt": "Our program has a clear benefits realization framework on paper, but the business units aren't actually tracking or reporting benefits. How do I get business owners to take ownership of benefits measurement?",
-      "expected_behavior": "Do not invoke program-governance-ecological-design. This is a stakeholder engagement and accountability problem within an existing governance structure — the question is about getting the right people to perform their assigned roles, not about diagnosing or redesigning governance architecture. The skill addresses structural gaps in where governance is pointed, not the organizational behavior problem of getting stakeholders to fulfill their governance responsibilities."
-    },
-    {
-      "id": "tp-08",
-      "category": "blurred_boundary",
-      "prompt": "I'm the PMO director for a large regulatory compliance program. We have strong project controls, rigorous EVM, and detailed milestone tracking. The program is on schedule and under budget. But the CISO told me last week that the program isn't actually reducing the organization's risk exposure — the compliance artifacts exist but the underlying security posture hasn't changed. What's happening?",
-      "expected_behavior": "Invoke program-governance-ecological-design. This is the EVM measurement theater pattern (c15): rigorous component measurement, governance that can detect and report component variance but cannot close the loop on the outcome the program was meant to produce. The compliance artifacts are the components; the actual risk reduction requires interaction between compliance activities and operational behavior change — an interaction layer that governance is not designed to see. However, this also has elements of organizational change management and benefits realization strategy, so the response should acknowledge where ecological design addresses the governance architecture question and where other frameworks may apply to the behavior change question."
-    },
-    {
-      "id": "tp-09",
-      "category": "blurred_boundary",
-      "prompt": "We're nine months into a digital transformation and we've had significant scope changes in three workstreams — emerging requirements that nobody anticipated. Our governance structure keeps flagging these as variance from baseline. The changes seem right to me based on what we're learning, but the governance process is treating them as problems to be corrected back to the original plan. How do I handle this?",
-      "expected_behavior": "Invoke program-governance-ecological-design — specifically the organizational slack for recombination concept and the disequilibrium reframe. Governance is forcing adherence to original design and treating emergent learning as variance to be corrected rather than information that should update the program. This is a boundary condition failure: governance has been set to eliminate productive instability rather than maintain the conditions under which good emergence can happen. However, this also requires judgment about whether the scope changes are genuinely improving the program or drifting — not every deviation is productive. The skill provides the frame; the specific recommendation requires assessing whether the changes are improving outcome alignment."
-    },
-    {
-      "id": "tp-10",
-      "category": "blurred_boundary",
-      "prompt": "I've been asked to set up governance for an AI implementation program — five workstreams, including data infrastructure, model development, change management, policy/compliance, and business process redesign. The outcomes only materialize if all five come together coherently. I'm worried about using a standard PMO governance template. What should I be thinking about?",
-      "expected_behavior": "Invoke program-governance-ecological-design. This is a well-posed setup for ecological design: explicit acknowledgment that outcomes require interaction between workstreams, not just parallel delivery. Apply the three design questions directly. The AI context adds specificity — the interaction between data infrastructure and model development, between model behavior and policy compliance, between process redesign and change management, are all interaction layer dependencies where issues will not be visible in any single workstream's status report. However, this scenario also has elements of jagged-frontier-work-allocation (what portions of program management itself to run through AI) — distinguish which question is being asked."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm running a large transformation program — six workstreams, eighteen months in. Project reporting is solid, every workstream is green or amber, but we're nine months from target and the business outcomes we promised the board are nowhere close to materializing. The steering committee keeps asking me to tighten milestone tracking. I don't think that's the problem. What is?",
+    "expected": "Invoke program-governance-ecological-design. This is the canonical signature: strong component reporting, weak benefits realization. The steering committee's instinct (tighten oversight) is the oversight model applied more rigorously to a problem that lives at the interaction layer, not the component level. Diagnose the unowned interaction layer. Apply the three audit questions. The governance function needs to shift from monitoring components to stewarding the conditions at the integration points between workstreams.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're setting up governance for a new enterprise platform program — five departments, each with their own workstream, all building toward a shared capability that requires all five to integrate. The PMO template is a steering committee plus weekly status reports from each workstream lead. Is there anything missing from this model?",
+    "expected": "Invoke program-governance-ecological-design. The PMO template is the oversight model applied to what is structurally a program with interaction-dependent outcomes. Walk through the three design questions: Who owns the interaction layer? How do weak signals from integration points reach decision-makers? Do workstreams have slack to adapt? The template has no answer to any of these — it monitors components and has no governance function for the emergent layer where the shared capability will or will not materialize.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We keep having the same problem: integration issues surface as crises, not as risks. Workstream leads say they're on track. Dependencies get flagged in workstream meetings but never reach the steering committee until they've already forced a decision. Our reporting cadence is weekly. What's wrong with our governance?",
+    "expected": "Invoke program-governance-ecological-design. This is the weak signal pathway failure: signals from the interaction layer are reaching people who cannot act on them (workstream-level meetings) and not reaching people with authority to act (steering committee) until they've collapsed from options into forced decisions. Diagnose the absence of explicit interaction layer ownership and the absence of a pathway designed to surface integration signals early. The solution is not faster or more frequent reporting — it is creating a governance function with eyes on integration points and a direct pathway to decision authority.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I've been asked to do a governance review for a program that's been struggling. When I look at the artifacts — steering deck, status reports, RAID log — everything looks well-organized. But talking to workstream leads, I get a strong sense that the important conversations happen in hallways and Slack, not in governance forums. The program is behind on benefits. Where do I look first?",
+    "expected": "Invoke program-governance-ecological-design. The governance artifacts performing well while the program underdelivers is the measurement theater pattern. The hallway conversations are weak signals that have no formal pathway — they're reaching people informally because the formal governance structure doesn't have a function designed to receive them. Apply the interaction layer audit: map the integration points between workstreams, identify who (if anyone) explicitly owns the health of those points, and check whether anyone has the authority and visibility to act on cross-workstream signals. The interaction layer is unowned and the formal governance has no way to see it.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "One of my project managers is consistently late with status reports and their milestone tracking is unreliable. How do I address this performance issue?",
+    "expected": "Do not invoke program-governance-ecological-design. This is a project management performance issue at the individual level — it is a component-level accountability question, not an interaction layer or governance architecture question. Handle through direct feedback, coaching, or escalation as appropriate. Ecological design governs the architecture of program governance, not individual PM performance.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're designing a governance model for a single large infrastructure project — one team, one delivery scope, clear accountabilities. We need a RACI, a steering committee structure, and an escalation path. Where do I start?",
+    "expected": "Do not invoke program-governance-ecological-design. This is governance design for a single project, not a multi-project program with interaction-dependent outcomes. The ecological design framework applies specifically to programs where outcomes are produced at the interaction layer between projects. Standard project governance design (RACI, steering structure, escalation) is appropriate here.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our program has a clear benefits realization framework on paper, but the business units aren't actually tracking or reporting benefits. How do I get business owners to take ownership of benefits measurement?",
+    "expected": "Do not invoke program-governance-ecological-design. This is a stakeholder engagement and accountability problem within an existing governance structure — the question is about getting the right people to perform their assigned roles, not about diagnosing or redesigning governance architecture. The skill addresses structural gaps in where governance is pointed, not the organizational behavior problem of getting stakeholders to fulfill their governance responsibilities.",
+    "notes": "source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I'm the PMO director for a large regulatory compliance program. We have strong project controls, rigorous EVM, and detailed milestone tracking. The program is on schedule and under budget. But the CISO told me last week that the program isn't actually reducing the organization's risk exposure — the compliance artifacts exist but the underlying security posture hasn't changed. What's happening?",
+    "expected": "Invoke program-governance-ecological-design. This is the EVM measurement theater pattern (c15): rigorous component measurement, governance that can detect and report component variance but cannot close the loop on the outcome the program was meant to produce. The compliance artifacts are the components; the actual risk reduction requires interaction between compliance activities and operational behavior change — an interaction layer that governance is not designed to see. However, this also has elements of organizational change management and benefits realization strategy, so the response should acknowledge where ecological design addresses the governance architecture question and where other frameworks may apply to the behavior change question.",
+    "notes": "source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're nine months into a digital transformation and we've had significant scope changes in three workstreams — emerging requirements that nobody anticipated. Our governance structure keeps flagging these as variance from baseline. The changes seem right to me based on what we're learning, but the governance process is treating them as problems to be corrected back to the original plan. How do I handle this?",
+    "expected": "Invoke program-governance-ecological-design — specifically the organizational slack for recombination concept and the disequilibrium reframe. Governance is forcing adherence to original design and treating emergent learning as variance to be corrected rather than information that should update the program. This is a boundary condition failure: governance has been set to eliminate productive instability rather than maintain the conditions under which good emergence can happen. However, this also requires judgment about whether the scope changes are genuinely improving the program or drifting — not every deviation is productive. The skill provides the frame; the specific recommendation requires assessing whether the changes are improving outcome alignment.",
+    "notes": "source id: tp-09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I've been asked to set up governance for an AI implementation program — five workstreams, including data infrastructure, model development, change management, policy/compliance, and business process redesign. The outcomes only materialize if all five come together coherently. I'm worried about using a standard PMO governance template. What should I be thinking about?",
+    "expected": "Invoke program-governance-ecological-design. This is a well-posed setup for ecological design: explicit acknowledgment that outcomes require interaction between workstreams, not just parallel delivery. Apply the three design questions directly. The AI context adds specificity — the interaction between data infrastructure and model development, between model behavior and policy compliance, between process redesign and change management, are all interaction layer dependencies where issues will not be visible in any single workstream's status report. However, this scenario also has elements of jagged-frontier-work-allocation (what portions of program management itself to run through AI) — distinguish which question is being asked.",
+    "notes": "source id: tp-10"
+  }
+]

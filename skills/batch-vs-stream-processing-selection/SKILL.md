@@ -1,16 +1,11 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: batch-vs-stream-processing-selection
 description: |
   Invoke this skill when an engineering team must choose between batch processing (periodic jobs over bounded, immutable input) and stream processing (continuous processing of unbounded, incrementally arriving input) for a data pipeline. Specific triggers: a data pipeline needs to produce derived outputs (search indexes, recommendations, ML features, analytics); a bug in a production pipeline corrupted derived data and you are evaluating whether you can recover; the team is debating "how often should we run this job?"; a pipeline produces stale results and the question is whether to move to real-time processing.
 
   Do NOT invoke when: the question is about online request-response latency (OLTP performance); the issue is with a single-node computation's correctness; you are deciding the primary storage architecture (see `system-of-record-vs-derived-data`).
-
-  Key signals: "we need to regenerate the index after the bug fix," "how much latency can we tolerate in the recommendations?", "the pipeline is too slow to run hourly," "we want to process events as they arrive," "our batch job failed halfway through — is the output safe?", "can we replay the pipeline?", "the results are already a day old when users see them."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 11: Batch Processing'
 tags: [batch-processing, stream-processing, immutable-inputs, derived-data, human-fault-tolerance, kafka]
-related_skills: [system-of-record-vs-derived-data, end-to-end-idempotence-request-ids, schema-evolution-compatibility-planning]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Batch Vs. Stream Processing Selection
@@ -168,3 +163,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 11: Batch Processing

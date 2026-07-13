@@ -1,3 +1,9 @@
+---
+name: pass-through-method-wrong-layer-count
+description: |
+  Invoke this skill when you observe any of the following: - A service layer delegates every call to a repository layer with no transformation, validation, or transaction wrapping. - An adapter class that exists between two components but adds no type conversion, format change, or protocol translation. - A decorator whose `Wrap()` or `Execute()` method calls the wrapped object with the same arguments and does nothing else — no logging, no retry, no access control. - A code review comment "we need a class for X" where X is behavior already fully implemented by an existing class. - Any method whose first and only substantive action is calling another method with the same parameters. Check: could a caller call the inner method directly without losing anything? - A variable appearing in N consecutive method signatures that is not used by any of the intermediate methods — only by the final one.
+---
+
 # Pass-Through-Method-Wrong-Layer-Count
 
 **Book**: A Philosophy of Software Design — John Ousterhout (2018)
@@ -92,5 +98,5 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Information Hiding & Temporal Decomposition](../information-hiding-temporal-decomposition/SKILL.md)** — *composes-with* → Two diagnostics for wrong module boundaries: pass-through = same abstraction at adjacent layers; leakage = design decision appearing in multiple interfaces. Apply both when evaluating a layered design.
-- **[Somewhat General-Purpose Interface](../somewhat-general-purpose-interface/SKILL.md)** — *contrasts-with* → S04 addresses insufficient generality (interface mirrors use case — too specific); S05 addresses excessive layering (too many layers with identical abstractions). Both are interface design skills but address opposite failure directions.
+- **Information Hiding & Temporal Decomposition** — *composes-with* → Two diagnostics for wrong module boundaries: pass-through = same abstraction at adjacent layers; leakage = design decision appearing in multiple interfaces. Apply both when evaluating a layered design.
+- **Somewhat General-Purpose Interface** — *contrasts-with* → S04 addresses insufficient generality (interface mirrors use case — too specific); S05 addresses excessive layering (too many layers with identical abstractions). Both are interface design skills but address opposite failure directions.

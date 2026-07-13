@@ -10,10 +10,7 @@ description: |
   Key trigger: Someone proposes a canary size by convention ("we always do 5%") or proposes blue/green as a canary evaluation strategy. The correct frame is arithmetic, not convention. Canary size × estimated defect rate × duration = budget consumed. If the team cannot state that calculation, they have not sized the canary.
 
   Before/after canaries — including blue/green — are structurally unsound for defect attribution because time is itself a confound. Concurrent canaries (control and canary populations simultaneously active) are required for valid comparison.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 16 - Canarying Releases; Chapter 2 - Implementing SLOs"
 tags: [canary, release-engineering, error-budget, deployment, slo, blue-green]
-related_skills: []
 ---
 
 # Canary Sizing as Error Budget Arithmetic (With Before/After Invalidation)
@@ -132,3 +129,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 16 - Canarying Releases, Chapter 2 - Implementing SLOs

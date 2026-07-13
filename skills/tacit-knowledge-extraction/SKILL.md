@@ -11,25 +11,7 @@ description: |
   - "Requirements gathering interviews keep producing contradictions"
   - "There are shadow spreadsheets everywhere"
   - "The official schema doesn't match what the business actually does"
-
-  Do NOT use this skill when:
-  - Process documentation is current and has been validated with domain experts
-    (proceed directly to business-process-discovery with the documentation as input)
-  - The process is well-understood and the question is how to translate it into a
-    data model (use process-to-model-translation)
-  - Access to the people who do the work has been blocked or restricted — the three
-    techniques require physical or organizational access; if access is blocked,
-    address the organizational prerequisite first (see power-interest-grid-stakeholders)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 13 — Seeing the Business.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 13 — Seeing the Business
 tags: [tacit-knowledge, business-process, discovery, field-research, data-modeling]
-related_skills:
-  - slug: power-interest-grid-stakeholders
-    relation: depends-on
-  - slug: business-process-discovery
-    relation: composes-with
 ---
 
 # Tacit Knowledge Extraction — Gemba Walk / Artifact Archaeology / Unhappy Path Interviews
@@ -401,8 +383,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`power-interest-grid-stakeholders`](../power-interest-grid-stakeholders/SKILL.md): Organizational access to the workers and their artifacts is the prerequisite for all three field-research techniques — the grid identifies which key players can grant access and what engagement strategy is needed when a department is politically sealed.
-- **composes-with** [`business-process-discovery`](../business-process-discovery/SKILL.md): The three techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) produce the raw evidence that completes the five-component process description when documentation is missing, stale, or contradicted by reality.
+- **depends-on** `power-interest-grid-stakeholders`: Organizational access to the workers and their artifacts is the prerequisite for all three field-research techniques — the grid identifies which key players can grant access and what engagement strategy is needed when a department is politically sealed.
+- **composes-with** `business-process-discovery`: The three techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) produce the raw evidence that completes the five-component process description when documentation is missing, stale, or contradicted by reality.
 
 ______________________________________________________________________
 
@@ -412,3 +394,9 @@ ______________________________________________________________________
 - **Source IDs**: f20
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 13 — Seeing the Business

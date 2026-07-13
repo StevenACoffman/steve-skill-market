@@ -6,12 +6,7 @@ description: |
   Call when: An executive asks why the SLO hasn't improved reliability. A team has had SLOs for a year and outage frequency is unchanged. Engineers discuss SLO numbers but don't change priorities when the budget is exhausted. The SLO exists but the error budget policy does not, or exists but has never been invoked.
 
   Do not call when: The SLO and error budget policy are already ratified and enforced — the question is about implementing the policy's specific consequences (use error-budget-policy-framework) or about whether the SLO number is correct (use slo-stakeholder-negotiation-gate).
-
-  Key trigger: "We have SLOs" + no behavior change when the budget is exhausted. An SLO without a written, pre-approved error budget policy with organizational authority to enforce it is operationally equivalent to having no SLO. Measurement does not produce improvement; consequences do.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 20 - SRE Team Lifecycles (Principle #1); Chapter 2 - Implementing SLOs; Chapter 3 - SLO Engineering Case Studies"
 tags: [slo, error-budget, governance, principle-1, consequences, policy, leadership-commitment]
-related_skills: []
 ---
 
 # SRE Principle: SLOs with Consequences Are the Governance Mechanism
@@ -129,3 +124,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 20 - SRE Team Lifecycles (Principle #1), Chapter 2 - Implementing SLOs, Chapter 3 - SLO Engineering Case Studies

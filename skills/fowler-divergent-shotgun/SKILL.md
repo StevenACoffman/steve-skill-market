@@ -6,12 +6,7 @@ description: |
   Key trigger signal: "Every time I change X, I also have to change Y and Z in this same class." (Divergent Change) or "Every time I change X, I have to edit five different files." (Shotgun Surgery).
 
   Do NOT invoke this skill for general code smell detection across a whole codebase (use fowler-code-smells for the full smell vocabulary), or when the question is specifically about a function that is too long (Long Function smell), or when the question is about untangling feature from refactoring work (use fowler-two-hats for that).
-source_book: 'Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)'
-source_chapter: Chapter 3
 tags: [code-smells, modularity, cohesion, refactoring]
-related_skills:
-  - slug: fowler-code-smells
-    relation: depends-on
 ---
 
 # Divergent Change Vs. Shotgun Surgery — Two Inverse Modularity Failures
@@ -173,3 +168,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code — Martin Fowler (2018) — Chapter 3

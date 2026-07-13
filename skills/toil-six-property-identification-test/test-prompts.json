@@ -1,62 +1,58 @@
-{
-  "skill": "toil-six-property-identification-test",
-  "description": "Use this skill when you need to classify operational work as toil versus legitimate engineering work versus administrative overhead.",
-  "test_prompts": [
-    {
-      "id": "toil-six-property-identification-test-should-01",
-      "category": "should_invoke",
-      "prompt": "Every time we onboard a new enterprise customer we have to manually create their tenant in the database, set up their IAM roles, configure their VPC peering, and send them a welcome email with their credentials. It takes about 3 hours per customer and we're doing this for 10-15 new customers a month. Is this toil and should we automate it?",
-      "expected": "invoke",
-      "rationale": "Direct toil classification request with O(n) scaling signal ('every new customer'). All six properties are clearly implicated. The skill's six-property scoring test should be applied to confirm and prioritize this for automation."
-    },
-    {
-      "id": "toil-six-property-identification-test-should-02",
-      "category": "should_invoke",
-      "prompt": "My team keeps arguing about what counts as toil when we're deciding what to put on the automation roadmap. Someone says writing postmortems is toil because it's manual and we do it after every incident. Someone else says rotating our TLS certs every 90 days is toil. Can we get a consistent framework for making these calls?",
-      "expected": "invoke",
-      "rationale": "Explicit request for a classification framework to resolve toil vs. non-toil debates. Both examples named are interesting: postmortems score low (not automatable, produce enduring value, not tactical) and cert rotation scores moderate-to-high depending on whether it's scripted. The six-property test is exactly what is needed."
-    },
-    {
-      "id": "toil-six-property-identification-test-should-03",
-      "category": "should_invoke",
-      "prompt": "I spend about 6 hours every Friday afternoon pulling capacity metrics from Grafana, pasting them into a spreadsheet, and sending a report to the infrastructure team. It doesn't feel like engineering work but my manager says it's important. Should this count against my 50% ops time cap?",
-      "expected": "invoke",
-      "rationale": "This matches the weekly capacity report scenario from the skill's A2 section almost exactly. The work is manual, repetitive, automatable, and produces no enduring value. The 50% cap question is downstream of the toil classification — apply the six-property test first to establish whether this counts as toil."
-    },
-    {
-      "id": "toil-six-property-identification-test-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our ops team is spending 70% of their time on operational work and only 30% on engineering projects. We've already identified the top toil categories and we know cert rotation, manual deployments, and customer provisioning are the biggest ones. How do we make the case to leadership to get headcount or time to automate?",
-      "expected": "skip",
-      "rationale": "The toil classification is already done — the team knows what their toil is. The question is what to do about exceeding the ops time threshold. The right skill is the fifty-percent-engineering-time-cap, which governs escalation, priority adjustment, and the structural response when toil exceeds the ceiling."
-    },
-    {
-      "id": "toil-six-property-identification-test-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We have way too many meetings. Stand-ups, syncs, status updates, planning sessions — I feel like I spend half my week in meetings and can't get any real work done. Is this toil we should try to eliminate?",
-      "expected": "skip",
-      "rationale": "Meetings are administrative overhead, not toil. The skill explicitly states that overhead (meetings, HR, goal-setting) is a separate category that is neither toil nor engineering work and should not be classified as either. The right conversation is a management/process problem, not an SRE toil reduction initiative."
-    },
-    {
-      "id": "toil-six-property-identification-test-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're cleaning up our entire alerting configuration — hundreds of alert rules accumulated over 4 years, many of them firing for things nobody cares about anymore. This is going to take 3-4 weeks of engineering time. Can we justify this as toil reduction work?",
-      "expected": "skip",
-      "rationale": "This is the alerting configuration cleanup case from the skill's A1 Case 1 — used explicitly to illustrate work that is NOT toil. The work is not repetitive, not automatable without judgment, not tactical, and produces enduring value (a permanently improved monitoring system). Calling it toil would be a misclassification that the skill explicitly guards against."
-    },
-    {
-      "id": "toil-six-property-identification-test-boundary-01",
-      "category": "boundary",
-      "prompt": "We're required by our SOC 2 audit to manually review and approve every change to production firewall rules before it goes live. The review takes 20-30 minutes per change, we do about 15 changes a week, and it's always the same checklist. Our security team won't let us automate the approval because the auditors want a human sign-off. Does this count as toil?",
-      "expected": "invoke",
-      "rationale": "Boundary case: the work scores high on most toil properties (manual, repetitive, same checklist pattern suggests automatable mechanics) but the human judgment requirement is real (audit compliance) and political constraints prevent elimination even if it qualifies. The skill should be invoked to do the classification — the B section's author blind spot about politically-constrained toil applies here. The answer is 'yes, this is toil, but you cannot eliminate it; you can only reduce the friction per review.'"
-    },
-    {
-      "id": "toil-six-property-identification-test-boundary-02",
-      "category": "boundary",
-      "prompt": "We've written an ML model that flags anomalous log patterns for an on-call engineer to review. The engineer reviews about 30 flagged items per shift and dismisses 28 of them as false positives, but the 2 real ones genuinely require judgment to diagnose. Does the review step count as toil we should try to reduce?",
-      "expected": "invoke",
-      "rationale": "This sits exactly at the automatable property boundary the skill calls out in its B section: 'if the automation would be wrong 20% of the time and require human review of every output, the human judgment component disqualifies it.' The 28/30 false positive rate means the human review is adding real signal but is also largely mechanical. The skill should be invoked to score each property carefully — the automatable property will be the pivotal one, and the answer is likely 'partially toil, reduce the false positive rate rather than eliminate the review.'"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Every time we onboard a new enterprise customer we have to manually create their tenant in the database, set up their IAM roles, configure their VPC peering, and send them a welcome email with their credentials. It takes about 3 hours per customer and we're doing this for 10-15 new customers a month. Is this toil and should we automate it?",
+    "expected": "invoke",
+    "notes": "rationale: Direct toil classification request with O(n) scaling signal ('every new customer'). All six properties are clearly implicated. The skill's six-property scoring test should be applied to confirm and prioritize this for automation.; source id: toil-six-property-identification-test-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My team keeps arguing about what counts as toil when we're deciding what to put on the automation roadmap. Someone says writing postmortems is toil because it's manual and we do it after every incident. Someone else says rotating our TLS certs every 90 days is toil. Can we get a consistent framework for making these calls?",
+    "expected": "invoke",
+    "notes": "rationale: Explicit request for a classification framework to resolve toil vs. non-toil debates. Both examples named are interesting: postmortems score low (not automatable, produce enduring value, not tactical) and cert rotation scores moderate-to-high depending on whether it's scripted. The six-property test is exactly what is needed.; source id: toil-six-property-identification-test-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I spend about 6 hours every Friday afternoon pulling capacity metrics from Grafana, pasting them into a spreadsheet, and sending a report to the infrastructure team. It doesn't feel like engineering work but my manager says it's important. Should this count against my 50% ops time cap?",
+    "expected": "invoke",
+    "notes": "rationale: This matches the weekly capacity report scenario from the skill's A2 section almost exactly. The work is manual, repetitive, automatable, and produces no enduring value. The 50% cap question is downstream of the toil classification — apply the six-property test first to establish whether this counts as toil.; source id: toil-six-property-identification-test-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our ops team is spending 70% of their time on operational work and only 30% on engineering projects. We've already identified the top toil categories and we know cert rotation, manual deployments, and customer provisioning are the biggest ones. How do we make the case to leadership to get headcount or time to automate?",
+    "expected": "skip",
+    "notes": "rationale: The toil classification is already done — the team knows what their toil is. The question is what to do about exceeding the ops time threshold. The right skill is the fifty-percent-engineering-time-cap, which governs escalation, priority adjustment, and the structural response when toil exceeds the ceiling.; source id: toil-six-property-identification-test-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have way too many meetings. Stand-ups, syncs, status updates, planning sessions — I feel like I spend half my week in meetings and can't get any real work done. Is this toil we should try to eliminate?",
+    "expected": "skip",
+    "notes": "rationale: Meetings are administrative overhead, not toil. The skill explicitly states that overhead (meetings, HR, goal-setting) is a separate category that is neither toil nor engineering work and should not be classified as either. The right conversation is a management/process problem, not an SRE toil reduction initiative.; source id: toil-six-property-identification-test-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're cleaning up our entire alerting configuration — hundreds of alert rules accumulated over 4 years, many of them firing for things nobody cares about anymore. This is going to take 3-4 weeks of engineering time. Can we justify this as toil reduction work?",
+    "expected": "skip",
+    "notes": "rationale: This is the alerting configuration cleanup case from the skill's A1 Case 1 — used explicitly to illustrate work that is NOT toil. The work is not repetitive, not automatable without judgment, not tactical, and produces enduring value (a permanently improved monitoring system). Calling it toil would be a misclassification that the skill explicitly guards against.; source id: toil-six-property-identification-test-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're required by our SOC 2 audit to manually review and approve every change to production firewall rules before it goes live. The review takes 20-30 minutes per change, we do about 15 changes a week, and it's always the same checklist. Our security team won't let us automate the approval because the auditors want a human sign-off. Does this count as toil?",
+    "expected": "invoke",
+    "notes": "rationale: Boundary case: the work scores high on most toil properties (manual, repetitive, same checklist pattern suggests automatable mechanics) but the human judgment requirement is real (audit compliance) and political constraints prevent elimination even if it qualifies. The skill should be invoked to do the classification — the B section's author blind spot about politically-constrained toil applies here. The answer is 'yes, this is toil, but you cannot eliminate it; you can only reduce the friction per review.'; source id: toil-six-property-identification-test-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We've written an ML model that flags anomalous log patterns for an on-call engineer to review. The engineer reviews about 30 flagged items per shift and dismisses 28 of them as false positives, but the 2 real ones genuinely require judgment to diagnose. Does the review step count as toil we should try to reduce?",
+    "expected": "invoke",
+    "notes": "rationale: This sits exactly at the automatable property boundary the skill calls out in its B section: 'if the automation would be wrong 20% of the time and require human review of every output, the human judgment component disqualifies it.' The 28/30 false positive rate means the human review is adding real signal but is also largely mechanical. The skill should be invoked to score each property carefully — the automatable property will be the pivotal one, and the answer is likely 'partially toil, reduce the false positive rate rather than eliminate the review.'; source id: toil-six-property-identification-test-boundary-02"
+  }
+]

@@ -1,62 +1,44 @@
-{
-  "skill": "three-layer-metadata-stack",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "tls-t1",
-      "type": "should_trigger",
-      "prompt": "We built a data catalog last year. It has every table, every column, data types, primary keys, the works. We deployed an AI assistant to query it three months ago and it keeps querying the wrong tables. It'll join the Sales customers table to the Finance transactions table even though those customer_ids don't mean the same thing. What are we missing in our catalog?",
-      "expected_skill": "three-layer-metadata-stack",
-      "trigger_rationale": "Matches language signal 'We have a data catalog but the AI assistant still gets things wrong'. The problem is specifically that the catalog has only technical metadata (column names, types, keys) but lacks the business layer (which team owns which table, what the column means) and semantic layer (are these customer_ids the same concept?). This is the AI assistant + technical-metadata-only failure case from A1 Case 1.",
-      "should_not_trigger": []
-    },
-    {
-      "id": "tls-t2",
-      "type": "should_trigger",
-      "prompt": "Our data team documented everything in Confluence — table descriptions, column definitions, ownership. But our business analysts still can't find what they need and keep asking engineers for help. The documentation exists. Why isn't it working?",
-      "expected_skill": "three-layer-metadata-stack",
-      "trigger_rationale": "Business user adoption failure despite documentation. The problem is that documentation in Confluence is disconnected from the data assets (matches the 'Easily Confused Adjacent Methodologies' section: documentation in wikis is not equivalent to business metadata co-located with the data asset). The three-layer-metadata-stack addresses where metadata must live and what the business layer must contain for non-technical consumers.",
-      "should_not_trigger": []
-    },
-    {
-      "id": "tls-t3",
-      "type": "should_trigger",
-      "prompt": "Two of our data domains — Marketing and Revenue Operations — both have an 'events' table. When we merge event streams for cross-domain analysis we get garbage results. Both tables have the same column names but the values mean different things. How should we have structured the metadata to prevent this?",
-      "expected_skill": "three-layer-metadata-stack",
-      "trigger_rationale": "Cross-domain join failure due to same column name carrying different meanings — the context collapse pattern (ce10, A1 Case 3). This is a missing semantic metadata layer problem: without semantic layer encoding of what 'event' means in each domain and cross-domain equivalence mappings, a join on matching column names is a guess. The three-layer stack is the structural defense against this failure.",
-      "should_not_trigger": []
-    },
-    {
-      "id": "tls-d1",
-      "type": "should_not_trigger",
-      "prompt": "Sales and Finance both use the term 'revenue' but they calculate it differently — Sales includes pipeline, Finance counts only closed deals. We need to pick a canonical definition and make it the standard. How do we approach this?",
-      "expected_skill": "semantic-vocabulary-ladder",
-      "trigger_rationale": "This is a vocabulary problem — two teams using the same word with different definitions, requiring a preferred term with scope qualifiers. The semantic-vocabulary-ladder is the remediation framework for vocabulary disagreements. The three-layer-metadata-stack would tell you to put the result into the semantic metadata layer, but the vocabulary-level question ('how do we pick the canonical term and formalize it?') is the ladder's domain.",
-      "should_not_trigger": ["three-layer-metadata-stack"]
-    },
-    {
-      "id": "tls-d2",
-      "type": "should_not_trigger",
-      "prompt": "Our AI agent has access to the customer table and keeps trying to update customer status flags directly, bypassing the approval workflow we have in our CRM. The data is correct — it's reading the right values. How do we constrain what the agent is allowed to do?",
-      "expected_skill": "context-intent-action-for-ai-models",
-      "trigger_rationale": "Agent taking unauthorized write operations is specifically an Action layer problem in context-intent-action-for-ai-models. The three-layer-metadata-stack covers metadata architecture for all consumers but does not define agent action constraints. CIA's Action layer — encoding permissible operations and approval requirements — is the correct skill here.",
-      "should_not_trigger": ["three-layer-metadata-stack"]
-    },
-    {
-      "id": "tls-e1",
-      "type": "edge_case",
-      "prompt": "We're starting a new data governance initiative. Our CISO wants role-based access control on all tables. Our CDO wants 'better data documentation'. Our AI team wants to deploy an LLM assistant next quarter. What should we build first and how do we organize what we document?",
-      "expected_skill": "three-layer-metadata-stack",
-      "edge_rationale": "This prompt mentions three overlapping concerns: access control (CISO), documentation (CDO), and AI deployment (AI team). The CISO's concern is RBAC (not this skill's domain). The CDO's concern is metadata documentation (this skill's domain). The AI team's concern will eventually also invoke context-intent-action-for-ai-models, but the foundation — what must be documented and how — is answered by the three-layer stack first. The edge is whether a user recognizes that RBAC is orthogonal and that metadata architecture is the correct starting framework before CIA.",
-      "self_evaluation": {
-        "triggers_correctly": true,
-        "confidence": "medium-high",
-        "notes": "The CDO 'better data documentation' + AI deployment combination is the canonical trigger. RBAC mention could cause confusion but doesn't redirect to a different skill — it's simply outside scope. The three-layer-metadata-stack's A2 Scenario 5 (metadata governance initiative) matches this prompt closely."
-      }
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy tls-d1 routes to semantic-vocabulary-ladder (vocabulary term conflict, not metadata layer architecture). Decoy tls-d2 routes to context-intent-action-for-ai-models (agent action constraints, not general metadata architecture). The three-layer stack is the general metadata architecture for all consumers; CIA extends it specifically for AI agents."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We built a data catalog last year. It has every table, every column, data types, primary keys, the works. We deployed an AI assistant to query it three months ago and it keeps querying the wrong tables. It'll join the Sales customers table to the Finance transactions table even though those customer_ids don't mean the same thing. What are we missing in our catalog?",
+    "expected": "Skill activates and diagnoses that the catalog has only the technical layer (names, types, keys) while the business layer (owner/description distinguishing the Sales vs. Finance tables) and semantic layer (cross-domain equivalence mapping stating whether the two customer_ids are the same concept) are absent; without semantic grounding the AI fills the gap from its training prior and joins on matching column names, so both layers must be added before AI queries can be trusted.",
+    "notes": "source id: tls-t1"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our data team documented everything in Confluence — table descriptions, column definitions, ownership. But our business analysts still can't find what they need and keep asking engineers for help. The documentation exists. Why isn't it working?",
+    "expected": "Skill activates and identifies that documentation in a separate wiki is not equivalent to a business metadata layer co-located with the data asset; the three layers (technical, business, semantic) must live in the catalog attached to the tables/columns themselves so non-technical consumers can verify the right source without asking an engineer, and it should recommend migrating the Confluence content into the catalog as owned, in-place business metadata.",
+    "notes": "source id: tls-t2"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Two of our data domains — Marketing and Revenue Operations — both have an 'events' table. When we merge event streams for cross-domain analysis we get garbage results. Both tables have the same column names but the values mean different things. How should we have structured the metadata to prevent this?",
+    "expected": "Skill activates and names this as context collapse caused by a missing semantic metadata layer: the technical column names survived the merge but the semantic encoding of what 'event' means in each Bounded Context and the cross-domain equivalence (or non-equivalence) mapping was never captured, so a join on matching names is a guess; the fix is to encode domain-scoped semantic metadata and explicit equivalence mappings before merging streams.",
+    "notes": "source id: tls-t3"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Sales and Finance both use the term 'revenue' but they calculate it differently — Sales includes pipeline, Finance counts only closed deals. We need to pick a canonical definition and make it the standard. How do we approach this?",
+    "expected": "skill should not activate",
+    "notes": "source id: tls-d1"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our AI agent has access to the customer table and keeps trying to update customer status flags directly, bypassing the approval workflow we have in our CRM. The data is correct — it's reading the right values. How do we constrain what the agent is allowed to do?",
+    "expected": "skill should not activate",
+    "notes": "source id: tls-d2"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "We're starting a new data governance initiative. Our CISO wants role-based access control on all tables. Our CDO wants 'better data documentation'. Our AI team wants to deploy an LLM assistant next quarter. What should we build first and how do we organize what we document?",
+    "expected": "Skill activates and organizes the work around the three-layer stack: the CISO's RBAC is orthogonal and out of scope, the CDO's 'better documentation' and the AI team's LLM deployment are both answered by building technical, business, and semantic metadata as the foundation, and the semantic layer in particular must be complete before the AI assistant ships; it should recommend building the three-layer stack first (with CIA layered on later for the agent) rather than starting from RBAC.",
+    "notes": "source id: tls-e1"
+  }
+]

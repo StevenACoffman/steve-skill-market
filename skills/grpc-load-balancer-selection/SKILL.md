@@ -1,16 +1,14 @@
 ---
-id: grpc-load-balancer-selection
-title: gRPC Load Balancer Selection
-description: >
+name: grpc-load-balancer-selection
+description: |
   Invoke when choosing a load balancing strategy for gRPC services, or when
   diagnosing uneven traffic distribution across gRPC backends. Key trigger:
   "deploy gRPC behind a load balancer" or "one backend is getting all traffic."
   Core rule: generic L4 TCP load balancers do not distribute gRPC traffic —
   only L7 proxies with explicit gRPC support or client-side load balancing work.
-source: "gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)"
 tags: [grpc, load-balancing, kubernetes, envoy, l4, l7, http2, production]
-related_skills:
 ---
+# gRPC Load Balancer Selection
 
 ## gRPC Load Balancer Selection
 
@@ -173,14 +171,19 @@ Current gRPC-Go uses `grpc.NewClient`. The load balancing configuration via
 ### Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: candidates/frameworks.md fw04; candidates/counter-examples.md ce05
 - Verified entry: verified.md fw04, ce05
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
 ### Related Skills
 
-- **[grpc-l4-lb-failure-mode](../grpc-l4-lb-failure-mode/SKILL.md)** — compares: this skill is the prescriptive selection framework; grpc-l4-lb-failure-mode is the diagnostic companion for an existing production problem — use this skill for initial design, the other for incident diagnosis.
-- **[grpc-observability-three-pillar](../grpc-observability-three-pillar-with-trace-log-bridge/SKILL.md)** — combines: per-pod Prometheus metrics (`grpc_server_handled_total` by pod) are the verification step after any load-balancing fix; run observability setup before or alongside LB changes.
-- **[grpc-security-credential-composition](../grpc-security-credential-composition/SKILL.md)** — informs: service mesh deployments (the preferred LB option) absorb mTLS at the sidecar layer, removing the need to configure channel credentials in application code.
-- **[grpc-vs-rest-vs-graphql](../grpc-vs-rest-vs-graphql/SKILL.md)** — informs: the internal-vs-external service topology established by the protocol selection skill determines what load-balancing infrastructure is appropriate.
+- **grpc-l4-lb-failure-mode** — compares: this skill is the prescriptive selection framework; grpc-l4-lb-failure-mode is the diagnostic companion for an existing production problem — use this skill for initial design, the other for incident diagnosis.
+- **grpc-observability-three-pillar** — combines: per-pod Prometheus metrics (`grpc_server_handled_total` by pod) are the verification step after any load-balancing fix; run observability setup before or alongside LB changes.
+- **grpc-security-credential-composition** — informs: service mesh deployments (the preferred LB option) absorb mTLS at the sidecar layer, removing the need to configure channel credentials in application code.
+- **grpc-vs-rest-vs-graphql** — informs: the internal-vs-external service topology established by the protocol selection skill determines what load-balancing infrastructure is appropriate.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)

@@ -1,58 +1,44 @@
-{
-  "skill": "business-process-discovery",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "bpd-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We're starting a new data model for our insurance claims processing workflow. We have the database schema from our legacy system but we're not sure if it captures all the steps in the process. Where should we start?",
-      "expected_behavior": "Skill triggers. User is starting a new model for a human-facing workflow and is about to make the Hellta mistake (starting from the schema). Skill should guide through the five-component framework: triggering event, outcome, business object in motion (the Claim), actors, and sequence — before any schema work.",
-      "should_trigger": true,
-      "rationale": "Classic trigger scenario #1 (new data model design) + warning sign (starting from legacy schema). Language matches 'we're starting a new data model for [business process]'. No five-component map exists yet."
-    },
-    {
-      "id": "bpd-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our finance team and our operations team are both pulling reports from the same orders table, but they keep getting different totals. Finance says we processed 4,200 orders last quarter; operations says 3,800. Nobody can explain the gap. How do we debug this?",
-      "expected_behavior": "Skill triggers. This is trigger scenario #3 (multiple teams getting different numbers from the same source) — the symptom of context collapse caused by incompatible process assumptions baked into the same model. Skill should guide through five-component discovery to surface what each team's process actually is, not just debugging the query.",
-      "should_trigger": true,
-      "rationale": "Direct language match for 'Multiple teams are getting different numbers from the same source'. Root cause is undiscovered process (or context collision) — either way, discovery is the correct first step."
-    },
-    {
-      "id": "bpd-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We inherited a healthcare data platform from a team that was laid off. There's a schema with tables like patient_records, encounters, billing_events but we have no documentation on what any of the business processes were. Stakeholders keep asking for reports we can't generate from these tables. How do we figure out what this model was supposed to represent?",
-      "expected_behavior": "Skill triggers. This is trigger scenario #2 (inherited schema with wrong numbers / can't answer questions) and trigger scenario #4 (schema doesn't answer stakeholder questions). The five-component framework should be applied to discover what the original business processes actually were, treating existing tables as clues rather than the source of truth.",
-      "should_trigger": true,
-      "rationale": "Matches 'We inherited this data but don't know what the business process was' and 'The schema we have doesn't answer the questions stakeholders are asking'. Zero documentation = must run discovery."
-    },
-    {
-      "id": "bpd-decoy-01",
-      "type": "should_not_trigger",
-      "prompt": "We've just finished mapping our loan approval workflow. We have the five components: the triggering event is when a complete application is submitted, the outcome is approval/decline/withdrawal, the business object is the Loan Application, the actors are borrower/loan officer/underwriter/compliance, and we have the sequence with all the unhappy paths documented. Now I need to figure out what tables and columns to build.",
-      "expected_behavior": "Skill does NOT trigger. The five-component map is already complete and validated. The next step is process-to-model-translation, which applies the four mapping rules to convert the completed discovery into model components. Running discovery again would be redundant.",
-      "should_trigger": false,
-      "rationale": "The B boundary section explicitly says: 'If a complete, verified process map exists with all five components documented and validated, proceed directly to process-to-model-translation. Do not re-run discovery for a process that has already been discovered.' This prompt is the exact handoff point."
-    },
-    {
-      "id": "bpd-decoy-02",
-      "type": "should_not_trigger",
-      "prompt": "Our customer success team defines a 'Customer' as anyone on an active subscription. Our billing team says a 'Customer' is a legal entity on a contract. Our support team says a 'Customer' is whoever is using the product, which could be multiple people under one contract. We're trying to build a unified customer table and we keep fighting about what should go in it.",
-      "expected_behavior": "Skill does NOT trigger. This is a bounded-context-swimlane-detection scenario, not a discovery scenario. The process is understood; the problem is that three teams have three different definitions of the same entity. The correct response is to apply swimlane crossing analysis and the diagnostic question ('What is a Customer to you?') to confirm boundaries and design separate context-specific models with a mapping layer.",
-      "should_trigger": false,
-      "rationale": "Three teams with diverging definitions of a shared entity = bounded context collision. This is exactly the distinguishing case called out in A2: 'A prompt about different teams having different definitions of the same entity should NOT trigger this — it triggers bounded-context-swimlane-detection.'"
-    },
-    {
-      "id": "bpd-edge-01",
-      "type": "edge_case",
-      "prompt": "We have a process document for our employee onboarding workflow. It was written two years ago and our HR director says it should still be accurate, but when we tried to use it to design the schema last week we found a bunch of steps that didn't make sense — like a background check step that goes to an external vendor nobody could name. Should we just fill in the gaps as we go, or do we need to do more discovery work?",
-      "expected_behavior": "Edge case: documentation exists but shows signs of being stale (two years old, unexplained external vendor, gaps). The B boundary says 'if documentation is available but outdated or unreliable and field research is needed to recover tacit knowledge, use tacit-knowledge-extraction.' However, the A2 section also says 'even with documentation in hand, a modeler should run through the five components explicitly to verify completeness.' Correct response: activate business-process-discovery AND flag that the stale documentation and unexplained gaps are warning signs for ce11 (tacit knowledge gap), recommending tacit-knowledge-extraction techniques (specifically Gemba Walk and Artifact Archaeology) alongside the five-component verification — the two skills compose here.",
-      "should_trigger": true,
-      "rationale": "Ambiguous case: documentation exists (boundary says proceed to BPD) but has clear staleness indicators (2 years, unexplained gaps) which are exactly the warning signs for tacit-knowledge-extraction. The correct answer is: BPD triggers AND recommends composing with tacit-knowledge-extraction. Tests whether the skill recognizes the composed case."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy-01 tests the discovery/translation handoff boundary. Decoy-02 tests the discovery/bounded-context confusion. Edge case tests the documentation-exists-but-stale composition with tacit-knowledge-extraction."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're starting a new data model for our insurance claims processing workflow. We have the database schema from our legacy system but we're not sure if it captures all the steps in the process. Where should we start?",
+    "expected": "Skill triggers. User is starting a new model for a human-facing workflow and is about to make the Hellta mistake (starting from the schema). Skill should guide through the five-component framework: triggering event, outcome, business object in motion (the Claim), actors, and sequence — before any schema work.",
+    "notes": "rationale: Classic trigger scenario #1 (new data model design) + warning sign (starting from legacy schema). Language matches 'we're starting a new data model for [business process]'. No five-component map exists yet.; source id: bpd-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our finance team and our operations team are both pulling reports from the same orders table, but they keep getting different totals. Finance says we processed 4,200 orders last quarter; operations says 3,800. Nobody can explain the gap. How do we debug this?",
+    "expected": "Skill triggers. This is trigger scenario #3 (multiple teams getting different numbers from the same source) — the symptom of context collapse caused by incompatible process assumptions baked into the same model. Skill should guide through five-component discovery to surface what each team's process actually is, not just debugging the query.",
+    "notes": "rationale: Direct language match for 'Multiple teams are getting different numbers from the same source'. Root cause is undiscovered process (or context collision) — either way, discovery is the correct first step.; source id: bpd-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We inherited a healthcare data platform from a team that was laid off. There's a schema with tables like patient_records, encounters, billing_events but we have no documentation on what any of the business processes were. Stakeholders keep asking for reports we can't generate from these tables. How do we figure out what this model was supposed to represent?",
+    "expected": "Skill triggers. This is trigger scenario #2 (inherited schema with wrong numbers / can't answer questions) and trigger scenario #4 (schema doesn't answer stakeholder questions). The five-component framework should be applied to discover what the original business processes actually were, treating existing tables as clues rather than the source of truth.",
+    "notes": "rationale: Matches 'We inherited this data but don't know what the business process was' and 'The schema we have doesn't answer the questions stakeholders are asking'. Zero documentation = must run discovery.; source id: bpd-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We've just finished mapping our loan approval workflow. We have the five components: the triggering event is when a complete application is submitted, the outcome is approval/decline/withdrawal, the business object is the Loan Application, the actors are borrower/loan officer/underwriter/compliance, and we have the sequence with all the unhappy paths documented. Now I need to figure out what tables and columns to build.",
+    "expected": "Skill does NOT trigger. The five-component map is already complete and validated. The next step is process-to-model-translation, which applies the four mapping rules to convert the completed discovery into model components. Running discovery again would be redundant.",
+    "notes": "rationale: The B boundary section explicitly says: 'If a complete, verified process map exists with all five components documented and validated, proceed directly to process-to-model-translation. Do not re-run discovery for a process that has already been discovered.' This prompt is the exact handoff point.; source id: bpd-decoy-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our customer success team defines a 'Customer' as anyone on an active subscription. Our billing team says a 'Customer' is a legal entity on a contract. Our support team says a 'Customer' is whoever is using the product, which could be multiple people under one contract. We're trying to build a unified customer table and we keep fighting about what should go in it.",
+    "expected": "Skill does NOT trigger. This is a bounded-context-swimlane-detection scenario, not a discovery scenario. The process is understood; the problem is that three teams have three different definitions of the same entity. The correct response is to apply swimlane crossing analysis and the diagnostic question ('What is a Customer to you?') to confirm boundaries and design separate context-specific models with a mapping layer.",
+    "notes": "rationale: Three teams with diverging definitions of a shared entity = bounded context collision. This is exactly the distinguishing case called out in A2: 'A prompt about different teams having different definitions of the same entity should NOT trigger this — it triggers bounded-context-swimlane-detection.'; source id: bpd-decoy-02"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "We have a process document for our employee onboarding workflow. It was written two years ago and our HR director says it should still be accurate, but when we tried to use it to design the schema last week we found a bunch of steps that didn't make sense — like a background check step that goes to an external vendor nobody could name. Should we just fill in the gaps as we go, or do we need to do more discovery work?",
+    "expected": "Edge case: documentation exists but shows signs of being stale (two years old, unexplained external vendor, gaps). The B boundary says 'if documentation is available but outdated or unreliable and field research is needed to recover tacit knowledge, use tacit-knowledge-extraction.' However, the A2 section also says 'even with documentation in hand, a modeler should run through the five components explicitly to verify completeness.' Correct response: activate business-process-discovery AND flag that the stale documentation and unexplained gaps are warning signs for ce11 (tacit knowledge gap), recommending tacit-knowledge-extraction techniques (specifically Gemba Walk and Artifact Archaeology) alongside the five-component verification — the two skills compose here.",
+    "notes": "rationale: Ambiguous case: documentation exists (boundary says proceed to BPD) but has clear staleness indicators (2 years, unexplained gaps) which are exactly the warning signs for tacit-knowledge-extraction. The correct answer is: BPD triggers AND recommends composing with tacit-knowledge-extraction. Tests whether the skill recognizes the composed case.; source id: bpd-edge-01"
+  }
+]

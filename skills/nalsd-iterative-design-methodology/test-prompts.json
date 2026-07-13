@@ -1,62 +1,58 @@
-{
-  "skill": "nalsd-iterative-design-methodology",
-  "description": "Use this skill when designing any large distributed system that will run on real hardware with real cost constraints — especially when design discussions have remained at the whiteboard level without machine counts, RAM estimates, or cost basis.",
-  "test_prompts": [
-    {
-      "id": "nalsd-iterative-design-methodology-should-01",
-      "category": "should_invoke",
-      "prompt": "We're designing a new event ingestion pipeline to handle 200,000 events per second from IoT devices, with a requirement that 99% of events are queryable within 10 seconds of ingestion. The architecture review is tomorrow and so far we have: Kafka → Flink → Cassandra → API layer. Everyone agrees it'll scale because 'we can add more nodes.' How should we prepare for the review?",
-      "expected": "invoke",
-      "rationale": "The key anti-pattern trigger: 'we can add more nodes' without any machine counts, RAM estimates, or bottleneck analysis. This is a whiteboard architecture that has never been validated at real scale. NALSD Phase 2 feasibility question applies directly: how many Kafka partitions? What's the Flink parallelism required? What does Cassandra write throughput look like at 200K/s and what's the cost?"
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-should-02",
-      "category": "should_invoke",
-      "prompt": "We launched our new mobile game last week expecting 50,000 DAU. We got 800,000. Our API servers autoscaled fine but our session state service fell over completely — it's single-node Redis and it's pegged at 100% CPU. We're losing users. What went wrong in our design process and how do we fix the architecture?",
-      "expected": "invoke",
-      "rationale": "This is the Pokémon GO pattern from the skill's A1 case study: autoscaling assumptions masked a single-node bottleneck that was never validated for feasibility at the actual load. NALSD Phase 2 Question 3 (Is it feasible?) was skipped — single-node Redis at 100K RPS is a discoverable limit. The skill applies both retroactively (to explain what failed) and prospectively (to design the replacement)."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-should-03",
-      "category": "should_invoke",
-      "prompt": "I need to design a global rate limiter for our API that handles 75,000 RPS with a P99 latency under 3ms for the rate limit check itself. My first thought is a centralized Redis cluster. Walk me through whether that's feasible and what the iteration looks like if it's not.",
-      "expected": "invoke",
-      "rationale": "This matches the rate limiter example in the skill's A2 Scenario 3 almost exactly, with concrete numbers (75K RPS, 3ms P99). The request explicitly asks for the NALSD iterative approach: start with the simple design (centralized Redis), validate feasibility with real numbers, then iterate when the centralized SPOF fails the resilience question. The team is asking for the design methodology, not just an answer."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our production search service is returning results in 2.3 seconds at P99. Our SLO requires P99 under 500ms. We've profiled it and the bottleneck is in the Elasticsearch query execution — specifically a nested aggregation that we can't avoid. What are our options for hitting the latency target?",
-      "expected": "skip",
-      "rationale": "This is post-production performance optimization of an existing system — explicitly excluded in the boundary section: 'The system is already in production and you're doing performance optimization. Use profiling and bottleneck analysis directly. NALSD is a pre-production discipline.' The team already has profiling data pointing to the specific bottleneck. The right response is query optimization, caching strategies, or architectural alternatives to the nested aggregation."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We have a cron job that runs nightly, pulls data from three internal APIs, transforms it, and writes a CSV to S3 for our finance team. It takes about 4 hours to run. The finance team wants it to finish in under 1 hour. How do we speed it up?",
-      "expected": "skip",
-      "rationale": "This is a single-machine pipeline optimization problem, not a large distributed system design problem. The boundary section excludes 'single-machine applications or scripts where scale is not a design concern.' The fix is likely parallelization within the job (threading, chunked API calls) or moving to a framework like Spark — not NALSD's iterative feasibility methodology, which addresses distributed system design at significant scale."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're doing capacity planning for our existing microservices fleet. Traffic has grown 40% year-over-year and we need to figure out how many additional servers to provision for next quarter. We have current utilization metrics and cost-per-instance data. What's the process?",
-      "expected": "skip",
-      "rationale": "The skill's boundary section explicitly distinguishes: 'Capacity planning is an ongoing operational activity for existing systems. NALSD is a design-time discipline for new systems.' This team already has a production system with real utilization metrics — the right approach is extrapolation from observed data, not NALSD's design-phase feasibility methodology."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-boundary-01",
-      "category": "boundary",
-      "prompt": "I have a system design interview in 45 minutes for a staff SRE role. The problem is to design a distributed job scheduler capable of handling 10 million jobs per day with at-least-once delivery guarantees. I know the NALSD approach but 45 minutes is tight. Should I follow the full methodology or take shortcuts?",
-      "expected": "invoke",
-      "rationale": "The skill's boundary section acknowledges this: 'You need a quick design proposal in a 45-minute interview. NALSD is the full discipline; the interview context requires a compressed version that still produces numbers but may skip some iterations.' The skill still applies — produce numbers, not just whiteboard arrows — but the guidance on what to prioritize in the compressed format is exactly what NALSD provides. Invoke with the caveat about the compressed version."
-    },
-    {
-      "id": "nalsd-iterative-design-methodology-boundary-02",
-      "category": "boundary",
-      "prompt": "We're designing a new internal developer metrics dashboard that will aggregate build times, test pass rates, and deployment frequencies for about 200 engineers. Expected traffic: maybe 500 requests per day. We want to make sure we're doing this right architecturally. Should we go through the full NALSD process?",
-      "expected": "skip",
-      "rationale": "At 500 requests per day, scale is not a design concern — this falls into the 'single-machine application where scale is not a design concern' exclusion. NALSD overhead (feasibility calculations, resilience iteration, cost basis analysis) is not justified for an internal tool at this traffic volume. The right guidance is to use a simple, boring architecture (a single application server with a database) and move on. NALSD's rigor is reserved for systems where scale creates genuine engineering constraints."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're designing a new event ingestion pipeline to handle 200,000 events per second from IoT devices, with a requirement that 99% of events are queryable within 10 seconds of ingestion. The architecture review is tomorrow and so far we have: Kafka → Flink → Cassandra → API layer. Everyone agrees it'll scale because 'we can add more nodes.' How should we prepare for the review?",
+    "expected": "invoke",
+    "notes": "rationale: The key anti-pattern trigger: 'we can add more nodes' without any machine counts, RAM estimates, or bottleneck analysis. This is a whiteboard architecture that has never been validated at real scale. NALSD Phase 2 feasibility question applies directly: how many Kafka partitions? What's the Flink parallelism required? What does Cassandra write throughput look like at 200K/s and what's the cost?; source id: nalsd-iterative-design-methodology-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We launched our new mobile game last week expecting 50,000 DAU. We got 800,000. Our API servers autoscaled fine but our session state service fell over completely — it's single-node Redis and it's pegged at 100% CPU. We're losing users. What went wrong in our design process and how do we fix the architecture?",
+    "expected": "invoke",
+    "notes": "rationale: This is the Pokémon GO pattern from the skill's A1 case study: autoscaling assumptions masked a single-node bottleneck that was never validated for feasibility at the actual load. NALSD Phase 2 Question 3 (Is it feasible?) was skipped — single-node Redis at 100K RPS is a discoverable limit. The skill applies both retroactively (to explain what failed) and prospectively (to design the replacement).; source id: nalsd-iterative-design-methodology-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I need to design a global rate limiter for our API that handles 75,000 RPS with a P99 latency under 3ms for the rate limit check itself. My first thought is a centralized Redis cluster. Walk me through whether that's feasible and what the iteration looks like if it's not.",
+    "expected": "invoke",
+    "notes": "rationale: This matches the rate limiter example in the skill's A2 Scenario 3 almost exactly, with concrete numbers (75K RPS, 3ms P99). The request explicitly asks for the NALSD iterative approach: start with the simple design (centralized Redis), validate feasibility with real numbers, then iterate when the centralized SPOF fails the resilience question. The team is asking for the design methodology, not just an answer.; source id: nalsd-iterative-design-methodology-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our production search service is returning results in 2.3 seconds at P99. Our SLO requires P99 under 500ms. We've profiled it and the bottleneck is in the Elasticsearch query execution — specifically a nested aggregation that we can't avoid. What are our options for hitting the latency target?",
+    "expected": "skip",
+    "notes": "rationale: This is post-production performance optimization of an existing system — explicitly excluded in the boundary section: 'The system is already in production and you're doing performance optimization. Use profiling and bottleneck analysis directly. NALSD is a pre-production discipline.' The team already has profiling data pointing to the specific bottleneck. The right response is query optimization, caching strategies, or architectural alternatives to the nested aggregation.; source id: nalsd-iterative-design-methodology-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have a cron job that runs nightly, pulls data from three internal APIs, transforms it, and writes a CSV to S3 for our finance team. It takes about 4 hours to run. The finance team wants it to finish in under 1 hour. How do we speed it up?",
+    "expected": "skip",
+    "notes": "rationale: This is a single-machine pipeline optimization problem, not a large distributed system design problem. The boundary section excludes 'single-machine applications or scripts where scale is not a design concern.' The fix is likely parallelization within the job (threading, chunked API calls) or moving to a framework like Spark — not NALSD's iterative feasibility methodology, which addresses distributed system design at significant scale.; source id: nalsd-iterative-design-methodology-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're doing capacity planning for our existing microservices fleet. Traffic has grown 40% year-over-year and we need to figure out how many additional servers to provision for next quarter. We have current utilization metrics and cost-per-instance data. What's the process?",
+    "expected": "skip",
+    "notes": "rationale: The skill's boundary section explicitly distinguishes: 'Capacity planning is an ongoing operational activity for existing systems. NALSD is a design-time discipline for new systems.' This team already has a production system with real utilization metrics — the right approach is extrapolation from observed data, not NALSD's design-phase feasibility methodology.; source id: nalsd-iterative-design-methodology-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "I have a system design interview in 45 minutes for a staff SRE role. The problem is to design a distributed job scheduler capable of handling 10 million jobs per day with at-least-once delivery guarantees. I know the NALSD approach but 45 minutes is tight. Should I follow the full methodology or take shortcuts?",
+    "expected": "invoke",
+    "notes": "rationale: The skill's boundary section acknowledges this: 'You need a quick design proposal in a 45-minute interview. NALSD is the full discipline; the interview context requires a compressed version that still produces numbers but may skip some iterations.' The skill still applies — produce numbers, not just whiteboard arrows — but the guidance on what to prioritize in the compressed format is exactly what NALSD provides. Invoke with the caveat about the compressed version.; source id: nalsd-iterative-design-methodology-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We're designing a new internal developer metrics dashboard that will aggregate build times, test pass rates, and deployment frequencies for about 200 engineers. Expected traffic: maybe 500 requests per day. We want to make sure we're doing this right architecturally. Should we go through the full NALSD process?",
+    "expected": "skip",
+    "notes": "rationale: At 500 requests per day, scale is not a design concern — this falls into the 'single-machine application where scale is not a design concern' exclusion. NALSD overhead (feasibility calculations, resilience iteration, cost basis analysis) is not justified for an internal tool at this traffic volume. The right guidance is to use a simple, boring architecture (a single application server with a database) and move on. NALSD's rigor is reserved for systems where scale creates genuine engineering constraints.; source id: nalsd-iterative-design-methodology-boundary-02"
+  }
+]

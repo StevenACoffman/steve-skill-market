@@ -1,3 +1,9 @@
+---
+name: somewhat-general-purpose-interface
+description: |
+  Invoke this skill during API design or review when any of the following signals appear: - A method's name includes a UI action or user operation: `backspace()`, `onClickSave()`, `handleDeleteKey()`, `submitForm()`. Names like these reveal that caller context has leaked into the module. The method is not describing what the module does — it is describing why a caller might call it. - The API is growing by accretion: each new product requirement adds a new method to the interface. The method count tracks the feature backlog rather than the underlying capability set. This is the clearest sign of special-purpose drift. - A method is called in exactly one place: if you grep the codebase and a method has a single caller, it probably encodes that caller's specific need. Ask whether the logic belongs in the caller or whether a more general form would serve both current and future callers.
+---
+
 # Skill: Somewhat-General-Purpose Interface
 
 **Source**: *A Philosophy of Software Design* by John Ousterhout (2018), Chapter 6 — "General-Purpose Modules are Deeper"
@@ -123,4 +129,4 @@ ______________________________________________________________________
 ## Related Skills
 
 - **Deep Module / Classitis Diagnosis (`structural-diagnosis-smells-depth`)** — *composes-with* → A somewhat-general-purpose interface is a technique for achieving depth. Use the depth ratio test (S02) to evaluate whether the generalized interface has achieved a better benefit-to-cost ratio.
-- **[Pass-Through Method / Wrong Layer Count](../pass-through-method-wrong-layer-count/SKILL.md)** — *contrasts-with* → S04 addresses insufficient generality (interface mirrors use case); S05 addresses excessive layering (same abstraction at two levels). Both are about interface design but the failure directions are opposite.
+- **Pass-Through Method / Wrong Layer Count** — *contrasts-with* → S04 addresses insufficient generality (interface mirrors use case); S05 addresses excessive layering (same abstraction at two levels). Both are about interface design but the failure directions are opposite.

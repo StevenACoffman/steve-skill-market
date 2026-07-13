@@ -14,20 +14,7 @@ description: |
   The fix is closure inversion: instead of Get()/Set(v), expose Set(func(*T)). The method acquires
   the lock once and holds it for the entire closure body. The read, check, and write all happen
   inside the same lock window, with no gap where another goroutine can interfere.
-
-  This pattern is independently validated by database/sql (withLock helper, ~18 call sites) and
-  Tailscale's syncs.MutexValue (WithLock method). Both production systems arrived at the same
-  solution in different domains.
-
-  Key signal: if you see v := x.Get(); v++; x.Set(v) or any read-check-write sequence using
-  separate locked methods, the code has this bug. go test -race will not catch it — only an
-  expected-value assertion with concurrent goroutines will.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: mutex_closure
 tags: [go, concurrency, mutex, safety, data-races]
-related_skills:
-  - slug: structured-goroutine-lifetime
-    relation: contrasts-with
 ---
 
 # Mutex Closure Pattern for Atomic Read-Modify-Write
@@ -261,7 +248,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** [`structured-goroutine-lifetime`](../structured-goroutine-lifetime/SKILL.md): Both address correctness problems in concurrent code, but at different levels. The mutex closure pattern makes a compound read-modify-write atomic within one operation — it prevents lost updates the race detector cannot see. Structured goroutine lifetime management controls when goroutines start, stop, and propagate errors — it prevents goroutine leaks and unbounded fan-out. A function can leak goroutines while having perfect mutex discipline; it can have correct lifetime management while losing counter updates. Choose based on whether the problem is in shared memory mutation or goroutine coordination.
+- **contrasts-with** `structured-goroutine-lifetime`: Both address correctness problems in concurrent code, but at different levels. The mutex closure pattern makes a compound read-modify-write atomic within one operation — it prevents lost updates the race detector cannot see. Structured goroutine lifetime management controls when goroutines start, stop, and propagate errors — it prevents goroutine leaks and unbounded fan-out. A function can leak goroutines while having perfect mutex discipline; it can have correct lifetime management while losing counter updates. Choose based on whether the problem is in shared memory mutation or goroutine coordination.
 
 ______________________________________________________________________
 
@@ -270,3 +257,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — mutex_closure

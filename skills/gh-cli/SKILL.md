@@ -1,11 +1,7 @@
 ---
-description: Use when performing any GitHub operation from the command line — creating PRs, managing issues, checking Actions status, working with releases, gists, codespaces, or organizations. Comprehensive reference for the gh CLI.
-metadata:
-  github-path: skills/gh-cli
-  github-ref: refs/heads/main
-  github-repo: https://github.com/github/awesome-copilot
-  github-tree-sha: 437437f7f20bcdbbdb3081cf164435a388c0a39a
 name: gh-cli
+description: |
+  Use when performing any GitHub operation from the command line — creating PRs, managing issues, checking Actions status, working with releases, gists, codespaces, or organizations. Comprehensive reference for the gh CLI.
 ---
 
 # GitHub CLI (`gh`)

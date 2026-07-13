@@ -1,9 +1,8 @@
 ---
-id: grpc-dual-server-observability
-title: Dual-Server Observability — Concurrent gRPC + Prometheus HTTP Server with errgroup Lifecycle
+name: grpc-dual-server-observability
 description: Trigger when running a gRPC server and a Prometheus metrics HTTP server in the same process with unified error propagation and coordinated graceful shutdown.
-source: [gRPC Go for Professionals, Clément Jean, Packt, 2023]
 ---
+# Dual-Server Observability — Concurrent gRPC + Prometheus HTTP Server with errgroup Lifecycle
 
 ## R — Reading
 
@@ -47,3 +46,9 @@ The TODO service in Ch8 introduces the dual-server pattern with `errgroup`: the 
 `GracefulStop()` blocks indefinitely if streaming RPCs do not complete; add a timeout context to `GracefulStop`'s wrapping if your service has long-lived bidirectional streams. The errgroup pattern unifies startup failure detection but does not coordinate partial shutdown ordering — if the metrics server fails after the gRPC server is already handling RPCs, both servers shut down regardless. For services with more than two concurrent servers, consider a dedicated lifecycle manager. The Prometheus metrics registry must be thread-safe; use `prometheus.NewRegistry()` (not `prometheus.DefaultRegisterer`) to avoid test interference from the global registry.
 
 ## Related Skills
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Go for Professionals, Clément Jean, Packt, 2023]

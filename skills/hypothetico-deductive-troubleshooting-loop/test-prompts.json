@@ -1,62 +1,58 @@
-{
-  "skill": "hypothetico-deductive-troubleshooting-loop",
-  "description": "Use this skill when an engineer is responding to a production incident, alert, or system anomaly and must determine its root cause using a four-phase discipline: triage first, then examine, diagnose, and test before treating.",
-  "test_prompts": [
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-01",
-      "category": "should_invoke",
-      "prompt": "We have a payment service error rate alert firing — about 12% of requests failing. My first instinct is to restart the cache nodes because that fixed it last Tuesday when we had the same alert. But my tech lead is telling me to slow down. What should I actually do first?",
-      "expected": "invoke",
-      "rationale": "Canonical trigger: engineer about to skip the loop and apply last week's fix. The skill directly addresses 'same problem as last time' confirmation bias. The tech lead's caution signals exactly the Examine-before-Treat discipline the loop imposes."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-02",
-      "category": "should_invoke",
-      "prompt": "We pushed a config change three days ago. Today, our database query latency alarm fired. Half the team is convinced it's the config change. But I looked at the change and it only touches the API layer — it shouldn't touch any database code paths. How do I figure out what's actually causing this?",
-      "expected": "invoke",
-      "rationale": "Classic spurious correlation scenario: post hoc ergo propter hoc reasoning. The team has jumped to a hypothesis (config change) without examining database telemetry independently. The skill's Examine and Test phases apply directly — confirm that the config change actually touches the relevant code paths before treating it as the cause."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-03",
-      "category": "should_invoke",
-      "prompt": "We have a latency spike affecting all endpoints on our search service — even static asset requests that are served straight from memory. It started about 90 minutes ago. Nobody can figure out what changed. We have distributed tracing. Where do I start narrowing this down?",
-      "expected": "invoke",
-      "rationale": "This matches the App Engine latency mystery case from A1. Static asset slowness rules out application-layer causes immediately. The skill prescribes the Examine step (use distributed tracing to walk the full RPC stack) and systematic hypothesis elimination. The symptom distribution (all endpoints including memory-served static content) is a clue that guides hypothesis ranking."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "The `HighDiskUsage` alert fired on our log ingestion service. Our runbook says: check which log stream is filling the disk, run the archive script, then verify disk returns below 80%. I'm doing this now but wanted to double check the steps.",
-      "expected": "skip",
-      "rationale": "A known alert with an established, working playbook. The skill's boundary explicitly excludes this: 'Do not call this skill when the mitigation is obvious from monitoring and an established playbook exists — use the playbook skill instead.' The engineer should follow the playbook-as-mttr-reduction approach."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We have a P0 incident in progress — our primary database is about to run out of disk and will hard-stop writes in about 15 minutes. We have a known procedure to promote the replica and point traffic there. Should I start the incident coordination process?",
-      "expected": "skip",
-      "rationale": "Triage dictates immediate action before any diagnosis is possible. The boundary explicitly covers this: 'when triage dictates immediate action to prevent data loss before any diagnosis is possible, act first.' Additionally, 'should I start the incident coordination process' is an incident-management-role-separation question, not a troubleshooting loop question."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We just resolved a 3-hour outage. I need to write the postmortem and document what happened, what we found, and what the contributing factors were. How should I structure it?",
-      "expected": "skip",
-      "rationale": "The incident is resolved. This is a postmortem writing question, not an active troubleshooting question. The right skill is blameless-postmortem-process. The troubleshooting loop's output (the documented test-and-disconfirm record) feeds into the postmortem, but postmortem structure is a different skill."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-boundary-01",
-      "category": "boundary",
-      "prompt": "We have five engineers looking at this incident simultaneously. Two are making changes in production, one is updating the status page, and I'm trying to figure out what's broken. Things are getting chaotic and I'm not sure we're making progress. What should I do?",
-      "expected": "skip",
-      "rationale": "The primary problem here is coordination breakdown, not diagnostic method. Multiple engineers modifying production simultaneously is the failure mode that incident-management-role-separation solves — establish IC and Ops Lead first. The troubleshooting loop applies to the Ops Lead's inner diagnostic work once roles are assigned. Expected skip because role separation is the more urgent and foundational need."
-    },
-    {
-      "id": "hypothetico-deductive-troubleshooting-loop-boundary-02",
-      "category": "boundary",
-      "prompt": "Our recommendation service is behaving oddly — results look different than expected but no errors are being thrown and latency is normal. A junior engineer says 'it's probably a data issue' but hasn't looked at anything yet. We have no playbook for this. How should we approach figuring out what's wrong?",
-      "expected": "invoke",
-      "rationale": "Novel anomaly, no playbook, and a team already forming a hypothesis before examining evidence. The junior engineer's guess matches the confirmation bias pitfall the loop addresses. The symptom is an implicit error (correct response code, wrong content) — the Examine step would gather evidence to generate ranked hypotheses before treating the 'data issue' guess as a diagnosis."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have a payment service error rate alert firing — about 12% of requests failing. My first instinct is to restart the cache nodes because that fixed it last Tuesday when we had the same alert. But my tech lead is telling me to slow down. What should I actually do first?",
+    "expected": "invoke",
+    "notes": "rationale: Canonical trigger: engineer about to skip the loop and apply last week's fix. The skill directly addresses 'same problem as last time' confirmation bias. The tech lead's caution signals exactly the Examine-before-Treat discipline the loop imposes.; source id: hypothetico-deductive-troubleshooting-loop-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We pushed a config change three days ago. Today, our database query latency alarm fired. Half the team is convinced it's the config change. But I looked at the change and it only touches the API layer — it shouldn't touch any database code paths. How do I figure out what's actually causing this?",
+    "expected": "invoke",
+    "notes": "rationale: Classic spurious correlation scenario: post hoc ergo propter hoc reasoning. The team has jumped to a hypothesis (config change) without examining database telemetry independently. The skill's Examine and Test phases apply directly — confirm that the config change actually touches the relevant code paths before treating it as the cause.; source id: hypothetico-deductive-troubleshooting-loop-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We have a latency spike affecting all endpoints on our search service — even static asset requests that are served straight from memory. It started about 90 minutes ago. Nobody can figure out what changed. We have distributed tracing. Where do I start narrowing this down?",
+    "expected": "invoke",
+    "notes": "rationale: This matches the App Engine latency mystery case from A1. Static asset slowness rules out application-layer causes immediately. The skill prescribes the Examine step (use distributed tracing to walk the full RPC stack) and systematic hypothesis elimination. The symptom distribution (all endpoints including memory-served static content) is a clue that guides hypothesis ranking.; source id: hypothetico-deductive-troubleshooting-loop-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "The `HighDiskUsage` alert fired on our log ingestion service. Our runbook says: check which log stream is filling the disk, run the archive script, then verify disk returns below 80%. I'm doing this now but wanted to double check the steps.",
+    "expected": "skip",
+    "notes": "rationale: A known alert with an established, working playbook. The skill's boundary explicitly excludes this: 'Do not call this skill when the mitigation is obvious from monitoring and an established playbook exists — use the playbook skill instead.' The engineer should follow the playbook-as-mttr-reduction approach.; source id: hypothetico-deductive-troubleshooting-loop-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We have a P0 incident in progress — our primary database is about to run out of disk and will hard-stop writes in about 15 minutes. We have a known procedure to promote the replica and point traffic there. Should I start the incident coordination process?",
+    "expected": "skip",
+    "notes": "rationale: Triage dictates immediate action before any diagnosis is possible. The boundary explicitly covers this: 'when triage dictates immediate action to prevent data loss before any diagnosis is possible, act first.' Additionally, 'should I start the incident coordination process' is an incident-management-role-separation question, not a troubleshooting loop question.; source id: hypothetico-deductive-troubleshooting-loop-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We just resolved a 3-hour outage. I need to write the postmortem and document what happened, what we found, and what the contributing factors were. How should I structure it?",
+    "expected": "skip",
+    "notes": "rationale: The incident is resolved. This is a postmortem writing question, not an active troubleshooting question. The right skill is blameless-postmortem-process. The troubleshooting loop's output (the documented test-and-disconfirm record) feeds into the postmortem, but postmortem structure is a different skill.; source id: hypothetico-deductive-troubleshooting-loop-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We have five engineers looking at this incident simultaneously. Two are making changes in production, one is updating the status page, and I'm trying to figure out what's broken. Things are getting chaotic and I'm not sure we're making progress. What should I do?",
+    "expected": "skip",
+    "notes": "rationale: The primary problem here is coordination breakdown, not diagnostic method. Multiple engineers modifying production simultaneously is the failure mode that incident-management-role-separation solves — establish IC and Ops Lead first. The troubleshooting loop applies to the Ops Lead's inner diagnostic work once roles are assigned. Expected skip because role separation is the more urgent and foundational need.; source id: hypothetico-deductive-troubleshooting-loop-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our recommendation service is behaving oddly — results look different than expected but no errors are being thrown and latency is normal. A junior engineer says 'it's probably a data issue' but hasn't looked at anything yet. We have no playbook for this. How should we approach figuring out what's wrong?",
+    "expected": "invoke",
+    "notes": "rationale: Novel anomaly, no playbook, and a team already forming a hypothesis before examining evidence. The junior engineer's guess matches the confirmation bias pitfall the loop addresses. The symptom is an implicit error (correct response code, wrong content) — the Examine step would gather evidence to generate ranked hypotheses before treating the 'data issue' guess as a diagnosis.; source id: hypothetico-deductive-troubleshooting-loop-boundary-02"
+  }
+]

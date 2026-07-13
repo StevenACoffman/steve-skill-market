@@ -1,45 +1,79 @@
-{
-  "skill_id": "letsgo-template-safe-render",
-  "prompts": [
-    {
-      "id": "tp-f05-01",
-      "prompt": "My Go web app sometimes returns a 200 OK with truncated HTML when a template has a bug. How do I fix this?",
-      "tags": ["partial-write", "200-ok-bug"]
-    },
-    {
-      "id": "tp-f05-02",
-      "prompt": "Why can't I just call ts.Execute(w, data) in my Go handler and then handle the error after?",
-      "tags": ["streaming-write", "headers-already-sent"]
-    },
-    {
-      "id": "tp-f05-03",
-      "prompt": "What is the two-stage render pattern in Go HTTP handlers and when should I use it?",
-      "tags": ["two-stage-render", "bytes-buffer"]
-    },
-    {
-      "id": "tp-f05-04",
-      "prompt": "When does http.ResponseWriter implicitly send a 200 OK status in Go?",
-      "tags": ["implicit-200", "response-writer-internals"]
-    },
-    {
-      "id": "tp-f05-05",
-      "prompt": "Should I parse Go HTML templates on every request or build a cache at startup? What are the tradeoffs?",
-      "tags": ["template-cache", "startup-validation"]
-    },
-    {
-      "id": "tp-f05-06",
-      "prompt": "How do I make template parse errors fail at startup instead of surfacing on the first user request?",
-      "tags": ["startup-failure", "fail-fast"]
-    },
-    {
-      "id": "tp-f05-07",
-      "prompt": "Write me a safe render() helper for a Go net/http handler that prevents partial 200 responses on template errors.",
-      "tags": ["code-generation", "render-helper"]
-    },
-    {
-      "id": "tp-f05-08",
-      "prompt": "How do I support template hot-reloading in development while using a startup cache in production?",
-      "tags": ["dev-mode", "cache-bypass"]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My Go web app sometimes returns a 200 OK with truncated HTML when a template has a bug. How do I fix this?",
+    "expected": "Skill identifies the partial-200 failure and prescribes the two-stage render: execute the template into a bytes.Buffer first; on error call serverError(w, r, err) while w is still clean; only on success call w.WriteHeader(status) then buf.WriteTo(w).",
+    "notes": "source id: tp-f05-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Why can't I just call ts.Execute(w, data) in my Go handler and then handle the error after?",
+    "expected": "Skill explains that http.ResponseWriter is a streaming writer: template execution writes bytes (and an implicit 200) incrementally, so once headers are sent a mid-execution error cannot be turned into a 500; buffer to a bytes.Buffer before touching w.",
+    "notes": "source id: tp-f05-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "What is the two-stage render pattern in Go HTTP handlers and when should I use it?",
+    "expected": "Skill describes rendering the template into an in-memory bytes.Buffer first, then writing the verified buffer to http.ResponseWriter only on success (WriteHeader then WriteTo); use it whenever serving server-rendered HTML to avoid partial-200 corrupted responses.",
+    "notes": "source id: tp-f05-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "When does http.ResponseWriter implicitly send a 200 OK status in Go?",
+    "expected": "Skill explains the first call to Write() (or explicit WriteHeader) flushes headers including the status, defaulting to 200 OK if WriteHeader was not called; since template execution writes incrementally, this happens mid-render, which is why buffering is required.",
+    "notes": "source id: tp-f05-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Should I parse Go HTML templates on every request or build a cache at startup? What are the tradeoffs?",
+    "expected": "Skill recommends building a map[string]*template.Template cache at startup via newTemplateCache(): parse-per-request is slow and surfaces parse errors at runtime, whereas a startup cache is warm from the first request and turns malformed templates into a fail-fast startup error.",
+    "notes": "source id: tp-f05-05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "How do I make template parse errors fail at startup instead of surfacing on the first user request?",
+    "expected": "Skill directs calling newTemplateCache() in main() and, if it returns an error, logging it and os.Exit(1); pre-parsing all pages at startup makes a malformed template a deployment/startup failure rather than a user-visible runtime error.",
+    "notes": "source id: tp-f05-06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "Write me a safe render() helper for a Go net/http handler that prevents partial 200 responses on template errors.",
+    "expected": "Skill produces a render() that looks up the page in app.templateCache (serverError if missing), allocates buf := new(bytes.Buffer), calls ts.ExecuteTemplate(buf, \"base\", data), returns via serverError on error, and only on success calls w.WriteHeader(status) then buf.WriteTo(w).",
+    "notes": "source id: tp-f05-07"
+  },
+  {
+    "id": 8,
+    "type": "should_trigger",
+    "prompt": "How do I support template hot-reloading in development while using a startup cache in production?",
+    "expected": "Skill directs gating on an environment/debug flag: in development skip the cache and call newTemplateCache() (rebuild templates) on each request, while production uses the startup-built cache; the two-stage buffered render is unchanged either way.",
+    "notes": "source id: tp-f05-08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "How do I register a custom template function with FuncMap to format dates in Go's html/template?",
+    "expected": "skill should not activate — this is defining template helper functions, not the two-stage safe-render that prevents partial-200 responses",
+    "notes": "decoy: template funcs, adjacent templating topic outside safe-render"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "How do I structure base layouts with {{define}}/{{block}} so all my pages share a common header and footer in Go's html/template?",
+    "expected": "skill should not activate — this is template inheritance/composition structure, which the skill's Boundary explicitly lists as out of scope; it's not about the two-stage safe-render or the partial-200 status problem",
+    "notes": "decoy: template inheritance strategy, named as out-of-scope in the skill's Boundary"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My JSON API sometimes sends a 200 and then fails partway through json.NewEncoder(w).Encode() on a large payload, leaving truncated JSON. Is that the same problem this two-stage render pattern solves?",
+    "expected": "Defensible/nuanced: it's the same partial-200 failure mode, and the skill's Boundary explicitly notes JSON encoding shares it, but the fix differs — encode to a bytes.Buffer then copy, rather than the html/template two-stage render() helper — so the agent should confirm the shared failure while pointing to the buffer-then-write variant.",
+    "notes": "edge: same partial-write failure mode named in the Boundary, but JSON (not HTML templates) is the adjacent case"
+  }
+]

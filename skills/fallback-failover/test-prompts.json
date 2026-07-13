@@ -1,76 +1,72 @@
-{
-  "skill": "fallback-failover",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Our payment gateway has a 99% SLA but we need 99.9% availability for our checkout flow. We can't change the vendor. What are our options?",
-      "expected_behavior": "Invokes fallback-failover, evaluates the options: failover to a same-type payment processor replica (common-cause risk if same provider) vs. fallback to a different payment provider (heterogeneous, decoupled lifecycle). Notes that a secondary payment processor is a classic heterogeneous fallback, and quantifies the composite SLO improvement using the parallel error budget formula.",
-      "notes": "Positive scenario: dependency SLA lower than required — the canonical fallback/failover selection question."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "We have a primary and secondary server in an active-passive setup, but last week both went down at the same time during a deployment. What went wrong and how do we fix it?",
-      "expected_behavior": "Invokes fallback-failover, diagnoses the common-cause failure pattern in homogeneous failover (shared deployment pipeline means a bad deployment can take both primary and secondary down simultaneously), recommends decoupling the deployment lifecycle or switching to a heterogeneous fallback that is independent of the primary's change cycle.",
-      "notes": "Positive scenario: simultaneous primary and secondary failure — the common-cause failure anti-pattern."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "Our primary database just went down. We have a read replica in the same cloud region. What should our plan be right now, and what does this tell us about our architecture?",
-      "expected_behavior": "Invokes fallback-failover, guides the immediate response (promote replica if it's current, verify data consistency, assess RTO), then evaluates the architecture: same-cloud-region replica shares the common-cause failure mode for region-level events. Recommends reviewing whether active-passive hot failover to a different region is warranted depending on the SLO requirement.",
-      "notes": "Positive scenario: active incident with a replica — immediate response plus architectural review."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're designing a news site that needs to stay up even when our backend is slow or down. Would serving stale cached content as a backup be a fallback or a failover? And is it a good approach?",
-      "expected_behavior": "Invokes fallback-failover, classifies stale cache as a heterogeneous fallback (different type of solution — cached content vs. live backend, decoupled lifecycle, consumer notices the difference via stale data). Endorses it as a strong approach for content delivery, references the 'poor data' degradation category, and notes the acceptance of staleness must be a business decision.",
-      "notes": "Positive scenario: cache-as-backup classification and evaluation — direct parallel to the book's news site Varnish example."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "For a high-value B2B order process, would it make sense to use a phone call as the backup when our online system is down? That seems low-tech but we rarely have outages.",
-      "expected_behavior": "Invokes fallback-failover, validates the manual fallback as a legitimate strategy for high-value, low-volume transactions — direct parallel to the book's phone call example. Classifies it as maximally heterogeneous (completely decoupled failure lifecycle), notes the cost-per-order trade-off, and warns that it requires a tested runbook and staff preparation.",
-      "notes": "Positive scenario: manual fallback viability evaluation — the book's premium sales phone call example."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I set up database replication in PostgreSQL?",
-      "expected_behavior": "Implementation question — should provide PostgreSQL replication setup guidance without invoking fallback-failover. The skill addresses the design decision (failover vs. fallback, which type, how to configure for resilience), not the mechanical implementation of replication.",
-      "notes": "Decoy: implementation-level database replication question, not a resilience design decision."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "What is high availability and what does it mean for a web service?",
-      "expected_behavior": "Definitional question — should explain high availability concepts without invoking fallback-failover. The skill is about selecting the specific mechanism; this is a conceptual overview question.",
-      "notes": "Decoy: high availability definition question, not a design selection question."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "Our service had an outage for 4 hours last month. How should we categorize the severity and communicate it to customers?",
-      "expected_behavior": "Incident classification and communication question — should use degradation-disruption framing for classification and general incident communication best practices. Does not invoke fallback-failover, which is about designing resilience mechanisms, not classifying or communicating incidents.",
-      "notes": "Decoy: incident classification and communication question — belongs to degradation-disruption."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "Should I use active-active or active-passive for my stateful database cluster? I want the highest availability but I'm worried about data consistency.",
-      "expected_behavior": "Ambiguous: the skill should walk through the trade-off specific to stateful systems — active-active provides instant failover and load distribution but requires distributed state management and conflict resolution; active-passive is simpler for consistency but has a recovery time cost. The answer depends on the RTO requirement, the write consistency requirement, and the infrastructure investment available. Should not give a single answer without exploring these dimensions.",
-      "notes": "Boundary: active-active vs active-passive for stateful services — the classic distributed systems trade-off question."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "We set up a fallback to our secondary CDN provider six months ago but we've never actually tested it. Is that a problem?",
-      "expected_behavior": "The skill should confirm this is the untested fallback anti-pattern (ce29) — automation or manual fallback that is never exercised will drift out of sync with the primary, configurations will stale, and the fallback will likely fail when needed. Recommends scheduling a regular test cadence, treating it like fire alarm testing, and defines what a passing test looks like.",
-      "notes": "Boundary: untested fallback system — tests whether the skill surfaces the testing requirement as a mandatory, not optional, step."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our payment gateway has a 99% SLA but we need 99.9% availability for our checkout flow. We can't change the vendor. What are our options?",
+    "expected": "Invokes fallback-failover, evaluates the options: failover to a same-type payment processor replica (common-cause risk if same provider) vs. fallback to a different payment provider (heterogeneous, decoupled lifecycle). Notes that a secondary payment processor is a classic heterogeneous fallback, and quantifies the composite SLO improvement using the parallel error budget formula.",
+    "notes": "Positive scenario: dependency SLA lower than required — the canonical fallback/failover selection question.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have a primary and secondary server in an active-passive setup, but last week both went down at the same time during a deployment. What went wrong and how do we fix it?",
+    "expected": "Invokes fallback-failover, diagnoses the common-cause failure pattern in homogeneous failover (shared deployment pipeline means a bad deployment can take both primary and secondary down simultaneously), recommends decoupling the deployment lifecycle or switching to a heterogeneous fallback that is independent of the primary's change cycle.",
+    "notes": "Positive scenario: simultaneous primary and secondary failure — the common-cause failure anti-pattern.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our primary database just went down. We have a read replica in the same cloud region. What should our plan be right now, and what does this tell us about our architecture?",
+    "expected": "Invokes fallback-failover, guides the immediate response (promote replica if it's current, verify data consistency, assess RTO), then evaluates the architecture: same-cloud-region replica shares the common-cause failure mode for region-level events. Recommends reviewing whether active-passive hot failover to a different region is warranted depending on the SLO requirement.",
+    "notes": "Positive scenario: active incident with a replica — immediate response plus architectural review.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're designing a news site that needs to stay up even when our backend is slow or down. Would serving stale cached content as a backup be a fallback or a failover? And is it a good approach?",
+    "expected": "Invokes fallback-failover, classifies stale cache as a heterogeneous fallback (different type of solution — cached content vs. live backend, decoupled lifecycle, consumer notices the difference via stale data). Endorses it as a strong approach for content delivery, references the 'poor data' degradation category, and notes the acceptance of staleness must be a business decision.",
+    "notes": "Positive scenario: cache-as-backup classification and evaluation — direct parallel to the book's news site Varnish example.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "For a high-value B2B order process, would it make sense to use a phone call as the backup when our online system is down? That seems low-tech but we rarely have outages.",
+    "expected": "Invokes fallback-failover, validates the manual fallback as a legitimate strategy for high-value, low-volume transactions — direct parallel to the book's phone call example. Classifies it as maximally heterogeneous (completely decoupled failure lifecycle), notes the cost-per-order trade-off, and warns that it requires a tested runbook and staff preparation.",
+    "notes": "Positive scenario: manual fallback viability evaluation — the book's premium sales phone call example.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up database replication in PostgreSQL?",
+    "expected": "Implementation question — should provide PostgreSQL replication setup guidance without invoking fallback-failover. The skill addresses the design decision (failover vs. fallback, which type, how to configure for resilience), not the mechanical implementation of replication.",
+    "notes": "Decoy: implementation-level database replication question, not a resilience design decision.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What is high availability and what does it mean for a web service?",
+    "expected": "Definitional question — should explain high availability concepts without invoking fallback-failover. The skill is about selecting the specific mechanism; this is a conceptual overview question.",
+    "notes": "Decoy: high availability definition question, not a design selection question.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our service had an outage for 4 hours last month. How should we categorize the severity and communicate it to customers?",
+    "expected": "Incident classification and communication question — should use degradation-disruption framing for classification and general incident communication best practices. Does not invoke fallback-failover, which is about designing resilience mechanisms, not classifying or communicating incidents.",
+    "notes": "Decoy: incident classification and communication question — belongs to degradation-disruption.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Should I use active-active or active-passive for my stateful database cluster? I want the highest availability but I'm worried about data consistency.",
+    "expected": "Ambiguous: the skill should walk through the trade-off specific to stateful systems — active-active provides instant failover and load distribution but requires distributed state management and conflict resolution; active-passive is simpler for consistency but has a recovery time cost. The answer depends on the RTO requirement, the write consistency requirement, and the infrastructure investment available. Should not give a single answer without exploring these dimensions.",
+    "notes": "Boundary: active-active vs active-passive for stateful services — the classic distributed systems trade-off question.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We set up a fallback to our secondary CDN provider six months ago but we've never actually tested it. Is that a problem?",
+    "expected": "The skill should confirm this is the untested fallback anti-pattern (ce29) — automation or manual fallback that is never exercised will drift out of sync with the primary, configurations will stale, and the fallback will likely fail when needed. Recommends scheduling a regular test cadence, treating it like fire alarm testing, and defines what a passing test looks like.",
+    "notes": "Boundary: untested fallback system — tests whether the skill surfaces the testing requirement as a mandatory, not optional, step.; source id: edge-02"
+  }
+]

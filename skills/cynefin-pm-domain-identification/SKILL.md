@@ -1,9 +1,9 @@
 ---
-id: cynefin-pm-domain-identification
-title: Cynefin Domain Identification for PM Governance
-description: Invoke when a project or program is exhibiting signs of governance mismatch — the team is doing everything right by the process but the situation keeps deteriorating, escalations aren't resolving, or the standard governance instruments feel like they're making things worse. Also invoke when a significant event (technical failure, regulatory shift, political reversal, vendor collapse) may have moved the underlying situation into a new domain without the governance structure following it.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: cynefin-pm-domain-identification
+description: |
+  Invoke when a project or program is exhibiting signs of governance mismatch — the team is doing everything right by the process but the situation keeps deteriorating, escalations aren't resolving, or the standard governance instruments feel like they're making things worse. Also invoke when a significant event (technical failure, regulatory shift, political reversal, vendor collapse) may have moved the underlying situation into a new domain without the governance structure following it.
 ---
+# Cynefin Domain Identification for PM Governance
 
 ## R — Reading
 
@@ -70,6 +70,12 @@ For single-team projects in stable, well-understood domains where domain classif
 
 ## Related Skills
 
-- **[project-complexity-source-diagnosis](../project-complexity-source-diagnosis/SKILL.md)** — *combines*: complexity source diagnosis classifies the structural/uncertainty profile; Cynefin translates that into governance response; use together
-- **[four-forces-situational-assessment](../four-forces-situational-assessment/SKILL.md)** — *combines*: Four Forces identifies dominant forces; Cynefin classifies the governance domain; together they produce both a situational and a governance prescription
-- **[requisite-variety-gap-assessment](../requisite-variety-gap-assessment/SKILL.md)** — *compares*: both assess governance fitness; different analytical lenses on the same question
+- **project-complexity-source-diagnosis** — *combines*: complexity source diagnosis classifies the structural/uncertainty profile; Cynefin translates that into governance response; use together
+- **four-forces-situational-assessment** — *combines*: Four Forces identifies dominant forces; Cynefin classifies the governance domain; together they produce both a situational and a governance prescription
+- **requisite-variety-gap-assessment** — *compares*: both assess governance fitness; different analytical lenses on the same question
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

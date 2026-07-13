@@ -1,15 +1,9 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: testing-go-public-test-api
-description: Invoke when multiple packages or external consumers need to test against a Go package's interface, or when consumers duplicate setup code because *_test.go files cannot be imported. Covers the testing.go pattern: factory functions (TestServer, TestConfig), compliance suite functions (TestMyInterface), and mock structs — all exported from a regular .go file importable by other packages.
-  one call. The downside: the helpers compile into the production binary, adding
-  binary size. For size-sensitive packages, guard with //go:build !production.
-source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
-source_chapter: Part 2 — Writing Testable Code / Testing as a Public API
+description: |
+  Invoke when multiple packages or external consumers need to test against a Go package's interface, or when consumers duplicate setup code because *_test.go files cannot be imported. Covers the testing.go pattern: factory functions (TestServer, TestConfig), compliance suite functions (TestMyInterface), and mock structs — all exported from a regular .go file importable by other packages.
 tags: [go, testing, public-api, test-infrastructure, library-design]
-related_skills:
-  - test-helper-contract            # composes-with: every function exported in testing.go must follow this contract
-  - custom-framework-within-go-test # composes-with: the custom harness is often published in testing.go
+allowed-tools: Bash, Read, Edit
 ---
 
 # Export Test Infrastructure in Testing.go as a Package's Public Test API
@@ -454,3 +448,9 @@ main package is required.
 
 - **test-helper-contract** (composes-with): Every factory function and compliance suite exported in `testing.go` must follow the helper contract — accept `*testing.T`, never return errors, call `t.Fatalf` internally, register cleanup via `t.Cleanup` or a returned `func()`. The `testing.go` skill governs *where* helpers live (so they are importable); the helper contract skill governs *how* they are signed.
 - **custom-framework-within-go-test** (composes-with): The custom test harness (e.g., `logicaltest.Test(t, TestCase{...})`) is typically published in a `testing.go` file so plugin authors in other packages can import and call it. The custom framework skill defines the *structure* of the harness (steps, PreCheck, cleanup); this skill provides the *mechanism* that makes it importable.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 2 — Writing Testable Code / Testing as a Public API

@@ -1,12 +1,8 @@
 ---
 name: fowler-database-parallel-change
-description: Invoke when altering a live production database schema (adding, renaming, or removing columns/tables) without downtime. Covers the six-phase expand-contract lifecycle: expand, dual-write, backfill, migrate readers, stabilize, and contract. Apply when a team wants to rename or drop a column in-place — that is the anti-pattern this skill replaces.
-source_book: "Refactoring: Improving the Design of Existing Code (2nd Ed.)" by Martin Fowler
-source_chapter: Chapter 2 — Principles in Refactoring
+description: |
+  Invoke when altering a live production database schema (adding, renaming, or removing columns/tables) without downtime. Covers the six-phase expand-contract lifecycle: expand, dual-write, backfill, migrate readers, stabilize, and contract. Apply when a team wants to rename or drop a column in-place — that is the anti-pattern this skill replaces.
 tags: [database, migration, schema, backwards-compatibility, expand-contract, parallel-change]
-related_skills:
-  - slug: fowler-branch-by-abstraction
-    relation: composes-with
 ---
 
 # Fowler — Database Parallel Change (Expand-Contract)
@@ -339,3 +335,9 @@ tooling required to execute it safely is not covered.
 - R quote: verbatim from lines 3551–3560
 - Phase: 2 (SKILL.md creation)
 - Date: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Refactoring: Improving the Design of Existing Code (2nd Ed.)" by Martin Fowler — Chapter 2 — Principles in Refactoring

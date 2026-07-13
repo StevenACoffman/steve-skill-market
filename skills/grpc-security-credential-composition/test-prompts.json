@@ -1,74 +1,79 @@
 [
   {
-    "id": "tp01",
-    "segment": "A2",
-    "trigger": "OAuth2 without TLS bug",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "I've configured OAuth2 token validation on my gRPC server. During local debugging I removed the TLS configuration to simplify setup. Is that a problem?",
-    "expected_behavior": "Should identify this as a critical security issue: the OAuth2 bearer token is now transmitted as plaintext gRPC metadata (HTTP/2 headers). Any observer on the network path can read the Authorization header and extract the token. Should explain that RequireTransportSecurity() returning true in the PerRPCCredentials implementation is the guard designed to prevent this — it should cause the gRPC library to reject attaching call credentials to an insecure channel. Should recommend restoring TLS immediately, and should explain the two-layer model: TLS secures the channel, OAuth2/JWT secures individual RPCs, and both are required.",
-    "should_not": "Should not say this is acceptable for local debugging. Should not omit the RequireTransportSecurity() enforcement mechanism."
+    "expected": "Should identify this as a critical security issue: the OAuth2 bearer token is now transmitted as plaintext gRPC metadata (HTTP/2 headers). Any observer on the network path can read the Authorization header and extract the token. Should explain that RequireTransportSecurity() returning true in the PerRPCCredentials implementation is the guard designed to prevent this — it should cause the gRPC library to reject attaching call credentials to an insecure channel. Should recommend restoring TLS immediately, and should explain the two-layer model: TLS secures the channel, OAuth2/JWT secures individual RPCs, and both are required.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "segment": "R",
-    "trigger": "source quote — two credential types",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "What does the gRPC Up and Running book say about the two types of credentials in gRPC?",
-    "expected_behavior": "Should quote or closely paraphrase: 'There are two types of credential supports in gRPC, channel and call. Channel credentials are attached to the channels such as TLS, etc. Call credentials are attached to the call, such as OAuth 2.0 tokens, basic authentication, etc. We even can apply both credential types to the gRPC application.' Should explain the composition: both types can be used simultaneously on the same connection — TLS secures the transport, per-RPC tokens secure individual calls.",
-    "should_not": "Should not say only one credential type is needed. Should not confuse channel credentials with call credentials."
+    "expected": "Should quote or closely paraphrase: 'There are two types of credential supports in gRPC, channel and call. Channel credentials are attached to the channels such as TLS, etc. Call credentials are attached to the call, such as OAuth 2.0 tokens, basic authentication, etc. We even can apply both credential types to the gRPC application.' Should explain the composition: both types can be used simultaneously on the same connection — TLS secures the transport, per-RPC tokens secure individual calls.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "segment": "I",
-    "trigger": "when to use mTLS vs one-way TLS",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "We have two internal microservices that call each other. Should we use one-way TLS or mutual TLS (mTLS)?",
-    "expected_behavior": "Should recommend mTLS for internal service-to-service communication. With one-way TLS, the client verifies the server's identity but the server does not verify the client — any client that can reach the server can make RPCs. mTLS means both parties present certificates: the server verifies the client is a known service, preventing a compromised service from impersonating another. Should describe the Go configuration: the server sets tls.RequireAndVerifyClientCert, loads the CA pool, and both sides present their own certificate/key. Should note that one-way TLS is correct for external-facing services where the client (browser, external developer) does not have a certificate.",
-    "should_not": "Should not recommend one-way TLS for internal service meshes without noting the lack of client authentication."
+    "expected": "Should recommend mTLS for internal service-to-service communication. With one-way TLS, the client verifies the server's identity but the server does not verify the client — any client that can reach the server can make RPCs. mTLS means both parties present certificates: the server verifies the client is a known service, preventing a compromised service from impersonating another. Should describe the Go configuration: the server sets tls.RequireAndVerifyClientCert, loads the CA pool, and both sides present their own certificate/key. Should note that one-way TLS is correct for external-facing services where the client (browser, external developer) does not have a certificate.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "segment": "I",
-    "trigger": "RequireTransportSecurity enforcement",
+    "id": 4,
+    "type": "should_trigger",
     "prompt": "What does RequireTransportSecurity() do in a gRPC PerRPCCredentials implementation, and what happens if it returns false?",
-    "expected_behavior": "Should explain that RequireTransportSecurity() is a method on the PerRPCCredentials interface that signals whether the credentials require a TLS-secured channel to be transmitted. If it returns true, the gRPC library will refuse to attach the credentials to a channel that does not have TLS — the call fails at credential-attachment time, not on the network. If it returns false, the credentials will be sent over any channel, including plaintext, enabling token leakage. Should emphasize that returning true is mandatory for any credential type that carries a secret (OAuth2 tokens, JWTs, passwords).",
-    "should_not": "Should not say returning false is acceptable for non-production environments. Should not confuse this method with any server-side TLS configuration."
+    "expected": "Should explain that RequireTransportSecurity() is a method on the PerRPCCredentials interface that signals whether the credentials require a TLS-secured channel to be transmitted. If it returns true, the gRPC library will refuse to attach the credentials to a channel that does not have TLS — the call fails at credential-attachment time, not on the network. If it returns false, the credentials will be sent over any channel, including plaintext, enabling token leakage. Should emphasize that returning true is mandatory for any credential type that carries a secret (OAuth2 tokens, JWTs, passwords).",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "segment": "E",
-    "trigger": "implementation — composing TLS + OAuth2",
+    "id": 5,
+    "type": "should_trigger",
     "prompt": "How do I configure a gRPC Go client to use both TLS and OAuth2 token authentication simultaneously?",
-    "expected_behavior": "Should show both grpc.WithTransportCredentials (for TLS/channel credentials) and grpc.WithPerRPCCredentials (for call credentials) passed to grpc.NewClient as separate dial options. Should show a PerRPCCredentials implementation that returns the token in GetRequestMetadata and returns true from RequireTransportSecurity. Should note that grpc.NewClient (not the deprecated grpc.Dial) is the current API. Should emphasize that both options are required — neither one alone is sufficient for production.",
-    "should_not": "Should not show only one of the two credential types. Should not use grpc.WithInsecure() alongside call credentials."
+    "expected": "Should show both grpc.WithTransportCredentials (for TLS/channel credentials) and grpc.WithPerRPCCredentials (for call credentials) passed to grpc.NewClient as separate dial options. Should show a PerRPCCredentials implementation that returns the token in GetRequestMetadata and returns true from RequireTransportSecurity. Should note that grpc.NewClient (not the deprecated grpc.Dial) is the current API. Should emphasize that both options are required — neither one alone is sufficient for production.",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "segment": "A1",
-    "trigger": "book progression — how credential composition was demonstrated",
+    "id": 6,
+    "type": "should_trigger",
     "prompt": "How does the gRPC Up and Running book build up to the two-layer credential model?",
-    "expected_behavior": "Should describe the Chapter 6 progression: first one-way TLS is added to the ProductInfo service (server cert/key, client trusts the server cert); then OAuth2 call credentials are added on top of the existing TLS channel (client attaches a token, server validates it in an interceptor). The book explicitly notes that OAuth requires the underlying transport to be secure — the TLS from the first step is a prerequisite for the OAuth2 in the second step. Should mention mTLS as the third configuration (both sides present certs).",
-    "should_not": "Should not say the book introduces both credential types at the same time without the progressive setup. Should not omit that the book explicitly states OAuth requires transport security."
+    "expected": "Should describe the Chapter 6 progression: first one-way TLS is added to the ProductInfo service (server cert/key, client trusts the server cert); then OAuth2 call credentials are added on top of the existing TLS channel (client attaches a token, server validates it in an interceptor). The book explicitly notes that OAuth requires the underlying transport to be secure — the TLS from the first step is a prerequisite for the OAuth2 in the second step. Should mention mTLS as the third configuration (both sides present certs).",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "segment": "A2",
-    "trigger": "static passwords anti-pattern",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "Our gRPC service uses basic auth (username/password) for call-level authentication. Is this acceptable?",
-    "expected_behavior": "Should recommend replacing static passwords with token-based credentials. The book explicitly states: 'gRPC doesn't encourage us to use a username/password for authenticating to services. This is because a username/password doesn't have control in time as opposed to other tokens (JSON Web Tokens [JWTs], OAuth2 access tokens).' Tokens carry an explicit expiry and can be revoked without credential rotation; passwords cannot. Should recommend OAuth2 or JWT. Should also confirm that basic auth credentials must still be sent only over a TLS channel.",
-    "should_not": "Should not endorse static passwords for production gRPC services. Should not omit the time-based control argument from the book."
+    "expected": "Should recommend replacing static passwords with token-based credentials. The book explicitly states: 'gRPC doesn't encourage us to use a username/password for authenticating to services. This is because a username/password doesn't have control in time as opposed to other tokens (JSON Web Tokens [JWTs], OAuth2 access tokens).' Tokens carry an explicit expiry and can be revoked without credential rotation; passwords cannot. Should recommend OAuth2 or JWT. Should also confirm that basic auth credentials must still be sent only over a TLS channel.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "segment": "B",
-    "trigger": "boundary — service mesh absorbs channel credentials",
+    "id": 8,
+    "type": "edge_case",
     "prompt": "We're running on Istio. Do we still need to configure TLS in our gRPC server code?",
-    "expected_behavior": "Should explain that in Istio, mTLS between services is provided transparently by the Envoy sidecar proxy — the application code never handles TLS. The sidecar intercepts all inbound and outbound traffic and applies mTLS automatically based on the mesh policy. In this case, configuring TLS in gRPC server application code is not only unnecessary but can conflict with the sidecar's TLS handling (double-TLS). However, per-RPC call credentials (OAuth2 tokens, JWTs for application-level identity) are still the application's responsibility even in a service mesh. Should identify which layer is mesh-managed (transport/channel) vs. application-managed (per-RPC identity).",
-    "should_not": "Should not say the service mesh eliminates the need for call credentials. Should not say TLS must always be configured in application code regardless of the deployment environment."
+    "expected": "Should explain that in Istio, mTLS between services is provided transparently by the Envoy sidecar proxy — the application code never handles TLS. The sidecar intercepts all inbound and outbound traffic and applies mTLS automatically based on the mesh policy. In this case, configuring TLS in gRPC server application code is not only unnecessary but can conflict with the sidecar's TLS handling (double-TLS). However, per-RPC call credentials (OAuth2 tokens, JWTs for application-level identity) are still the application's responsibility even in a service mesh. Should identify which layer is mesh-managed (transport/channel) vs. application-managed (per-RPC identity).",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "segment": "B",
-    "trigger": "boundary — grpc.Dial deprecation",
+    "id": 9,
+    "type": "edge_case",
     "prompt": "The book's credential examples use grpc.Dial. Is that still the right API?",
-    "expected_behavior": "Should note that grpc.Dial is deprecated in newer gRPC-Go versions and has been replaced by grpc.NewClient. Should explain the key behavioral difference: grpc.NewClient does not initiate a connection immediately (lazy connection), while grpc.Dial historically started connection establishment on the calling goroutine. The credential configuration (grpc.WithTransportCredentials, grpc.WithPerRPCCredentials) works identically with grpc.NewClient. Should also mention that grpc.WithInsecure() is replaced by insecure.NewCredentials() from the credentials/insecure package. The book's examples are functionally correct for the credential model but should use the updated API.",
-    "should_not": "Should not say grpc.Dial is still the recommended API. Should not claim the credential configuration itself changed."
+    "expected": "Should note that grpc.Dial is deprecated in newer gRPC-Go versions and has been replaced by grpc.NewClient. Should explain the key behavioral difference: grpc.NewClient does not initiate a connection immediately (lazy connection), while grpc.Dial historically started connection establishment on the calling goroutine. The credential configuration (grpc.WithTransportCredentials, grpc.WithPerRPCCredentials) works identically with grpc.NewClient. Should also mention that grpc.WithInsecure() is replaced by insecure.NewCredentials() from the credentials/insecure package. The book's examples are functionally correct for the credential model but should use the updated API.",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "Our gRPC service is deployed behind a Kubernetes Service with a plain L4 load balancer, and we're seeing all requests pile up on one backend pod after a rolling restart. How do I get gRPC connections to spread evenly across pods?",
+    "expected": "skill should not activate — this is a gRPC load-balancing / connection-distribution topology question (L4 vs L7, client-side vs proxy LB), not about configuring channel (TLS/mTLS) or call (OAuth2/JWT) credentials.",
+    "notes": "decoy: same gRPC production-operations domain but about traffic distribution, not the two-layer credential composition this skill covers."
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "We need to add a new field to a proto message and roll it out across many services without breaking older clients still in flight during the deploy. What's the safe way to evolve the schema?",
+    "expected": "skill should not activate — this is a proto schema-evolution / rolling-deployment-compatibility question (field numbering, backward/forward compatibility), not about authentication or transport security credentials.",
+    "notes": "decoy: adjacent gRPC/proto concern (schema evolution) with no relation to channel or call credential configuration."
   }
 ]

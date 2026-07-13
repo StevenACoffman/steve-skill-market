@@ -1,9 +1,9 @@
 ---
-id: terraform-backend-bootstrap-problem
-title: 'Terraform Backend Bootstrap Problem: Variables Forbidden, Chicken-and-Egg Setup'
-description: Invoke when a user tries to use variables in a backend block and gets an error, asks how to share backend configuration across environments without copy-pasting, or needs to set up an S3+DynamoDB remote backend for the first time.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
+name: terraform-backend-bootstrap-problem
+description: |
+  Invoke when a user tries to use variables in a backend block and gets an error, asks how to share backend configuration across environments without copy-pasting, or needs to set up an S3+DynamoDB remote backend for the first time.
 ---
+# Terraform Backend Bootstrap Problem: Variables Forbidden, Chicken-and-Egg Setup
 
 ## R — Reading
 
@@ -120,5 +120,11 @@ terraform {
 
 ## Related Skills
 
-- **[terraform-directory-layout-isolation](../terraform-directory-layout-isolation/SKILL.md)** — prerequisite for: file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
-- **[terraform-secrets-in-state](../terraform-secrets-in-state/SKILL.md)** — prerequisite for: the S3 bucket created during bootstrap is the same bucket that must be encrypted and access-controlled to protect plaintext secrets in state.
+- **terraform-directory-layout-isolation** — prerequisite for: file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
+- **terraform-secrets-in-state** — prerequisite for: the S3 bucket created during bootstrap is the same bucket that must be encrypted and access-controlled to protect plaintext secrets in state.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

@@ -8,16 +8,7 @@ description: |
   This skill is specifically about the code-level strategy of introducing an abstraction layer to enable incremental, never-broken migration. It is NOT about git branching strategy (despite the confusable name), and it is NOT primarily about database schema migration (use fowler-database-parallel-change for that, though the same principle applies).
 
   Do NOT invoke this skill for small refactorings that fit in a single commit or a single session — use fowler-opportunistic-refactoring for those. Do NOT invoke for keeping refactoring and feature work separated in a session — use fowler-two-hats for that.
-source_book: 'Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)'
-source_chapter: Chapter 2
 tags: [refactoring, architecture, migration, abstraction]
-related_skills:
-  - slug: fowler-database-parallel-change
-    relation: composes-with
-  - slug: fowler-opportunistic-refactoring
-    relation: composes-with
-  - slug: fowler-yagni-refactoring
-    relation: contrasts-with
 ---
 
 # Branch by Abstraction — Incremental Large-Scale Refactoring
@@ -162,3 +153,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code — Martin Fowler (2018) — Chapter 2

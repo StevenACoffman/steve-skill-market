@@ -1,65 +1,72 @@
-{
-  "skill_id": "grpc-payload-optimization",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "Should I care about which field numbers I assign to Protobuf fields? Does it affect performance?",
-      "rationale": "Direct match: varint encoding cost and the 1–15 threshold rule."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "I enabled gzip compression on our gRPC service and our payload sizes got larger. How is that possible?",
-      "rationale": "Direct match: the ce05 counter-example — gzip overhead on small non-repetitive Protobuf messages."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "What is the correct sequence of steps to optimize Protobuf payload sizes, and which ones should I apply first?",
-      "rationale": "Direct match: the five-step f04 payload optimization decision process."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "My proto message has an int32 field that sometimes holds negative values and is always 10 bytes. What's wrong?",
-      "rationale": "Direct match: int32 negative values cost 10 bytes; sint32 with ZigZag is the fix."
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "How do I add a new field to an existing Protobuf message without breaking existing clients?",
-      "rationale": "Proto backward compatibility and field evolution, not payload size optimization."
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement HTTP/2 multiplexing for a Go gRPC service?",
-      "rationale": "HTTP/2 transport behavior, unrelated to Protobuf payload optimization."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "What is the best way to benchmark gRPC throughput under load?",
-      "rationale": "Load testing (ghz), not message-level payload size optimization."
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "I want to reduce the amount of data sent over a server-streaming RPC. The client only needs 3 of the 10 fields on each response. What's the best approach?",
-      "rationale": "Blurred: involves FieldMask (both this skill and grpc-fieldmask-partial-updates skill) — this skill covers it as step 4 of payload optimization; the other skill covers the full FieldMask implementation pattern."
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "When should I use gzip.UseCompressor as a per-call option versus setting it globally on the gRPC client connection?",
-      "rationale": "Blurred: the per-call vs global gzip decision is within the boundary of this skill, but the question is more operational than the core optimization-decision process."
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "I have a client-streaming RPC that sends millions of UpdateTaskRequest messages per day. The request currently wraps a Task sub-message. Should I flatten the fields?",
-      "rationale": "Blurred: the flattening decision is step 3 of this skill, but grpc-flatten-streaming-requests covers the full mechanics and trade-offs of flattening specifically."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Should I care about which field numbers I assign to Protobuf fields? Does it affect performance?",
+    "expected": "The skill activates and explains that Protobuf field tags are varint-encoded: tags 1–15 fit in a single byte while tags 16+ cost two bytes, so a field set on every message costs 1 extra byte per occurrence when assigned tag 16 instead of 15. It should give the actionable rule — assign tags 1–15 to the most frequently populated/required fields and reserve higher tags for rarely-set optional fields — and note this compounds meaningfully in high-volume streaming RPCs.",
+    "notes": "rationale: Direct match: varint encoding cost and the 1–15 threshold rule.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I enabled gzip compression on our gRPC service and our payload sizes got larger. How is that possible?",
+    "expected": "The skill activates and explains that gzip has a fixed overhead (~18 bytes) and only shrinks payloads containing repetition; Protobuf binary already strips field names and uses compact varint encoding, so small non-repetitive messages (e.g., a 2-byte Int32Value expanding to ~20 bytes) get larger under gzip. It should advise measuring proto.Marshal output before/after compression and enabling gzip only when it reliably shrinks typical payloads (long strings, large similar repeated fields), never globally without benchmarking.",
+    "notes": "rationale: Direct match: the ce05 counter-example — gzip overhead on small non-repetitive Protobuf messages.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "What is the correct sequence of steps to optimize Protobuf payload sizes, and which ones should I apply first?",
+    "expected": "The skill activates and gives the five-step sequence in order, cheapest-to-apply first: (1) integer type selection (uint/sint/fixed), (2) field-tag assignment (frequent fields at 1–15), (3) flattening nested sub-messages in high-volume streaming requests, (4) FieldMask for read/list requests, (5) benchmark gzip last. It should explain the ordering rationale: schema-design changes (steps 1–3) cost nothing at runtime, while gzip imposes per-call CPU overhead and can harm rather than help, so it is applied last and only after measurement.",
+    "notes": "rationale: Direct match: the five-step f04 payload optimization decision process.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My proto message has an int32 field that sometimes holds negative values and is always 10 bytes. What's wrong?",
+    "expected": "The skill activates and explains that a negative int32 value always costs 10 bytes because Protobuf encodes it as a 64-bit two's-complement varint. The fix is to change the field type to sint32 (or sint64), which uses ZigZag encoding and represents small negative values in 1–2 bytes. It should note this type choice is step 1 of the optimization sequence and is a schema-design decision.",
+    "notes": "rationale: Direct match: int32 negative values cost 10 bytes; sint32 with ZigZag is the fix.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I add a new field to an existing Protobuf message without breaking existing clients?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Proto backward compatibility and field evolution, not payload size optimization.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement HTTP/2 multiplexing for a Go gRPC service?",
+    "expected": "skill should not activate",
+    "notes": "rationale: HTTP/2 transport behavior, unrelated to Protobuf payload optimization.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What is the best way to benchmark gRPC throughput under load?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Load testing (ghz), not message-level payload size optimization.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I want to reduce the amount of data sent over a server-streaming RPC. The client only needs 3 of the 10 fields on each response. What's the best approach?",
+    "expected": "The defensible outcome is FieldMask: add google.protobuf.FieldMask to the request so the caller names the 3 fields it wants, and implement server-side filtering (clearing non-requested fields via ProtoReflect().Range() before stream.Send()) so the mask is paid once per request but reduces bandwidth across all N streamed responses. The skill should surface that FieldMask is step 4 of its optimization sequence and hand off to grpc-fieldmask-partial-updates for the detailed implementation, and caution that derived fields must be computed after the mask is applied.",
+    "notes": "rationale: Blurred: involves FieldMask (both this skill and grpc-fieldmask-partial-updates skill) — this skill covers it as step 4 of payload optimization; the other skill covers the full FieldMask implementation pattern.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "When should I use gzip.UseCompressor as a per-call option versus setting it globally on the gRPC client connection?",
+    "expected": "The defensible outcome is that gzip should be applied selectively rather than globally: because gzip only helps repetitive/large payloads and inflates small non-repetitive ones, the per-call gzip.UseCompressor option is preferable for the specific methods whose typical messages benchmark smaller compressed, while a global connection-level setting risks inflating every small message on the connection. The skill should surface the same measure-before-enabling reasoning (benchmark proto.Marshal size vs gzip size on representative payloads) and only enable compression where it reliably wins.",
+    "notes": "rationale: Blurred: the per-call vs global gzip decision is within the boundary of this skill, but the question is more operational than the core optimization-decision process.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I have a client-streaming RPC that sends millions of UpdateTaskRequest messages per day. The request currently wraps a Task sub-message. Should I flatten the fields?",
+    "expected": "The defensible outcome is yes, flatten: for a client-streaming RPC sending millions of messages daily, moving the editable fields of the wrapped Task sub-message directly into UpdateTaskRequest eliminates the ~2-byte length-delimited framing overhead per occurrence, which compounds across the message volume (the book's TODO example dropped 56→50 bytes per request). The skill should surface this as step 3 of its sequence and hand off to grpc-flatten-streaming-requests for the full before/after byte analysis and migration, while noting the trade-off that flattening increases request-message maintenance burden if the domain type changes.",
+    "notes": "rationale: Blurred: the flattening decision is step 3 of this skill, but grpc-flatten-streaming-requests covers the full mechanics and trade-offs of flattening specifically.; source id: tp10"
+  }
+]

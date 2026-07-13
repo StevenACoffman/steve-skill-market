@@ -1,86 +1,79 @@
-{
-  "skill": "structured-goroutine-lifetime",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I think I have a goroutine leak. My service's goroutine count keeps growing over time and I'm not sure which goroutines are staying alive. How do I find and fix leaks?",
-      "expected_behavior": "Explain goroutine leak patterns: early return before draining channels, bare go func() with no WaitGroup. Show goleak for detection. Diagnose common causes: unbuffered channel send with no receiver, missing wait. Recommend errgroup as the cleanest fix for parallel fan-out scenarios.",
-      "notes": "Goroutine leak suspicion — direct trigger signal from SKILL.md."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "When should I use `errgroup` vs `sync.WaitGroup`? I'm spawning goroutines to make parallel API calls and I need to handle errors properly.",
-      "expected_behavior": "Explain the distinction: errgroup cancels sibling goroutines on the first error (cancel-on-error); WaitGroup runs all siblings to completion and collects all errors. For parallel API calls where you want to stop on first failure, errgroup.WithContext is idiomatic. Show the errgroup pattern with g.Go and g.Wait.",
-      "notes": "errgroup vs WaitGroup question — explicit trigger in SKILL.md language signals."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "I'm spawning goroutines in a loop to process Kafka messages. Under high load the goroutine count explodes and eventually the service runs out of memory. How do I bound the concurrency?",
-      "expected_behavior": "Explain the buffered channel semaphore pattern: sem := make(chan struct{}, N). Show that the send into sem must happen inside g.Go (not before) so context cancellation can abort goroutines waiting on the semaphore. Demonstrate the defer release pattern. Combine with errgroup for error propagation.",
-      "notes": "Unbounded fan-out under load — exactly Case 2 from SKILL.md, the Kafka polling loop scenario."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "My test hangs when I inject an error into one of my goroutines. In the happy path it finishes fine, but as soon as an error occurs, the test just hangs forever.",
-      "expected_behavior": "Diagnose the early-return + unbuffered channel leak: the test function returns on first error but other goroutines are blocked trying to send on channels that no one is reading. Show three fixes: drain all channels before evaluating errors, buffer channels by 1, or switch to errgroup which eliminates the channel plumbing entirely.",
-      "notes": "Test hangs on error path — directly matches the early-return goroutine leak pattern, ce02 from SKILL.md."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "How do I properly wait for all my goroutines to finish before my function returns? I keep seeing unexpected behavior when functions return before goroutines complete.",
-      "expected_behavior": "Explain the two questions to answer before every go func(): what signals it to stop, and what waits for it to finish. Show WaitGroup for wait-all and errgroup for cancel-on-error. Emphasize that context cancellation is a signal mechanism, not a wait mechanism — you still need wg.Wait or g.Wait after sending the cancel signal.",
-      "notes": "'How do I wait for goroutines' — explicit trigger signal from SKILL.md."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "I have two goroutines sharing a counter and go test -race passes, but the final counter value is always wrong. What's happening?",
-      "expected_behavior": "This is a logical race / lost-update bug — activate mutex-closure-atomic-mutation skill instead. The Get/Set sequence is not atomic. The race detector passes because each lock acquisition is valid individually. The fix is the closure inversion pattern (Set(func(*T))).",
-      "notes": "Logical race with passing race detector — this is mutex-closure-atomic-mutation territory, not goroutine lifetime."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I propagate a cancellation cause in Go so that callers can tell WHY the context was cancelled rather than just that it was cancelled?",
-      "expected_behavior": "Explain context.WithCancelCause and context.Cause() from Go 1.21. This is the context-cancellation-cause skill — about what information to attach when cancelling, not about goroutine lifetime management or preventing leaks.",
-      "notes": "Context cancellation cause — SKILL.md explicitly distinguishes: 'context cancellation signal design (use context-cancellation-cause skill instead)'."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "How do I send and receive values on a channel using select with a timeout?",
-      "expected_behavior": "Explain select with a time.After or context deadline case for channel operations. This is channel mechanics/semantics — no goroutine spawning, lifetime, or leak concern present.",
-      "notes": "Pure channel semantics question — SKILL.md excludes 'pure channel communication questions with no goroutine lifetime concern'."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "I cancelled a context but my goroutines keep running. How do I make sure they actually stop when I cancel?",
-      "expected_behavior": "Triggers the skill — this is the canonical 'cancellation is a signal, not a wait' confusion. Goroutines must check ctx.Done() at loop boundaries or blocking points AND the caller must wait (wg.Wait / g.Wait) after cancelling. Explain that context.CancelFunc signals intent to stop; lifetime management ensures the stop completes.",
-      "notes": "Goroutines ignoring cancellation — composes context cancellation (signal) with goroutine lifetime (wait). Both skills are relevant but this skill owns the 'how do I ensure they actually stop' question."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "How do I limit concurrent HTTP requests in Go to avoid overwhelming a downstream service?",
-      "expected_behavior": "Triggers the skill — buffered channel semaphore pattern. sem := make(chan struct{}, N) bounds live goroutines to N. Show composition with errgroup for error handling. This is the bounded concurrency pattern from SKILL.md.",
-      "notes": "Concurrency limiting question — core pattern in the skill. Could also touch rate limiting at the client level, but the goroutine bounding approach is the primary answer here."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "goleak is reporting unexpected goroutines in my test. The goroutine says it's in state 'chan receive'. How do I figure out what it is?",
-      "expected_behavior": "Triggers the skill. Explain reading goroutine dumps: 'chan receive' means a goroutine is blocked waiting on a channel no one is sending to. This is often a goroutine that was spawned but whose owner returned early. Point to goleak filtering and runtime.Stack to get the goroutine's creation site. Map to the early-return/channel-drain fix.",
-      "notes": "goleak diagnosis question — directly in the skill's domain. Edge because it's a diagnostic question, not a design question, but the answer is firmly in this skill."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I think I have a goroutine leak. My service's goroutine count keeps growing over time and I'm not sure which goroutines are staying alive. How do I find and fix leaks?",
+    "expected": "Explain goroutine leak patterns: early return before draining channels, bare go func() with no WaitGroup. Show goleak for detection. Diagnose common causes: unbuffered channel send with no receiver, missing wait. Recommend errgroup as the cleanest fix for parallel fan-out scenarios.",
+    "notes": "Goroutine leak suspicion — direct trigger signal from SKILL.md.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "When should I use `errgroup` vs `sync.WaitGroup`? I'm spawning goroutines to make parallel API calls and I need to handle errors properly.",
+    "expected": "Explain the distinction: errgroup cancels sibling goroutines on the first error (cancel-on-error); WaitGroup runs all siblings to completion and collects all errors. For parallel API calls where you want to stop on first failure, errgroup.WithContext is idiomatic. Show the errgroup pattern with g.Go and g.Wait.",
+    "notes": "errgroup vs WaitGroup question — explicit trigger in SKILL.md language signals.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm spawning goroutines in a loop to process Kafka messages. Under high load the goroutine count explodes and eventually the service runs out of memory. How do I bound the concurrency?",
+    "expected": "Explain the buffered channel semaphore pattern: sem := make(chan struct{}, N). Show that the send into sem must happen inside g.Go (not before) so context cancellation can abort goroutines waiting on the semaphore. Demonstrate the defer release pattern. Combine with errgroup for error propagation.",
+    "notes": "Unbounded fan-out under load — exactly Case 2 from SKILL.md, the Kafka polling loop scenario.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My test hangs when I inject an error into one of my goroutines. In the happy path it finishes fine, but as soon as an error occurs, the test just hangs forever.",
+    "expected": "Diagnose the early-return + unbuffered channel leak: the test function returns on first error but other goroutines are blocked trying to send on channels that no one is reading. Show three fixes: drain all channels before evaluating errors, buffer channels by 1, or switch to errgroup which eliminates the channel plumbing entirely.",
+    "notes": "Test hangs on error path — directly matches the early-return goroutine leak pattern, ce02 from SKILL.md.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "How do I properly wait for all my goroutines to finish before my function returns? I keep seeing unexpected behavior when functions return before goroutines complete.",
+    "expected": "Explain the two questions to answer before every go func(): what signals it to stop, and what waits for it to finish. Show WaitGroup for wait-all and errgroup for cancel-on-error. Emphasize that context cancellation is a signal mechanism, not a wait mechanism — you still need wg.Wait or g.Wait after sending the cancel signal.",
+    "notes": "'How do I wait for goroutines' — explicit trigger signal from SKILL.md.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I have two goroutines sharing a counter and go test -race passes, but the final counter value is always wrong. What's happening?",
+    "expected": "This is a logical race / lost-update bug — activate mutex-closure-atomic-mutation skill instead. The Get/Set sequence is not atomic. The race detector passes because each lock acquisition is valid individually. The fix is the closure inversion pattern (Set(func(*T))).",
+    "notes": "Logical race with passing race detector — this is mutex-closure-atomic-mutation territory, not goroutine lifetime.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I propagate a cancellation cause in Go so that callers can tell WHY the context was cancelled rather than just that it was cancelled?",
+    "expected": "Explain context.WithCancelCause and context.Cause() from Go 1.21. This is the context-cancellation-cause skill — about what information to attach when cancelling, not about goroutine lifetime management or preventing leaks.",
+    "notes": "Context cancellation cause — SKILL.md explicitly distinguishes: 'context cancellation signal design (use context-cancellation-cause skill instead)'.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "How do I send and receive values on a channel using select with a timeout?",
+    "expected": "Explain select with a time.After or context deadline case for channel operations. This is channel mechanics/semantics — no goroutine spawning, lifetime, or leak concern present.",
+    "notes": "Pure channel semantics question — SKILL.md excludes 'pure channel communication questions with no goroutine lifetime concern'.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I cancelled a context but my goroutines keep running. How do I make sure they actually stop when I cancel?",
+    "expected": "Triggers the skill — this is the canonical 'cancellation is a signal, not a wait' confusion. Goroutines must check ctx.Done() at loop boundaries or blocking points AND the caller must wait (wg.Wait / g.Wait) after cancelling. Explain that context.CancelFunc signals intent to stop; lifetime management ensures the stop completes.",
+    "notes": "Goroutines ignoring cancellation — composes context cancellation (signal) with goroutine lifetime (wait). Both skills are relevant but this skill owns the 'how do I ensure they actually stop' question.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I limit concurrent HTTP requests in Go to avoid overwhelming a downstream service?",
+    "expected": "Triggers the skill — buffered channel semaphore pattern. sem := make(chan struct{}, N) bounds live goroutines to N. Show composition with errgroup for error handling. This is the bounded concurrency pattern from SKILL.md.",
+    "notes": "Concurrency limiting question — core pattern in the skill. Could also touch rate limiting at the client level, but the goroutine bounding approach is the primary answer here.; source id: edge-case-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "goleak is reporting unexpected goroutines in my test. The goroutine says it's in state 'chan receive'. How do I figure out what it is?",
+    "expected": "Triggers the skill. Explain reading goroutine dumps: 'chan receive' means a goroutine is blocked waiting on a channel no one is sending to. This is often a goroutine that was spawned but whose owner returned early. Point to goleak filtering and runtime.Stack to get the goroutine's creation site. Map to the early-return/channel-drain fix.",
+    "notes": "goleak diagnosis question — directly in the skill's domain. Edge because it's a diagnostic question, not a design question, but the answer is firmly in this skill.; source id: edge-case-03"
+  }
+]

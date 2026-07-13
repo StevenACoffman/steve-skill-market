@@ -1,3 +1,9 @@
+---
+name: multicloud-5-option-decision
+description: |
+  Invoke this skill when you encounter any of the following: - Someone says "we're going multicloud" without specifying which of the five scenarios they intend. - A team is building an abstraction layer to make applications run on any cloud, and you need to evaluate the cost of that decision. - An organization has workloads spread across multiple cloud providers and is trying to decide whether this is intentional or accidental. - Leadership wants "cloud portability" as a hedge against vendor lock-in and you need to evaluate whether that goal justifies the cost. - Different business units are using different cloud providers and you need to decide whether to centralize, formalize, or leave it. - A team is evaluating cloud options and the word "multicloud" is being used to justify native-service avoidance. - You need to explain to a CTO why their stated multicloud ambition is more complex than they realize.
+---
+
 # Multicloud: 5-Option Decision Table
 
 **Source:** Cloud Strategy, Gregor Hohpe (~2020–2022) — Chapter 18: Multicloud: You've Got Options
@@ -95,7 +101,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **[Lock-In Cost Optimization](../lock-in-cost-optimization/SKILL.md)** — *composes-with* → The Portable and Parallel options both require calculating the expected switching cost vs. portability investment cost (U-curve and Esperanto Effect); the lock-in skill provides the analytical model the 5-option table needs for options 4 and 5.
-- **[Enterprise Non-Cloud Diagnostic](../enterprise-non-cloud-diagnostic/SKILL.md)** — *precedes* → Before selecting a multicloud option, the NIST diagnostic should confirm the baseline single-cloud platform preserves cloud characteristics; multicloud complexity built on an Enterprise Non-Cloud foundation compounds the problem.
-- **[Architect Elevator](../architect-elevator/SKILL.md)** — *depends-on* → The 5-option table is most powerful when an elevator architect deploys it simultaneously to CTOs (strategic trade-offs) and engineers (mechanism costs); without the elevator posture the table is adopted at one level only and misapplied at the other.
-- **[Principles Quality Checklist](../principles-quality-checklist/SKILL.md)** — *depends-on* → A multicloud principle of "we will be cloud-portable" fails the checklist's opposite test, product-name test, and lacks a cost model; running the checklist on the multicloud strategy principles before selecting an option prevents later architectural drift.
+- **Lock-In Cost Optimization** — *composes-with* → The Portable and Parallel options both require calculating the expected switching cost vs. portability investment cost (U-curve and Esperanto Effect); the lock-in skill provides the analytical model the 5-option table needs for options 4 and 5.
+- **Enterprise Non-Cloud Diagnostic** — *precedes* → Before selecting a multicloud option, the NIST diagnostic should confirm the baseline single-cloud platform preserves cloud characteristics; multicloud complexity built on an Enterprise Non-Cloud foundation compounds the problem.
+- **Architect Elevator** — *depends-on* → The 5-option table is most powerful when an elevator architect deploys it simultaneously to CTOs (strategic trade-offs) and engineers (mechanism costs); without the elevator posture the table is adopted at one level only and misapplied at the other.
+- **Principles Quality Checklist** — *depends-on* → A multicloud principle of "we will be cloud-portable" fails the checklist's opposite test, product-name test, and lacks a cost model; running the checklist on the multicloud strategy principles before selecting an option prevents later architectural drift.

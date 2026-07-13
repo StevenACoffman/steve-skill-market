@@ -6,10 +6,7 @@ description: |
   Trigger: any question of the form "is this work toil?" or "should we automate this away?" or "does this count against our 50% ops cap?"
 
   Do NOT call this skill for classifying project work, feature development, or non-operational activities. Do not use it to argue that all unpleasant work should be eliminated — pleasantness is explicitly not a criterion. Do not apply it to overhead (meetings, HR, goal-setting), which is a separate category that is also not toil.
-source_book: "Site Reliability Engineering" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 5: Eliminating Toil"
 tags: [toil, automation, operational-work, prioritization, scaling, sre-model]
-related_skills: []
 ---
 
 # Toil Six-Property Identification Test
@@ -139,3 +136,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer et al. (Google) — Chapter 5: Eliminating Toil

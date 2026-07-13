@@ -12,24 +12,7 @@ description: |
   - "We need to know which step a request is currently in"
   - "We have a process diagram — how do we turn it into a schema?"
   - Any schema design question for a workflow, approval process, or state machine
-
-  Do NOT use this skill when:
-  - The business process has not yet been documented with its five components
-    (use business-process-discovery first)
-  - The question is about how to set the grain of the resulting model, not how to
-    translate the process into model components (use grain-decision-four-questions)
-  - The question is about validating a model that has already been built (use
-    grain-audit-checklist)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 13 — Seeing the Business.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 13 — Seeing the Business
 tags: [process-modeling, event-sourcing, state-history, data-modeling, schema-design]
-related_skills:
-  - slug: business-process-discovery
-    relation: depends-on
-  - slug: temporal-depth-selection
-    relation: composes-with
 ---
 
 # Process-to-Model Translation — Four Mapping Rules
@@ -362,8 +345,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`business-process-discovery`](../business-process-discovery/SKILL.md): The four mapping rules require the five-component process description as their input — without a completed discovery, there is no valid artifact for this skill to translate into model components.
-- **composes-with** [`temporal-depth-selection`](../temporal-depth-selection/SKILL.md): Rule 3 of this skill produces a state history table that is unitemporal by default; temporal-depth-selection determines whether an upgrade to bitemporal is needed based on whether corrections must be auditable or ML training requires historical feature values.
+- **depends-on** `business-process-discovery`: The four mapping rules require the five-component process description as their input — without a completed discovery, there is no valid artifact for this skill to translate into model components.
+- **composes-with** `temporal-depth-selection`: Rule 3 of this skill produces a state history table that is unitemporal by default; temporal-depth-selection determines whether an upgrade to bitemporal is needed based on whether corrections must be auditable or ML training requires historical feature values.
 
 ______________________________________________________________________
 
@@ -373,3 +356,9 @@ ______________________________________________________________________
 - **Source IDs**: f19
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 13 — Seeing the Business

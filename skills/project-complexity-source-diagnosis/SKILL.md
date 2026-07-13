@@ -1,9 +1,9 @@
 ---
-id: project-complexity-source-diagnosis
-title: Project Complexity Source Diagnosis
-description: Invoke when a project is consistently failing standard PM interventions and the cause is unclear — the team is competent, the tools are being used correctly, but outcomes keep degrading. Also invoke at program initiation when governance approach is being selected and the nature of the difficulty is contested: some stakeholders are calling for more rigorous planning and control, others are calling for agility and iteration, and neither position is clearly wrong.
-source: "Project Management Research and the Critical Path, Nicole Williams, 2026"
+name: project-complexity-source-diagnosis
+description: |
+  Invoke when a project is consistently failing standard PM interventions and the cause is unclear — the team is competent, the tools are being used correctly, but outcomes keep degrading. Also invoke at program initiation when governance approach is being selected and the nature of the difficulty is contested: some stakeholders are calling for more rigorous planning and control, others are calling for agility and iteration, and neither position is clearly wrong.
 ---
+# Project Complexity Source Diagnosis
 
 ## R — Reading
 
@@ -70,5 +70,11 @@ For projects that are clearly in one quadrant by easy consensus, running this di
 
 ## Related Skills
 
-- **[cynefin-pm-domain-identification](../cynefin-pm-domain-identification/SKILL.md)** — *combines*: complexity source diagnosis tells you what kind of hard the project is; Cynefin tells you what governance response that requires; run together
-- **[four-forces-situational-assessment](../four-forces-situational-assessment/SKILL.md)** — *combines*: both diagnose why a program is difficult; complexity source gives the structural category; Four Forces gives the force dynamics; together they produce a complete situational picture
+- **cynefin-pm-domain-identification** — *combines*: complexity source diagnosis tells you what kind of hard the project is; Cynefin tells you what governance response that requires; run together
+- **four-forces-situational-assessment** — *combines*: both diagnose why a program is difficult; complexity source gives the structural category; Four Forces gives the force dynamics; together they produce a complete situational picture
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

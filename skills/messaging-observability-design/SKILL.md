@@ -1,9 +1,9 @@
 ---
-id: messaging-observability-design
-title: Messaging Observability Design
-description: Invoke when you don't know where a message went, when the system looks healthy but messages aren't being processed, when designing a new async integration from scratch, when a packaged application is in the integration path and cannot be modified, or when debugging an incident in a live async system.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)
+name: messaging-observability-design
+description: |
+  Invoke when you don't know where a message went, when the system looks healthy but messages aren't being processed, when designing a new async integration from scratch, when a packaged application is in the integration path and cannot be modified, or when debugging an incident in a live async system.
 ---
+# Messaging Observability Design
 
 ## Messaging Observability Design
 
@@ -113,7 +113,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Integration Style Selection](../integration-style-selection/SKILL.md)** — *depends-on* → Observability design is only relevant after Messaging is selected as the integration style; the patterns (Wire Tap, Message History, Message Store, Smart Proxy) are specific to async messaging pipelines.
-- **[Queue Control Flow Model](../queue-control-flow-model/SKILL.md)** — *composes-with* → Understanding who controls the cadence of a pipeline (Driver, Fetcher, Sender) determines where Wire Taps and Message Store capture points should be placed to observe real flow.
-- **[Competing Consumers vs. Dispatcher](../competing-consumers-vs-dispatcher/SKILL.md)** — *composes-with* → When parallel workers are in use, Message History and Wire Tap placement must account for non-deterministic processing order; observability design must be adapted to the chosen parallelism pattern.
-- **[Queue Flow Control Decision](../queue-flow-control-decision/SKILL.md)** — *enables* → Message Store and Wire Tap on the Dead Letter Channel are the primary instruments for detecting queue overflow and flow control triggering events before they cause the "all lights green, system is down" failure.
+- **Integration Style Selection** — *depends-on* → Observability design is only relevant after Messaging is selected as the integration style; the patterns (Wire Tap, Message History, Message Store, Smart Proxy) are specific to async messaging pipelines.
+- **Queue Control Flow Model** — *composes-with* → Understanding who controls the cadence of a pipeline (Driver, Fetcher, Sender) determines where Wire Taps and Message Store capture points should be placed to observe real flow.
+- **Competing Consumers vs. Dispatcher** — *composes-with* → When parallel workers are in use, Message History and Wire Tap placement must account for non-deterministic processing order; observability design must be adapted to the chosen parallelism pattern.
+- **Queue Flow Control Decision** — *enables* → Message Store and Wire Tap on the Dead Letter Channel are the primary instruments for detecting queue overflow and flow control triggering events before they cause the "all lights green, system is down" failure.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)

@@ -1,62 +1,58 @@
-{
-  "skill": "fifty-percent-engineering-time-cap",
-  "description": "Use this skill when an SRE team's operational work is crowding out engineering project work, when management is considering hiring more SREs to handle growing on-call load, or when a team needs to distinguish whether they are an SRE team or a renamed ops team.",
-  "test_prompts": [
-    {
-      "id": "fifty-percent-engineering-time-cap-should-01",
-      "category": "should_invoke",
-      "prompt": "My VP wants to hire three more SREs because our current team of six is overwhelmed with on-call and tickets. The team is spending about 70% of their time on operational work. I think more headcount is the wrong solution but I need to explain why and what we should do instead.",
-      "expected": "invoke",
-      "rationale": "This is the exact trigger scenario from the skill's A2 section. The VP's 'more hands = less burden' framing is precisely the failure pattern the skill warns against. The 70% operational load, the headcount proposal, and the need to articulate the right alternative are all canonical signals."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-should-02",
-      "category": "should_invoke",
-      "prompt": "Our SRE team has been doing about 60% operational work — tickets, incident response, manual deployments — for the past two quarters. We keep promising to fix the toil but every time we try to start a project, another incident pulls us back. How do we escape this trap?",
-      "expected": "invoke",
-      "rationale": "Chronic cap violation over two quarters, with the classic pattern of project work being perpetually preempted by operational load. The skill's safety valve — redirecting excess operational work back to the dev team — is the structural intervention needed here."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-should-03",
-      "category": "should_invoke",
-      "prompt": "We formed an SRE team six months ago by renaming our ops team. The work is identical to what we did before — tickets, deployments, monitoring alerts — but now we're called SREs. Morale is low because people expected something different. What's the structural problem here?",
-      "expected": "invoke",
-      "rationale": "This is the 'SRE devolving into ops' failure pattern the skill is specifically designed to diagnose. The renaming-without-structural-change scenario is a direct match. The skill explains why the 50% cap is the mechanism that distinguishes a real SRE team from a renamed ops team."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We've been tracking our error budget and we're at 85% consumed with three weeks left in the quarter. The dev team has two features queued for release. Should we let them ship?",
-      "expected": "skip",
-      "rationale": "This is an error-budget-conflict-resolution question about release velocity governance. The 50% cap governs SRE internal time allocation. Error budget governs cross-team release decisions. These are distinct governance mechanisms that happen to both involve the SRE team."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "I need to figure out if our support ticket workflow counts as toil. We get about 30 tickets per week, each takes 10–15 minutes, and they're all slightly different customer configuration issues. Is this toil or something else?",
-      "expected": "skip",
-      "rationale": "This is a toil-six-property-identification-test question. The 50% cap tells you how much toil is acceptable; the six-property test tells you what counts as toil in the first place. The classification must come before the cap can be applied."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "Our engineers are burning out. We've had three people quit in the last quarter and exit interviews all mention unsustainable on-call schedules — being paged multiple times a night, weekends included. How do we make the on-call rotation sustainable?",
-      "expected": "skip",
-      "rationale": "This is an on-call-sustainability-model question about rotation size, paging frequency per shift, and the specific on-call constraints (2 incidents per shift, minimum rotation of 8 single-site/6 dual-site). The 50% cap is a related but higher-level mechanism; the on-call sustainability model addresses the specific rotation mechanics and engineer wellbeing directly."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-boundary-01",
-      "category": "boundary",
-      "prompt": "We're in the middle of a major incident that has been running for four days. My SRE team has been doing essentially 100% operational work for four days straight and nothing is getting done on our project roadmap. Should I invoke the 50% cap right now?",
-      "expected": "skip",
-      "rationale": "The skill's boundary explicitly states: 'Do not use in an acute crisis (major ongoing incident, newly launched service with unknown failure modes). The cap is a steady-state governance tool, not an incident-response constraint. Allow temporary exceedances with explicit time limits and recovery plans.' Four days into a major incident is clearly an acute crisis. Apply the cap framework once the incident is resolved."
-    },
-    {
-      "id": "fifty-percent-engineering-time-cap-boundary-02",
-      "category": "boundary",
-      "prompt": "Our SRE team only has four engineers and we're already below the minimum rotation size. We're also spending about 65% of our time on operational work. Should I apply the 50% cap and start redirecting work back to dev, or do I need to fix the rotation size first?",
-      "expected": "skip",
-      "rationale": "The skill's boundary is explicit: 'The team is below the minimum rotation size (8 single-site, 6 dual-site). The sustainability model must be addressed first — a team too small to maintain a sustainable rotation cannot apply the 50% cap meaningfully.' With 4 engineers, the on-call-sustainability-model problem is more urgent. Fix the rotation size first (hire or negotiate), then apply the cap mechanism."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My VP wants to hire three more SREs because our current team of six is overwhelmed with on-call and tickets. The team is spending about 70% of their time on operational work. I think more headcount is the wrong solution but I need to explain why and what we should do instead.",
+    "expected": "invoke",
+    "notes": "rationale: This is the exact trigger scenario from the skill's A2 section. The VP's 'more hands = less burden' framing is precisely the failure pattern the skill warns against. The 70% operational load, the headcount proposal, and the need to articulate the right alternative are all canonical signals.; source id: fifty-percent-engineering-time-cap-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our SRE team has been doing about 60% operational work — tickets, incident response, manual deployments — for the past two quarters. We keep promising to fix the toil but every time we try to start a project, another incident pulls us back. How do we escape this trap?",
+    "expected": "invoke",
+    "notes": "rationale: Chronic cap violation over two quarters, with the classic pattern of project work being perpetually preempted by operational load. The skill's safety valve — redirecting excess operational work back to the dev team — is the structural intervention needed here.; source id: fifty-percent-engineering-time-cap-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We formed an SRE team six months ago by renaming our ops team. The work is identical to what we did before — tickets, deployments, monitoring alerts — but now we're called SREs. Morale is low because people expected something different. What's the structural problem here?",
+    "expected": "invoke",
+    "notes": "rationale: This is the 'SRE devolving into ops' failure pattern the skill is specifically designed to diagnose. The renaming-without-structural-change scenario is a direct match. The skill explains why the 50% cap is the mechanism that distinguishes a real SRE team from a renamed ops team.; source id: fifty-percent-engineering-time-cap-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We've been tracking our error budget and we're at 85% consumed with three weeks left in the quarter. The dev team has two features queued for release. Should we let them ship?",
+    "expected": "skip",
+    "notes": "rationale: This is an error-budget-conflict-resolution question about release velocity governance. The 50% cap governs SRE internal time allocation. Error budget governs cross-team release decisions. These are distinct governance mechanisms that happen to both involve the SRE team.; source id: fifty-percent-engineering-time-cap-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I need to figure out if our support ticket workflow counts as toil. We get about 30 tickets per week, each takes 10–15 minutes, and they're all slightly different customer configuration issues. Is this toil or something else?",
+    "expected": "skip",
+    "notes": "rationale: This is a toil-six-property-identification-test question. The 50% cap tells you how much toil is acceptable; the six-property test tells you what counts as toil in the first place. The classification must come before the cap can be applied.; source id: fifty-percent-engineering-time-cap-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our engineers are burning out. We've had three people quit in the last quarter and exit interviews all mention unsustainable on-call schedules — being paged multiple times a night, weekends included. How do we make the on-call rotation sustainable?",
+    "expected": "skip",
+    "notes": "rationale: This is an on-call-sustainability-model question about rotation size, paging frequency per shift, and the specific on-call constraints (2 incidents per shift, minimum rotation of 8 single-site/6 dual-site). The 50% cap is a related but higher-level mechanism; the on-call sustainability model addresses the specific rotation mechanics and engineer wellbeing directly.; source id: fifty-percent-engineering-time-cap-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're in the middle of a major incident that has been running for four days. My SRE team has been doing essentially 100% operational work for four days straight and nothing is getting done on our project roadmap. Should I invoke the 50% cap right now?",
+    "expected": "skip",
+    "notes": "rationale: The skill's boundary explicitly states: 'Do not use in an acute crisis (major ongoing incident, newly launched service with unknown failure modes). The cap is a steady-state governance tool, not an incident-response constraint. Allow temporary exceedances with explicit time limits and recovery plans.' Four days into a major incident is clearly an acute crisis. Apply the cap framework once the incident is resolved.; source id: fifty-percent-engineering-time-cap-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our SRE team only has four engineers and we're already below the minimum rotation size. We're also spending about 65% of our time on operational work. Should I apply the 50% cap and start redirecting work back to dev, or do I need to fix the rotation size first?",
+    "expected": "skip",
+    "notes": "rationale: The skill's boundary is explicit: 'The team is below the minimum rotation size (8 single-site, 6 dual-site). The sustainability model must be addressed first — a team too small to maintain a sustainable rotation cannot apply the 50% cap meaningfully.' With 4 engineers, the on-call-sustainability-model problem is more urgent. Fix the rotation size first (hire or negotiate), then apply the cap mechanism.; source id: fifty-percent-engineering-time-cap-boundary-02"
+  }
+]

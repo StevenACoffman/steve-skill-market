@@ -1,26 +1,9 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: replication-lag-as-correctness
 description: |
   Invoke this skill when replication lag is producing incorrect or confusing behavior for users, not merely slow or stale behavior. The specific trigger is when a system uses read replicas and users experience one of three named violations: they submit a change and immediately see the old value (read-your-writes violation); they see data move backward in time on refresh (monotonic reads violation); or they observe causally-inconsistent sequences like a reply appearing before its question (consistent prefix violation).
-
-  Specific trigger situations:
-  - A user submits a form update (address, profile, setting) and immediately loads a page served from a replica that shows the old value.
-  - A user refreshes a feed and sees fewer items than they saw a moment ago (reading from a lagging replica on the second request).
-  - Sequence-dependent data (comment threads, order-then-confirmation) appears in wrong causal order to some users.
-  - An engineering team treats replication lag as a performance tuning problem ("it'll catch up") rather than a correctness problem.
-  - A post-mortem attributes a user-visible bug to "replication delay" and the fix proposed is "reduce lag" rather than routing logic.
-
-  Do NOT invoke when:
-  - The root problem is which replication topology to use (use `replication-topology-selection`).
-  - The lag is in a batch analytics pipeline where staleness by minutes or hours is acceptable.
-  - The question is about write conflicts between concurrent writers (use `transaction-isolation-level-selection`).
-
-  Key signals: "user sees old data after update," "eventual consistency is fine," "it'll catch up," "read replica routing," "monotonic reads," "read-your-writes."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 6: Replication'
 tags: [replication, replication-lag, read-your-writes, monotonic-reads, consistent-prefix, consistency, correctness]
-related_skills: [replication-topology-selection, transaction-isolation-level-selection, timeliness-vs-integrity-distinction]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Replication Lag as Consistency and Correctness Concern
@@ -171,3 +154,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 6: Replication

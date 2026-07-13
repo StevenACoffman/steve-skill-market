@@ -1,59 +1,65 @@
-{
-  "skill_id": "ml-simplest-model-baseline-first",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "My team wants to use a neural network for a sales prediction problem. We haven't tried linear regression yet. Is that the right order?",
-      "expected_concepts": ["simplest model first — linear regression is the baseline", "neural network complexity must be justified by measured improvement", "establish baseline metric before adding complexity"]
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "I added a new feature to my regression model but the test MAE didn't improve. Should I keep the feature?",
-      "expected_concepts": ["no — complexity requires measured justification", "same MAE = no benefit for added opacity/maintenance cost", "remove the feature — the Newspaper example"]
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "What's the right process for deciding when to increase ML model complexity?",
-      "expected_concepts": ["start with simplest model", "measure test-set metric", "step up only if metric threshold not met", "document each step with metric evidence"]
-    },
-    {
-      "id": "tp04",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement a convolutional neural network in Go?",
-      "expected_concepts": ["architecture implementation question", "not about baseline-first model selection methodology"]
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "What's the difference between L1 and L2 regularization?",
-      "expected_concepts": ["regularization mechanics", "not about the baseline-first principle"]
-    },
-    {
-      "id": "tp06",
-      "type": "blurred_boundary",
-      "prompt": "The simplest model for our NLP task would be TF-IDF plus logistic regression. Should we start there even though BERT would probably do better?",
-      "expected_concepts": ["yes — establish the baseline first", "BERT is only justified if TF-IDF+LR fails the metric threshold", "in NLP pre-trained models can be the 'simple' starting point", "measure first, then decide if complexity is needed"]
-    },
-    {
-      "id": "tp07",
-      "type": "blurred_boundary",
-      "prompt": "My simple model meets the accuracy threshold but a more complex model has 2% better accuracy. Should I use the complex model?",
-      "expected_concepts": ["if threshold is met, simpler model is preferred", "2% improvement — weigh against maintenance cost, interpretability loss, overfitting risk", "question: is 2% improvement meaningful in the business context?"]
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "We tried logistic regression, random forest, and XGBoost. All perform similarly. Which should we use in production?",
-      "expected_concepts": ["simplest model — logistic regression if metrics are equivalent", "interpretability and maintenance cost favor simpler model", "complexity is not justified when no metric improvement"]
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "Training accuracy is 98% with our complex model but test accuracy is 72%. Is this what the simplest-model principle is designed to catch?",
-      "expected_concepts": ["overfitting — training vs test gap", "complex model memorized training data", "simpler model would likely have smaller train-test gap", "baseline-first prevents this by gating complexity on test-set metric"]
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My team wants to use a neural network for a sales prediction problem. We haven't tried linear regression yet. Is that the right order?",
+    "expected": "Skill activates and says no: start with the simplest plausible model (linear regression) to establish a measured baseline metric first, then only step up to a neural network if that baseline fails the pre-defined threshold — complexity must be justified by measured test-set improvement.",
+    "notes": "source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I added a new feature to my regression model but the test MAE didn't improve. Should I keep the feature?",
+    "expected": "Skill activates and says remove the feature: an unchanged test MAE means the added complexity has zero measured benefit while incurring opacity and maintenance cost — this is exactly the Newspaper example, where the feature is rejected by measurement rather than intuition.",
+    "notes": "source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "What's the right process for deciding when to increase ML model complexity?",
+    "expected": "Skill activates and gives the ratchet process: define the metric and threshold first, implement the simplest plausible model, measure its test-set metric and stop if it meets the threshold, otherwise step up complexity one level and re-measure — documenting each step (model, features, metric, keep/reject) and rejecting any step that does not improve the metric by a meaningful margin.",
+    "notes": "source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement a convolutional neural network in Go?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "What's the difference between L1 and L2 regularization?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "The simplest model for our NLP task would be TF-IDF plus logistic regression. Should we start there even though BERT would probably do better?",
+    "expected": "Skill activates and says yes, start with TF-IDF + logistic regression to establish the baseline; BERT is only justified if that baseline fails the metric threshold. It should note the boundary caveat that in NLP a pre-trained model can itself be the 'simple' starting point, but the discipline is the same — measure first, then decide if complexity is needed.",
+    "notes": "source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "My simple model meets the accuracy threshold but a more complex model has 2% better accuracy. Should I use the complex model?",
+    "expected": "Skill activates and defaults to the simpler model because the threshold is already met — a numerically higher score is not the gate. It should surface that the 2% must be weighed against added maintenance cost, interpretability loss, and overfitting risk, and ask whether 2% is meaningful in the business context.",
+    "notes": "source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We tried logistic regression, random forest, and XGBoost. All perform similarly. Which should we use in production?",
+    "expected": "Skill activates and selects logistic regression, the simplest model, since the metrics are equivalent — complexity is not justified without measured improvement, and interpretability and lower maintenance cost favor the simpler model.",
+    "notes": "source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Training accuracy is 98% with our complex model but test accuracy is 72%. Is this what the simplest-model principle is designed to catch?",
+    "expected": "Skill activates and confirms yes: the large train-test gap is overfitting — the complex model memorized the training data. A simpler model would likely have a smaller gap, and baseline-first prevents this failure mode by gating every complexity step on the honest test-set metric rather than training-set performance.",
+    "notes": "source id: tp09"
+  }
+]

@@ -1,87 +1,79 @@
-{
-  "skill": "go-beyond-service-transaction-boundary",
-  "version": "0.1.0",
-  "source_book": "Go Beyond — Ben B. Johnson",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Where should I open and close transactions in my Go service layer? In the HTTP handler, in the repository, or in the service method?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. In the service method. The HTTP handler should call one service method and receive a result — no transaction visible. The service method opens the transaction, calls repository/helper functions within it, and commits or rolls back. The domain interface (which the service implements) has no transaction parameters.",
-      "notes": "Direct question about transaction placement — the primary trigger."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I need to create an order AND decrement inventory atomically. My HTTP handler currently calls OrderService.Create then InventoryService.Decrement. How do I make this atomic?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. Do not expose a transaction to the HTTP handler. Instead, redesign the service boundary: create OrderService.CreateWithInventoryDecrement (or PlaceOrder) that opens one transaction internally and calls both createOrder and decrementInventory SQL helpers within it. The HTTP handler calls one method; atomicity is invisible to it. The urge to compose from the caller is a signal to redesign the service.",
-      "notes": "The core test of the skill: caller wanting to compose — redesign the service instead."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "Should my repository methods accept a *sql.Tx parameter so the service layer can compose them in a single transaction?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. No — this leaks transaction management to the service layer (ce12). The service layer should not hold or pass transaction objects. Instead: the database adapter's service method owns the transaction; it calls unexported helper functions that accept *Tx; those helpers are not exposed to the service interface. The transaction boundary is encapsulated inside the adapter.",
-      "notes": "Repository with *Tx parameter — a common design that violates the principle."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "I have *sql.Tx being passed through 5 levels of function calls and it's getting messy. Is there a better approach?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. Yes — the *Tx should not travel through function calls visible to the service layer. Restructure: service method opens the transaction; unexported package-level helpers accept (ctx, tx, entity) internally; only helpers inside the database adapter package know about the transaction. The *Tx doesn't cross the package boundary into the domain or service interface.",
-      "notes": "*sql.Tx thread-through is a symptom of missing service-as-boundary."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "Should I add a BeginTransaction() method to my service interface so callers can control atomicity?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. No — this is the ce12 failure mode: leaking transaction management to callers. Service interfaces are black boxes; they must not expose database internals (ce12). If callers need to compose multiple operations atomically, that is a service boundary redesign signal: create a service method that encapsulates all those operations with atomicity.",
-      "notes": "Exposing BeginTransaction on the service interface — direct violation scenario."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I implement distributed transactions across two microservices in Go?",
-      "expected_behavior": "Do not invoke go-beyond-service-transaction-boundary. Distributed transactions (sagas, two-phase commit, outbox pattern) across service boundaries are a different problem. The service-as-transaction-boundary skill covers single-database atomicity within one service. For distributed systems, different patterns apply.",
-      "notes": "Lure: transactions, but distributed context is out of scope."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I use database connection pooling in Go?",
-      "expected_behavior": "Do not invoke go-beyond-service-transaction-boundary. Connection pooling is database connection management, not transaction boundary design. The service-as-transaction-boundary skill is about where transactions begin and end, not about how connections are managed.",
-      "notes": "Lure: database, but about connection management not transaction boundaries."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "What is the difference between sql.DB and sql.Tx in Go?",
-      "expected_behavior": "Do not invoke go-beyond-service-transaction-boundary. This is a factual Go standard library question about database types. The skill applies when deciding *where* transactions live in an application, not when explaining what sql.Tx is.",
-      "notes": "Lure: sql.Tx mentioned, but conceptual question not a design decision."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "I need to create a user in my database AND send a welcome email. If the email send fails, should the database insert be rolled back?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary with nuance: the database insert and email send are not in the same transactional domain — email is a side effect that cannot be rolled back. The service method should: (1) open a transaction for the database insert; (2) commit the insert; (3) call the email service after commit. If email fails, handle it separately (retry queue, error log) — don't roll back the database insert. The service method still owns its own transaction boundary; email is outside the transaction.",
-      "notes": "Mixed transactional and non-transactional operations — boundary of the skill."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "I'm building a read-only report endpoint. The service method only SELECTs data. Does the service-as-transaction-boundary apply?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary with the read-only simplification: for pure read operations with no consistency requirements, a transaction is optional (or can be a read-only transaction). The pattern is most important for write operations and for reads that need snapshot isolation. For simple reads, you can skip the transaction or use a read-only transaction. The black-box principle still applies: callers don't know or care whether the service opened a transaction.",
-      "notes": "Read-only service method — reduced transaction requirement."
-    },
-    {
-      "id": "edge-03",
-      "type": "edge_case",
-      "prompt": "My service method needs to call another service method as part of its work. Can these two service methods share a transaction?",
-      "expected_behavior": "Invoke go-beyond-service-transaction-boundary. Service methods should not compose each other within a transaction — that leaks the transaction context between service boundaries. Instead: (1) if atomicity is needed, consolidate into a single service method that calls the lower-level SQL helpers directly; or (2) accept that the two service operations are independent atomic units and handle partial failures explicitly. Service methods are designed to be the atomic unit — nesting them breaks the encapsulation.",
-      "notes": "Service-to-service composition within a transaction — subtle boundary case."
-    }
-  ],
-  "minimum_pass_rate": 0.85,
-  "notes": "5 should_trigger + 3 should_not_trigger + 3 edge_case = 11 total. All should_not_triggers must pass."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Where should I open and close transactions in my Go service layer? In the HTTP handler, in the repository, or in the service method?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. In the service method. The HTTP handler should call one service method and receive a result — no transaction visible. The service method opens the transaction, calls repository/helper functions within it, and commits or rolls back. The domain interface (which the service implements) has no transaction parameters.",
+    "notes": "Direct question about transaction placement — the primary trigger.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I need to create an order AND decrement inventory atomically. My HTTP handler currently calls OrderService.Create then InventoryService.Decrement. How do I make this atomic?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. Do not expose a transaction to the HTTP handler. Instead, redesign the service boundary: create OrderService.CreateWithInventoryDecrement (or PlaceOrder) that opens one transaction internally and calls both createOrder and decrementInventory SQL helpers within it. The HTTP handler calls one method; atomicity is invisible to it. The urge to compose from the caller is a signal to redesign the service.",
+    "notes": "The core test of the skill: caller wanting to compose — redesign the service instead.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Should my repository methods accept a *sql.Tx parameter so the service layer can compose them in a single transaction?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. No — this leaks transaction management to the service layer (ce12). The service layer should not hold or pass transaction objects. Instead: the database adapter's service method owns the transaction; it calls unexported helper functions that accept *Tx; those helpers are not exposed to the service interface. The transaction boundary is encapsulated inside the adapter.",
+    "notes": "Repository with *Tx parameter — a common design that violates the principle.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I have *sql.Tx being passed through 5 levels of function calls and it's getting messy. Is there a better approach?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. Yes — the *Tx should not travel through function calls visible to the service layer. Restructure: service method opens the transaction; unexported package-level helpers accept (ctx, tx, entity) internally; only helpers inside the database adapter package know about the transaction. The *Tx doesn't cross the package boundary into the domain or service interface.",
+    "notes": "*sql.Tx thread-through is a symptom of missing service-as-boundary.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Should I add a BeginTransaction() method to my service interface so callers can control atomicity?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. No — this is the ce12 failure mode: leaking transaction management to callers. Service interfaces are black boxes; they must not expose database internals (ce12). If callers need to compose multiple operations atomically, that is a service boundary redesign signal: create a service method that encapsulates all those operations with atomicity.",
+    "notes": "Exposing BeginTransaction on the service interface — direct violation scenario.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement distributed transactions across two microservices in Go?",
+    "expected": "Do not invoke go-beyond-service-transaction-boundary. Distributed transactions (sagas, two-phase commit, outbox pattern) across service boundaries are a different problem. The service-as-transaction-boundary skill covers single-database atomicity within one service. For distributed systems, different patterns apply.",
+    "notes": "Lure: transactions, but distributed context is out of scope.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I use database connection pooling in Go?",
+    "expected": "Do not invoke go-beyond-service-transaction-boundary. Connection pooling is database connection management, not transaction boundary design. The service-as-transaction-boundary skill is about where transactions begin and end, not about how connections are managed.",
+    "notes": "Lure: database, but about connection management not transaction boundaries.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between sql.DB and sql.Tx in Go?",
+    "expected": "Do not invoke go-beyond-service-transaction-boundary. This is a factual Go standard library question about database types. The skill applies when deciding *where* transactions live in an application, not when explaining what sql.Tx is.",
+    "notes": "Lure: sql.Tx mentioned, but conceptual question not a design decision.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I need to create a user in my database AND send a welcome email. If the email send fails, should the database insert be rolled back?",
+    "expected": "Invoke go-beyond-service-transaction-boundary with nuance: the database insert and email send are not in the same transactional domain — email is a side effect that cannot be rolled back. The service method should: (1) open a transaction for the database insert; (2) commit the insert; (3) call the email service after commit. If email fails, handle it separately (retry queue, error log) — don't roll back the database insert. The service method still owns its own transaction boundary; email is outside the transaction.",
+    "notes": "Mixed transactional and non-transactional operations — boundary of the skill.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm building a read-only report endpoint. The service method only SELECTs data. Does the service-as-transaction-boundary apply?",
+    "expected": "Invoke go-beyond-service-transaction-boundary with the read-only simplification: for pure read operations with no consistency requirements, a transaction is optional (or can be a read-only transaction). The pattern is most important for write operations and for reads that need snapshot isolation. For simple reads, you can skip the transaction or use a read-only transaction. The black-box principle still applies: callers don't know or care whether the service opened a transaction.",
+    "notes": "Read-only service method — reduced transaction requirement.; source id: edge-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My service method needs to call another service method as part of its work. Can these two service methods share a transaction?",
+    "expected": "Invoke go-beyond-service-transaction-boundary. Service methods should not compose each other within a transaction — that leaks the transaction context between service boundaries. Instead: (1) if atomicity is needed, consolidate into a single service method that calls the lower-level SQL helpers directly; or (2) accept that the two service operations are independent atomic units and handle partial failures explicitly. Service methods are designed to be the atomic unit — nesting them breaks the encapsulation.",
+    "notes": "Service-to-service composition within a transaction — subtle boundary case.; source id: edge-03"
+  }
+]

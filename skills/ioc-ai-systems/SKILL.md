@@ -10,22 +10,7 @@ description: |
   reviewing an existing AI system that exhibits unpredictable behavior; someone proposes
   an "agentic" or "vibe-coding" approach where the LLM decides what to do next; you are
   evaluating whether to let an LLM plan and execute a multi-step workflow end-to-end.
-
-  Do NOT call this skill when: you are choosing among multi-agent coordination patterns
-  within a workflow step (use `multi-agent-reliability`); you are designing the LLM
-  interface layer for a simple single-step generation task that requires no workflow state;
-  the question is about how to measure reliability of an AI system post-deployment (use
-  `sli-monitoring-design-maturity`).
-
-  Key trigger signal: "Should the AI decide what to do next?" or "We're giving the agent
-  full control to figure out how to accomplish the goal" or "The system passes the demo
-  but fails unpredictably in production."
 tags: [ai-architecture, ioc, deterministic, workflow, llm, reliability]
-related_skills:
-  - slug: emergent-properties
-    relation: depends-on
-  - slug: multi-agent-reliability
-    relation: composes-with
 ---
 
 # IOC Architecture for AI Systems (Deterministic Workflow + LLM Generation)
@@ -277,8 +262,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`emergent-properties`](../emergent-properties/SKILL.md): Emergent-properties provides the theoretical foundation for why LLM workflow control fails (strong emergence); IOC is the architectural prescription that responds to that insight.
-- **composes-with** → [`multi-agent-reliability`](../multi-agent-reliability/SKILL.md): IOC governs who controls the outer state machine; multi-agent reliability patterns structure how multiple LLM agents collaborate within individual workflow steps that require reliability improvement.
+- **depends-on** → `emergent-properties`: Emergent-properties provides the theoretical foundation for why LLM workflow control fails (strong emergence); IOC is the architectural prescription that responds to that insight.
+- **composes-with** → `multi-agent-reliability`: IOC governs who controls the outer state machine; multi-agent reliability patterns structure how multiple LLM agents collaborate within individual workflow steps that require reliability improvement.
 
 ______________________________________________________________________
 

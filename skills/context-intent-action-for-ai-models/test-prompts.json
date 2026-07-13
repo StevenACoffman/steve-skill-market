@@ -1,62 +1,44 @@
-{
-  "skill": "context-intent-action-for-ai-models",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "cia-t1",
-      "type": "should_trigger",
-      "prompt": "We have an AI agent that queries our financial data warehouse. Last week it identified a set of customers who qualified for refunds under our policy and then — without any human review — sent them all refund confirmation emails. Our data model was accurate. The agent had all the right data. How do we prevent this from happening again?",
-      "expected_skill": "context-intent-action-for-ai-models",
-      "trigger_rationale": "This is the canonical Action layer failure: agent took an unauthorized operation (send emails, trigger refunds) that was not encoded as requiring human approval. Matches A1 Case 2 (AI agent suggesting refunds). The data was correct, metadata existed — but the Action layer was absent. 'Our AI agent took an action it wasn't supposed to take' is a direct language signal.",
-      "should_not_trigger": []
-    },
-    {
-      "id": "cia-t2",
-      "type": "should_trigger",
-      "prompt": "We're deploying an LLM to query our customer data platform. The LLM keeps treating 'customer' as anyone who visited our website. Our internal definition is 'someone who completed a paid transaction'. We've described this in our data catalog. Why is the agent still using the wrong definition, and how do we fix it?",
-      "expected_skill": "context-intent-action-for-ai-models",
-      "trigger_rationale": "Matches language signal 'Our AI agent is using the wrong definition of [term]'. This is a Context layer failure: the organizational definition exists in the catalog (business metadata) but is not being delivered to the agent at runtime via a context-engineering pipeline backed by rung 4 semantic grounding. CIA's Context layer diagnosis and remedy is the correct framework.",
-      "should_not_trigger": []
-    },
-    {
-      "id": "cia-t3",
-      "type": "should_trigger",
-      "prompt": "We're designing a new data model from scratch. We know from day one that both human analysts and an AI agent will query it. The AI agent will be doing churn prediction and is supposed to surface high-risk accounts for human review — it should never directly change account status. How do we design the model to enforce this from the start?",
-      "expected_skill": "context-intent-action-for-ai-models",
-      "trigger_rationale": "AI-integrated data model design from scratch with explicit agent consumers and action constraints (read/surface vs. write/change status). Matches A2 Scenario 5 (designing for AI agents from day one). Requires all three CIA layers: Context (correct definitions), Intent (churn-analysis use case annotation), Action (read-only + human-approval-required constraint).",
-      "should_not_trigger": []
-    },
-    {
-      "id": "cia-d1",
-      "type": "should_not_trigger",
-      "prompt": "We have a data lakehouse with hundreds of tables. Business users can't navigate it — they don't know what columns mean, who owns which tables, or which tables are validated. We need a plan for what to document and how to organize it.",
-      "expected_skill": "three-layer-metadata-stack",
-      "trigger_rationale": "This is a metadata architecture and catalog design problem for human consumers. No AI agent is mentioned; the problem is business user navigation and metadata completeness. The three-layer-metadata-stack answers 'what to document and how to organize it' (technical / business / semantic layers). CIA is not relevant — there is no AI agent consumption and no action constraint concern.",
-      "should_not_trigger": ["context-intent-action-for-ai-models"]
-    },
-    {
-      "id": "cia-d2",
-      "type": "should_not_trigger",
-      "prompt": "Our Finance team and our Sales team both query a 'revenue' table and get different numbers. Finance says gross revenue; Sales says net of returns. Human analysts on both teams are confused. How do we resolve the terminology and get everyone on the same page?",
-      "expected_skill": "semantic-vocabulary-ladder",
-      "trigger_rationale": "This is a vocabulary disagreement between human teams — no AI agent is involved. The semantic-vocabulary-ladder handles synonym collision and contested term reconciliation between human stakeholders. CIA is only relevant when AI agents are the consumers; here, both consumers are human analysts who can call each other and ask for clarification. The vocabulary ladder's rung 1 (preferred term + synonyms with scope qualifiers) is the correct entry point.",
-      "should_not_trigger": ["context-intent-action-for-ai-models"]
-    },
-    {
-      "id": "cia-e1",
-      "type": "edge_case",
-      "prompt": "We have a compliance requirement that no one — human or system — should be able to delete customer records without a documented audit trail and dual approval. We're also deploying an AI agent to automate customer data quality checks. The legal team keeps saying 'access control' and the data team keeps saying 'we need to put this in the model somehow'. Who is right?",
-      "expected_skill": "context-intent-action-for-ai-models",
-      "edge_rationale": "This prompt deliberately conflates RBAC (the legal team's framing) with the Action layer (the data team's instinct). Per the skill's B section, RBAC and the Action layer are complementary and non-overlapping: RBAC says which roles can access the table; the Action layer says what operations the AI agent can perform on data it has access to, with what approval chain. The legal team is not wrong — RBAC is needed — but it does not substitute for the Action layer. The edge is recognizing that the AI agent introduction specifically triggers CIA, not just access control policy.",
-      "self_evaluation": {
-        "triggers_correctly": true,
-        "confidence": "high",
-        "notes": "The AI agent + action constraint combination is the exact CIA trigger. The RBAC vs. Action-layer confusion is explicitly called out in the skill's 'Easily Confused Adjacent Methodologies' section, making this a strong stress test of the boundary. A system that routes this to RBAC/access-control advice only would miss the CIA layer entirely."
-      }
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy cia-d1 routes to three-layer-metadata-stack (human consumer metadata architecture, no AI agent). Decoy cia-d2 routes to semantic-vocabulary-ladder (human team vocabulary disagreement, no agent). CIA is specifically for AI agent consumers taking automated actions — human-only consumer questions do not trigger it."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We have an AI agent that queries our financial data warehouse. Last week it identified a set of customers who qualified for refunds under our policy and then — without any human review — sent them all refund confirmation emails. Our data model was accurate. The agent had all the right data. How do we prevent this from happening again?",
+    "expected": "Skill activates and diagnoses a missing Action layer (with missing Intent): the data was correct but the model never encoded that write/trigger operations require human approval. It prescribes annotating the asset as reporting-only and adding action constraints — write operations require supervisor override, a recommendation-to-human chain the agent cannot short-circuit — in the model itself, not just application code.",
+    "notes": "source id: cia-t1"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're deploying an LLM to query our customer data platform. The LLM keeps treating 'customer' as anyone who visited our website. Our internal definition is 'someone who completed a paid transaction'. We've described this in our data catalog. Why is the agent still using the wrong definition, and how do we fix it?",
+    "expected": "Skill activates and diagnoses a Context-layer failure: the catalog holds business metadata but the definition is not encoded as a rung-4 ontology rule nor delivered to the agent at query time, so the LLM falls back on its training prior. It prescribes encoding the Customer definition with scope qualifiers and a context-engineering pipeline that injects it at runtime so it overrides the training prior.",
+    "notes": "source id: cia-t2"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're designing a new data model from scratch. We know from day one that both human analysts and an AI agent will query it. The AI agent will be doing churn prediction and is supposed to surface high-risk accounts for human review — it should never directly change account status. How do we design the model to enforce this from the start?",
+    "expected": "Skill activates and prescribes designing all three CIA layers in from the start atop the three-layer metadata stack: Context (correct ontology-level account definitions), Intent (annotate the churn-prediction/retention-analysis use case), and Action (mark the entity read-only/surface-only with account-status writes requiring human review, so the agent cannot change status directly).",
+    "notes": "source id: cia-t3"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We have a data lakehouse with hundreds of tables. Business users can't navigate it — they don't know what columns mean, who owns which tables, or which tables are validated. We need a plan for what to document and how to organize it.",
+    "expected": "skill should not activate",
+    "notes": "source id: cia-d1"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our Finance team and our Sales team both query a 'revenue' table and get different numbers. Finance says gross revenue; Sales says net of returns. Human analysts on both teams are confused. How do we resolve the terminology and get everyone on the same page?",
+    "expected": "skill should not activate",
+    "notes": "source id: cia-d2"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "We have a compliance requirement that no one — human or system — should be able to delete customer records without a documented audit trail and dual approval. We're also deploying an AI agent to automate customer data quality checks. The legal team keeps saying 'access control' and the data team keeps saying 'we need to put this in the model somehow'. Who is right?",
+    "expected": "Skill activates and resolves the conflation: RBAC and the Action layer are complementary and non-overlapping, so both teams are partly right. RBAC governs which roles can access the table; the Action layer governs what operations the agent may perform on data it can access — here encoding delete as requiring documented audit trail and dual approval as a model-level action constraint. The edge insight is that introducing the AI agent specifically triggers CIA, and access control alone does not substitute for the Action layer.",
+    "notes": "source id: cia-e1"
+  }
+]

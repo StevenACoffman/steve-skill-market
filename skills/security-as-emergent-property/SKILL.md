@@ -13,25 +13,7 @@ description: |
   - Any estimate for "adding security" to a system that is already partially built
   - Security review requested at the pre-launch gate rather than at design time
   - "Why is retrofitting authentication taking 3× longer than estimated?"
-
-  Do NOT use this skill when:
-  - The user is designing a new system from scratch and asking what to design in —
-    this skill is the diagnostic for why retrofit fails, not the design recipe;
-    use the appropriate design-time skills (tcb-identification-minimization,
-    least-privilege-tooling-enforced-time-bounded, etc.) for the positive prescriptions
-  - The question is about a specific tactical security control (e.g., "how do I add
-    rate limiting") — use the relevant specific skill
-  - The question is about reliability only, with no security component
-
-  The mechanism explained here is "emergent property": security is not a feature that
-  can be localized to a module and bolted on — it arises from the interaction of all
-  design decisions simultaneously. This explains structurally (not just anecdotally)
-  why bolt-on security fails and why retrofit cost is proportional to integration
-  points, not to the complexity of the security mechanism itself.
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: "Chapter 4 — Design Tradeoffs; Chapter 1 — The Intersection of Security and Reliability"
 tags: [emergent-properties, design-tradeoffs, security-by-design, architecture, technical-debt, reliability, lifecycle]
-related_skills: []
 ---
 
 # Security and Reliability Are Emergent Properties — Must Be Designed In, Never Bolted On
@@ -308,3 +290,9 @@ ______________________________________________________________________
 - **Source IDs**: f18, p01
 - **Verification**: All three validation tests passed (cross-domain, predictive power,
   exclusivity) — see verified.md entry for f18+p01
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 4 — Design Tradeoffs, Chapter 1 — The Intersection of Security and Reliability

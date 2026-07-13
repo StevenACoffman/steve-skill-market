@@ -1,9 +1,8 @@
 ---
-id: grpc-kubernetes-deployment-topology
-title: Kubernetes Deployment Topology — Deployment + ClusterIP + NGINX Ingress + cert-manager for gRPC
+name: grpc-kubernetes-deployment-topology
 description: Trigger when deploying a gRPC microservice to Kubernetes and need the correct combination of resources for external access, TLS termination, and inter-service communication.
-source: [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]
 ---
+# Kubernetes Deployment Topology — Deployment + ClusterIP + NGINX Ingress + cert-manager for gRPC
 
 ## R — Reading
 
@@ -52,4 +51,10 @@ The `backend-protocol: GRPC` annotation is NGINX-specific; Traefik and HAProxy I
 
 ## Related Skills
 
-- **[grpc-service-decomposition-by-capability](../grpc-service-decomposition-by-capability/SKILL.md)** — depends on: each decomposed service needs its own Deployment and ClusterIP Service; the decomposition count determines the number of Kubernetes manifests and Ingress path rules
+- **grpc-service-decomposition-by-capability** — depends on: each decomposed service needs its own Deployment and ClusterIP Service; the decomposition count determines the number of Kubernetes manifests and Ingress path rules
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Microservices in Go, Hüseyin Babal, Manning, 2023]

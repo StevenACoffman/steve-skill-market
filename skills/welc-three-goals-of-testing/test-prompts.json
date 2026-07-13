@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our tests don't seem to help. We write them, CI is green, and we still ship bugs every sprint. The team is losing faith in the whole testing effort. What's going wrong?",
+    "expected": "Invoke welc-three-goals-of-testing. Diagnose goal confusion: the team likely has quality-mechanism tests (TDD unit tests) but no maintenance-goal tests to survive refactoring and no validation layer. Name the three goals explicitly, map the team's current tests to them, and identify the gap.",
+    "notes": "source id: should-trigger-01; notes: Direct match to A2 scenario 1 and the literal language signal 'our tests don't seem to help'. The symptom of CI green + bugs in production is the compound failure mode of missing maintenance and validation goals while over-investing in quality-mechanism tests."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have 87% code coverage across our entire backend service. Last release we still had three production incidents. My manager is asking why we're investing in testing if it isn't catching bugs. How do I explain this?",
+    "expected": "Invoke welc-three-goals-of-testing. Explain the distinction between coverage (which lines executed) and goal coverage (which of the three testing goals are being served). 87% coverage can coexist with zero maintenance-goal tests and zero validation. Diagnose which goal gaps are producing production incidents.",
+    "notes": "source id: should-trigger-02; notes: Direct match to A2 scenario 2: 'we have high test coverage but still ship bugs'. The manager's question conflates coverage measurement with the value of the test suite. The three-goals framework explains why the conflation is wrong."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're starting a new feature that touches our payments module. Should we write unit tests or integration tests for this? The team can't agree and we've been arguing about it for a week.",
+    "expected": "Invoke welc-three-goals-of-testing. Reframe: the question 'unit vs. integration' is unanswerable without first establishing which goal the tests are meant to serve. Unit tests serve the quality goal (design pressure, fast feedback) and maintenance if written at the behavior boundary. Integration tests serve maintenance (stable under refactoring). The correct answer depends on which goal the payments module needs most right now.",
+    "notes": "source id: should-trigger-03; notes: Direct match to A2 scenario 3: 'should we write unit tests or integration tests for this?' The team is stuck on mechanism selection without having resolved goal selection. The three-goals framework resolves the argument by reframing the question."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our test suite takes 40 minutes to run and nobody runs it locally anymore. People just push and wait for CI. Half the time tests fail on things that aren't related to what they changed. The whole suite feels like a burden more than a safety net.",
+    "expected": "Invoke welc-three-goals-of-testing. Diagnose: slow, distrusted suite is the compound failure mode of goal confusion. Tests are likely coupled to implementation (quality-mechanism tests serving the maintenance goal), which makes them break during refactoring. Prescribe: separate the suite by goal — fast quality tests run on save, stable behavior-level maintenance tests run on commit, validation at release gate.",
+    "notes": "source id: should-trigger-04; notes: Direct match to A2 scenario 4: 'our test suite is slow and nobody trusts it'. The symptoms (slow, coupled, breaks on unrelated changes) are the precise indicators of quality-mechanism tests being used for the maintenance goal."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I have a 400-line OrderProcessor class with no tests and I need to refactor it next week. I know I need characterization tests first. What's the exact procedure — how do I actually write one?",
+    "expected": "Should NOT invoke welc-three-goals-of-testing. The user has already identified that they need maintenance-goal tests and has named the specific tool (characterization tests). This is a welc-characterization-test execution question — the step-by-step procedure for writing characterization tests against an existing untested class.",
+    "notes": "source id: should-not-trigger-01; notes: The user already knows the goal (maintenance) and the mechanism (characterization tests) and is asking for the procedure. welc-three-goals-of-testing diagnoses goal confusion; it is not needed here. Strong decoy because the scenario is legacy code testing, which is the source domain of this skill."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I'm trying to write property-based tests for a discount calculation function and I keep adding exception clauses — 'except when the user is a VIP', 'except when the cart is empty', 'except during a promotional period'. I have six clauses now. What does this mean for my code?",
+    "expected": "Should NOT invoke welc-three-goals-of-testing. The user is executing on the quality goal using property-based tests and has encountered the design signal: inability to state a clean property without exception clauses indicates the function is doing too much or has an ill-bounded input domain. This is welc-property-based-design-pressure — the exception clauses are a design signal requiring decomposition.",
+    "notes": "source id: should-not-trigger-02; notes: welc-three-goals-of-testing establishes that property-based tests serve the quality goal. The user is already past that insight and into execution. The exception-clause explosion is a design pressure signal, which is welc-property-based-design-pressure's domain."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our startup is building firmware for a medical device. We're asking whether we need a full automated test suite before launch. How much testing is actually required here?",
+    "expected": "Should NOT invoke welc-three-goals-of-testing. The question is about how much testing to invest, not which kinds of tests serve which goals. Medical device firmware is the canonical untended system in Feathers' framework — the answer is calibrated by deployment model (untended: cannot hotfix in production), code lifetime (long), and defect cost (safety-critical). This is welc-tended-untended-systems.",
+    "notes": "source id: should-not-trigger-03; notes: welc-three-goals-of-testing answers 'which goals do these tests serve?'; welc-tended-untended-systems answers 'how much investment in testing is warranted?' The user is asking the investment question. Medical device + firmware is a direct match to the untended-systems domain."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We do TDD on all new code. But when we go back to refactor old modules, the tests we wrote using TDD always break — we end up spending as much time fixing tests as doing the refactoring. We thought TDD was supposed to make refactoring safe. What are we doing wrong?",
+    "expected": "Ambiguous — could invoke welc-three-goals-of-testing or welc-characterization-test. Most likely SHOULD trigger welc-three-goals-of-testing because the user's problem is goal confusion: TDD tests (quality mechanism) are being used as the maintenance safety net. When they refactor, quality-mechanism tests break because they test internal structure. The solution is a separate maintenance layer (characterization tests) that is stable under structural change. welc-characterization-test would then be the follow-on execution skill.",
+    "notes": "source id: blurred-boundary-01; notes: The user attributes the problem to TDD itself ('we thought TDD was supposed to make refactoring safe'). The root cause is goal confusion: TDD serves the quality goal; a maintenance layer serves the refactoring safety goal. This is a three-goals diagnosis case, but it leads directly into characterization test execution. Both skills apply; welc-three-goals-of-testing is the correct first response, with welc-characterization-test as the prescribed remedy."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We shipped a feature two weeks ago. All tests pass, the product owner signed off in staging, but users aren't adopting it. The engagement numbers are terrible. Did we do something wrong in our testing process?",
+    "expected": "Ambiguous — could invoke welc-three-goals-of-testing or be a general product/UX question. Most likely SHOULD trigger welc-three-goals-of-testing because the symptom is precisely the validation goal failure: the team confused staging sign-off with user acceptance. The tests verified the system matched the spec (verification); they did not confirm that users would adopt the feature (validation). The framework explains why 'all tests pass + product owner staging sign-off' is not equivalent to user validation.",
+    "notes": "source id: blurred-boundary-02; notes: The user may be asking a product question (why don't users like the feature?), but the framing 'did we do something wrong in our testing process?' is explicitly a testing strategy question. The answer is: staging verification ≠ user validation; the testing process lacked a validation layer. welc-three-goals-of-testing handles this via the Validation goal and the 'Verification vs. Validation' boundary section."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Someone on our team says we should adopt TDD because it will dramatically reduce bugs in production. Someone else says TDD is overhyped and doesn't actually catch bugs. They're both citing studies. How do we settle this argument?",
+    "expected": "Ambiguous — could invoke welc-three-goals-of-testing or could be a general TDD evaluation question. Most likely SHOULD trigger welc-three-goals-of-testing because both positions in the debate are wrong in the same way: they treat TDD as a bug-catching mechanism. Feathers' 'Flawed Theory' directly addresses this. TDD serves the quality goal via design pressure; it does not primarily catch bugs. The studies are measuring the wrong outcome. The framework resolves the argument by reframing what TDD is for.",
+    "notes": "source id: blurred-boundary-03; notes: This is the 'Flawed Theory' scenario in the I section: 'more unit tests → fewer bugs in production' is the exact claim being debated. Feathers' insight is that TDD's value is in forced specification, not bug detection. The skill resolves the debate at the level of first principles rather than empirical count. Neither debater is wrong about the data; both are wrong about what they're measuring."
+  }
+]

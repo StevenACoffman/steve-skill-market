@@ -1,79 +1,72 @@
-{
-  "skill": "interface-guards",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I have an exported type that's supposed to implement io.ReadCloser but I want the compiler to tell me immediately if I accidentally drop a method instead of finding out at runtime. How do I do that?",
-      "expected_behavior": "Skill shows the compile-time interface guard idiom: `var _ io.ReadCloser = (*MyType)(nil)` in the package, which causes a compile error the moment the type no longer satisfies the interface.",
-      "notes": "Core compile-time guard use case with stdlib interface."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "How do I make sure my type satisfies an interface at compile time in Go without writing a test for it?",
-      "expected_behavior": "Skill explains the blank-identifier interface guard pattern as the idiomatic Go way to assert interface satisfaction at compile time.",
-      "notes": "Direct ask for compile-time interface satisfaction check."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "Someone on my team renamed a method on a struct and it silently stopped implementing our Plugin interface. We only found out when the app crashed in staging. How do we prevent that?",
-      "expected_behavior": "Skill recommends adding a compile-time guard near the type definition so any method rename or removal that breaks interface compliance is caught immediately during build.",
-      "notes": "Accidental interface breakage discovered late — guards prevent this."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're building a plugin system where third parties implement our Handler interface. How do we document and enforce that a concrete type must implement the interface?",
-      "expected_behavior": "Skill explains using an interface guard both as documentation (the guard line makes intent obvious) and enforcement (compile error if the contract is violated).",
-      "notes": "Plugin/extensibility scenario where interface compliance is a contract."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I check at runtime whether a value I received implements the Stringer interface before calling String() on it?",
-      "expected_behavior": "Runtime interface checking is done with type assertions (v, ok := x.(fmt.Stringer)), not compile-time guards. Skill should not activate.",
-      "notes": "Runtime type assertion — different mechanism from compile-time guards."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I check if a pointer is nil before dereferencing it in Go?",
-      "expected_behavior": "Nil checking is unrelated to interface compliance verification. Skill should not activate.",
-      "notes": "Nil guard is a different concept entirely."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "I want my struct to implement the json.Marshaler interface so I can control how it serializes. How do I write the MarshalJSON method?",
-      "expected_behavior": "Implementing a stdlib interface for normal use does not require an interface guard discussion. The user wants to know how to write the method, not how to enforce compliance. Skill should not activate.",
-      "notes": "Normal interface implementation — no guard pattern needed or asked for."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "How do I check if a struct implements an interface at runtime?",
-      "expected_behavior": "No — should not trigger. Runtime checking is a type assertion (v, ok := x.(SomeInterface)), not an interface guard. The skill covers compile-time enforcement only. Skill should not activate, or at most clarify the distinction.",
-      "notes": "Runtime vs compile-time is the boundary; this is on the runtime side."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "I added a new method to our Repository interface and now I need to find all the structs that implement it so I can add the method to them. How do I do that quickly?",
-      "expected_behavior": "Partial trigger. Adding interface guards to all implementors before making the interface change would cause compile errors that immediately identify which types need updating. The skill is highly relevant as a workflow recommendation, even though the primary question is about discovery.",
-      "notes": "Interface evolution — guards turn a discovery problem into a compile error."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "Should I define my interfaces in the package that uses them or the package that implements them?",
-      "expected_behavior": "This is an interface placement question (consumer-side vs producer-side interfaces), not about compile-time guards. Skill should not activate, though interface design is a related topic.",
-      "notes": "Interface location is a design question separate from guard enforcement."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I have an exported type that's supposed to implement io.ReadCloser but I want the compiler to tell me immediately if I accidentally drop a method instead of finding out at runtime. How do I do that?",
+    "expected": "Skill shows the compile-time interface guard idiom: `var _ io.ReadCloser = (*MyType)(nil)` in the package, which causes a compile error the moment the type no longer satisfies the interface.",
+    "notes": "Core compile-time guard use case with stdlib interface.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "How do I make sure my type satisfies an interface at compile time in Go without writing a test for it?",
+    "expected": "Skill explains the blank-identifier interface guard pattern as the idiomatic Go way to assert interface satisfaction at compile time.",
+    "notes": "Direct ask for compile-time interface satisfaction check.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Someone on my team renamed a method on a struct and it silently stopped implementing our Plugin interface. We only found out when the app crashed in staging. How do we prevent that?",
+    "expected": "Skill recommends adding a compile-time guard near the type definition so any method rename or removal that breaks interface compliance is caught immediately during build.",
+    "notes": "Accidental interface breakage discovered late — guards prevent this.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're building a plugin system where third parties implement our Handler interface. How do we document and enforce that a concrete type must implement the interface?",
+    "expected": "Skill explains using an interface guard both as documentation (the guard line makes intent obvious) and enforcement (compile error if the contract is violated).",
+    "notes": "Plugin/extensibility scenario where interface compliance is a contract.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I check at runtime whether a value I received implements the Stringer interface before calling String() on it?",
+    "expected": "Runtime interface checking is done with type assertions (v, ok := x.(fmt.Stringer)), not compile-time guards. Skill should not activate.",
+    "notes": "Runtime type assertion — different mechanism from compile-time guards.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I check if a pointer is nil before dereferencing it in Go?",
+    "expected": "Nil checking is unrelated to interface compliance verification. Skill should not activate.",
+    "notes": "Nil guard is a different concept entirely.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I want my struct to implement the json.Marshaler interface so I can control how it serializes. How do I write the MarshalJSON method?",
+    "expected": "Implementing a stdlib interface for normal use does not require an interface guard discussion. The user wants to know how to write the method, not how to enforce compliance. Skill should not activate.",
+    "notes": "Normal interface implementation — no guard pattern needed or asked for.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "How do I check if a struct implements an interface at runtime?",
+    "expected": "No — should not trigger. Runtime checking is a type assertion (v, ok := x.(SomeInterface)), not an interface guard. The skill covers compile-time enforcement only. Skill should not activate, or at most clarify the distinction.",
+    "notes": "Runtime vs compile-time is the boundary; this is on the runtime side.; source id: edge-case-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I added a new method to our Repository interface and now I need to find all the structs that implement it so I can add the method to them. How do I do that quickly?",
+    "expected": "Partial trigger. Adding interface guards to all implementors before making the interface change would cause compile errors that immediately identify which types need updating. The skill is highly relevant as a workflow recommendation, even though the primary question is about discovery.",
+    "notes": "Interface evolution — guards turn a discovery problem into a compile error.; source id: edge-case-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Should I define my interfaces in the package that uses them or the package that implements them?",
+    "expected": "This is an interface placement question (consumer-side vs producer-side interfaces), not about compile-time guards. Skill should not activate, though interface design is a related topic.",
+    "notes": "Interface location is a design question separate from guard enforcement.; source id: edge-case-03"
+  }
+]

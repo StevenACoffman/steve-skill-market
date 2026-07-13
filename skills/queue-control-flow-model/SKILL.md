@@ -1,9 +1,9 @@
 ---
-id: queue-control-flow-model
-title: Queue Control Flow Model
-description: Invoke when connecting two cloud services that don't seem to support direct connection, when a colleague draws an integration diagram with unlabeled arrows, when message ordering matters for a downstream consumer using parallel workers, when selecting between pull-based and push-based delivery, or when a serverless pipeline shows unexpectedly high P90 latency.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003) + Addendum 3 (Gregor Hohpe, ~2022)
+name: queue-control-flow-model
+description: |
+  Invoke when connecting two cloud services that don't seem to support direct connection, when a colleague draws an integration diagram with unlabeled arrows, when message ordering matters for a downstream consumer using parallel workers, when selecting between pull-based and push-based delivery, or when a serverless pipeline shows unexpectedly high P90 latency.
 ---
+# Queue Control Flow Model
 
 ## Queue Control Flow Model
 
@@ -107,7 +107,13 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Integration Style Selection](../integration-style-selection/SKILL.md)** — *depends-on* → Control-flow modeling only applies after Messaging is selected as the integration style; this skill makes precise the operational properties that style creates.
-- **[Queue Flow Control Decision](../queue-flow-control-decision/SKILL.md)** — *enables* → Identifying that a component is a Driver (controls fetch rate) vs. a Sender (cannot self-throttle) is the prerequisite for choosing the correct flow control mechanism — a Driver can implement backpressure; a Sender cannot.
-- **[Competing Consumers vs. Dispatcher](../competing-consumers-vs-dispatcher/SKILL.md)** — *enables* → The control-flow model's order-preservation rule — a Queue with Competing Consumers destroys order; only a single-threaded Driver preserves it — directly determines which parallelism pattern is safe to use.
-- **[Messaging Observability Design](../messaging-observability-design/SKILL.md)** — *precedes* → Annotating control-flow roles on a pipeline diagram (Sender, Driver, Fetcher, Sink) clarifies where to place Wire Taps and Message Store capture points for maximum diagnostic value.
+- **Integration Style Selection** — *depends-on* → Control-flow modeling only applies after Messaging is selected as the integration style; this skill makes precise the operational properties that style creates.
+- **Queue Flow Control Decision** — *enables* → Identifying that a component is a Driver (controls fetch rate) vs. a Sender (cannot self-throttle) is the prerequisite for choosing the correct flow control mechanism — a Driver can implement backpressure; a Sender cannot.
+- **Competing Consumers vs. Dispatcher** — *enables* → The control-flow model's order-preservation rule — a Queue with Competing Consumers destroys order; only a single-threaded Driver preserves it — directly determines which parallelism pattern is safe to use.
+- **Messaging Observability Design** — *precedes* → Annotating control-flow roles on a pipeline diagram (Sender, Driver, Fetcher, Sink) clarifies where to place Wire Taps and Message Store capture points for maximum diagnostic value.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003) + Addendum 3 (Gregor Hohpe, ~2022)

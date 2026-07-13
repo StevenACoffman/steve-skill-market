@@ -13,22 +13,7 @@ description: |
   is ~76× faster than functional options, maintains IDE discoverability, and requires no
   closure allocation. Functional options are reserved for cases where callers must build,
   store, or conditionally apply option slices at runtime.
-
-  The decision is driven by three questions: How many options? Are they stable? Does the caller
-  need to compose them programmatically? If ≤3 stable options, pass them directly. If the API
-  is internal, use an exposed Config struct. If the API is external with a stable option set,
-  use dysfunctional options (method chaining). Only reach for functional options when callers
-  need to collect []Option slices and apply them dynamically, or when third parties need to
-  extend the option set.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: configure_options, dysfunctional_options_pattern
 tags: [go, api-design, configuration, performance, patterns]
-related_skills:
-  - slug: manual-dependency-injection
-    relation: composes-with
-  - slug: merged/all-books-v1/go-constructor-option-pattern-selection
-    relation: superseded-by
-    note: Merged into go-constructor-option-pattern-selection; source covers dysfunctional options pattern (method chaining), three-pattern decision tree, ~76x performance benchmark, and IDE discoverability argument.
 ---
 
 # Option Configuration Pattern Selection
@@ -216,7 +201,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`manual-dependency-injection`](../manual-dependency-injection/SKILL.md): Option patterns operate at the individual constructor level — they expose how a single type accepts its configuration knobs (timeouts, pool sizes, retry counts). Manual DI operates at the composition root level — it connects constructed types to each other in `cmd/main.go`. In practice: use dysfunctional options or functional options inside each `NewX(required).WithTimeout(5*time.Second)` call; use manual DI to pass the returned value into the next constructor.
+- **composes-with** `manual-dependency-injection`: Option patterns operate at the individual constructor level — they expose how a single type accepts its configuration knobs (timeouts, pool sizes, retry counts). Manual DI operates at the composition root level — it connects constructed types to each other in `cmd/main.go`. In practice: use dysfunctional options or functional options inside each `NewX(required).WithTimeout(5*time.Second)` call; use manual DI to pass the returned value into the next constructor.
 
 ______________________________________________________________________
 
@@ -225,3 +210,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — configure_options, dysfunctional_options_pattern

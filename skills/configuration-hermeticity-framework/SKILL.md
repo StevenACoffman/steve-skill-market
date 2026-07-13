@@ -6,12 +6,7 @@ description: |
   Call when: A team reports intermittent rollback failures, configuration rendering produces different results at different times, or a new configuration system is being designed. Also call when evaluating whether a proposed config tool (Helm, Jinja2, Ansible, CUE, Dhall) is safe for use in a reliability-sensitive deployment pipeline.
 
   Do not call when: The issue is a runtime configuration value being wrong (a data problem), not a configuration evaluation problem (a system property problem). This skill governs configuration system design, not configuration content auditing.
-
-  Key trigger: "The rollback produced different rendered output than the original deploy" — this is the canonical hermeticity violation symptom. Any config that consults external state (DNS, secrets manager, timestamp, latest build version) during evaluation is not hermetic.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 14 - Configuration Design and Best Practices; Chapter 15 - Configuration Specifics"
 tags: [configuration, hermeticity, rollback, reproducibility, infrastructure-as-code, language-design]
-related_skills: []
 ---
 
 # Configuration Hermeticity Framework (Three Required Properties + Five Pitfalls)
@@ -138,3 +133,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 14 - Configuration Design and Best Practices, Chapter 15 - Configuration Specifics

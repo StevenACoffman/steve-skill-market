@@ -1,77 +1,86 @@
-{
-  "skill": "first-derivative-economies-of-speed",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "Our CFO wants to know how much cloud will cost next year. How should we set the budget?",
-      "reason": "A fixed annual cloud budget is Economies of Scale thinking applied to a per-second billing platform — the skill explains why this framing is the wrong question and what rate-based budgeting looks like instead."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "We're 60% through our cloud migration. Our CIO is presenting to the board next week and wants to show progress. What metrics should she use?",
-      "reason": "Percentage migrated is an absolute position metric. The skill identifies this as Economies of Scale thinking and redirects to rate metrics (deployment frequency, time-to-market, value delivery rate)."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "Our team is comparing AWS vs Azure pricing for compute. We pulled per-instance price tables and AWS is cheaper per hour. Is that the right way to evaluate this?",
-      "reason": "Comparing unit prices is treating cloud as a capital asset (absolute pricing). The skill reframes: the relevant comparison is size × time × unit cost over actual consumption patterns."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "Why does our organization keep treating cloud transformation as a project with a finish line instead of an ongoing capability?",
-      "reason": "The project/finish-line mental model is Economies of Scale thinking — change is exceptional and packaged. The skill explains this directly and provides the diagnostic for shifting to rate-based, course-correction thinking."
-    },
-    {
-      "id": "tp05",
-      "type": "should_invoke",
-      "prompt": "How do I explain to a traditional IT finance team why cloud consumption billing is better than committing to reserved capacity upfront?",
-      "reason": "This is precisely the cultural translation between Economies of Scale (reserved = predictable = good) and Economies of Speed (consumption rate = flexibility = appropriate). The skill provides this framing explicitly."
-    },
-    {
-      "id": "tp06",
-      "type": "should_invoke",
-      "prompt": "Our engineering manager tracks team productivity by counting features completed per sprint. Is there something wrong with this?",
-      "reason": "Features per sprint is an absolute count, not a rate that reflects delivery velocity in a useful way. The skill explains the difference and what rate metrics would look like."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "We need to decide whether to adopt Kubernetes or a managed container service. What are the trade-offs?",
-      "reason": "This is a lock-in and platform decision, not a first-derivative / Economies of Speed question. The relevant skill is lock-in cost optimization or platform selection."
-    },
-    {
-      "id": "tp08",
-      "type": "should_not_invoke",
-      "prompt": "Our organization has three guiding principles for cloud: 'we value security', 'we want to delight customers', and 'we embrace innovation'. Are these good principles?",
-      "reason": "This invokes the principles-quality-checklist skill (opposite test, wishful thinking). Not a first-derivative question."
-    },
-    {
-      "id": "tp09",
-      "type": "should_not_invoke",
-      "prompt": "We're building a real-time fraud detection system. Should we use serverless or containers?",
-      "reason": "This is a technical architecture question about runtime platform selection, not an organizational economics framing question."
-    },
-    {
-      "id": "tp10",
-      "type": "should_not_invoke",
-      "prompt": "How do we structure our enterprise cloud security policy to meet SOC 2 requirements?",
-      "reason": "Compliance and security policy structuring is outside the scope of the first-derivative model, which is about organizational measurement and planning philosophy."
-    },
-    {
-      "id": "tp11",
-      "type": "blurred_boundary",
-      "prompt": "Our startup is growing fast and we need to decide whether to go all-in on reserved EC2 instances to save money or stay on on-demand. We're burning through budget quickly.",
-      "reason": "Superficially a budgeting/reserved-capacity question (first-derivative territory), but the answer for a fast-growing startup with uncertain load profiles also touches cloud cost formula (size × time × unit cost) and possibly the lock-in skill. Invoke first-derivative to frame the rate vs. absolute decision, then hand off to cost formula for specifics."
-    },
-    {
-      "id": "tp12",
-      "type": "blurred_boundary",
-      "prompt": "We migrated 80% of our workloads to the cloud last year but the business says they don't see value. IT says the migration is nearly done. What's going on?",
-      "reason": "This scenario has strong first-derivative elements (reporting progress as an absolute percentage rather than value delivery rate) but is primarily the value-gap / proxy-metrics pattern. Both skills are relevant; value-gap-migration-metrics is the primary signal."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our CFO wants to know how much cloud will cost next year. How should we set the budget?",
+    "expected": "Skill activates and names the fixed annual budget as Economies of Scale thinking imposed on a per-second-billed, first-derivative platform; it reframes to rate-based budgeting — managing burn rate vs. value-delivery rate continuously with course-correction — rather than committing to a single absolute annual number.",
+    "notes": "source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're 60% through our cloud migration. Our CIO is presenting to the board next week and wants to show progress. What metrics should she use?",
+    "expected": "Skill activates and identifies 'percent migrated' as an absolute position metric that goes stale and proxies nothing about value; it redirects to first-derivative rate metrics — deployment frequency, time-to-market, value-delivery rate — as what the board should actually see.",
+    "notes": "source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our team is comparing AWS vs Azure pricing for compute. We pulled per-instance price tables and AWS is cheaper per hour. Is that the right way to evaluate this?",
+    "expected": "Skill activates and explains that comparing per-instance unit prices treats cloud as a capital asset (absolute pricing); the correct comparison models actual consumption — size × time × unit cost over real utilization patterns over a period — not a single per-hour sticker price.",
+    "notes": "source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Why does our organization keep treating cloud transformation as a project with a finish line instead of an ongoing capability?",
+    "expected": "Skill activates and diagnoses the project/finish-line mental model as Economies of Scale thinking (change treated as exceptional and packaged into discrete projects); it explains the shift to Economies of Speed — continuous, rate-based, course-correcting operation — and applies the course-correction test to expose the bottleneck.",
+    "notes": "source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "How do I explain to a traditional IT finance team why cloud consumption billing is better than committing to reserved capacity upfront?",
+    "expected": "Skill activates and supplies the Economies of Scale-to-Economies of Speed cultural translation: reserved capacity encodes a static, absolute-value world, while per-consumption billing is the infrastructure expression of first-derivative (rate) thinking that matches a constantly changing environment; frame it as matching the billing model to the consumption model rather than as 'cheaper.'",
+    "notes": "source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "Our engineering manager tracks team productivity by counting features completed per sprint. Is there something wrong with this?",
+    "expected": "Skill activates and explains that a raw feature count is an absolute, not a rate that reflects delivery velocity, and can be gamed by shipping trivial changes; it recommends first-derivative metrics such as cycle time / throughput coupled with a value metric so the rate measures useful delivery.",
+    "notes": "source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We need to decide whether to adopt Kubernetes or a managed container service. What are the trade-offs?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our organization has three guiding principles for cloud: 'we value security', 'we want to delight customers', and 'we embrace innovation'. Are these good principles?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "We're building a real-time fraud detection system. Should we use serverless or containers?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "How do we structure our enterprise cloud security policy to meet SOC 2 requirements?",
+    "expected": "skill should not activate",
+    "notes": "source id: tp10"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "Our startup is growing fast and we need to decide whether to go all-in on reserved EC2 instances to save money or stay on on-demand. We're burning through budget quickly.",
+    "expected": "Skill activates to frame the rate-vs-absolute decision — with uncertain, fast-changing load a startup should think in first-derivative terms and avoid locking in absolute reserved commitments prematurely — then hands off to the cloud cost formula (size × time × unit cost over modeled utilization) for the specific reserved-vs-on-demand math.",
+    "notes": "source id: tp11"
+  },
+  {
+    "id": 12,
+    "type": "edge_case",
+    "prompt": "We migrated 80% of our workloads to the cloud last year but the business says they don't see value. IT says the migration is nearly done. What's going on?",
+    "expected": "Skill surfaces the first-derivative element — reporting progress as an absolute percentage rather than a value-delivery rate — but recognizes this is primarily the value-gap / proxy-metrics pattern; the defensible outcome is to note both frames and defer to value-gap-migration-metrics as the primary skill while contributing the rate-vs-absolute reframing.",
+    "notes": "source id: tp12"
+  }
+]

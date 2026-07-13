@@ -1,9 +1,8 @@
 ---
-id: welc-sprout-wrap-decision
-title: Sprout/Wrap Decision — Adding Behavior to Untestable Legacy Code
+name: welc-sprout-wrap-decision
 description: Trigger when a developer must add new behavior to existing code that cannot be immediately tested, and must choose among Sprout Method, Sprout Class, Wrap Method, or Wrap Class.
-source: [Working Effectively with Legacy Code, Michael C. Feathers, Prentice Hall, 2005]
 ---
+# Sprout/Wrap Decision — Adding Behavior to Untestable Legacy Code
 
 ## R — Reading
 
@@ -135,3 +134,9 @@ The counter-example is cumulative avoidance: code where every new feature for fi
 - **welc-legacy-code-change-algorithm** — composes-with: Sprout/wrap is the change strategy for Step 5 when Steps 3–4 are judged too risky or expensive; it is an acceleration for specific episodes, not a replacement for the full algorithm.
 - **welc-seam-model** — pairs-with: When no usable seam exists in the existing code, wrapping the original class creates a new seam at the wrapper boundary; sprouting introduces a seam at the delegation call site.
 - **welc-characterization-test** — contrasts-with: Characterization tests pin the existing code before modifying it; sprout/wrap deliberately avoids touching the existing code — the two techniques represent different safety strategies for the same constraint of untestable legacy code.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [Working Effectively with Legacy Code, Michael C. Feathers, Prentice Hall, 2005]

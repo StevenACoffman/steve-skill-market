@@ -1,14 +1,7 @@
 ---
+name: gh-stack
 description: |
   Use when the user wants to create, push, rebase, sync, navigate, or view stacks of dependent PRs. Covers the gh-stack GitHub CLI extension for managing stacked diffs, dependent pull requests, branch chains, and incremental code review workflows.
-metadata:
-  author: github
-  github-path: skills/gh-stack
-  github-ref: refs/tags/v0.0.2
-  github-repo: https://github.com/github/gh-stack
-  github-tree-sha: f11c787bea0bf060af1d8742464a22cd35aa1630
-  version: 0.0.2
-name: gh-stack
 ---
 
 # `gh-stack`

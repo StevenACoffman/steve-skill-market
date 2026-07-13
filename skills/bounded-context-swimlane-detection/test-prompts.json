@@ -1,58 +1,44 @@
-{
-  "skill": "bounded-context-swimlane-detection",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "bcsd-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We're migrating three regional divisions onto a single data platform. Each division has its own CRM and they all track 'Opportunities' but the field definitions don't match. One region counts an opportunity when a lead schedules a demo. Another counts it when a proposal is sent. The third counts it when a verbal commitment is received. We're trying to build one Opportunities table that all three sales teams will report from.",
-      "expected_behavior": "Skill triggers. This is trigger scenario #2 (platform consolidation) and #3 ('one source of truth' initiative) with a confirmed bounded context collision risk — three teams with three different definitions of 'Opportunity'. Skill should guide through swimlane crossing analysis: identify candidate crossings, apply the diagnostic question to each pair, confirm whether definitions diverge, and recommend separate context-specific models with mapping layers rather than one unified table.",
-      "should_trigger": true,
-      "rationale": "Direct match for 'We're consolidating our CRM / ERP / data platform' and 'Multiple systems have different definitions of [shared concept]'. Three diverging definitions of a shared entity = classic bounded context collision setup."
-    },
-    {
-      "id": "bcsd-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our product team and our data engineering team keep getting into arguments because when the product team queries the events table for 'active users' they get a different number than when the data team runs the same query. We've triple-checked the SQL and it's identical. Both teams are querying the same table. How is this possible?",
-      "expected_behavior": "Skill triggers. Two teams getting different numbers from identical queries on the same table is the canonical bounded context collision symptom (ce12 / ce10). The diagnostic question reveals that 'active user' means different things to each team — one applies an implicit filter the other doesn't. Skill should guide through: confirming this is a boundary (ask 'What is an active user to you?' to each team), documenting the diverging definitions, and redesigning the model with context-specific views or separate entities rather than one shared events table.",
-      "should_trigger": true,
-      "rationale": "Matches 'Two teams are getting different numbers from the same table' — explicitly listed language signal. The symptom (identical query, different results) is the canonical bounded context collision failure pattern."
-    },
-    {
-      "id": "bcsd-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We're building a unified 'Order' entity for our new data warehouse. The order travels through three departments: Sales creates it, Fulfillment picks and packs it, and Shipping hands it to the carrier. I need to design the schema so all three teams can use it. What should I watch out for?",
-      "expected_behavior": "Skill triggers. The order crosses three swimlanes (Sales → Fulfillment → Shipping), producing two candidate bounded context boundaries. Before designing the unified schema, apply the diagnostic question at each crossing: 'What is an Order to you?' to Sales, Fulfillment, and Shipping. If definitions diverge (e.g., Sales cares about revenue recognition, Fulfillment about warehouse slot allocation, Shipping about carrier manifest), separate models with translation layers are needed — not a single unified Order table.",
-      "should_trigger": true,
-      "rationale": "New entity design for a cross-department process (trigger scenario #5). Swimlane crossings are explicit in the prompt. Language matches 'We're building a unified [entity] table that multiple teams will use.'"
-    },
-    {
-      "id": "bcsd-decoy-01",
-      "type": "should_not_trigger",
-      "prompt": "We're building a new data model for our customer onboarding process. It's entirely handled by our Customer Success team — they own it end to end from contract signing to first login. I'm not sure what the exact steps are or who does what. How do I figure out what data to capture?",
-      "expected_behavior": "Skill does NOT trigger. This is a business-process-discovery scenario. The process is confined to a single team with no cross-domain hand-offs, so there are no swimlane crossings to analyze. The B boundary section explicitly says: 'If the entire process is performed within one department or system, with no swimlane crossings, bounded context analysis is not needed — map the process with business-process-discovery and proceed directly to process-to-model-translation.'",
-      "should_trigger": false,
-      "rationale": "Single department, unknown process steps = business-process-discovery, not bounded-context-swimlane-detection. The decoy design spec says: 'A prompt about starting a data model for a new business process should NOT trigger this — it triggers business-process-discovery.'"
-    },
-    {
-      "id": "bcsd-decoy-02",
-      "type": "should_not_trigger",
-      "prompt": "I've been interviewing people about our procurement approval process and everyone is telling me something different. The finance manager says it's a three-step process: request, approval, PO. But the actual procurement coordinator says she has a whole shadow spreadsheet she uses called EMERGENCY_APPROVALS_Q3.xlsx because the official system doesn't handle urgent requests. The CFO apparently has to sign off on anything over $50K but there's no record of that anywhere in the system.",
-      "expected_behavior": "Skill does NOT trigger. This is a tacit-knowledge-extraction scenario. The symptom is contradictory interview results and shadow spreadsheets — exactly the A2 trigger cases for tacit-knowledge-extraction (trigger #3: contradictory interviews; trigger #4: shadow spreadsheets; trigger #5: official schema doesn't match reality). The correct response is Gemba Walk + Artifact Archaeology + Unhappy Path Interviews to surface what the real process is.",
-      "should_trigger": false,
-      "rationale": "Shadow spreadsheets and contradictory interviews = tacit knowledge gap, not bounded context problem. The decoy design spec says: 'A prompt about tacit knowledge or shadow spreadsheets should NOT trigger this — it triggers tacit-knowledge-extraction.'"
-    },
-    {
-      "id": "bcsd-edge-01",
-      "type": "edge_case",
-      "prompt": "We mapped our patient journey process and found that it crosses three swimlanes: outpatient clinic, inpatient hospital, and billing. We've confirmed with domain experts that each team defines 'Patient' differently: the clinic says active care plan, the hospital says currently admitted or post-discharge, billing says a legal account tied to insurance. Now we're debating whether to build one unified Patient table or three. What's the right answer?",
-      "expected_behavior": "Edge case: the swimlane analysis is already complete and boundaries are confirmed with documented diverging definitions from all three sides. The skill should confirm: three confirmed bounded contexts require three separate entity models (ClinicalPatient, AdmittedPatient, BillingAccount) plus mapping tables at each crossing — explicitly NOT a unified Patient table. This is the healthcare case from A1. The skill should also confirm that the diagnostic work is done and the next step is process-to-model-translation within each context.",
-      "should_trigger": true,
-      "rationale": "The swimlane map exists and all three definitions are already surfaced. The boundary detection phase is complete but the design decision phase (step 4 of execution) hasn't been applied yet. Tests whether the skill correctly handles the case where the detection work is done but the design recommendation is still needed."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. Decoy-01 tests the single-department process (BPD territory). Decoy-02 tests the shadow-spreadsheet/tacit-knowledge confusion. Edge case tests the post-detection design decision phase."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're migrating three regional divisions onto a single data platform. Each division has its own CRM and they all track 'Opportunities' but the field definitions don't match. One region counts an opportunity when a lead schedules a demo. Another counts it when a proposal is sent. The third counts it when a verbal commitment is received. We're trying to build one Opportunities table that all three sales teams will report from.",
+    "expected": "Skill triggers. This is trigger scenario #2 (platform consolidation) and #3 ('one source of truth' initiative) with a confirmed bounded context collision risk — three teams with three different definitions of 'Opportunity'. Skill should guide through swimlane crossing analysis: identify candidate crossings, apply the diagnostic question to each pair, confirm whether definitions diverge, and recommend separate context-specific models with mapping layers rather than one unified table.",
+    "notes": "rationale: Direct match for 'We're consolidating our CRM / ERP / data platform' and 'Multiple systems have different definitions of [shared concept]'. Three diverging definitions of a shared entity = classic bounded context collision setup.; source id: bcsd-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our product team and our data engineering team keep getting into arguments because when the product team queries the events table for 'active users' they get a different number than when the data team runs the same query. We've triple-checked the SQL and it's identical. Both teams are querying the same table. How is this possible?",
+    "expected": "Skill triggers. Two teams getting different numbers from identical queries on the same table is the canonical bounded context collision symptom (ce12 / ce10). The diagnostic question reveals that 'active user' means different things to each team — one applies an implicit filter the other doesn't. Skill should guide through: confirming this is a boundary (ask 'What is an active user to you?' to each team), documenting the diverging definitions, and redesigning the model with context-specific views or separate entities rather than one shared events table.",
+    "notes": "rationale: Matches 'Two teams are getting different numbers from the same table' — explicitly listed language signal. The symptom (identical query, different results) is the canonical bounded context collision failure pattern.; source id: bcsd-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're building a unified 'Order' entity for our new data warehouse. The order travels through three departments: Sales creates it, Fulfillment picks and packs it, and Shipping hands it to the carrier. I need to design the schema so all three teams can use it. What should I watch out for?",
+    "expected": "Skill triggers. The order crosses three swimlanes (Sales → Fulfillment → Shipping), producing two candidate bounded context boundaries. Before designing the unified schema, apply the diagnostic question at each crossing: 'What is an Order to you?' to Sales, Fulfillment, and Shipping. If definitions diverge (e.g., Sales cares about revenue recognition, Fulfillment about warehouse slot allocation, Shipping about carrier manifest), separate models with translation layers are needed — not a single unified Order table.",
+    "notes": "rationale: New entity design for a cross-department process (trigger scenario #5). Swimlane crossings are explicit in the prompt. Language matches 'We're building a unified [entity] table that multiple teams will use.'; source id: bcsd-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We're building a new data model for our customer onboarding process. It's entirely handled by our Customer Success team — they own it end to end from contract signing to first login. I'm not sure what the exact steps are or who does what. How do I figure out what data to capture?",
+    "expected": "Skill does NOT trigger. This is a business-process-discovery scenario. The process is confined to a single team with no cross-domain hand-offs, so there are no swimlane crossings to analyze. The B boundary section explicitly says: 'If the entire process is performed within one department or system, with no swimlane crossings, bounded context analysis is not needed — map the process with business-process-discovery and proceed directly to process-to-model-translation.'",
+    "notes": "rationale: Single department, unknown process steps = business-process-discovery, not bounded-context-swimlane-detection. The decoy design spec says: 'A prompt about starting a data model for a new business process should NOT trigger this — it triggers business-process-discovery.'; source id: bcsd-decoy-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I've been interviewing people about our procurement approval process and everyone is telling me something different. The finance manager says it's a three-step process: request, approval, PO. But the actual procurement coordinator says she has a whole shadow spreadsheet she uses called EMERGENCY_APPROVALS_Q3.xlsx because the official system doesn't handle urgent requests. The CFO apparently has to sign off on anything over $50K but there's no record of that anywhere in the system.",
+    "expected": "Skill does NOT trigger. This is a tacit-knowledge-extraction scenario. The symptom is contradictory interview results and shadow spreadsheets — exactly the A2 trigger cases for tacit-knowledge-extraction (trigger #3: contradictory interviews; trigger #4: shadow spreadsheets; trigger #5: official schema doesn't match reality). The correct response is Gemba Walk + Artifact Archaeology + Unhappy Path Interviews to surface what the real process is.",
+    "notes": "rationale: Shadow spreadsheets and contradictory interviews = tacit knowledge gap, not bounded context problem. The decoy design spec says: 'A prompt about tacit knowledge or shadow spreadsheets should NOT trigger this — it triggers tacit-knowledge-extraction.'; source id: bcsd-decoy-02"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "We mapped our patient journey process and found that it crosses three swimlanes: outpatient clinic, inpatient hospital, and billing. We've confirmed with domain experts that each team defines 'Patient' differently: the clinic says active care plan, the hospital says currently admitted or post-discharge, billing says a legal account tied to insurance. Now we're debating whether to build one unified Patient table or three. What's the right answer?",
+    "expected": "Edge case: the swimlane analysis is already complete and boundaries are confirmed with documented diverging definitions from all three sides. The skill should confirm: three confirmed bounded contexts require three separate entity models (ClinicalPatient, AdmittedPatient, BillingAccount) plus mapping tables at each crossing — explicitly NOT a unified Patient table. This is the healthcare case from A1. The skill should also confirm that the diagnostic work is done and the next step is process-to-model-translation within each context.",
+    "notes": "rationale: The swimlane map exists and all three definitions are already surfaced. The boundary detection phase is complete but the design decision phase (step 4 of execution) hasn't been applied yet. Tests whether the skill correctly handles the case where the detection work is done but the design recommendation is still needed.; source id: bcsd-edge-01"
+  }
+]

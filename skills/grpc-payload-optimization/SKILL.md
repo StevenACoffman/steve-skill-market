@@ -1,9 +1,8 @@
 ---
-id: grpc-payload-optimization
-title: Payload Optimization — Varint Field Ordering, gzip Threshold, and FieldMask Sequencing
+name: grpc-payload-optimization
 description: Trigger when optimizing Protobuf message sizes or deciding whether to enable gzip compression on a gRPC service.
-source: [gRPC Go for Professionals, Clément Jean, Packt, 2023]
 ---
+# Payload Optimization — Varint Field Ordering, gzip Threshold, and FieldMask Sequencing
 
 ## R — Reading
 
@@ -46,5 +45,11 @@ Field tag assignment is a schema design decision that is binary-incompatible onc
 
 ## Related Skills
 
-- **[grpc-fieldmask-partial-updates](../grpc-fieldmask-partial-updates/SKILL.md)** — combines: FieldMask is step 4 of the 5-step optimization sequence described here; apply fieldmask-partial-updates for the detailed server-side implementation.
-- **[grpc-flatten-streaming-requests](../grpc-flatten-streaming-requests/SKILL.md)** — combines: message flattening is step 3 of the same sequence; apply flatten-streaming-requests for the detailed before/after byte count analysis and migration guidance.
+- **grpc-fieldmask-partial-updates** — combines: FieldMask is step 4 of the 5-step optimization sequence described here; apply fieldmask-partial-updates for the detailed server-side implementation.
+- **grpc-flatten-streaming-requests** — combines: message flattening is step 3 of the same sequence; apply flatten-streaming-requests for the detailed before/after byte count analysis and migration guidance.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Go for Professionals, Clément Jean, Packt, 2023]

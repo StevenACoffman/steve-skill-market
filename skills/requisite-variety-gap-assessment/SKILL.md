@@ -1,9 +1,9 @@
 ---
-id: requisite-variety-gap-assessment
-title: Requisite Variety Gap Assessment
-description: Invoke when a management or governance system is visibly failing to regulate an environment whose complexity it was designed to control — specifically when a program, project, or organization is experiencing failure modes that keep appearing despite the management system believing it has appropriate oversight in place. Use when the question is not "what went wrong" but "why was the management system structurally unable to catch this before it became a failure."
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: requisite-variety-gap-assessment
+description: |
+  Invoke when a management or governance system is visibly failing to regulate an environment whose complexity it was designed to control — specifically when a program, project, or organization is experiencing failure modes that keep appearing despite the management system believing it has appropriate oversight in place. Use when the question is not "what went wrong" but "why was the management system structurally unable to catch this before it became a failure."
 ---
+# Requisite Variety Gap Assessment
 
 ## R — Reading
 
@@ -69,6 +69,12 @@ The forty-person wall case (c06) is particularly instructive because it looked l
 
 ## Related Skills
 
-- **[governance-variety-lever-selection](../governance-variety-lever-selection/SKILL.md)** — *prerequisite for*: this skill's deficit profile is the required input for lever selection
-- **[governance-model-adequacy-test](../governance-model-adequacy-test/SKILL.md)** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
-- **[cynefin-pm-domain-identification](../cynefin-pm-domain-identification/SKILL.md)** — *compares*: both assess governance fitness; Cynefin classifies by domain logic, Ashby by variety gap
+- **governance-variety-lever-selection** — *prerequisite for*: this skill's deficit profile is the required input for lever selection
+- **governance-model-adequacy-test** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
+- **cynefin-pm-domain-identification** — *compares*: both assess governance fitness; Cynefin classifies by domain logic, Ashby by variety gap
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

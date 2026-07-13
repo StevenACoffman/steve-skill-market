@@ -1,16 +1,14 @@
 ---
-id: grpc-l4-lb-failure-mode
-title: L4 Load Balancer Failure Mode with gRPC
-description: >
+name: grpc-l4-lb-failure-mode
+description: |
   Invoke when diagnosing uneven traffic distribution across gRPC backend pods,
   or when reviewing a gRPC deployment architecture that places services behind
   a TCP/L4 load balancer. Core issue: L4 LBs distribute connections, not RPCs;
   HTTP/2 multiplexing means all gRPC RPCs share one connection, so all go to
   one backend.
-source: "gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)"
 tags: [grpc, load-balancing, http2, l4, multiplexing, kubernetes, failure-mode, production]
-related_skills:
 ---
+# L4 Load Balancer Failure Mode with gRPC
 
 ## L4 Load Balancer Failure Mode with gRPC
 
@@ -189,13 +187,18 @@ when making an initial architecture decision.
 ### Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: candidates/counter-examples.md ce05; candidates/frameworks.md fw04
 - Verified entries: verified.md ce05, fw04
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
 ### Related Skills
 
-- **[grpc-load-balancer-selection](../grpc-load-balancer-selection/SKILL.md)** — compares: grpc-load-balancer-selection is the prescriptive framework for initial architecture decisions; this skill is the diagnostic companion for an existing production problem — use this skill when traffic skew is already observed.
-- **[grpc-observability-three-pillar](../grpc-observability-three-pillar-with-trace-log-bridge/SKILL.md)** — depends on: per-pod Prometheus metrics are required to confirm and measure the L4 LB failure mode; observability must be installed before this diagnostic skill can be applied.
-- **[grpc-security-credential-composition](../grpc-security-credential-composition/SKILL.md)** — informs: moving to a service mesh to fix L4 LB also changes how mTLS is handled — the mesh sidecar absorbs channel credentials, so application-level TLS config must be re-evaluated.
+- **grpc-load-balancer-selection** — compares: grpc-load-balancer-selection is the prescriptive framework for initial architecture decisions; this skill is the diagnostic companion for an existing production problem — use this skill when traffic skew is already observed.
+- **grpc-observability-three-pillar** — depends on: per-pod Prometheus metrics are required to confirm and measure the L4 LB failure mode; observability must be installed before this diagnostic skill can be applied.
+- **grpc-security-credential-composition** — informs: moving to a service mesh to fix L4 LB also changes how mTLS is handled — the mesh sidecar absorbs channel credentials, so application-level TLS config must be re-evaluated.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)

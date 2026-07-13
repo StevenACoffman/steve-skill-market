@@ -1,98 +1,100 @@
 [
   {
-    "id": "tp01",
-    "category": "direct-question",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "I have a plugin interface. Every plugin needs to pass the same multi-step acceptance test suite. Should I write a separate test runner binary that loads each plugin and runs the suite?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "No. Write a TestCase struct and a Test(t *testing.T, tc TestCase) function as a Go library. Plugin authors write a standard Test* function that calls your harness. go test orchestrates everything — -run filters backends, -race detects concurrent access, -cover measures coverage, -timeout kills hung tests. A separate binary would require reimplementing all of this.",
-    "verifies": ["I-why-library", "E-step-3", "E-step-7"]
+    "expected": "Skill activates and says no: write a TestCase struct and a Test(t *testing.T, tc TestCase) function as a Go library, so each plugin author writes a standard Test* function that calls the harness. go test then orchestrates everything — -run filters backends, -race, -cover, -timeout all work for free — whereas a separate binary would have to reimplement all of it.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "category": "direct-question",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "We're building a storage backend abstraction. Contributors write new storage backends. How should contributors write acceptance tests for their backend implementation?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Export a TestCase struct and Test(t *testing.T, tc TestCase) function in testing.go (not _test.go, so it is importable). Contributors write: func TestMyBackend(t *testing.T) { storagelib.Test(t, storagelib.TestCase{Backend: myImpl, Steps: [...]}) }. The harness handles setup, step execution, assertions, and cleanup. Contributors do not need to learn a new tool — they write a standard Go test function.",
-    "verifies": ["E-step-4", "E-step-6", "I-why-library"]
+    "expected": "Skill activates and prescribes exporting a TestCase struct and Test(t *testing.T, tc TestCase) function in testing.go (not _test.go, so it is importable). Contributors write a standard func TestMyBackend(t *testing.T) { storagelib.Test(t, storagelib.TestCase{Backend: myImpl, Steps: [...]}) } — the harness handles setup, step execution, assertions, and cleanup, so no new tool is needed.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "category": "pattern-application",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "I'm writing a custom test harness for a database driver interface. How do I structure the TestCase and TestStep types, and what should the Test() function do?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Define TestCase with fields: PreCheck func() (to t.Skip if env not configured), Driver YourDriverInterface, Steps []TestStep, Cleanup func(). Define TestStep with Description string and Check func(result YourResultType) error. In Test(t, tc): call t.Helper(), call tc.PreCheck() if set, defer tc.Cleanup(), then range over tc.Steps — execute each step, call t.Fatalf on unexpected errors, call step.Check and t.Fatalf if it returns an error.",
-    "verifies": ["E-step-1", "E-step-2", "E-step-3"]
+    "expected": "Skill activates and prescribes: TestCase with PreCheck func(), the Driver interface, Steps []TestStep, and Cleanup func(); TestStep with Description and a Check func(result) error. Test(t, tc) calls t.Helper(), runs tc.PreCheck() if set, defers tc.Cleanup(), then ranges the steps executing each, calling t.Fatalf on unexpected errors and when a step's Check returns an error.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "category": "gating",
+    "id": 4,
+    "type": "should_trigger",
     "prompt": "Our acceptance tests hit real cloud infrastructure. They take 10 minutes each and require environment variables with real credentials. How do I prevent them from running on every go test ./...?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Use a PreCheck function in the TestCase: check for required env vars and call t.Skip if they are absent. Example: PreCheck: func() { if os.Getenv(\"CLOUD_API_KEY\") == \"\" { t.Skip(\"CLOUD_API_KEY not set; skipping acceptance test\") } }. Alternatively, use a build tag (//go:build acceptance) on the test file. Both approaches let unit tests run normally under go test ./... while acceptance tests run only when the environment is configured.",
-    "verifies": ["E-step-5", "I-precheck-gates"]
+    "expected": "Skill activates and prescribes a PreCheck gate in the TestCase: check for required env vars and call t.Skip when absent (e.g. skip if CLOUD_API_KEY is empty). Alternatively use a //go:build acceptance build tag on the file. Either way unit tests still run under go test ./..., while acceptance tests run only when the environment is configured.",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "category": "code-review",
+    "id": 5,
+    "type": "should_trigger",
     "prompt": "We wrote acceptance tests for our plugin system. Here is the structure:\n\nfunc TestPluginA(t *testing.T) {\n    p := NewPluginA()\n    if err := p.Configure(testConfig); err != nil {\n        t.Fatalf(\"configure: %s\", err)\n    }\n    role, err := p.CreateRole(\"admin\")\n    if err != nil {\n        t.Fatalf(\"create role: %s\", err)\n    }\n    creds, err := p.ReadCredentials(role)\n    if err != nil {\n        t.Fatalf(\"read creds: %s\", err)\n    }\n    if creds.Token == \"\" {\n        t.Fatal(\"empty token\")\n    }\n}\n\nfunc TestPluginB(t *testing.T) {\n    p := NewPluginB()\n    // identical structure with PluginB calls\n}\n\nThis works, but we have 8 plugins and the tests are getting hard to maintain. What is the right refactoring?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Extract the repeated structure into a custom harness. Define TestCase{Plugin PluginInterface, Steps []TestStep} and Test(t *testing.T, tc TestCase). Each TestStep holds the operation type and a Check func. The three steps (configure, create role, read credentials) become TestCase.Steps. Each of the 8 plugin tests becomes a 10-line TestCase assembly that calls the harness. The harness handles setup/teardown, step ordering, and t.Fatalf on failure. The behavioral contract lives once; plugin authors only supply what varies.",
-    "verifies": ["I-steps-replace-table", "E-step-1", "E-step-2", "E-step-3", "E-step-6"]
+    "expected": "Skill activates and prescribes extracting the repeated structure into a custom harness: define TestCase{Plugin, Steps []TestStep} and Test(t, tc), with the three operations (configure, create role, read credentials) becoming TestCase.Steps. Each of the 8 plugin tests collapses to a ~10-line TestCase assembly calling the harness; the behavioral contract lives once and authors supply only what varies.",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "category": "scope-boundary",
+    "id": 6,
+    "type": "edge_case",
     "prompt": "I have a single database implementation. I want to write acceptance tests with multiple steps: create table, insert rows, query, verify. Should I use a custom harness for this?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "No. For a single implementation without other plugins, a custom harness is overkill. Use t.Run subtests to name the steps: t.Run('create table', func(t *testing.T) {...}); t.Run('insert rows', func(t *testing.T) {...}). t.Run gives you named steps, per-step failure isolation, and -run filtering without the abstraction cost of a TestCase struct. Extract a custom harness only when you have multiple plugin implementations that must all pass the same scenario structure.",
-    "verifies": ["B-overkill-single", "B-t-run-alternative"]
+    "expected": "Skill activates and says no: for a single implementation a custom harness is overkill. Use t.Run subtests to name the steps (create table, insert rows, query, verify), which gives named steps, per-step failure isolation, and -run filtering without the TestCase abstraction. Extract a harness only once multiple plugin implementations must all pass the same scenario structure.",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "category": "go-test-flags",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "How do I run the acceptance test for just one backend in a Vault-style plugin system, and how do I make sure the race detector is active during the test?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Because the harness runs inside go test, standard flags work unchanged. To run one backend: go test -run TestBackend_AWS ./backend/aws/. To enable the race detector: go test -race -run TestBackend_AWS ./backend/aws/. Both flags work because the acceptance test is a standard Test* function — go test treats it identically to any unit test. There is nothing special to configure in the harness.",
-    "verifies": ["E-step-7", "I-why-library"]
+    "expected": "Skill activates and answers that because the harness runs inside go test, standard flags work unchanged: go test -run TestBackend_AWS ./backend/aws/ runs one backend, and adding -race enables the race detector. The acceptance test is a standard Test* function, so go test treats it like any unit test — nothing special to configure in the harness.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "category": "harness-location",
+    "id": 8,
+    "type": "should_trigger",
     "prompt": "I wrote my TestCase struct and Test() harness function in a _test.go file. Contributors from other packages are getting import errors when they try to use it. What is wrong?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Files ending in _test.go are only compiled during go test and are not importable by other packages. Move the TestCase struct, TestStep struct, and Test() function to a regular .go file — conventionally named testing.go. This makes them part of the package's public API and importable by any external package. See also the testing-go-public-test-api skill for the broader pattern of exporting test infrastructure.",
-    "verifies": ["E-step-4", "B-confusion-with-testing-go"]
+    "expected": "Skill activates and explains that _test.go files are only compiled during go test and are not importable by other packages. Move the TestCase struct, TestStep struct, and Test() function to a regular .go file (conventionally testing.go) so they become part of the package's public API, importable externally. It may reference the testing-go-public-test-api pattern.",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "category": "terraform-pattern",
+    "id": 9,
+    "type": "should_trigger",
     "prompt": "How does Terraform test 50+ cloud providers nightly against real infrastructure while keeping unit tests fast and using just go test?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Terraform uses a custom harness (resource.TestCase / resource.Test) that runs inside go test. Each provider's acceptance tests call resource.Test with a TestCase containing Terraform HCL config, a list of Steps (each step applies a config and runs Check functions on the resulting state), and a CheckDestroy function. A PreCheck function (testAccPreCheck) gates acceptance runs by checking required env vars — unit tests run normally, acceptance tests run only when credentials are set. Nightly CI sets the credentials and runs go test -run TestAcc across all provider packages.",
-    "verifies": ["A1-case2", "E-step-5", "I-why-library"]
+    "expected": "Skill activates and explains Terraform uses a custom harness (resource.TestCase / resource.Test) that runs inside go test: each provider's test calls resource.Test with HCL config, Steps that apply a config and run Check functions on the resulting state, and a CheckDestroy. A PreCheck (testAccPreCheck) gates acceptance runs on env vars so unit tests stay fast, and nightly CI sets credentials and runs go test -run TestAcc across all provider packages.",
+    "notes": "source id: tp09"
   },
   {
-    "id": "tp10",
-    "category": "anti-pattern-detection",
+    "id": 10,
+    "type": "should_trigger",
     "prompt": "Our team is frustrated that go test doesn't support our complex plugin system. They want to write a Python script that discovers plugin binaries, runs each one against a scenario definition YAML file, and reports results. Should we do this?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "No. The frustration is a design problem, not a go test limitation. A Python script with YAML scenarios would lose: -run filtering, -race detection, -cover instrumentation, -timeout enforcement, standard output formatting, IDE integration, and the Go test cache. Write a TestCase struct and Test(t *testing.T, tc TestCase) harness in Go instead. Plugin authors write standard Test* functions. All the go test infrastructure they already know works unchanged. The scenario definition is a Go struct, not a YAML file.",
-    "verifies": ["I-why-library", "E-step-7", "B-overkill-single"]
+    "expected": "Skill activates and says no: this is a design problem, not a go test limitation. A Python/YAML runner loses -run filtering, -race, -cover, -timeout, standard output, IDE integration, and the test cache. Instead write a TestCase struct and Test(t, tc) harness in Go where authors write standard Test* functions and the scenario is a Go struct, not YAML — keeping all the go test infrastructure they already use.",
+    "notes": "source id: tp10"
   },
   {
-    "id": "tp11",
-    "category": "modern-alternatives",
+    "id": 11,
+    "type": "edge_case",
     "prompt": "I was about to write a custom test harness for a CLI tool's acceptance tests. A colleague mentioned testscript. When should I use testscript vs a custom TestCase harness?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "testscript is a specialized harness for CLI acceptance testing where scenarios are expressed as .txtar script files (command invocations + expected output). It is well-suited when the plugin interface IS the CLI itself — contributors write .txtar scripts, not Go code. Use a custom TestCase harness instead when: (a) the plugin interface is a Go interface (not a binary), (b) steps need to share Go objects between them (e.g., a role created in step 2 is passed to step 5), or (c) contributors are expected to write Go test code. Both run inside go test; the choice is about whether the scenario definition language is .txtar or Go struct literals.",
-    "verifies": ["B-modern-alternatives", "I-steps-replace-table"]
+    "expected": "Skill activates and distinguishes the two: testscript suits CLI acceptance testing where scenarios are .txtar script files (commands + expected output) and the interface IS the CLI. Use a custom TestCase harness instead when the plugin interface is a Go interface, when steps must share Go objects across them, or when contributors write Go test code. Both run inside go test; the choice is whether the scenario language is .txtar or Go struct literals.",
+    "notes": "source id: tp11"
   },
   {
-    "id": "tp12",
-    "category": "stateful-steps",
+    "id": 12,
+    "type": "should_trigger",
     "prompt": "My acceptance test scenario is: (1) create a user, (2) create an API token for that user, (3) use the token to call an authenticated endpoint, (4) revoke the token, (5) verify the endpoint now returns 401. Each step depends on state from the previous step. Can go test handle this, and how?",
-    "expected_skill_activation": true,
-    "expected_answer_summary": "Yes. Define TestStep.Check as func(state *TestState) error and thread state through the harness: each step's Check function can write results into TestState (the created user ID, the token string) and later steps read from it. The harness passes a single *TestState pointer through all Check calls in order. This stateful threading is exactly what the Steps []TestStep design supports — and why table-driven tests (which are independent) are the wrong pattern for this scenario.",
-    "verifies": ["I-steps-replace-table", "E-step-2", "E-step-3"]
+    "expected": "Skill activates and answers yes: define TestStep.Check as func(state *TestState) error and thread a single *TestState pointer through the harness so each step writes results (user ID, token) that later steps read. This ordered stateful threading is exactly what Steps []TestStep supports — and why table-driven tests (whose cases are independent) are the wrong pattern here.",
+    "notes": "source id: tp12"
+  },
+  {
+    "id": 13,
+    "type": "should_not_trigger",
+    "prompt": "How do I write a table-driven unit test for a single pure function like a string formatter in Go?",
+    "expected": "skill should not activate — this is ordinary table-driven unit testing of one function, not a custom multi-backend acceptance harness orchestrated within go test",
+    "notes": "decoy: plain unit testing, no pluggable-backend harness"
+  },
+  {
+    "id": 14,
+    "type": "should_not_trigger",
+    "prompt": "What's the idiomatic way to mock an outbound HTTP client in a Go unit test?",
+    "expected": "skill should not activate — this is about mocking a single dependency in a unit test, not orchestrating multiple plugin backends through a shared TestCase harness",
+    "notes": "decoy: dependency mocking, outside custom-framework scope"
   }
 ]

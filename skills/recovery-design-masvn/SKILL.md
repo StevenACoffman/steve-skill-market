@@ -16,14 +16,7 @@ description: |
   and enforces it on initialization. Also do not apply when availability requirements make
   any form of rollback prevention unacceptable — the design tension is real and MASVN is
   a middle path, not a universal solution.
-
-  Trigger phrases: "roll back to vulnerable version," "security patch has a bug," "attacker
-  forcing rollback," "firmware downgrade attack," "can't roll back past the security fix,"
-  "rollback vs. security tradeoff."
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: Chapter 9 — Design for Recovery
 tags: [recovery-design, MASVN, rollback, security-versioning, deny-lists, key-rotation, firmware]
-related_skills: []
 ---
 
 # Recovery Design with MASVN — Preventing Rollback Past Security Boundaries
@@ -241,3 +234,9 @@ ______________________________________________________________________
 ## Audit Information
 
 - V1 ✓ / V2 ✓ / V3 ✓ — 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 9 — Design for Recovery

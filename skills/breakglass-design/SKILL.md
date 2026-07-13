@@ -16,14 +16,7 @@ description: |
   meaningful concern. You are designing the normal access path (not the emergency bypass).
   Breakglass already exists and is properly designed — the question is about the normal
   access model.
-
-  KEY TRIGGER: "What if we get locked out?" is the trigger. The answer to this question
-  is not to loosen the normal control — it is to design a proper breakglass so the normal
-  control can be as strict as needed.
-source_book: "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google)
-source_chapter: Chapter 5 — Design for Least Privilege
 tags: [breakglass, least-privilege, access-control, audit, emergency-access, zero-trust]
-related_skills: []
 ---
 
 # Breakglass Must Exist for Every Strict Access Control
@@ -249,3 +242,9 @@ ______________________________________________________________________
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Source IDs: p04
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google) — Chapter 5 — Design for Least Privilege

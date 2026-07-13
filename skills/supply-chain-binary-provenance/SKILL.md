@@ -11,17 +11,7 @@ description: |
   system cryptographically verify that this artifact was produced by the verified pipeline
   from reviewed source?" Binary provenance is the mechanism that closes the gap between
   human approval and machine verification.
-
-  Do NOT apply to organizations where insider deployment risk is low and build
-  infrastructure is simple — the operational complexity of full binary provenance with
-  verifiable builds is substantial and appropriate for large or high-security organizations.
-
-  Trigger phrases: "developer token compromise," "malicious branch deployment," "how do we
-  verify the binary," "supply chain attack," "build pipeline integrity," "artifact signing."
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: Chapter 14 — Deploying Code
 tags: [supply-chain, binary-provenance, build-integrity, deployment-policy, verifiable-builds, code-signing, insider-risk]
-related_skills: []
 ---
 
 # Supply Chain Integrity via Binary Provenance and Provenance-Based Deployment Policies
@@ -221,3 +211,9 @@ ______________________________________________________________________
 ## Audit Information
 
 - V1 ✓ / V2 ✓ / V3 ✓ — 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 14 — Deploying Code

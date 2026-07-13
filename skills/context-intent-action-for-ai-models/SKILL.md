@@ -15,26 +15,8 @@ description: |
   - "How do we prevent our AI system from doing [dangerous thing]?"
   - Any AI/LLM integration with an existing data platform
   - Any agentic system design where the agent reads data and then acts
-
-  Do NOT use this skill when:
-  - The consumer is human-only: human analysts apply their own judgment about
-    what to do with query results; Intent and Action layers add no value here
-  - The tool is read-only reporting with no automated action path (a dashboard
-    a human reads has no action layer concern)
-  - The question is about which vocabulary level to build (controlled vocabulary,
-    taxonomy, ontology) — use semantic-vocabulary-ladder for that
-  - The question is about what metadata layers tables must carry — use
-    three-layer-metadata-stack as the foundation first
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 11 — Context, Intent,
-  and Action: The Semantic Foundation.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 11 — Context, Intent, and Action: The Semantic Foundation
 tags: [AI-agents, context-engineering, intent, action-aware-modeling, LLM,
        semantic-grounding, agentic-AI, data-model-safety]
-related_skills:
-  - slug: three-layer-metadata-stack
-    relation: depends-on
 ---
 
 # Context-Intent-Action Architecture for AI-Integrated Data Models
@@ -436,7 +418,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`three-layer-metadata-stack`](../three-layer-metadata-stack/SKILL.md): CIA's Context layer draws from the semantic metadata layer, and its Intent and Action layers annotate the business and semantic layers — the three-layer stack must be present and correct before CIA extensions are meaningful.
+- **depends-on** `three-layer-metadata-stack`: CIA's Context layer draws from the semantic metadata layer, and its Intent and Action layers annotate the business and semantic layers — the three-layer stack must be present and correct before CIA extensions are meaningful.
 
 ______________________________________________________________________
 
@@ -446,3 +428,9 @@ ______________________________________________________________________
 - **Source IDs**: f16 (framework extractor)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 11 — Context, Intent, and Action: The Semantic Foundation

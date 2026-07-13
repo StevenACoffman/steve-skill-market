@@ -16,14 +16,7 @@ description: |
   WHEN NOT TO CALL: The access model is already time-bounded and tooling-enforced and
   the question is about a specific access decision. You are designing authentication (who
   can prove identity) rather than authorization (what an authenticated identity can do).
-
-  KEY TRIGGER: "We trust our engineers not to abuse their access" or "engineers have broad
-  access to production for operational reasons" or "we'll add access controls after we
-  scale." These are signals that least privilege is honor-enforced, not tooling-enforced.
-source_book: "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google)
-source_chapter: Chapter 5 — Design for Least Privilege
 tags: [least-privilege, access-control, breakglass, time-bounded, tooling-enforced, insider-risk]
-related_skills: []
 ---
 
 # Least Privilege Enforced by Tooling, Time-Bounded, and Context-Aware
@@ -248,3 +241,9 @@ ______________________________________________________________________
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Source IDs: f08, p05, p07
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google) — Chapter 5 — Design for Least Privilege

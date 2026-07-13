@@ -2,13 +2,7 @@
 name: matryer-maker-func
 description: |
   Apply when a developer needs to wire up HTTP handler dependencies and is choosing between methods on a server struct versus direct parameter injection. Trigger phrases include: "handler needs a db and logger", "where do I put dependencies for handlers", "should I use a server struct", "handler function signature". Use maker functions that return http.Handler with explicit dependency parameters; the function body holds per-handler setup, the returned closure handles each request. DO NOT INVOKE when the question is about middleware construction, global application wiring (NewServer), or request-scoped data (use context for that).
-source_book: "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024)
-source_chapter: Maker funcs return the handler
 tags: [go, http-services, handlers, closures, dependency-injection]
-related_skills:
-  - matryer-run-function
-  - matryer-middleware-constructor
-  - matryer-decode-valid
 ---
 
 # Maker Funcs Return the Handler
@@ -224,3 +218,9 @@ The dependencies are explicit at the call site. The `stmt` is prepared once at s
 - **matryer-run-function** — pairs-with: makers are wired in `addRoutes`, which is called during `run()`; the entry-point pattern and the handler pattern compose at the server-setup boundary.
 - **matryer-middleware-constructor** — pairs-with: both are factory functions registered in `routes.go`; makers produce handlers, constructors produce middleware adapters, and they sit side by side in `addRoutes`.
 - **matryer-decode-valid** — pairs-with: `decodeValid` is called inside maker function bodies to handle JSON decoding and validation in a single step.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024) — Maker funcs return the handler

@@ -13,18 +13,7 @@ description: |
   "how should I wrap errors in Go?", "what error codes should I use?", "how do I build a
   stack trace without using runtime stack dumps?", "my HTTP handler doesn't know what
   status code to return from a service error".
-
-  Not suitable for: questions about the errors package or fmt.Errorf basics (standard
-  Go error wrapping); questions about error logging frameworks; performance profiling;
-  questions about panics vs. errors.
-
-  Key trigger: the user needs to design an error type that serves multiple different
-  consumers (application code, end users, operators/logs), or they're hitting the wall
-  where one error type can't serve all consumers well.
-source_book: "Go Beyond" Ben B. Johnson
-source_chapter: failure-is-your-domain.md
 tags: [error-handling, domain-design, go, three-consumer-roles, error-codes]
-related_skills: []
 ---
 
 # Three-Consumer-Role Error Design
@@ -183,8 +172,8 @@ ______________________________________________________________________
 
 ## Related Skills (Stage 3 Filling)
 
-- depends-on: [go-beyond-four-tenet-layout](../go-beyond-four-tenet-layout/SKILL.md) — Error type placement in root package follows tenet 1
-- composes-with: [go-beyond-service-transaction-boundary](../go-beyond-service-transaction-boundary/SKILL.md) — service methods both own transactions and translate errors at the boundary
+- depends-on: go-beyond-four-tenet-layout — Error type placement in root package follows tenet 1
+- composes-with: go-beyond-service-transaction-boundary — service methods both own transactions and translate errors at the boundary
 
 ______________________________________________________________________
 
@@ -193,3 +182,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: See test-prompts.json
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Beyond" Ben B. Johnson

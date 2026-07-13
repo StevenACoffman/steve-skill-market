@@ -10,15 +10,8 @@ description: |
   types with critical interface contracts where no other static conversion already exists in the
   code. If the type is already passed as the interface somewhere (e.g., a function parameter),
   the compiler already checks it — adding a guard is redundant. For unexported types used
-  internally, interface conformance is usually obvious from usage. The guard is most valuable
-  for library types, plugin implementations, and any exported struct where the interface contract
-  is part of the public API but no direct assignment exists in normal code paths.
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: interface_guards
+  internally, interface conformance is usually obvious from usage.
 tags: [go, interfaces, compile-time-safety, type-system]
-related_skills:
-  - slug: consumer-side-interface-segregation
-    relation: composes-with
 ---
 
 # Interface Guards (Compile-Time Interface Conformity Checks)
@@ -212,7 +205,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`consumer-side-interface-segregation`](../consumer-side-interface-segregation/SKILL.md): After defining a narrow consumer-side interface in the business package and implementing it in a gateway package, an interface guard (`var _ paymentGateway = (*StripeGateway)(nil)`) placed in the gateway package verifies at compile time that the implementation still satisfies the interface. This is most valuable when the implementing type lives in a different package with no direct assignment in normal code paths — exactly the gateway pattern scenario.
+- **composes-with** `consumer-side-interface-segregation`: After defining a narrow consumer-side interface in the business package and implementing it in a gateway package, an interface guard (`var _ paymentGateway = (*StripeGateway)(nil)`) placed in the gateway package verifies at compile time that the implementation still satisfies the interface. This is most valuable when the implementing type lives in a different package with no direct assignment in normal code paths — exactly the gateway pattern scenario.
 
 ______________________________________________________________________
 
@@ -221,3 +214,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — interface_guards

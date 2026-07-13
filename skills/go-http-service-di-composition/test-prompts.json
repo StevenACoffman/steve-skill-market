@@ -1,103 +1,93 @@
-{
-  "skill_id": "go-http-service-di-composition",
-  "skill_type": "merged-skill",
-  "source_skills": [
-    "lets-go/letsgo-application-struct-di",
-    "matryer-http-services/matryer-run-function"
-  ],
-  "tests": [
-    {
-      "id": "st-001",
-      "type": "should_trigger",
-      "prompt": "My Go HTTP service reads os.Getenv('DATABASE_URL') and calls flag.Parse() directly inside main(). Tests that change environment variables conflict with each other when run in parallel. How do I fix this without serializing the test suite?",
-      "expected_behavior": "Extract a run() function accepting getenv func(string) string and args []string. Replace os.Getenv calls with getenv() calls. Replace flag.Parse() with flag.NewFlagSet inside run(). Tests pass a closure per test for getenv instead of using t.SetEnv — no process environment mutation, t.Parallel() works everywhere.",
-      "expected_not": "Should not recommend t.Setenv as the primary fix or suggest serializing tests with TestMain"
-    },
-    {
-      "id": "st-002",
-      "type": "should_trigger",
-      "prompt": "I have a Go HTTP service where all handlers are package-level functions that read from a package-level db variable. I want to unit test individual handlers with mock dependencies but can't inject them. What's the idiomatic way to restructure this?",
-      "expected_behavior": "Define an application struct holding db and other shared dependencies as fields. Convert handler functions to methods on *application. Provide newTestApplication(t) that returns an *application with mock fields. Package-level db disappears — no global state, no data races, handler tests inject mocks per test.",
-      "expected_not": "Should not suggest monkey-patching the global variable or using sync.Mutex to serialize access to the global"
-    },
-    {
-      "id": "st-003",
-      "type": "should_trigger",
-      "prompt": "When I run go test ./... multiple tests panic with 'flag redefined: addr'. The addr flag is registered in main() and tests that call the service startup code hit the global flag.CommandLine twice. How do I fix this?",
-      "expected_behavior": "The root cause is flag.Parse() using the global flag.CommandLine. Fix by extracting run() and using flag.NewFlagSet(args[0], flag.ContinueOnError) inside it — each invocation gets its own flag set, no shared global state, no panic on second parse.",
-      "expected_not": "Should not recommend flag.CommandLine.Init() hacks or skipping flag parsing in tests"
-    },
-    {
-      "id": "st-004",
-      "type": "should_trigger",
-      "prompt": "I'm starting a new Go HTTP service from scratch with a database connection, a template cache, a session manager, and a form decoder. How should I wire all these dependencies to my route handlers without using globals?",
-      "expected_behavior": "Create an application struct with fields for each dependency. Inside run(), construct dependencies in order, assemble the application struct, and pass app.routes() to http.Server. Write handlers as methods on *application. Show the complete two-layer composition: run() as entrypoint layer and application struct as handler layer.",
-      "expected_not": "Should not recommend a DI framework or global init() functions for dependency setup"
-    },
-    {
-      "id": "st-005",
-      "type": "should_trigger",
-      "prompt": "I want to write an end-to-end test that starts my Go HTTP server, sends requests against it, and verifies responses — including flag and environment variable parsing — but without mutating the real process environment or leaving a server running after the test.",
-      "expected_behavior": "Call run() in a goroutine from the test. Pass context.WithCancel and t.Cleanup(cancel) for server lifetime. Pass a getenv closure with controlled values. Use flag args via the args []string parameter. Use localhost:0 for an OS-assigned port. The test controls the complete startup environment without process-level mutation.",
-      "expected_not": "Should not suggest httptest.NewServer alone (bypasses run() startup logic) or TestMain with os.Setenv"
-    },
-    {
-      "id": "snt-001",
-      "type": "should_not_trigger",
-      "prompt": "I want to use samber/do for dependency injection in my Go service to get automatic lifecycle management and lazy initialization of dependencies. How do I set it up?",
-      "expected_behavior": "Answer using the samber/do DI container API — registering providers, resolving dependencies, and managing scope. This is a DI framework question, not the manual run() + application struct pattern.",
-      "expected_not": "Should not invoke go-http-service-di-composition"
-    },
-    {
-      "id": "snt-002",
-      "type": "should_not_trigger",
-      "prompt": "How do I implement graceful shutdown in my Go HTTP server so it drains in-flight requests before exiting when it receives SIGTERM?",
-      "expected_behavior": "Answer using http.Server.Shutdown() with a context deadline and signal.NotifyContext. The skill notes graceful shutdown is an http.Server concern, not a struct concern, and explicitly marks it as out of scope.",
-      "expected_not": "Should not invoke go-http-service-di-composition as the primary skill"
-    },
-    {
-      "id": "snt-003",
-      "type": "should_not_trigger",
-      "prompt": "My Go service needs to connect to three different databases at startup. How do I manage the connection pool configuration and health checks for each?",
-      "expected_behavior": "Answer focusing on pgxpool configuration, health check endpoints, and connection management — database driver concerns. While the application struct would hold the pools, the question is about connection pool tuning, not the DI wiring pattern.",
-      "expected_not": "Should not invoke go-http-service-di-composition as the primary skill"
-    },
-    {
-      "id": "ec-001",
-      "type": "edge_case",
-      "prompt": "My run() function now has 9 parameters including logger, db, cache, config, mailer, and three different API clients. It's getting unwieldy. Should I switch to a struct-of-dependencies parameter for run() itself?",
-      "expected_behavior": "Acknowledge the B section signature-drift tradeoff explicitly: Ryer acknowledges this but does not prescribe a limit. A struct-of-dependencies for run()'s parameters is a valid alternative for large parameter lists. However, the key discipline is preserved regardless of form: run() must still not use globals, must still accept getenv as a parameter (not os.Getenv directly), and must still assemble the application struct internally. Present both options with the tradeoff.",
-      "decision_axis": "The B section (Ryer) signature-drift failure mode: run() parameter list growth. The decision conditional is whether caller-visible injection clarity (long explicit list) outweighs call-site readability (grouped struct)."
-    },
-    {
-      "id": "ec-002",
-      "type": "edge_case",
-      "prompt": "I extracted run() from main() and moved signal.NotifyContext into main() since 'that's where OS signals belong'. The service starts and stops correctly. What could go wrong?",
-      "expected_behavior": "Identify the B section signal.NotifyContext placement error: signal.NotifyContext and its defer cancel() belong inside run(). In main(), defer cancel() is never actually called because main() exits as soon as run() returns — a resource leak. The signal context's cancel function must be deferred inside run() to be executed on run() completion, not in main() which has no defer scope that survives the run() call.",
-      "decision_axis": "The B section (Ryer) signal.NotifyContext placement failure: cancel() in main() after run() returns never executes. The defer must be inside the function where the work happens."
-    },
-    {
-      "id": "ec-003",
-      "type": "edge_case",
-      "prompt": "My run() passes getenv correctly, but one of my imported packages calls os.Getenv('API_KEY') in its init() function. The parallel tests that use run() are still flaky because init() ignores my getenv injection. How do I handle this?",
-      "expected_behavior": "This is the B section (Ryer) getenv-stub limitation: getenv injection only reaches run() and its callees. Package-level init() functions that call os.Getenv directly cannot be reached. Solutions: refactor the imported package to accept the API key as a constructor parameter; or set the environment variable once before the test process starts (TestMain) since init() runs once. Accept that this is a structural limitation of the pattern, not a fixable injection problem.",
-      "decision_axis": "The B section boundary: getenv injection cannot reach init() functions. The pattern assumes all environment reads happen inside run() or its callees."
-    },
-    {
-      "id": "pm-001",
-      "type": "prefer_merged_over_source",
-      "prompt": "I want to write two kinds of tests for my Go HTTP service: one that exercises individual handler logic with mock dependencies, and another that exercises the full startup including flag parsing and environment variable loading with t.Parallel(). Can I have both?",
-      "merged_advantage": "The merged skill explicitly provides both testing strategies as complementary, not alternatives: newTestApplication(t) for handler-level mock injection (Edwards layer), and run(ctx, args, getenv, ...) in a goroutine with context cancellation for startup-level testing (Ryer layer). The synthesis explicitly calls out that 'applying only one layer produces either untestable startup logic or no coherent handler dependency model'.",
-      "source1_gap": "lets-go/letsgo-application-struct-di (Edwards) provides newTestApplication(t) for handler tests but leaves startup logic in main() — end-to-end tests calling run() are structurally blocked because main() cannot be tested.",
-      "source2_gap": "matryer-http-services/matryer-run-function (Ryer) provides run() for startup tests but does not describe a handler-layer dependency injection model — without the application struct, developer following only Ryer would accumulate dependencies as closures or locals in run(), making handler-level mock injection ad hoc."
-    },
-    {
-      "id": "pm-002",
-      "type": "prefer_merged_over_source",
-      "prompt": "My team is retrofitting a Go HTTP service that currently uses package-level globals (db, logger, config) and a monolithic main(). We want to add t.Parallel() to the test suite and stop tests from conflicting. What's the migration path?",
-      "merged_advantage": "The merged skill provides a complete sequential migration: Step 1 extract run() (fixing flag.CommandLine and os.Getenv conflicts — Ryer's contribution), Steps 2-5 build the application struct and convert handlers to methods (fixing global db/logger — Edwards's contribution), Steps 6-8 write both newTestApplication(t) and run()-based tests. The synthesis provides the correct ordering: run() extraction must come first because it creates the composition root that the application struct lives inside.",
-      "source1_gap": "Edwards (Let's Go) gives the application struct pattern but assumes startup logic is already testable — it does not address how to fix flag.CommandLine conflicts or t.SetEnv races that come from main() still doing startup work.",
-      "source2_gap": "Ryer gives the run() pattern but without the application struct, the handler global state problem (package-level db) is not resolved — run() is now testable but handler tests still hit globals."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My Go HTTP service reads os.Getenv('DATABASE_URL') and calls flag.Parse() directly inside main(). Tests that change environment variables conflict with each other when run in parallel. How do I fix this without serializing the test suite?",
+    "expected": "Extract a run() function accepting getenv func(string) string and args []string. Replace os.Getenv calls with getenv() calls. Replace flag.Parse() with flag.NewFlagSet inside run(). Tests pass a closure per test for getenv instead of using t.SetEnv — no process environment mutation, t.Parallel() works everywhere.",
+    "notes": "source id: st-001"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I have a Go HTTP service where all handlers are package-level functions that read from a package-level db variable. I want to unit test individual handlers with mock dependencies but can't inject them. What's the idiomatic way to restructure this?",
+    "expected": "Define an application struct holding db and other shared dependencies as fields. Convert handler functions to methods on *application. Provide newTestApplication(t) that returns an *application with mock fields. Package-level db disappears — no global state, no data races, handler tests inject mocks per test.",
+    "notes": "source id: st-002"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "When I run go test ./... multiple tests panic with 'flag redefined: addr'. The addr flag is registered in main() and tests that call the service startup code hit the global flag.CommandLine twice. How do I fix this?",
+    "expected": "The root cause is flag.Parse() using the global flag.CommandLine. Fix by extracting run() and using flag.NewFlagSet(args[0], flag.ContinueOnError) inside it — each invocation gets its own flag set, no shared global state, no panic on second parse.",
+    "notes": "source id: st-003"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm starting a new Go HTTP service from scratch with a database connection, a template cache, a session manager, and a form decoder. How should I wire all these dependencies to my route handlers without using globals?",
+    "expected": "Create an application struct with fields for each dependency. Inside run(), construct dependencies in order, assemble the application struct, and pass app.routes() to http.Server. Write handlers as methods on *application. Show the complete two-layer composition: run() as entrypoint layer and application struct as handler layer.",
+    "notes": "source id: st-004"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I want to write an end-to-end test that starts my Go HTTP server, sends requests against it, and verifies responses — including flag and environment variable parsing — but without mutating the real process environment or leaving a server running after the test.",
+    "expected": "Call run() in a goroutine from the test. Pass context.WithCancel and t.Cleanup(cancel) for server lifetime. Pass a getenv closure with controlled values. Use flag args via the args []string parameter. Use localhost:0 for an OS-assigned port. The test controls the complete startup environment without process-level mutation.",
+    "notes": "source id: st-005"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I want to use samber/do for dependency injection in my Go service to get automatic lifecycle management and lazy initialization of dependencies. How do I set it up?",
+    "expected": "Answer using the samber/do DI container API — registering providers, resolving dependencies, and managing scope. This is a DI framework question, not the manual run() + application struct pattern.",
+    "notes": "source id: snt-001"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement graceful shutdown in my Go HTTP server so it drains in-flight requests before exiting when it receives SIGTERM?",
+    "expected": "Answer using http.Server.Shutdown() with a context deadline and signal.NotifyContext. The skill notes graceful shutdown is an http.Server concern, not a struct concern, and explicitly marks it as out of scope.",
+    "notes": "source id: snt-002"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "My Go service needs to connect to three different databases at startup. How do I manage the connection pool configuration and health checks for each?",
+    "expected": "Answer focusing on pgxpool configuration, health check endpoints, and connection management — database driver concerns. While the application struct would hold the pools, the question is about connection pool tuning, not the DI wiring pattern.",
+    "notes": "source id: snt-003"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My run() function now has 9 parameters including logger, db, cache, config, mailer, and three different API clients. It's getting unwieldy. Should I switch to a struct-of-dependencies parameter for run() itself?",
+    "expected": "Acknowledge the B section signature-drift tradeoff explicitly: Ryer acknowledges this but does not prescribe a limit. A struct-of-dependencies for run()'s parameters is a valid alternative for large parameter lists. However, the key discipline is preserved regardless of form: run() must still not use globals, must still accept getenv as a parameter (not os.Getenv directly), and must still assemble the application struct internally. Present both options with the tradeoff.",
+    "notes": "source id: ec-001"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I extracted run() from main() and moved signal.NotifyContext into main() since 'that's where OS signals belong'. The service starts and stops correctly. What could go wrong?",
+    "expected": "Identify the B section signal.NotifyContext placement error: signal.NotifyContext and its defer cancel() belong inside run(). In main(), defer cancel() is never actually called because main() exits as soon as run() returns — a resource leak. The signal context's cancel function must be deferred inside run() to be executed on run() completion, not in main() which has no defer scope that survives the run() call.",
+    "notes": "source id: ec-002"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "My run() passes getenv correctly, but one of my imported packages calls os.Getenv('API_KEY') in its init() function. The parallel tests that use run() are still flaky because init() ignores my getenv injection. How do I handle this?",
+    "expected": "This is the B section (Ryer) getenv-stub limitation: getenv injection only reaches run() and its callees. Package-level init() functions that call os.Getenv directly cannot be reached. Solutions: refactor the imported package to accept the API key as a constructor parameter; or set the environment variable once before the test process starts (TestMain) since init() runs once. Accept that this is a structural limitation of the pattern, not a fixable injection problem.",
+    "notes": "source id: ec-003"
+  },
+  {
+    "id": 12,
+    "type": "prefer_merged_over_source",
+    "prompt": "I want to write two kinds of tests for my Go HTTP service: one that exercises individual handler logic with mock dependencies, and another that exercises the full startup including flag parsing and environment variable loading with t.Parallel(). Can I have both?",
+    "expected": "Skill presents both testing strategies as complementary layers, not alternatives: newTestApplication(t) that returns an *application with mock fields for handler-level testing (Edwards layer), and run(ctx, args, getenv, ...) launched in a goroutine with context cancellation plus a getenv closure for startup-level end-to-end testing under t.Parallel() (Ryer layer), noting that applying only one layer leaves either startup untestable or the handler dependency model incoherent.",
+    "notes": "source id: pm-001"
+  },
+  {
+    "id": 13,
+    "type": "prefer_merged_over_source",
+    "prompt": "My team is retrofitting a Go HTTP service that currently uses package-level globals (db, logger, config) and a monolithic main(). We want to add t.Parallel() to the test suite and stop tests from conflicting. What's the migration path?",
+    "expected": "Skill gives the correct ordered migration: first extract run() to fix flag.CommandLine and os.Getenv/t.SetEnv conflicts (Ryer), then build the application struct and convert handlers to methods to remove the global db/logger/config (Edwards), then write both newTestApplication(t) handler tests and run()-based startup tests; run() extraction must come first because it creates the composition root the application struct lives inside.",
+    "notes": "source id: pm-002"
+  }
+]

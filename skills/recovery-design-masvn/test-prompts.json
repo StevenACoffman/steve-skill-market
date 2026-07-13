@@ -1,62 +1,58 @@
-{
-  "skill": "recovery-design-masvn",
-  "description": "Use this skill when designing update/rollback mechanisms for self-updating components, firmware, or any system where the ability to roll back conflicts with the need to permanently enforce a security patch.",
-  "test_prompts": [
-    {
-      "id": "recovery-design-masvn-should-01",
-      "category": "should_invoke",
-      "prompt": "We shipped a firmware update to 50,000 routers that patches a critical authentication bypass. Now we're seeing reports of random reboots from the new firmware. Operations wants to roll back to the previous version, but the previous version has the auth bypass. How do we handle this — do we roll back or not?",
-      "expected": "invoke",
-      "rationale": "Classic MASVN trigger: reliability team wants rollback to a version with a known security vulnerability. This is the exact design tension the skill resolves — whether rollback is permissible, and how to prevent it mechanically."
-    },
-    {
-      "id": "recovery-design-masvn-should-02",
-      "category": "should_invoke",
-      "prompt": "We're designing the update pipeline for a self-updating agent binary that runs on-prem at customer sites. We need to be able to push security patches fast, but we're worried that if a patch has a bug we can't roll customers back past it. How do other teams handle the security-vs-rollback tradeoff in self-updating software?",
-      "expected": "invoke",
-      "rationale": "Directly asks how to design rollback vs. security patch enforcement in a self-updating binary — the core MASVN design problem. The phrase 'can't roll customers back past it' maps precisely to the MASVN low-water mark concept."
-    },
-    {
-      "id": "recovery-design-masvn-should-03",
-      "category": "should_invoke",
-      "prompt": "An attacker we evicted last week appears to have modified our release tooling while they had access. We think they may have set something in the version metadata to block future updates to affected endpoints. Our endpoints are now refusing to accept new firmware because the version floor is set to an impossibly high value. How do we recover from a poisoned MASVN ratchet?",
-      "expected": "invoke",
-      "rationale": "Describes the exact MASVN ratchet-poisoning attack scenario covered in the skill (attacker sets MASVN to maximum). The recovery path — key rotation and dedicated logic to recognize the poisoned ComponentState — is in the MASVN framework."
-    },
-    {
-      "id": "recovery-design-masvn-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our Kubernetes deployment rolled out a bad container image and we need to roll back to the previous tag. Argo CD is showing the previous revision — can we just sync to that?",
-      "expected": "skip",
-      "rationale": "This is a stateless container deployment rollback with no local component state. MASVN applies to self-updating components that store ComponentState locally. The right skill is standard deployment/GitOps rollback practice — not MASVN, which does not apply to clean-install deployment models."
-    },
-    {
-      "id": "recovery-design-masvn-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We need to verify that the binary deployed to production actually came from our reviewed source and wasn't tampered with in the artifact store. How do we cryptographically tie the deployed artifact back to the code review?",
-      "expected": "skip",
-      "rationale": "This is a binary provenance / supply chain integrity question — the supply-chain-binary-provenance skill applies. Binary provenance verifies BUILD integrity (what source produced the artifact). MASVN verifies ROLLBACK prevention (minimum version floor). The two are related but distinct; this prompt asks about the provenance side."
-    },
-    {
-      "id": "recovery-design-masvn-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "Our medical device firmware has to guarantee 99.999% availability — regulators require that we can always revert to the last known good version within 5 minutes of a failure. How do we design the update pipeline to meet that requirement?",
-      "expected": "skip",
-      "rationale": "The availability requirement explicitly makes rollback prevention unacceptable. MASVN's boundary section states it should not apply when availability requirements make rollback prevention unacceptable. The right approach is a reliability-first firmware update design, not MASVN."
-    },
-    {
-      "id": "recovery-design-masvn-boundary-01",
-      "category": "boundary",
-      "prompt": "We shipped version 4.2 of our OS kernel module last week which fixed CVE-2024-1234. We want to advance our security version floor now so that hosts can't be downgraded to 4.1 by an attacker. Should we do that immediately or wait?",
-      "expected": "invoke",
-      "rationale": "The team is explicitly asking when to advance the MASVN floor — and the answer (wait for stability, advance in the NEXT release i+1, not immediately at patch time) is the non-obvious core insight of the skill. Even though 'MASVN' isn't named, the question maps directly to the 'advance conservatively' execution step. Invoke to explain the delayed-advancement design and why premature advancement prevents rollback of buggy patches."
-    },
-    {
-      "id": "recovery-design-masvn-boundary-02",
-      "category": "boundary",
-      "prompt": "We have a version deny list in our update server that blocks deployment of known-bad agent versions. It's getting long — 47 entries. Should we keep maintaining this or switch to something more systematic?",
-      "expected": "invoke",
-      "rationale": "A bloated deny list is the signal that MASVN should replace (or complement) it for the long-term enforcement. The skill explicitly covers the deny-list-to-MASVN transition: deny lists are the fast path during incident response; MASVN provides permanent enforcement that garbage-collects the deny list. The team is at exactly the point where the skill's three-mechanism framework becomes relevant. Invoke to explain the complementary role of deny lists vs. MASVN."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We shipped a firmware update to 50,000 routers that patches a critical authentication bypass. Now we're seeing reports of random reboots from the new firmware. Operations wants to roll back to the previous version, but the previous version has the auth bypass. How do we handle this — do we roll back or not?",
+    "expected": "invoke",
+    "notes": "rationale: Classic MASVN trigger: reliability team wants rollback to a version with a known security vulnerability. This is the exact design tension the skill resolves — whether rollback is permissible, and how to prevent it mechanically.; source id: recovery-design-masvn-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're designing the update pipeline for a self-updating agent binary that runs on-prem at customer sites. We need to be able to push security patches fast, but we're worried that if a patch has a bug we can't roll customers back past it. How do other teams handle the security-vs-rollback tradeoff in self-updating software?",
+    "expected": "invoke",
+    "notes": "rationale: Directly asks how to design rollback vs. security patch enforcement in a self-updating binary — the core MASVN design problem. The phrase 'can't roll customers back past it' maps precisely to the MASVN low-water mark concept.; source id: recovery-design-masvn-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "An attacker we evicted last week appears to have modified our release tooling while they had access. We think they may have set something in the version metadata to block future updates to affected endpoints. Our endpoints are now refusing to accept new firmware because the version floor is set to an impossibly high value. How do we recover from a poisoned MASVN ratchet?",
+    "expected": "invoke",
+    "notes": "rationale: Describes the exact MASVN ratchet-poisoning attack scenario covered in the skill (attacker sets MASVN to maximum). The recovery path — key rotation and dedicated logic to recognize the poisoned ComponentState — is in the MASVN framework.; source id: recovery-design-masvn-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our Kubernetes deployment rolled out a bad container image and we need to roll back to the previous tag. Argo CD is showing the previous revision — can we just sync to that?",
+    "expected": "skip",
+    "notes": "rationale: This is a stateless container deployment rollback with no local component state. MASVN applies to self-updating components that store ComponentState locally. The right skill is standard deployment/GitOps rollback practice — not MASVN, which does not apply to clean-install deployment models.; source id: recovery-design-masvn-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We need to verify that the binary deployed to production actually came from our reviewed source and wasn't tampered with in the artifact store. How do we cryptographically tie the deployed artifact back to the code review?",
+    "expected": "skip",
+    "notes": "rationale: This is a binary provenance / supply chain integrity question — the supply-chain-binary-provenance skill applies. Binary provenance verifies BUILD integrity (what source produced the artifact). MASVN verifies ROLLBACK prevention (minimum version floor). The two are related but distinct; this prompt asks about the provenance side.; source id: recovery-design-masvn-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our medical device firmware has to guarantee 99.999% availability — regulators require that we can always revert to the last known good version within 5 minutes of a failure. How do we design the update pipeline to meet that requirement?",
+    "expected": "skip",
+    "notes": "rationale: The availability requirement explicitly makes rollback prevention unacceptable. MASVN's boundary section states it should not apply when availability requirements make rollback prevention unacceptable. The right approach is a reliability-first firmware update design, not MASVN.; source id: recovery-design-masvn-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We shipped version 4.2 of our OS kernel module last week which fixed CVE-2024-1234. We want to advance our security version floor now so that hosts can't be downgraded to 4.1 by an attacker. Should we do that immediately or wait?",
+    "expected": "invoke",
+    "notes": "rationale: The team is explicitly asking when to advance the MASVN floor — and the answer (wait for stability, advance in the NEXT release i+1, not immediately at patch time) is the non-obvious core insight of the skill. Even though 'MASVN' isn't named, the question maps directly to the 'advance conservatively' execution step. Invoke to explain the delayed-advancement design and why premature advancement prevents rollback of buggy patches.; source id: recovery-design-masvn-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have a version deny list in our update server that blocks deployment of known-bad agent versions. It's getting long — 47 entries. Should we keep maintaining this or switch to something more systematic?",
+    "expected": "invoke",
+    "notes": "rationale: A bloated deny list is the signal that MASVN should replace (or complement) it for the long-term enforcement. The skill explicitly covers the deny-list-to-MASVN transition: deny lists are the fast path during incident response; MASVN provides permanent enforcement that garbage-collects the deny list. The team is at exactly the point where the skill's three-mechanism framework becomes relevant. Invoke to explain the complementary role of deny lists vs. MASVN.; source id: recovery-design-masvn-boundary-02"
+  }
+]

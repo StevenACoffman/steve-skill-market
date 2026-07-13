@@ -1,9 +1,8 @@
 ---
-id: grpc-flatten-streaming-requests
-title: Flatten Repeated Fields in Client-Streaming Requests — Eliminate Sub-Message Overhead
+name: grpc-flatten-streaming-requests
 description: Trigger when designing or optimizing a client-streaming RPC request message that currently wraps a domain object in a nested sub-message.
-source: [gRPC Go for Professionals, Clément Jean, Packt, 2023]
 ---
+# Flatten Repeated Fields in Client-Streaming Requests — Eliminate Sub-Message Overhead
 
 ## R — Reading
 
@@ -47,5 +46,11 @@ Flattening is a binary-incompatible schema change if deployed clients are alread
 
 ## Related Skills
 
-- **[grpc-payload-optimization](../grpc-payload-optimization/SKILL.md)** — prerequisite for: flattening is step 3 of the 5-step payload optimization sequence; payload-optimization frames when to apply flattening vs. field tag assignment vs. gzip.
-- **[grpc-fieldmask-partial-updates](../grpc-fieldmask-partial-updates/SKILL.md)** — compares: both are streaming bandwidth reduction techniques — flattening reduces request overhead on client-streaming writes; FieldMask reduces response overhead on server-streaming reads; apply both for bidirectional streaming endpoints.
+- **grpc-payload-optimization** — prerequisite for: flattening is step 3 of the 5-step payload optimization sequence; payload-optimization frames when to apply flattening vs. field tag assignment vs. gzip.
+- **grpc-fieldmask-partial-updates** — compares: both are streaming bandwidth reduction techniques — flattening reduces request overhead on client-streaming writes; FieldMask reduces response overhead on server-streaming reads; apply both for bidirectional streaming endpoints.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** [gRPC Go for Professionals, Clément Jean, Packt, 2023]

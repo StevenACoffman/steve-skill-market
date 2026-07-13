@@ -6,12 +6,7 @@ description: |
   Call when: A team is setting an initial SLO, revising an existing one after a post-incident review, or there is disagreement about whether an SLO is achievable or appropriate. Also call when the error budget policy cannot be ratified because one or more parties refuses to sign.
 
   Do not call when: The SLO is already ratified and the question is about what to do now that the budget has been exhausted (use error-budget-policy-framework) or about whether to adjust alerting thresholds (use multiwindow-multi-burn-rate-alerting).
-
-  Key trigger: Any situation where one party sets an SLO without involving the others, or where the SLO is being debated after an incident. The negotiation gate must happen before incidents, not during or after. Disagreement at the approval stage is not a negotiating failure — it is a diagnostic signal that the SLO needs revision.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 2 - Implementing SLOs; Chapter 18 - SRE Engagement Model"
 tags: [slo, negotiation, stakeholder-alignment, error-budget-policy, governance, toil]
-related_skills: []
 ---
 
 # SLO Stakeholder Negotiation Gate (Tripartite Policy Approval as SLO Fitness Test)
@@ -128,3 +123,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 2 - Implementing SLOs, Chapter 18 - SRE Engagement Model

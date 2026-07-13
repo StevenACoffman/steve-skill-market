@@ -1,68 +1,72 @@
-{
-  "skill_id": "terraform-backend-bootstrap-problem",
-  "book": "Terraform: Up and Running (3rd Edition)",
-  "author": "Yevgeniy Brikman",
-  "generated": "2026-05-05",
-  "prompts": [
-    {
-      "id": "bb-si-01",
-      "type": "should_invoke",
-      "prompt": "I'm getting an error: 'Variables not allowed' when I try to use var.bucket_name in my Terraform backend block. How do I fix this?",
-      "rationale": "Direct error message from trying to use variables in the backend block — the exact antipattern this skill addresses."
-    },
-    {
-      "id": "bb-si-02",
-      "type": "should_invoke",
-      "prompt": "I want to manage my S3 state bucket and DynamoDB lock table with Terraform, but Terraform needs them to exist before I can configure the backend. How do I break this chicken-and-egg problem?",
-      "rationale": "Directly describes the bootstrap problem — the two-step procedure is the answer."
-    },
-    {
-      "id": "bb-si-03",
-      "type": "should_invoke",
-      "prompt": "I have 6 environment directories each with a Terraform backend block. I want to DRY this up so the bucket name isn't repeated everywhere. What are my options?",
-      "rationale": "Multi-environment DRY backend config — the problem created by the variable restriction, solved by partial config or Terragrunt."
-    },
-    {
-      "id": "bb-si-04",
-      "type": "should_invoke",
-      "prompt": "How do I set up an S3 remote backend for Terraform from scratch in a new AWS account?",
-      "rationale": "Bootstrap setup from scratch — the two-step procedure with local state first, then migration."
-    },
-    {
-      "id": "bb-sni-01",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure Terraform to use Terraform Cloud as a backend instead of S3?",
-      "rationale": "Terraform Cloud backend has different configuration mechanics and no bootstrap problem — out of scope."
-    },
-    {
-      "id": "bb-sni-02",
-      "type": "should_not_invoke",
-      "prompt": "What's the difference between terraform init and terraform apply?",
-      "rationale": "Basic Terraform command explanation — not about the backend variable restriction."
-    },
-    {
-      "id": "bb-sni-03",
-      "type": "should_not_invoke",
-      "prompt": "How do I add state locking to prevent two engineers from running terraform apply at the same time?",
-      "rationale": "State locking setup is a straightforward DynamoDB configuration question — not specifically about the variable restriction or bootstrap problem."
-    },
-    {
-      "id": "bb-bb-01",
-      "type": "blurred_boundary",
-      "prompt": "I'm evaluating Terragrunt. Is it only useful for the backend variable limitation or does it solve other problems too?",
-      "rationale": "Touches the Terragrunt solution but extends beyond the backend problem into DRY configuration generally."
-    },
-    {
-      "id": "bb-bb-02",
-      "type": "blurred_boundary",
-      "prompt": "Can I use a data source in Terraform to look up an existing S3 bucket and use it as my backend?",
-      "rationale": "Asks whether a data source can substitute for a variable in the backend block — it cannot, same restriction applies."
-    },
-    {
-      "id": "bb-bb-03",
-      "type": "blurred_boundary",
-      "prompt": "I want to destroy the S3 bucket that holds my Terraform state. What's the safest way to do this?",
-      "rationale": "Reverse bootstrap — destroying the backend infrastructure requires migrating state back to local first, related but inverse procedure."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm getting an error: 'Variables not allowed' when I try to use var.bucket_name in my Terraform backend block. How do I fix this?",
+    "expected": "Skill activates and explains that the backend block forbids all variables, locals, data sources, and references because backend init runs in a pre-evaluation phase; the fix is to hardcode literal strings for bucket, key, and region, or use partial backend configuration passing values at init time via -backend-config.",
+    "notes": "rationale: Direct error message from trying to use variables in the backend block — the exact antipattern this skill addresses.; source id: bb-si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I want to manage my S3 state bucket and DynamoDB lock table with Terraform, but Terraform needs them to exist before I can configure the backend. How do I break this chicken-and-egg problem?",
+    "expected": "Skill activates and prescribes the two-step bootstrap: first apply the code that creates the S3 bucket and DynamoDB table using the default local backend, then add the backend \"s3\" block with hardcoded literals and run terraform init -migrate-state to move local state into the bucket.",
+    "notes": "rationale: Directly describes the bootstrap problem — the two-step procedure is the answer.; source id: bb-si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I have 6 environment directories each with a Terraform backend block. I want to DRY this up so the bucket name isn't repeated everywhere. What are my options?",
+    "expected": "Skill activates and offers the DRY options: use partial backend configuration (empty/minimal backend block with values supplied at init via -backend-config flags or a per-environment backend.hcl file), or adopt Terragrunt which generates backend blocks from terragrunt.hcl inputs; it should note variables can never be interpolated directly into the backend block.",
+    "notes": "rationale: Multi-environment DRY backend config — the problem created by the variable restriction, solved by partial config or Terragrunt.; source id: bb-si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "How do I set up an S3 remote backend for Terraform from scratch in a new AWS account?",
+    "expected": "Skill activates and walks through the two-step bootstrap: create the S3 bucket (versioning on, SSE enabled, prevent_destroy = true) and DynamoDB lock table (LockID hash key, PAY_PER_REQUEST) with local state via terraform apply, then add the backend \"s3\" block with literal values and run terraform init -migrate-state.",
+    "notes": "rationale: Bootstrap setup from scratch — the two-step procedure with local state first, then migration.; source id: bb-si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure Terraform to use Terraform Cloud as a backend instead of S3?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Terraform Cloud backend has different configuration mechanics and no bootstrap problem — out of scope.; source id: bb-sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What's the difference between terraform init and terraform apply?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Basic Terraform command explanation — not about the backend variable restriction.; source id: bb-sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I add state locking to prevent two engineers from running terraform apply at the same time?",
+    "expected": "skill should not activate",
+    "notes": "rationale: State locking setup is a straightforward DynamoDB configuration question — not specifically about the variable restriction or bootstrap problem.; source id: bb-sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I'm evaluating Terragrunt. Is it only useful for the backend variable limitation or does it solve other problems too?",
+    "expected": "Skill acknowledges Terragrunt is the idiomatic solution to the DRY-backend problem created by the variable restriction (it generates backend blocks from terragrunt.hcl), but is honest that its value extends beyond that to DRY configuration generally; it should scope its own claim to the backend concern and not overstate Terragrunt as solely a backend workaround.",
+    "notes": "rationale: Touches the Terragrunt solution but extends beyond the backend problem into DRY configuration generally.; source id: bb-bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Can I use a data source in Terraform to look up an existing S3 bucket and use it as my backend?",
+    "expected": "Skill activates and answers no: the backend block forbids data sources just as it forbids variables and references, because backend init precedes all evaluation including data source reads; the value must be a literal, or supplied via partial config at init time.",
+    "notes": "rationale: Asks whether a data source can substitute for a variable in the backend block — it cannot, same restriction applies.; source id: bb-bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I want to destroy the S3 bucket that holds my Terraform state. What's the safest way to do this?",
+    "expected": "Skill recognizes this as the inverse bootstrap: migrate state back to local first (remove the backend block and run terraform init -migrate-state), and note prevent_destroy = true must be removed before the bucket can be destroyed; it should surface the risk that destroying the state bucket while it still holds live state is unsafe.",
+    "notes": "rationale: Reverse bootstrap — destroying the backend infrastructure requires migrating state back to local first, related but inverse procedure.; source id: bb-bb-03"
+  }
+]

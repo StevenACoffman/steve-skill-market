@@ -1,9 +1,9 @@
 ---
-id: terraform-directory-layout-isolation
-title: 'Terraform Environment Isolation: File Layout Over Workspaces'
-description: Invoke when a user asks how to manage multiple environments (staging, production) with Terraform, whether workspaces are sufficient for environment isolation, or how to prevent a staging change from reaching production.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
+name: terraform-directory-layout-isolation
+description: |
+  Invoke when a user asks how to manage multiple environments (staging, production) with Terraform, whether workspaces are sufficient for environment isolation, or how to prevent a staging change from reaching production.
 ---
+# Terraform Environment Isolation: File Layout Over Workspaces
 
 ## R — Reading
 
@@ -66,7 +66,13 @@ CI enforces separate IAM roles per directory: the staging pipeline assumes `arn:
 
 ## Related Skills
 
-- **[terraform-backend-bootstrap-problem](../terraform-backend-bootstrap-problem/SKILL.md)** — informs: file-layout isolation requires a backend block per environment directory; the bootstrap skill explains how to provision those backends and keep them DRY.
-- **[terraform-secrets-in-state](../terraform-secrets-in-state/SKILL.md)** — combines: per-environment state buckets with separate IAM roles (this skill) pair with state bucket encryption and access controls (secrets skill) to fully protect secrets at rest.
-- **[terraform-module-size-smell](../terraform-module-size-smell/SKILL.md)** — combines: environment directory layout and small focused modules are complementary — the directory tree isolates environments while module decomposition isolates concerns within each environment.
-- **[terraform-no-cluster-app-same-module](../terraform-no-cluster-app-same-module/SKILL.md)** — informs: the two-apply separation required for EKS cluster + app follows the same isolation principle that drives per-environment directory layout.
+- **terraform-backend-bootstrap-problem** — informs: file-layout isolation requires a backend block per environment directory; the bootstrap skill explains how to provision those backends and keep them DRY.
+- **terraform-secrets-in-state** — combines: per-environment state buckets with separate IAM roles (this skill) pair with state bucket encryption and access controls (secrets skill) to fully protect secrets at rest.
+- **terraform-module-size-smell** — combines: environment directory layout and small focused modules are complementary — the directory tree isolates environments while module decomposition isolates concerns within each environment.
+- **terraform-no-cluster-app-same-module** — informs: the two-apply separation required for EKS cluster + app follows the same isolation principle that drives per-environment directory layout.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

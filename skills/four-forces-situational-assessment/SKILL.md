@@ -1,9 +1,9 @@
 ---
-id: four-forces-situational-assessment
-title: Four Forces Situational Assessment
-description: Invoke when a program leader needs to diagnose *why* a complex program is hard before deciding how to respond — specifically when multiple things are going wrong simultaneously and the standard diagnostic (scope creep, resource gaps, stakeholder issues) is not producing actionable insight. Also invoke when a program leader is preparing to take on a new complex assignment and needs to assess what they're walking into before selecting their initial governance posture.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: four-forces-situational-assessment
+description: |
+  Invoke when a program leader needs to diagnose *why* a complex program is hard before deciding how to respond — specifically when multiple things are going wrong simultaneously and the standard diagnostic (scope creep, resource gaps, stakeholder issues) is not producing actionable insight. Also invoke when a program leader is preparing to take on a new complex assignment and needs to assess what they're walking into before selecting their initial governance posture.
 ---
+# Four Forces Situational Assessment
 
 ## R — Reading
 
@@ -75,6 +75,12 @@ The framework does not directly address the political and organizational dynamic
 
 ## Related Skills
 
-- **[project-complexity-source-diagnosis](../project-complexity-source-diagnosis/SKILL.md)** — *combines*: complementary diagnostics for program difficulty; complexity source is structural, Four Forces is dynamic
-- **[cynefin-pm-domain-identification](../cynefin-pm-domain-identification/SKILL.md)** — *combines*: Four Forces identifies dominant forces; Cynefin classifies governance domain; together provide both situational and governance prescription
-- **[jagged-frontier-work-allocation](../jagged-frontier-work-allocation/SKILL.md)** — *combines*: when Velocity or Ambiguity forces are dominant, AI work allocation decisions need the Jagged Frontier framework to avoid compounding mistakes
+- **project-complexity-source-diagnosis** — *combines*: complementary diagnostics for program difficulty; complexity source is structural, Four Forces is dynamic
+- **cynefin-pm-domain-identification** — *combines*: Four Forces identifies dominant forces; Cynefin classifies governance domain; together provide both situational and governance prescription
+- **jagged-frontier-work-allocation** — *combines*: when Velocity or Ambiguity forces are dominant, AI work allocation decisions need the Jagged Frontier framework to avoid compounding mistakes
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

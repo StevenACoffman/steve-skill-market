@@ -1,62 +1,58 @@
-{
-  "skill": "sre-team-lifecycle-tuckman",
-  "description": "Use this skill when forming, diagnosing, or intervening in an SRE team — specifically when the team is struggling to become effective, experiencing internal resistance, or when a manager is applying the wrong intervention for the team's formation type.",
-  "test_prompts": [
-    {
-      "id": "sre-team-lifecycle-tuckman-should-01",
-      "category": "should_invoke",
-      "prompt": "Six months ago we converted our ops team into an SRE team. The engineers all went through SRE training and we gave them a roadmap of automation projects. But almost nothing has shipped. When I dig into it, automation tasks sit on the board for weeks, postmortem action items get closed without actual work being done, and whenever I bring up the automation roadmap in retrospectives the energy in the room tanks. I don't think this is a performance problem but I'm not sure what it is.",
-      "expected": "invoke",
-      "rationale": "Textbook converted ops team in Storming phase: automation resistance, shallow closure of postmortem items (avoiding evidence that their roles are reducible), and defensive energy around the automation roadmap. The skill's Scenario 1 maps directly — the manager is correctly sensing it's not a performance issue but needs the formation-type-specific diagnosis: job security anxiety, not skill or motivation deficit."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-should-02",
-      "category": "should_invoke",
-      "prompt": "We stood up a central reliability engineering team three months ago to serve our product teams. They're doing good technical work but I keep hearing from product engineers that 'the SRE team just adds process' and 'nothing can go to production without their sign-off.' The SRE team is frustrated because they feel like they're doing important work but getting no credit. How do I fix the relationship?",
-      "expected": "invoke",
-      "rationale": "Horizontal SRE team in Storming phase: the gating perception failure mode. The skill's Scenario 3 is an exact match. The prescribed intervention (seed with credibility, deliver enabling tools first, reframe every review as consultation not approval) addresses the organizational dynamic, not the technical work quality."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-should-03",
-      "category": "should_invoke",
-      "prompt": "We're spinning up a new SRE team for a major cloud migration project starting in Q3. I want to avoid the mistakes I've seen with previous SRE teams. What should I be thinking about now, during team formation, to set them up to reach performing as fast as possible?",
-      "expected": "invoke",
-      "rationale": "Proactive formation planning for a new project SRE team. The skill addresses exactly this — formation type identification, Forming-to-Storming risk prediction for the new project type (firefighting instead of instrumenting, too broad a scope on day one), and specific mitigations to reduce Storming duration. The seed-with-internal-transfers and operational-responsibility-staging guidance is directly applicable."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our SRE team has been running well for two years — SLOs are ratified, on-call is sustainable, toil is below 40%. Now they're being asked to take on three new services from a development team that's moving fast. How do we decide which services to accept, and on what conditions?",
-      "expected": "skip",
-      "rationale": "The team is clearly in the Performing stage (the boundary explicitly excludes teams that are Performing). The question is about the SRE engagement model — service onboarding criteria, PRR process, SLO fitness evaluation for new services. This is the SRE engagement model skill, not the lifecycle/Tuckman skill."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "Our SRE team is completely overwhelmed. On-call shifts are running back-to-back, engineers are working weekends, morale is at an all-time low, and the team has stopped collaborating. This started about four months ago when we onboarded two noisy new services. What do I do?",
-      "expected": "skip",
-      "rationale": "This is an operational overload situation with collapsed psychological safety — the overload-recovery-sequencing skill applies. The team is not in Storming due to formation dynamics; it is in crisis due to accumulated operational load. The boundary section explicitly identifies this: 'The team is in a crisis requiring immediate operational intervention — address the crisis with the overload recovery skill first.' The Tuckman skill is for formation dynamics, not operational crisis."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We have a critical reliability issue: our checkout service has 2% error rates and we're losing revenue. The SRE team knows what needs to be fixed technically but can't get prioritization from the development team. How do we escalate to get the engineering work prioritized?",
-      "expected": "skip",
-      "rationale": "This is a reliability prioritization and governance question, not a team formation question. The slo-consequences-governance-principle applies — if there is no pre-ratified error budget policy with organizational authority, this becomes a post-hoc negotiation that favors the party with more organizational power. The Tuckman lifecycle skill is not relevant to a specific reliability dispute."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-boundary-01",
-      "category": "boundary",
-      "prompt": "We acquired a startup six months ago and absorbed their engineering team into our SRE function. These engineers are excellent technically but they're resistant to our processes, don't engage with our postmortem culture, and keep doing things 'the way we did it at the old company.' I'm not sure if this is a formation issue or a culture clash issue.",
-      "expected": "invoke",
-      "rationale": "Resolved as invoke despite the author blind spot that the three formation types don't cover acquired teams. The acquired team has the strongest overlap with the converted ops team type: engineers whose previous identity and work patterns are being displaced, creating resistance that looks like performance problems but stems from organizational change anxiety. The Storming intervention principles (address the underlying concern directly, restructure metrics, involve engineers in designing the new approach rather than imposing it) apply even though the specific job-loss fear is replaced by identity/culture displacement. The skill is the best available tool."
-    },
-    {
-      "id": "sre-team-lifecycle-tuckman-boundary-02",
-      "category": "boundary",
-      "prompt": "My converted ops team is in Storming — automation resistance, the usual. But we're also genuinely overloaded: toil is at 65% and the on-call is brutal. Should I focus on the formation dynamics first or the workload first?",
-      "expected": "invoke",
-      "rationale": "Resolved as invoke because the skill explicitly addresses this combined case in its Related Skills section: 'a converted ops team in Storming is often simultaneously in operational overload; both interventions may be required in sequence (safety first, then formation-type Storming mitigation).' The Tuckman skill guides the sequencing decision: overload-recovery-sequencing (psychological safety) must come first, then the formation-type Storming mitigation. The skill is needed to answer the sequencing question the manager is asking."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Six months ago we converted our ops team into an SRE team. The engineers all went through SRE training and we gave them a roadmap of automation projects. But almost nothing has shipped. When I dig into it, automation tasks sit on the board for weeks, postmortem action items get closed without actual work being done, and whenever I bring up the automation roadmap in retrospectives the energy in the room tanks. I don't think this is a performance problem but I'm not sure what it is.",
+    "expected": "invoke",
+    "notes": "rationale: Textbook converted ops team in Storming phase: automation resistance, shallow closure of postmortem items (avoiding evidence that their roles are reducible), and defensive energy around the automation roadmap. The skill's Scenario 1 maps directly — the manager is correctly sensing it's not a performance issue but needs the formation-type-specific diagnosis: job security anxiety, not skill or motivation deficit.; source id: sre-team-lifecycle-tuckman-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We stood up a central reliability engineering team three months ago to serve our product teams. They're doing good technical work but I keep hearing from product engineers that 'the SRE team just adds process' and 'nothing can go to production without their sign-off.' The SRE team is frustrated because they feel like they're doing important work but getting no credit. How do I fix the relationship?",
+    "expected": "invoke",
+    "notes": "rationale: Horizontal SRE team in Storming phase: the gating perception failure mode. The skill's Scenario 3 is an exact match. The prescribed intervention (seed with credibility, deliver enabling tools first, reframe every review as consultation not approval) addresses the organizational dynamic, not the technical work quality.; source id: sre-team-lifecycle-tuckman-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're spinning up a new SRE team for a major cloud migration project starting in Q3. I want to avoid the mistakes I've seen with previous SRE teams. What should I be thinking about now, during team formation, to set them up to reach performing as fast as possible?",
+    "expected": "invoke",
+    "notes": "rationale: Proactive formation planning for a new project SRE team. The skill addresses exactly this — formation type identification, Forming-to-Storming risk prediction for the new project type (firefighting instead of instrumenting, too broad a scope on day one), and specific mitigations to reduce Storming duration. The seed-with-internal-transfers and operational-responsibility-staging guidance is directly applicable.; source id: sre-team-lifecycle-tuckman-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our SRE team has been running well for two years — SLOs are ratified, on-call is sustainable, toil is below 40%. Now they're being asked to take on three new services from a development team that's moving fast. How do we decide which services to accept, and on what conditions?",
+    "expected": "skip",
+    "notes": "rationale: The team is clearly in the Performing stage (the boundary explicitly excludes teams that are Performing). The question is about the SRE engagement model — service onboarding criteria, PRR process, SLO fitness evaluation for new services. This is the SRE engagement model skill, not the lifecycle/Tuckman skill.; source id: sre-team-lifecycle-tuckman-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our SRE team is completely overwhelmed. On-call shifts are running back-to-back, engineers are working weekends, morale is at an all-time low, and the team has stopped collaborating. This started about four months ago when we onboarded two noisy new services. What do I do?",
+    "expected": "skip",
+    "notes": "rationale: This is an operational overload situation with collapsed psychological safety — the overload-recovery-sequencing skill applies. The team is not in Storming due to formation dynamics; it is in crisis due to accumulated operational load. The boundary section explicitly identifies this: 'The team is in a crisis requiring immediate operational intervention — address the crisis with the overload recovery skill first.' The Tuckman skill is for formation dynamics, not operational crisis.; source id: sre-team-lifecycle-tuckman-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We have a critical reliability issue: our checkout service has 2% error rates and we're losing revenue. The SRE team knows what needs to be fixed technically but can't get prioritization from the development team. How do we escalate to get the engineering work prioritized?",
+    "expected": "skip",
+    "notes": "rationale: This is a reliability prioritization and governance question, not a team formation question. The slo-consequences-governance-principle applies — if there is no pre-ratified error budget policy with organizational authority, this becomes a post-hoc negotiation that favors the party with more organizational power. The Tuckman lifecycle skill is not relevant to a specific reliability dispute.; source id: sre-team-lifecycle-tuckman-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We acquired a startup six months ago and absorbed their engineering team into our SRE function. These engineers are excellent technically but they're resistant to our processes, don't engage with our postmortem culture, and keep doing things 'the way we did it at the old company.' I'm not sure if this is a formation issue or a culture clash issue.",
+    "expected": "invoke",
+    "notes": "rationale: Resolved as invoke despite the author blind spot that the three formation types don't cover acquired teams. The acquired team has the strongest overlap with the converted ops team type: engineers whose previous identity and work patterns are being displaced, creating resistance that looks like performance problems but stems from organizational change anxiety. The Storming intervention principles (address the underlying concern directly, restructure metrics, involve engineers in designing the new approach rather than imposing it) apply even though the specific job-loss fear is replaced by identity/culture displacement. The skill is the best available tool.; source id: sre-team-lifecycle-tuckman-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My converted ops team is in Storming — automation resistance, the usual. But we're also genuinely overloaded: toil is at 65% and the on-call is brutal. Should I focus on the formation dynamics first or the workload first?",
+    "expected": "invoke",
+    "notes": "rationale: Resolved as invoke because the skill explicitly addresses this combined case in its Related Skills section: 'a converted ops team in Storming is often simultaneously in operational overload; both interventions may be required in sequence (safety first, then formation-type Storming mitigation).' The Tuckman skill guides the sequencing decision: overload-recovery-sequencing (psychological safety) must come first, then the formation-type Storming mitigation. The skill is needed to answer the sequencing question the manager is asking.; source id: sre-team-lifecycle-tuckman-boundary-02"
+  }
+]

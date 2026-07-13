@@ -1,9 +1,9 @@
 ---
-id: internal-package-bounded-context-enforcement
-title: Use internal/ Package to Structurally Enforce Domain Boundaries
-description: Apply when structuring a Go DDD project and needing compile-time enforcement that one bounded context cannot import another's domain types directly — specifically when organising a monorepo, a multi-service project, or any Go module where domain leakage across context boundaries is a risk.
-source: Domain-Driven Design with Golang, Matthew Boyle, 2022
+name: internal-package-bounded-context-enforcement
+description: |
+  Apply when structuring a Go DDD project and needing compile-time enforcement that one bounded context cannot import another's domain types directly — specifically when organising a monorepo, a multi-service project, or any Go module where domain leakage across context boundaries is a risk.
 ---
+# Use internal/ Package to Structurally Enforce Domain Boundaries
 
 ## R — Reading
 
@@ -52,6 +52,12 @@ Boyle's claim that `internal/` "enforces" the domain boundary is accurate for im
 
 ## Related Skills
 
-- **[ddd-fitness-scorecard](../ddd-fitness-scorecard/SKILL.md)** — depends on: internal/ enforcement only makes sense once bounded contexts are established; the scorecard confirms the project warrants that architectural investment.
-- **[strong-consistency-across-bounded-contexts](../strong-consistency-across-bounded-contexts/SKILL.md)** — combines: internal/ defines where context lines are drawn structurally; the consistency rule defines what those lines mean at runtime — use both together to design the full bounded-context boundary.
-- **[domain-service-interface-composition](../domain-service-interface-composition/SKILL.md)** — informs: internal/ ensures that domain service interfaces defined inside internal/ are not accidentally exposed as a public API; the composition root in main.go sits outside internal/ and wires concrete implementations in.
+- **ddd-fitness-scorecard** — depends on: internal/ enforcement only makes sense once bounded contexts are established; the scorecard confirms the project warrants that architectural investment.
+- **strong-consistency-across-bounded-contexts** — combines: internal/ defines where context lines are drawn structurally; the consistency rule defines what those lines mean at runtime — use both together to design the full bounded-context boundary.
+- **domain-service-interface-composition** — informs: internal/ ensures that domain service interfaces defined inside internal/ are not accidentally exposed as a public API; the composition root in main.go sits outside internal/ and wires concrete implementations in.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Domain-Driven Design with Golang, Matthew Boyle, 2022

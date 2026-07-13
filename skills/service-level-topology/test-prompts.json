@@ -1,69 +1,65 @@
-{
-  "skill": "service-level-topology",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We're setting up SLOs for our team for the first time. We honestly have no idea what to measure. We have a bunch of infrastructure metrics in Datadog but we don't know which ones actually matter to our users. Where do we start?",
-      "expected_behavior": "Invokes service-level-topology, applies the four-section graph: (1) Offer — enumerate what the service exposes; (2) Use — identify who consumes it and what tasks they perform; (3) Risk — for each usage, enumerate failure modes with Symptom/Consequence/Business Impact; (4) Metrics — for each prioritized failure, identify the measurement. This is the structured derivation process that produces consumer-grounded SLIs from scratch.",
-      "notes": "Positive scenario: 'we have no idea what to measure' is an explicit trigger signal in the skill description."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I'm running an SLO workshop for 6 teams next month. I want a structured process to help each team figure out what their SLI should measure and how to prioritize which failures to instrument. What framework should I use?",
-      "expected_behavior": "Invokes service-level-topology, provides the workshop facilitation structure: run participants through the Offer → Use → Risk → Metrics graph. Key instruction: bring the service consumer into the room. The four sections map to workshop activities: service capability enumeration, consumer and task mapping, failure mode identification with business impact triage, and metric identification.",
-      "notes": "Positive scenario: SLO workshop facilitation is an explicit WHEN TO CALL scenario."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We're a platform team providing a shared data pipeline to 8 internal product teams. The product teams keep complaining that the pipeline is unreliable, but our monitoring shows 99%+ uptime. We think we're measuring the wrong things. How do we figure out what the product teams actually need us to measure?",
-      "expected_behavior": "Invokes service-level-topology, applies it to the internal platform case: the 8 product teams are the consumers, their tasks (getting fresh/accurate data on time) are the usage nodes, and the consumer-perceived failures (stale data, missing records, processing delays) are the risk nodes. The topology analysis will reveal that 'uptime' doesn't capture the consumer tasks that actually matter.",
-      "notes": "Positive scenario: platform team with infrastructure SLIs that miss consumer experience; internal platform topology case."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "Our alerts fire constantly but most of them don't correspond to anything users actually notice or complain about. We want to do a full audit of our alerting and replace noisy alerts with ones that actually signal user impact. Where do I start?",
-      "expected_behavior": "Invokes service-level-topology, prescribes an audit process using the Offer → Use → Risk → Metrics graph to re-derive which metrics correspond to real consumer task failures. Each existing alert should be traceable to a failure in the graph; alerts that aren't connected to a consumer task failure are candidates for removal or demotion.",
-      "notes": "Positive scenario: alert audit to remove noise; the topology graph provides the audit criterion (must trace to consumer task failure)."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "What is the difference between an SLI and an SLO?",
-      "expected_behavior": "Definitional question. Should not invoke service-level-topology; answer directly with concise definitions.",
-      "notes": "Decoy: terminology question requiring a definition, not a topology derivation exercise."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I set up distributed tracing for my microservices architecture?",
-      "expected_behavior": "Infrastructure tooling question. Should not invoke service-level-topology; answer with distributed tracing implementation guidance.",
-      "notes": "Decoy: monitoring tooling question; no SLI derivation or consumer mapping needed."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "Our SLIs are already mature — we've done consumer research and we know the tasks. Our error budget is consistently in the red. How do we decide what to fix first?",
-      "expected_behavior": "This is a lagom-slo or prioritization question, not a topology derivation. Should not invoke service-level-topology; the skill description explicitly says to use lagom-slo when SLIs are already at Stage 3+. Answer with error budget burn-rate analysis and prioritization guidance.",
-      "notes": "Decoy: mature SLIs already exist; this is calibration/prioritization territory, not topology derivation."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "Two of my teams are arguing about which one should own the alert for a shared database. Both teams read from it. The database team says it's not their job to define the SLO for the consumers' use cases. How do I resolve this?",
-      "expected_behavior": "Likely invokes service-level-topology and responsibility-control-slo. The topology graph resolves the dispute by making the ownership explicit: the database team owns database-level SLOs (query latency, availability); each consuming team owns their task-level SLO, scoped to what they control. The alert argument is actually an ownership argument resolvable through topology decomposition.",
-      "notes": "Boundary: ownership dispute that requires topology to map who controls which variables, plus responsibility-control-slo for the assignment decision."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "We're a brand new service with no users yet. We're in pre-launch. Should we define SLOs now or wait until we have real users to tell us what matters?",
-      "expected_behavior": "Likely invokes service-level-topology with a nuanced answer: the topology process requires consumers, but 'consumer' in Stage 2 includes future/anticipated consumers — design-time personas. Some topology work is valuable pre-launch (forces explicit assumption-making about what will matter) but the maturity level should be Stage 1-2, not Stage 4. SLOs pre-launch should be lightweight and expected to change.",
-      "notes": "Boundary: pre-launch service where consumer data is theoretical; the topology still applies as a design-time exercise but with acknowledged assumptions."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're setting up SLOs for our team for the first time. We honestly have no idea what to measure. We have a bunch of infrastructure metrics in Datadog but we don't know which ones actually matter to our users. Where do we start?",
+    "expected": "Invokes service-level-topology, applies the four-section graph: (1) Offer — enumerate what the service exposes; (2) Use — identify who consumes it and what tasks they perform; (3) Risk — for each usage, enumerate failure modes with Symptom/Consequence/Business Impact; (4) Metrics — for each prioritized failure, identify the measurement. This is the structured derivation process that produces consumer-grounded SLIs from scratch.",
+    "notes": "Positive scenario: 'we have no idea what to measure' is an explicit trigger signal in the skill description.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm running an SLO workshop for 6 teams next month. I want a structured process to help each team figure out what their SLI should measure and how to prioritize which failures to instrument. What framework should I use?",
+    "expected": "Invokes service-level-topology, provides the workshop facilitation structure: run participants through the Offer → Use → Risk → Metrics graph. Key instruction: bring the service consumer into the room. The four sections map to workshop activities: service capability enumeration, consumer and task mapping, failure mode identification with business impact triage, and metric identification.",
+    "notes": "Positive scenario: SLO workshop facilitation is an explicit WHEN TO CALL scenario.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're a platform team providing a shared data pipeline to 8 internal product teams. The product teams keep complaining that the pipeline is unreliable, but our monitoring shows 99%+ uptime. We think we're measuring the wrong things. How do we figure out what the product teams actually need us to measure?",
+    "expected": "Invokes service-level-topology, applies it to the internal platform case: the 8 product teams are the consumers, their tasks (getting fresh/accurate data on time) are the usage nodes, and the consumer-perceived failures (stale data, missing records, processing delays) are the risk nodes. The topology analysis will reveal that 'uptime' doesn't capture the consumer tasks that actually matter.",
+    "notes": "Positive scenario: platform team with infrastructure SLIs that miss consumer experience; internal platform topology case.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our alerts fire constantly but most of them don't correspond to anything users actually notice or complain about. We want to do a full audit of our alerting and replace noisy alerts with ones that actually signal user impact. Where do I start?",
+    "expected": "Invokes service-level-topology, prescribes an audit process using the Offer → Use → Risk → Metrics graph to re-derive which metrics correspond to real consumer task failures. Each existing alert should be traceable to a failure in the graph; alerts that aren't connected to a consumer task failure are candidates for removal or demotion.",
+    "notes": "Positive scenario: alert audit to remove noise; the topology graph provides the audit criterion (must trace to consumer task failure).; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between an SLI and an SLO?",
+    "expected": "Definitional question. Should not invoke service-level-topology; answer directly with concise definitions.",
+    "notes": "Decoy: terminology question requiring a definition, not a topology derivation exercise.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up distributed tracing for my microservices architecture?",
+    "expected": "Infrastructure tooling question. Should not invoke service-level-topology; answer with distributed tracing implementation guidance.",
+    "notes": "Decoy: monitoring tooling question; no SLI derivation or consumer mapping needed.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our SLIs are already mature — we've done consumer research and we know the tasks. Our error budget is consistently in the red. How do we decide what to fix first?",
+    "expected": "This is a lagom-slo or prioritization question, not a topology derivation. Should not invoke service-level-topology; the skill description explicitly says to use lagom-slo when SLIs are already at Stage 3+. Answer with error budget burn-rate analysis and prioritization guidance.",
+    "notes": "Decoy: mature SLIs already exist; this is calibration/prioritization territory, not topology derivation.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Two of my teams are arguing about which one should own the alert for a shared database. Both teams read from it. The database team says it's not their job to define the SLO for the consumers' use cases. How do I resolve this?",
+    "expected": "Likely invokes service-level-topology and responsibility-control-slo. The topology graph resolves the dispute by making the ownership explicit: the database team owns database-level SLOs (query latency, availability); each consuming team owns their task-level SLO, scoped to what they control. The alert argument is actually an ownership argument resolvable through topology decomposition.",
+    "notes": "Boundary: ownership dispute that requires topology to map who controls which variables, plus responsibility-control-slo for the assignment decision.; source id: edge-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're a brand new service with no users yet. We're in pre-launch. Should we define SLOs now or wait until we have real users to tell us what matters?",
+    "expected": "Likely invokes service-level-topology with a nuanced answer: the topology process requires consumers, but 'consumer' in Stage 2 includes future/anticipated consumers — design-time personas. Some topology work is valuable pre-launch (forces explicit assumption-making about what will matter) but the maturity level should be Stage 1-2, not Stage 4. SLOs pre-launch should be lightweight and expected to change.",
+    "notes": "Boundary: pre-launch service where consumer data is theoretical; the topology still applies as a design-time exercise but with acknowledged assumptions.; source id: edge-02"
+  }
+]

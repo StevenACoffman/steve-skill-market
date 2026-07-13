@@ -1,59 +1,51 @@
-{
-  "skill": "grain-audit-checklist",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We're about to go live with our new subscriptions table tomorrow. The grain is one row per customer per subscription tier. What checks should we run before flipping the switch?",
-      "expected_behavior": "Invoke grain-audit-checklist. Run all five checks: uniqueness (COUNT vs COUNT DISTINCT on customer_id + tier), NULLs in grain columns, late-arriving data rule, documentation, use-case coverage.",
-      "notes": "Textbook pre-deployment trigger. 'About to go live' + declared grain + 'what checks' matches the skill description and A2 language signal 'about to deploy this table'."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "I ran a SELECT COUNT(*) on our new daily_revenue table and got 8,500 rows, then ran SELECT COUNT(DISTINCT store_id, report_date) and got 7,200. Is something wrong? This table hasn't launched yet.",
-      "expected_behavior": "Invoke grain-audit-checklist. Check 1 has already been partially run and is failing — the counts diverge, confirming the assumed grain is wrong. Walk through the checklist: the COUNT mismatch means duplicate rows exist and the table must not be deployed until the upstream deduplication is fixed.",
-      "notes": "The user has already performed the Check 1 query and found a failure, but may not know what it means. Matches A2 language signal 'how do I verify the PK is actually unique?' and Check 1 failure pattern. Pre-deployment context is stated."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "Our pipeline loads session data nightly. I'm worried: what happens if a session event from yesterday arrives a day late and gets loaded into today's run? We haven't deployed this yet.",
-      "expected_behavior": "Invoke grain-audit-checklist. This is specifically Check 3 — late-arriving data handling must be declared before deployment. No rule exists yet; the skill establishes the upsert-or-reject rule requirement.",
-      "notes": "Pure Check 3 trigger: late-arriving data concern before deployment. Matches A2 language signal 'What happens if data arrives late for this table?' Pre-deployment context is stated explicitly."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We designed the grain of our new feature table as one row per user per week. Before we hand this off to the ML team I want to make sure the implementation actually matches that — do we have any duplicates, are there nulls in the key columns, is it documented properly?",
-      "expected_behavior": "Invoke grain-audit-checklist. Stated grain, pre-handoff (pre-deployment), and explicit request to verify implementation. Run all five checks systematically.",
-      "notes": "Directly asks about duplicates, nulls, and documentation — three of the five checks. Pre-deployment phrasing ('before we hand this off'). Matches 'I designed the grain as one row per X, but I want to double-check before shipping'."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "We don't have a grain defined for our analytics events table yet. Should we store one event per row, one user per day, or one session per row? We're starting the design from scratch.",
-      "expected_behavior": "Should NOT invoke grain-audit-checklist. No grain has been declared — this is a grain decision question. Should invoke grain-decision-four-questions instead.",
-      "notes": "Explicitly states 'we don't have a grain defined yet' and 'starting the design from scratch'. B section of grain-audit-checklist says: if grain has not been decided, use grain-decision-four-questions. Strong decoy because 'grain' and table design are present."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "Our orders table has been in production for six months. I ran the COUNT vs COUNT DISTINCT check you mentioned and the numbers don't match — we have duplicates. How do I fix this?",
-      "expected_behavior": "Should NOT invoke grain-audit-checklist as the primary response. The table is already in production with a discovered grain failure. B section explicitly says the audit cannot fix a production grain error — remediation is a grain redesign project. The correct response acknowledges the audit identified the problem but that fixing it requires rebuilding from raw source data.",
-      "notes": "B section of grain-audit-checklist: 'if the table is already in production and queries have been running on it... the audit can identify the problem but cannot fix it.' The user wants a fix, not a checklist. Decoy because the COUNT check is audit language but the situation is post-production."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "Something looks off with the row counts in our customer_orders view after a recent join I added. I'm not sure if this is a data quality issue or a grain issue. The view is used in production.",
-      "expected_behavior": "Ambiguous. The A2 language signal 'something looks off with the row counts after the join' directly matches grain-audit-checklist. However the B section says the checklist is a pre-deployment gate, not a production repair tool. The fact that it's in production AND in a view (not a materialized table) adds further ambiguity. Judgment: grain-audit-checklist Check 1 can still be run diagnostically on a view to identify a fan-out problem, even in production — the audit can identify the issue even if it cannot fix the underlying table. This is a case where the skill partially applies.",
-      "notes": "The tension is between the A2 language signal (row count anomaly after join) triggering this skill versus the B section prohibiting use on production tables. A view complicates this: a view is not a deployed table in the same sense. Reasonable to invoke the skill for diagnostic purposes while noting the production caveat."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. All should_not_triggers must pass (decoy tolerance is 0). Decoy 01 redirects to grain-decision-four-questions (no declared grain). Decoy 02 is the production-already-live scenario that grain-audit-checklist cannot remedy."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're about to go live with our new subscriptions table tomorrow. The grain is one row per customer per subscription tier. What checks should we run before flipping the switch?",
+    "expected": "Invoke grain-audit-checklist. Run all five checks: uniqueness (COUNT vs COUNT DISTINCT on customer_id + tier), NULLs in grain columns, late-arriving data rule, documentation, use-case coverage.",
+    "notes": "Textbook pre-deployment trigger. 'About to go live' + declared grain + 'what checks' matches the skill description and A2 language signal 'about to deploy this table'.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I ran a SELECT COUNT(*) on our new daily_revenue table and got 8,500 rows, then ran SELECT COUNT(DISTINCT store_id, report_date) and got 7,200. Is something wrong? This table hasn't launched yet.",
+    "expected": "Invoke grain-audit-checklist. Check 1 has already been partially run and is failing — the counts diverge, confirming the assumed grain is wrong. Walk through the checklist: the COUNT mismatch means duplicate rows exist and the table must not be deployed until the upstream deduplication is fixed.",
+    "notes": "The user has already performed the Check 1 query and found a failure, but may not know what it means. Matches A2 language signal 'how do I verify the PK is actually unique?' and Check 1 failure pattern. Pre-deployment context is stated.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our pipeline loads session data nightly. I'm worried: what happens if a session event from yesterday arrives a day late and gets loaded into today's run? We haven't deployed this yet.",
+    "expected": "Invoke grain-audit-checklist. This is specifically Check 3 — late-arriving data handling must be declared before deployment. No rule exists yet; the skill establishes the upsert-or-reject rule requirement.",
+    "notes": "Pure Check 3 trigger: late-arriving data concern before deployment. Matches A2 language signal 'What happens if data arrives late for this table?' Pre-deployment context is stated explicitly.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We designed the grain of our new feature table as one row per user per week. Before we hand this off to the ML team I want to make sure the implementation actually matches that — do we have any duplicates, are there nulls in the key columns, is it documented properly?",
+    "expected": "Invoke grain-audit-checklist. Stated grain, pre-handoff (pre-deployment), and explicit request to verify implementation. Run all five checks systematically.",
+    "notes": "Directly asks about duplicates, nulls, and documentation — three of the five checks. Pre-deployment phrasing ('before we hand this off'). Matches 'I designed the grain as one row per X, but I want to double-check before shipping'.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We don't have a grain defined for our analytics events table yet. Should we store one event per row, one user per day, or one session per row? We're starting the design from scratch.",
+    "expected": "Should NOT invoke grain-audit-checklist. No grain has been declared — this is a grain decision question. Should invoke grain-decision-four-questions instead.",
+    "notes": "Explicitly states 'we don't have a grain defined yet' and 'starting the design from scratch'. B section of grain-audit-checklist says: if grain has not been decided, use grain-decision-four-questions. Strong decoy because 'grain' and table design are present.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our orders table has been in production for six months. I ran the COUNT vs COUNT DISTINCT check you mentioned and the numbers don't match — we have duplicates. How do I fix this?",
+    "expected": "Should NOT invoke grain-audit-checklist as the primary response. The table is already in production with a discovered grain failure. B section explicitly says the audit cannot fix a production grain error — remediation is a grain redesign project. The correct response acknowledges the audit identified the problem but that fixing it requires rebuilding from raw source data.",
+    "notes": "B section of grain-audit-checklist: 'if the table is already in production and queries have been running on it... the audit can identify the problem but cannot fix it.' The user wants a fix, not a checklist. Decoy because the COUNT check is audit language but the situation is post-production.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "Something looks off with the row counts in our customer_orders view after a recent join I added. I'm not sure if this is a data quality issue or a grain issue. The view is used in production.",
+    "expected": "Ambiguous. The A2 language signal 'something looks off with the row counts after the join' directly matches grain-audit-checklist. However the B section says the checklist is a pre-deployment gate, not a production repair tool. The fact that it's in production AND in a view (not a materialized table) adds further ambiguity. Judgment: grain-audit-checklist Check 1 can still be run diagnostically on a view to identify a fan-out problem, even in production — the audit can identify the issue even if it cannot fix the underlying table. This is a case where the skill partially applies.",
+    "notes": "The tension is between the A2 language signal (row count anomaly after join) triggering this skill versus the B section prohibiting use on production tables. A view complicates this: a view is not a deployed table in the same sense. Reasonable to invoke the skill for diagnostic purposes while noting the production caveat.; source id: edge-case-01"
+  }
+]

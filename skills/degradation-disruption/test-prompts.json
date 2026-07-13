@@ -1,76 +1,72 @@
-{
-  "skill": "degradation-disruption",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Our pricing service is returning wrong prices to about 30% of users but the site is still up and accepting orders. We've classified this as a P3 degradation because the service is partially functional. Is that the right call?",
-      "expected_behavior": "Invokes degradation-disruption, challenges the P3 classification by applying the consequences-of-degraded-state test — customers completing purchases at wrong prices causes direct financial loss on every transaction, which may be worse than a clean disruption. Recommends reclassifying as P1 or higher, and evaluates deliberate disruption to stop the active harm.",
-      "notes": "Positive scenario: harmful degradation being under-classified because 'the service is still up' — the book's canonical retail pricing example."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our service is showing stale data to users — the data is 6 hours old but the UI doesn't indicate anything is wrong. The operations team says it's not an outage so it's probably a P3. What's the right severity?",
-      "expected_behavior": "Invokes degradation-disruption, classifies this as a degradation with potentially serious consequences depending on the data type (stale data that misleads users may be worse than no data). Applies the active harm test — are users making decisions on wrong information? — and recommends severity based on consequence of the degraded state, not just availability.",
-      "notes": "Positive scenario: stale data degradation classified as low severity without assessing business impact."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We're in an active incident. Our service is partially down — about 40% of requests are succeeding and 60% are failing. Should we take the whole service down, or keep it partially running while we fix the issue?",
-      "expected_behavior": "Invokes degradation-disruption, walks through the deliberate disruption evaluation: assess the consequences of the degraded state (are the 40% successes providing correct/safe results?), assess blast radius, and make a deliberate decision — if the partial service is actively harmful, disruption is preferable; if suboptimal but not harmful, keep it running.",
-      "notes": "Positive scenario: deliberate disruption decision during an active incident — the 'sometimes better to disrupt than degrade' principle."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "Our dependency went completely down, but our service is still functioning — we're serving cached data to users. Our dependency's status page says they have an outage. Should we declare an incident too?",
-      "expected_behavior": "Invokes degradation-disruption, clarifies the provider vs. consumer perspective distinction — the dependency has a disruption, but from the consumer's service perspective, this is a degradation (serving stale cached data). The severity from the consumer's perspective depends on how stale the cache is and whether stale data is actively harmful.",
-      "notes": "Positive scenario: cascading failure classification — provider disruption appearing as consumer degradation."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "We're building our incident severity model. Our current P1 definition is 'service is completely down.' A colleague argues that some degradations should also be P1. How should we frame the distinction?",
-      "expected_behavior": "Invokes degradation-disruption, explains that availability-only severity models systematically under-classify harmful degradations, introduces the three-axis severity assessment (blast radius, which capabilities affected, consequences of continued degraded operation), and recommends revising the P1 definition to include degradations where the consequences of continued operation exceed the cost of a clean disruption.",
-      "notes": "Positive scenario: designing an incident severity model — proactive severity framework design."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I set up a status page for my service?",
-      "expected_behavior": "Tooling and implementation question — should provide status page setup guidance without invoking degradation-disruption. The skill addresses classification and response decisions, not communication tooling setup.",
-      "notes": "Decoy: status page tooling question, not an incident classification or severity question."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "What is MTTR and how do I improve it?",
-      "expected_behavior": "Metric definition and improvement question — should explain MTTR (Mean Time to Recovery) and improvement approaches without invoking degradation-disruption. The skill is about classification and consequence analysis, not recovery time metrics.",
-      "notes": "Decoy: MTTR definition question, not an incident classification or severity analysis question."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "What SLO should I set for a service that has frequent planned maintenance windows?",
-      "expected_behavior": "SLO calibration question with planned maintenance context — should use lagom-slo or sli-formula-measurement framing (excluding planned maintenance from valid events). Does not invoke degradation-disruption.",
-      "notes": "Decoy: SLO target setting question, not an incident severity classification question."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "A service in our dependency chain is fully down, which means some of our requests fail. But 70% of our requests use a different path that doesn't need that dependency, so most users are fine. Is this a P1 for us?",
-      "expected_behavior": "Ambiguous: the blast radius is partial (30% of users affected), the dependency has a disruption but the consuming service has a degradation. The skill should evaluate: are the 30% of affected users the most critical users? Is the degraded state for those users harmful or just unavailable? Severity should be driven by the business impact on the 30%, not the percentage itself.",
-      "notes": "Boundary: partial blast radius degradation — tests whether the skill correctly weights consumer criticality over raw percentage."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "Our service is 'degraded' in the sense that we're running at 50% capacity and requests are being queued with 5-second delays instead of our normal 200ms. The service is technically functioning. Does this count as an incident?",
-      "expected_behavior": "Ambiguous: this is a degradation in the 'suboptimal' category (higher latency, but not actively harmful in most cases). The skill should evaluate whether the 5-second delay breaches any SLO or consumer tolerance threshold, and whether queuing has a risk of cascading to a full disruption. If the latency is within SLO, this may be a performance warning rather than an incident.",
-      "notes": "Boundary: performance degradation that might or might not rise to incident severity depending on SLO and consumer tolerance."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our pricing service is returning wrong prices to about 30% of users but the site is still up and accepting orders. We've classified this as a P3 degradation because the service is partially functional. Is that the right call?",
+    "expected": "Invokes degradation-disruption, challenges the P3 classification by applying the consequences-of-degraded-state test — customers completing purchases at wrong prices causes direct financial loss on every transaction, which may be worse than a clean disruption. Recommends reclassifying as P1 or higher, and evaluates deliberate disruption to stop the active harm.",
+    "notes": "Positive scenario: harmful degradation being under-classified because 'the service is still up' — the book's canonical retail pricing example.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our service is showing stale data to users — the data is 6 hours old but the UI doesn't indicate anything is wrong. The operations team says it's not an outage so it's probably a P3. What's the right severity?",
+    "expected": "Invokes degradation-disruption, classifies this as a degradation with potentially serious consequences depending on the data type (stale data that misleads users may be worse than no data). Applies the active harm test — are users making decisions on wrong information? — and recommends severity based on consequence of the degraded state, not just availability.",
+    "notes": "Positive scenario: stale data degradation classified as low severity without assessing business impact.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're in an active incident. Our service is partially down — about 40% of requests are succeeding and 60% are failing. Should we take the whole service down, or keep it partially running while we fix the issue?",
+    "expected": "Invokes degradation-disruption, walks through the deliberate disruption evaluation: assess the consequences of the degraded state (are the 40% successes providing correct/safe results?), assess blast radius, and make a deliberate decision — if the partial service is actively harmful, disruption is preferable; if suboptimal but not harmful, keep it running.",
+    "notes": "Positive scenario: deliberate disruption decision during an active incident — the 'sometimes better to disrupt than degrade' principle.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our dependency went completely down, but our service is still functioning — we're serving cached data to users. Our dependency's status page says they have an outage. Should we declare an incident too?",
+    "expected": "Invokes degradation-disruption, clarifies the provider vs. consumer perspective distinction — the dependency has a disruption, but from the consumer's service perspective, this is a degradation (serving stale cached data). The severity from the consumer's perspective depends on how stale the cache is and whether stale data is actively harmful.",
+    "notes": "Positive scenario: cascading failure classification — provider disruption appearing as consumer degradation.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We're building our incident severity model. Our current P1 definition is 'service is completely down.' A colleague argues that some degradations should also be P1. How should we frame the distinction?",
+    "expected": "Invokes degradation-disruption, explains that availability-only severity models systematically under-classify harmful degradations, introduces the three-axis severity assessment (blast radius, which capabilities affected, consequences of continued degraded operation), and recommends revising the P1 definition to include degradations where the consequences of continued operation exceed the cost of a clean disruption.",
+    "notes": "Positive scenario: designing an incident severity model — proactive severity framework design.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up a status page for my service?",
+    "expected": "Tooling and implementation question — should provide status page setup guidance without invoking degradation-disruption. The skill addresses classification and response decisions, not communication tooling setup.",
+    "notes": "Decoy: status page tooling question, not an incident classification or severity question.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What is MTTR and how do I improve it?",
+    "expected": "Metric definition and improvement question — should explain MTTR (Mean Time to Recovery) and improvement approaches without invoking degradation-disruption. The skill is about classification and consequence analysis, not recovery time metrics.",
+    "notes": "Decoy: MTTR definition question, not an incident classification or severity analysis question.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What SLO should I set for a service that has frequent planned maintenance windows?",
+    "expected": "SLO calibration question with planned maintenance context — should use lagom-slo or sli-formula-measurement framing (excluding planned maintenance from valid events). Does not invoke degradation-disruption.",
+    "notes": "Decoy: SLO target setting question, not an incident severity classification question.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "A service in our dependency chain is fully down, which means some of our requests fail. But 70% of our requests use a different path that doesn't need that dependency, so most users are fine. Is this a P1 for us?",
+    "expected": "Ambiguous: the blast radius is partial (30% of users affected), the dependency has a disruption but the consuming service has a degradation. The skill should evaluate: are the 30% of affected users the most critical users? Is the degraded state for those users harmful or just unavailable? Severity should be driven by the business impact on the 30%, not the percentage itself.",
+    "notes": "Boundary: partial blast radius degradation — tests whether the skill correctly weights consumer criticality over raw percentage.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our service is 'degraded' in the sense that we're running at 50% capacity and requests are being queued with 5-second delays instead of our normal 200ms. The service is technically functioning. Does this count as an incident?",
+    "expected": "Ambiguous: this is a degradation in the 'suboptimal' category (higher latency, but not actively harmful in most cases). The skill should evaluate whether the 5-second delay breaches any SLO or consumer tolerance threshold, and whether queuing has a risk of cascading to a full disruption. If the latency is within SLO, this may be a performance warning rather than an incident.",
+    "notes": "Boundary: performance degradation that might or might not rise to incident severity depending on SLO and consumer tolerance.; source id: edge-02"
+  }
+]

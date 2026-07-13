@@ -6,14 +6,7 @@ description: |
   Key trigger signal: "I've been refactoring and fixing at the same time and now I don't know what's broken." Or: spending more than a few minutes restructuring while trying to add or fix something.
 
   Do NOT invoke this skill to decide whether to refactor at all (use fowler-opportunistic-refactoring for that), or when the question is about organizing a long-term migration (use fowler-branch-by-abstraction for that). This skill is specifically about the moment-to-moment discipline of keeping the two modes separate.
-source_book: 'Refactoring: Improving the Design of Existing Code — Martin Fowler (2018)'
-source_chapter: Chapter 2
 tags: [refactoring, workflow, discipline, tdd]
-related_skills:
-  - slug: fowler-opportunistic-refactoring
-    relation: composes-with
-  - slug: fowler-performance-sequencing
-    relation: composes-with
 ---
 
 # Two Hats Discipline — Separating Functionality from Refactoring
@@ -155,3 +148,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Refactoring: Improving the Design of Existing Code — Martin Fowler (2018) — Chapter 2

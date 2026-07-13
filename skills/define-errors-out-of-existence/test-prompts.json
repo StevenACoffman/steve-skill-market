@@ -1,75 +1,72 @@
-{
-  "skill_id": "define-errors-out-of-existence",
-  "test_prompts": [
-    {
-      "id": "tp01",
-      "prompt": "My file-deletion method throws an error if the file doesn't exist. Every caller has to wrap it in a try/catch just to handle that case. Should I change it to silently succeed when the file is already gone?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Classic define-errors-out-of-existence: redefining the operation's semantics so a previously exceptional condition becomes a valid no-op."
-    },
-    {
-      "id": "tp02",
-      "prompt": "We have a `getUser` method that throws `UserNotFoundException` when the ID doesn't match. Every call site catches it and falls back to a default. Should we just return null or an empty Optional instead?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Proliferating exceptions force defensive boilerplate at every caller. This is the core use case: eliminate the error by redefining what the method guarantees."
-    },
-    {
-      "id": "tp03",
-      "prompt": "Our `unsubscribe` endpoint throws a 400 if the email address was never subscribed. Product wants callers to just be able to call it idempotently. Is it okay to just return 200 and do nothing?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Idempotent operations are a direct application of defining errors out of existence — the error case is eliminated by broadening the valid postcondition."
-    },
-    {
-      "id": "tp04",
-      "prompt": "We're debating whether `Queue.pop()` should throw on an empty queue or return a sentinel value. Half the team wants exceptions, half wants null. How do we decide?",
-      "expected": "invoke",
-      "category": "should_invoke",
-      "rationale": "Directly about exception vs. no-error design for a common boundary condition. Ousterhout's principle applies: can this condition be defined away?"
-    },
-    {
-      "id": "tp05",
-      "prompt": "Our error logs are hard to read. What's the best format for exception messages — should we include the stack trace, the input parameters, or just a human-readable description?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "About error message formatting and logging, not about whether errors should exist in the first place."
-    },
-    {
-      "id": "tp06",
-      "prompt": "I want to make sure all exceptions in my service are covered by unit tests. How should I structure tests to verify that my error paths work correctly?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Testing strategy for existing error paths, not a question about whether to throw or redesign the interface."
-    },
-    {
-      "id": "tp07",
-      "prompt": "Our API responses are slow when we hit the database. Would catching exceptions earlier in the call stack help performance at all?",
-      "expected": "no_invoke",
-      "category": "should_not_invoke",
-      "rationale": "Performance optimization question. Exception handling is mentioned but the concern is latency, not interface design."
-    },
-    {
-      "id": "tp08",
-      "prompt": "Should I propagate this IOException up to the controller or handle it in the service layer and return a result type instead?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Boundary case: partially about error propagation depth, but the option of returning a result type edges into defining the error out of existence at the service API boundary."
-    },
-    {
-      "id": "tp09",
-      "prompt": "We have a distributed transaction that can fail at step 3 of 5. Should we implement compensating transactions, or is it acceptable to leave partial state and let callers deal with it?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Error recovery in distributed systems touches define-errors-out-of-existence (can the system be designed so partial failure isn't an error?), but also involves broader distributed systems patterns."
-    },
-    {
-      "id": "tp10",
-      "prompt": "Our form validation throws a `ValidationException` with a list of field errors. Should that be an exception or should `validate()` return a result object with the error list?",
-      "expected": "invoke",
-      "category": "boundary",
-      "rationale": "Validation design sits at the boundary: the argument for a result object is essentially defining the 'error' out of existence as a normal return path."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My file-deletion method throws an error if the file doesn't exist. Every caller has to wrap it in a try/catch just to handle that case. Should I change it to silently succeed when the file is already gone?",
+    "expected": "invoke",
+    "notes": "rationale: Classic define-errors-out-of-existence: redefining the operation's semantics so a previously exceptional condition becomes a valid no-op.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have a `getUser` method that throws `UserNotFoundException` when the ID doesn't match. Every call site catches it and falls back to a default. Should we just return null or an empty Optional instead?",
+    "expected": "invoke",
+    "notes": "rationale: Proliferating exceptions force defensive boilerplate at every caller. This is the core use case: eliminate the error by redefining what the method guarantees.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our `unsubscribe` endpoint throws a 400 if the email address was never subscribed. Product wants callers to just be able to call it idempotently. Is it okay to just return 200 and do nothing?",
+    "expected": "invoke",
+    "notes": "rationale: Idempotent operations are a direct application of defining errors out of existence — the error case is eliminated by broadening the valid postcondition.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're debating whether `Queue.pop()` should throw on an empty queue or return a sentinel value. Half the team wants exceptions, half wants null. How do we decide?",
+    "expected": "invoke",
+    "notes": "rationale: Directly about exception vs. no-error design for a common boundary condition. Ousterhout's principle applies: can this condition be defined away?; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our error logs are hard to read. What's the best format for exception messages — should we include the stack trace, the input parameters, or just a human-readable description?",
+    "expected": "no_invoke",
+    "notes": "rationale: About error message formatting and logging, not about whether errors should exist in the first place.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I want to make sure all exceptions in my service are covered by unit tests. How should I structure tests to verify that my error paths work correctly?",
+    "expected": "no_invoke",
+    "notes": "rationale: Testing strategy for existing error paths, not a question about whether to throw or redesign the interface.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our API responses are slow when we hit the database. Would catching exceptions earlier in the call stack help performance at all?",
+    "expected": "no_invoke",
+    "notes": "rationale: Performance optimization question. Exception handling is mentioned but the concern is latency, not interface design.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Should I propagate this IOException up to the controller or handle it in the service layer and return a result type instead?",
+    "expected": "invoke",
+    "notes": "rationale: Boundary case: partially about error propagation depth, but the option of returning a result type edges into defining the error out of existence at the service API boundary.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We have a distributed transaction that can fail at step 3 of 5. Should we implement compensating transactions, or is it acceptable to leave partial state and let callers deal with it?",
+    "expected": "invoke",
+    "notes": "rationale: Error recovery in distributed systems touches define-errors-out-of-existence (can the system be designed so partial failure isn't an error?), but also involves broader distributed systems patterns.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our form validation throws a `ValidationException` with a list of field errors. Should that be an exception or should `validate()` return a result object with the error list?",
+    "expected": "invoke",
+    "notes": "rationale: Validation design sits at the boundary: the argument for a result object is essentially defining the 'error' out of existence as a normal return path.; source id: tp10"
+  }
+]

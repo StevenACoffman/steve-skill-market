@@ -1,65 +1,72 @@
-{
-  "skill": "matryer-waitfor-ready",
-  "prompts": [
-    {
-      "id": "si-1",
-      "category": "should_invoke",
-      "prompt": "My test starts the server with `go run(ctx)` and immediately sends a request, but I keep getting `connection refused` errors in CI. How do I fix this?",
-      "why": "Canonical trigger: goroutine race between test code and server startup, exactly the problem this skill solves."
-    },
-    {
-      "id": "si-2",
-      "category": "should_invoke",
-      "prompt": "Someone added `time.Sleep(200 * time.Millisecond)` in our test setup to wait for the server to start. Tests still flake occasionally. What's the right approach?",
-      "why": "Sleep-based waiting is the anti-pattern; the skill provides the correct alternative."
-    },
-    {
-      "id": "si-3",
-      "category": "should_invoke",
-      "prompt": "How do I write a `waitForReady` function in Go that polls a health endpoint until the server accepts requests or a timeout is reached?",
-      "why": "Direct request for the `waitForReady` implementation pattern."
-    },
-    {
-      "id": "si-4",
-      "category": "should_invoke",
-      "prompt": "I'm writing end-to-end tests for a Go HTTP service. Should I add a `/healthz` endpoint, and how would I use it in tests?",
-      "why": "Asks about both the health endpoint and its role in test synchronisation — the dual production+test purpose is the core insight."
-    },
-    {
-      "id": "sni-1",
-      "category": "should_not_invoke",
-      "prompt": "How do I implement graceful shutdown in a Go HTTP server when a SIGTERM is received?",
-      "why": "Graceful shutdown relates to context cancellation and `server.Shutdown`, not server readiness or health polling."
-    },
-    {
-      "id": "sni-2",
-      "category": "should_not_invoke",
-      "prompt": "What is the best way to structure middleware in a Go HTTP service?",
-      "why": "Middleware construction is a separate topic (matryer-middleware-constructor skill); no readiness or health-check concern."
-    },
-    {
-      "id": "sni-3",
-      "category": "should_not_invoke",
-      "prompt": "How do I parse environment variables and flags for my Go service configuration?",
-      "why": "Configuration injection via `getenv` or `flag` is a distinct skill; unrelated to server readiness."
-    },
-    {
-      "id": "bb-1",
-      "category": "blurred_boundary",
-      "prompt": "My Kubernetes deployment is being killed by liveness probes before the server finishes startup. Should I add a `/healthz` endpoint?",
-      "why": "Directly involves `/healthz` and Kubernetes probes — a production concern this skill addresses — but the primary framing is ops/deployment rather than test synchronisation. Both the health-endpoint step and the production wiring section apply."
-    },
-    {
-      "id": "bb-2",
-      "category": "blurred_boundary",
-      "prompt": "I'm writing a helper that waits for a third-party service (like a database or Redis) to be reachable before running integration tests. How should I structure it?",
-      "why": "The `waitForReady` polling pattern applies directly, but the target is not the server under test — it's a dependency. The loop structure and context/timeout handling are identical; the endpoint path and protocol may differ."
-    },
-    {
-      "id": "bb-3",
-      "category": "blurred_boundary",
-      "prompt": "How do I run multiple independent test instances of my Go server in parallel without port conflicts?",
-      "why": "Parallel test isolation requires random port binding (`:0`), which is mentioned in the Boundaries section as a prerequisite for `waitForReady` to work correctly. The skill is partially relevant but the main answer involves `net.Listen` and passing addresses — adjacent territory."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My test starts the server with `go run(ctx)` and immediately sends a request, but I keep getting `connection refused` errors in CI. How do I fix this?",
+    "expected": "Skill activates and diagnoses the goroutine startup race: add a /healthz endpoint and a waitForReady helper that polls it until a 200 (or ctx cancellation/timeout) before the test hits the API, instead of racing the not-yet-bound listener.",
+    "notes": "source id: si-1"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Someone added `time.Sleep(200 * time.Millisecond)` in our test setup to wait for the server to start. Tests still flake occasionally. What's the right approach?",
+    "expected": "Skill activates and replaces the brittle sleep with a waitForReady polling loop against a /healthz endpoint that returns on a real 200 response and bounds itself with the context and an explicit timeout, deterministically detecting readiness rather than guessing a duration.",
+    "notes": "source id: si-2"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How do I write a `waitForReady` function in Go that polls a health endpoint until the server accepts requests or a timeout is reached?",
+    "expected": "Skill activates and produces the waitForReady(ctx, timeout, endpoint) loop: build a request with http.NewRequestWithContext, return nil on 200, continue immediately on transport error (server not up yet), back off 250ms on non-200, and surface ctx.Done()/timeout as errors.",
+    "notes": "source id: si-3"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm writing end-to-end tests for a Go HTTP service. Should I add a `/healthz` endpoint, and how would I use it in tests?",
+    "expected": "Skill activates and affirms adding a /healthz route returning 200, then polling it with waitForReady in test setup; it surfaces the core insight that this single endpoint serves both the test-synchronisation need and the production readiness check (k8s probes, load balancers).",
+    "notes": "source id: si-4"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement graceful shutdown in a Go HTTP server when a SIGTERM is received?",
+    "expected": "skill should not activate",
+    "notes": "source id: sni-1"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is the best way to structure middleware in a Go HTTP service?",
+    "expected": "skill should not activate",
+    "notes": "source id: sni-2"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I parse environment variables and flags for my Go service configuration?",
+    "expected": "skill should not activate",
+    "notes": "source id: sni-3"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My Kubernetes deployment is being killed by liveness probes before the server finishes startup. Should I add a `/healthz` endpoint?",
+    "expected": "Skill activates on the production side of the same insight: add the /healthz (or /readyz) route and point the probe at it (tuning initialDelaySeconds/periodSeconds), noting the endpoint is the same one used for waitForReady test synchronisation even though the framing here is ops/deployment.",
+    "notes": "source id: bb-1"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm writing a helper that waits for a third-party service (like a database or Redis) to be reachable before running integration tests. How should I structure it?",
+    "expected": "Skill activates and reuses the waitForReady loop/context/timeout structure for a dependency rather than the server under test, noting the endpoint path and probe protocol may differ (e.g., a TCP dial or driver ping) since the target is not necessarily an HTTP /healthz.",
+    "notes": "source id: bb-2"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I run multiple independent test instances of my Go server in parallel without port conflicts?",
+    "expected": "Skill activates partially: it flags binding to :0 (OS-assigned random port) as the prerequisite for parallel isolation and for waitForReady to poll the right address, while noting the core answer involves net.Listen and communicating each server's bound address back to its test.",
+    "notes": "source id: bb-3"
+  }
+]

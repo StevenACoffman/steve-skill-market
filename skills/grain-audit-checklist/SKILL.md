@@ -18,16 +18,7 @@ description: |
     from raw source data)
   - The question is about how to aggregate correctly over a correctly-grained table
     (use six-aggregation-properties or aggregation-workflow-four-steps instead)
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 8 — Grain.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 8 — Grain — Getting the Level Right
 tags: [grain, data-modeling, validation, pre-deployment, checklist]
-related_skills:
-  - slug: grain-decision-four-questions
-    relation: depends-on
-  - slug: six-aggregation-properties
-    relation: composes-with
 ---
 
 # Grain Audit Checklist — Pre-Deployment Validation
@@ -348,8 +339,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`grain-decision-four-questions`](../grain-decision-four-questions/SKILL.md): This checklist requires a declared grain as its input — grain-decision-four-questions is the upstream tool that produces the grain declaration this checklist then validates.
-- **composes-with** [`six-aggregation-properties`](../six-aggregation-properties/SKILL.md): Property 1 of the six-aggregation-properties checklist (grain alignment) maps directly to Checks 1 and 2 here; running both pre-deployment closes the full structural validation loop.
+- **depends-on** `grain-decision-four-questions`: This checklist requires a declared grain as its input — grain-decision-four-questions is the upstream tool that produces the grain declaration this checklist then validates.
+- **composes-with** `six-aggregation-properties`: Property 1 of the six-aggregation-properties checklist (grain alignment) maps directly to Checks 1 and 2 here; running both pre-deployment closes the full structural validation loop.
 
 ______________________________________________________________________
 
@@ -360,3 +351,9 @@ ______________________________________________________________________
 - **Counter-examples used**: ce01 (fan-out from mismatched grain join), ce02 (mixed-grain trap)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 8 — Grain — Getting the Level Right

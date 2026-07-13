@@ -14,24 +14,7 @@ description: |
   - "How do I know this metric is trustworthy?"
   - "We're about to deploy a new dashboard / metric / ML feature"
   - Any question about verifying aggregate metric correctness before production deployment
-
-  Do NOT use this skill when:
-  - The question is about how to DESIGN an aggregation from scratch (use
-    aggregation-workflow-four-steps instead — design first, then verify here)
-  - The question is about setting the grain for a new dataset before any aggregation
-    exists (use grain-decision-four-questions)
-  - The user is exploring data informally with no production deployment intent
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 9 — Counting and
-  Aggregation: Controlling the Grain.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 9 — Counting and Aggregation: Controlling the Grain
 tags: [aggregation, checklist, pre-shipping, grain, disjointness, additivity, decomposability, closure, boundedness]
-related_skills:
-  - slug: aggregation-workflow-four-steps
-    relation: depends-on
-  - slug: decompose-averages-sum-count
-    relation: composes-with
 ---
 
 # Six Structural Properties of Safe Aggregation
@@ -413,8 +396,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`aggregation-workflow-four-steps`](../aggregation-workflow-four-steps/SKILL.md): This checklist validates an aggregation that was designed using the four-step workflow — the workflow produces the artifact; this skill confirms it is structurally safe before shipping.
-- **composes-with** [`decompose-averages-sum-count`](../decompose-averages-sum-count/SKILL.md): Properties 3 (Additivity) and 4 (Decomposability) of this checklist are precisely what the decompose rule implements — when those properties fail, that rule provides the structural fix.
+- **depends-on** `aggregation-workflow-four-steps`: This checklist validates an aggregation that was designed using the four-step workflow — the workflow produces the artifact; this skill confirms it is structurally safe before shipping.
+- **composes-with** `decompose-averages-sum-count`: Properties 3 (Additivity) and 4 (Decomposability) of this checklist are precisely what the decompose rule implements — when those properties fail, that rule provides the structural fix.
 
 ______________________________________________________________________
 
@@ -424,3 +407,9 @@ ______________________________________________________________________
 - **Source IDs**: f10 (framework extractor) + p19 (principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 9 — Counting and Aggregation: Controlling the Grain

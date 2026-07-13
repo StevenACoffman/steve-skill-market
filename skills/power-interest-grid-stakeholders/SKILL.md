@@ -11,25 +11,7 @@ description: |
   - "A stakeholder is blocking my project"
   - "I don't know who I need to involve in this decision"
   - Any new initiative requiring organizational alignment
-
-  Do NOT use this skill when:
-  - The stakeholders are already mapped and the question is about how to pitch to
-    a specific audience — use productland-vs-enterpriseland-selling for pitch framing
-  - The question is about discovering business requirements from stakeholders —
-    use business-process-discovery (which assumes access is already negotiated)
-  - The engagement has already stalled due to organizational structure rather than
-    stakeholder management — see tacit-knowledge-extraction for access strategies
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Politics chapter —
-  How Politics and Power Influence Data Models.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: How Politics and Power Influence Data Models
 tags: [stakeholders, politics, power-interest, engagement, organizational, planning]
-related_skills:
-  - slug: tacit-knowledge-extraction
-    relation: composes-with
-  - slug: productland-vs-enterpriseland-selling
-    relation: composes-with
 ---
 
 # Power-Interest Grid for Stakeholder Prioritization
@@ -236,8 +218,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`tacit-knowledge-extraction`](../tacit-knowledge-extraction/SKILL.md): The grid identifies which key players have the authority to grant access to organizationally sealed departments — a prerequisite that must be resolved before the Gemba Walk and Artifact Archaeology techniques can proceed.
-- **composes-with** [`productland-vs-enterpriseland-selling`](../productland-vs-enterpriseland-selling/SKILL.md): The grid determines who the audience is and which quadrant they occupy; the selling framework then prescribes what pitch frame and metrics to use with that specific audience.
+- **composes-with** `tacit-knowledge-extraction`: The grid identifies which key players have the authority to grant access to organizationally sealed departments — a prerequisite that must be resolved before the Gemba Walk and Artifact Archaeology techniques can proceed.
+- **composes-with** `productland-vs-enterpriseland-selling`: The grid determines who the audience is and which quadrant they occupy; the selling framework then prescribes what pitch frame and metrics to use with that specific audience.
 
 ______________________________________________________________________
 
@@ -247,3 +229,9 @@ ______________________________________________________________________
 - **Source IDs**: f22+p40 (framework extractor + principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — How Politics and Power Influence Data Models

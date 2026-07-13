@@ -16,16 +16,7 @@ description: |
   (use welc-seam-model or welc-sensing-vs-separation for that). Do not call when the
   user's code already has comprehensive tests around the change area and they just
   need to add behavior — that is standard TDD.
-
-  KEY TRIGGER SIGNALS: Any phrasing that contains "I need to add X to legacy code",
-  "this class has no tests", "I'm afraid to touch this code", "how do I safely
-  modify untested code", "I don't want to break anything", "this code has no test
-  coverage", "we inherited this codebase", "the codebase is untested", "I need to
-  change X but there are no tests for it", or "where do I even start with this mess."
-source_book: "Working Effectively with Legacy Code" by Michael C. Feathers (2005)
-source_chapter: Chapter 2 — Working with Feedback; Chapters 9–25 (all instantiate steps)
 tags: [legacy-code, change-management, testing, dependency-breaking, characterization-tests, process]
-related_skills: [welc-seam-model, welc-sensing-vs-separation, welc-characterization-test, welc-sprout-wrap-decision, welc-interception-point-selection, welc-scratch-refactoring, welc-tended-untended-systems]
 ---
 
 # The Legacy Code Change Algorithm
@@ -426,3 +417,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Source IDs**: f01 (framework extractor) merged with p06 (principle extractor), p01 (legacy code definition), p05 (legacy code dilemma) — merged at Phase 1.5
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Working Effectively with Legacy Code" by Michael C. Feathers (2005) — Chapter 2 — Working with Feedback, Chapters 9–25 (all instantiate steps)

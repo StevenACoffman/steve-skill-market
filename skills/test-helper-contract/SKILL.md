@@ -1,15 +1,9 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: test-helper-contract
-description: Invoke when writing or reviewing Go test helpers that return errors, or when a test body has repeated setup error-checking boilerplate. Covers the no-error-return contract (call t.Fatalf internally), the cleanup func() pattern, t.Helper() for correct failure line numbers, and t.Cleanup() as the Go 1.14+ alternative to returning func().
-source_book: '"Advanced Testing with Go" by Mitchell Hashimoto'
-source_chapter: Part 1 — Test Methodology / Test Helpers
+description: |
+  Invoke when writing or reviewing Go test helpers that return errors, or when a test body has repeated setup error-checking boilerplate. Covers the no-error-return contract (call t.Fatalf internally), the cleanup func() pattern, t.Helper() for correct failure line numbers, and t.Cleanup() as the Go 1.14+ alternative to returning func().
 tags: [go, testing, test-helpers, cleanup, test-methodology]
-related_skills:
-  - never-mock-net-conn-use-loopback  # composes-with: testConn IS a test helper following this contract
-  - testing-go-public-test-api        # composes-with: testing.go factory functions must follow this contract
-  - golden-files-update-flag          # composes-with: golden file fixture helpers follow this contract
-  - table-driven-named-cases          # composes-with: helpers are commonly called inside table case loops
+allowed-tools: Bash, Read, Edit
 ---
 
 # R — Raw Source
@@ -336,3 +330,9 @@ in all new code.
 - **testing-go-public-test-api** (composes-with): Every factory function exported in `testing.go` (e.g., `TestServer(t)`, `TestConfig(t)`) must follow this contract — no error return, `t.Fatalf` internally, cleanup via `t.Cleanup` or returned `func()`. The `testing.go` skill governs location; this skill governs signature.
 - **golden-files-update-flag** (composes-with): Fixture helpers that set up complex input structures for golden file tests should follow this contract. The helper creates the struct, calls `t.Fatalf` if construction fails, and returns the ready-to-use value.
 - **table-driven-named-cases** (composes-with): Helpers are called inside the table case loop to set up per-case resources. The no-error-return contract ensures the loop body stays focused on the case logic, not setup error handling.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Advanced Testing with Go" by Mitchell Hashimoto — Part 1 — Test Methodology / Test Helpers

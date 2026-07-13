@@ -1,9 +1,8 @@
 ---
-id: terraform-for-each-over-count
-title: 'Terraform for_each vs count: The Index-Shift Cascade Destroy Bug'
+name: terraform-for-each-over-count
 description: Invoke when a user is creating multiple resources with count and any resource has a distinct name, ID, or configuration — or when they ask why removing one item destroys seemingly unrelated resources.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
 ---
+# Terraform for_each vs count: The Index-Shift Cascade Destroy Bug
 
 ## R — Reading
 
@@ -63,6 +62,12 @@ After the switch, removing "neo" produces a single `destroy` on `aws_iam_user.ex
 
 ## Related Skills
 
-- **[terraform-moved-block-refactoring](../terraform-moved-block-refactoring/SKILL.md)** — prerequisite for: migrating an existing count-based resource to for_each requires moved blocks per instance to avoid destroy/create on all existing infrastructure.
-- **[terraform-module-size-smell](../terraform-module-size-smell/SKILL.md)** — informs: count-based loops in large modules compound blast radius; switching to for_each is often part of the same refactor that splits a module.
-- **[terraform-directory-layout-isolation](../terraform-directory-layout-isolation/SKILL.md)** — informs: stable for_each keys become especially important when the same module is reused across multiple environment directories.
+- **terraform-moved-block-refactoring** — prerequisite for: migrating an existing count-based resource to for_each requires moved blocks per instance to avoid destroy/create on all existing infrastructure.
+- **terraform-module-size-smell** — informs: count-based loops in large modules compound blast radius; switching to for_each is often part of the same refactor that splits a module.
+- **terraform-directory-layout-isolation** — informs: stable for_each keys become especially important when the same module is reused across multiple environment directories.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

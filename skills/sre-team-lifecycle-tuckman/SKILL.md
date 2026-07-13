@@ -6,12 +6,7 @@ description: |
   Call when: A new SRE team is being assembled (by any formation method), a team appears stuck and not making progress toward the Norming or Performing milestones, or a manager is applying generic team management advice to an SRE team context.
 
   Do not call when: The problem is a specific reliability or technical issue (not a team formation or organizational issue), or when the team is clearly Performing and the question is about sustaining performance rather than reaching it.
-
-  Key trigger: Resistance to SRE practices — especially automation — is the most common misdiagnosed symptom. Generic team management wisdom treats resistance as a personnel problem. This skill treats it as a formation-type-specific Storming phase behavior with a prescribed intervention that depends on how the team was formed.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 20 - SRE Team Lifecycles; Chapter 18 - SRE Engagement Model"
 tags: [team-formation, tuckman, sre-team, organizational-change, lifecycle, converted-ops, storming]
-related_skills: []
 ---
 
 # SRE Team Lifecycle by Formation Type (Tuckman Applied to SRE Team Formation)
@@ -143,3 +138,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 20 - SRE Team Lifecycles, Chapter 18 - SRE Engagement Model

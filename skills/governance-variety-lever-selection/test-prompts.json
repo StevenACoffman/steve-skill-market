@@ -1,66 +1,72 @@
-{
-  "skill_id": "governance-variety-lever-selection",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "We did a variety gap assessment on our program governance last month and identified three deficits: the steering committee only gets updates every six weeks (sensing), the PMO doesn't have authority to compel action across contractor boundaries (authority), and the program director can't approve scope changes above $500K without going back to the board (response). I have a budget to make one significant governance change this quarter. How do I decide which deficit to tackle first?",
-      "expected_behavior": "Invoke governance-variety-lever-selection. A prior variety audit has been done — the deficit locations are known. All three deficits call for Lever 1 (amplify). Apply the sequencing rule for multiple simultaneous deficits: sensing and authority first, then response. The sensing and authority deficits are likely to compound each other (without sensing, authority cannot be exercised; without authority, faster sensing produces signals that cannot be acted on). Recommend addressing these two in sequence before the response/approval threshold issue."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "I'm the program director for a digital transformation with 14 active workstreams. My governance board is overwhelmed — they can't meaningfully engage with 14 programs simultaneously and they're rubber-stamping everything. We've identified a clear variety deficit: the board has fewer decision cycles than the program has active decision points. The question on the table is whether to expand the board's capacity or to restructure the program to reduce the number of workstreams under active governance at any given time.",
-      "expected_behavior": "Invoke governance-variety-lever-selection. This is a Lever 2 or Lever 3 situation: the board's capacity cannot scale infinitely, so attenuation (reducing the number of concurrent workstreams requiring active governance) is structurally legitimate. Apply the Zenefits test to confirm attenuation is targeting environmental variety (the number of programs generating decision points) not governance capacity. If restructuring reduces programs under active oversight from 14 to, say, 6, that is legitimate Lever 2. If the restructuring works by making the board less capable of engaging with programs, that is a capacity reduction and fails the test."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "Our startup just hired a new COO from a Fortune 500 company to bring 'operational discipline.' Three months in, we've added approval layers, tightened expense processes, and created monthly all-hands governance reviews. The team is frustrated and things are actually moving slower. I'm trying to articulate why this feels wrong structurally — it's not just a culture fit issue.",
-      "expected_behavior": "Invoke governance-variety-lever-selection. This is the Zenefits anti-pattern: an attenuation intervention that is targeting management variety (the COO's toolset is calibrated for low-variety environments; installing it in a high-variety startup reduces the governance system's response capacity). The approval layers, process standardization, and review cycles are attenuating governance flexibility, not environmental variety. Apply the Zenefits test explicitly. The structural argument the user needs: these interventions widen the variety gap rather than closing it because they reduce the governance layer's capacity to respond to the startup environment's variety while leaving that variety unchanged."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_invoke",
-      "prompt": "I have a variety gap assessment showing deficits in all four areas simultaneously — sensing, response options, authority, and model-building. The program is actively in trouble. What do I do first?",
-      "expected_behavior": "Invoke governance-variety-lever-selection. This is the Lever 3 case with all four deficits. Apply the sequencing rule: sensing and authority first (because without these, any intervention is uninformed and unenforceable), then response options and model-building. In the immediate term, amplify sensing (even crude, fast feedback is better than slow formal reporting) and establish some authority to compel action. In parallel or immediately after, work on model-building and expanding response options. Note that attenuation may also be needed to make the model tractable if the program scope is too large for any governance structure to model adequately."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "I think our governance is failing but I'm not sure where the problem is. We're missing milestones, the vendor relationships are getting adversarial, and the steering committee seems disengaged. Where should I start investigating?",
-      "expected_behavior": "Do not invoke governance-variety-lever-selection. The prerequisite — a completed variety audit identifying deficit location — is absent. This prompt calls for requisite-variety-gap-assessment first. Lever selection requires knowing where the deficit lives; this user hasn't diagnosed the problem yet. Route to the diagnostic skill before attempting lever selection."
-    },
-    {
-      "id": "tp-06",
-      "category": "should_not_invoke",
-      "prompt": "I need to prepare the governance chapter of our program management plan for a new $50M federal IT program. What should the governance structure include?",
-      "expected_behavior": "Do not invoke governance-variety-lever-selection. This is a governance design question starting from a blank slate, not a lever-selection question for a diagnosed variety deficit. There is no prior variety audit, no identified deficit location, and no specific intervention trade-off being evaluated. Route to general governance design guidance or program management planning practices."
-    },
-    {
-      "id": "tp-07",
-      "category": "should_not_invoke",
-      "prompt": "My CPI is 0.78 and my SPI is 0.84 at month 8 of a 24-month program. How bad is this, and what corrective actions should I consider?",
-      "expected_behavior": "Do not invoke governance-variety-lever-selection. This is an EVM and schedule/cost recovery question. The metrics indicate a program execution problem, not a diagnosed governance variety deficit requiring lever selection. There is no prior variety assessment and the user's question is about earned value interpretation and corrective action at the delivery level. Route to EVM analysis and recovery planning."
-    },
-    {
-      "id": "tp-08",
-      "category": "blurred_boundary",
-      "prompt": "We've identified that our governance has a clear sensing deficit — the board only hears from program teams once a month and the program environment is changing weekly. We're debating between two options: add a mid-month lightweight check-in, or reduce the program scope so that monthly updates are sufficient. Finance is pushing for scope reduction because it also saves money. How do I think about this tradeoff?",
-      "expected_behavior": "This is genuine Lever 1 vs. Lever 2 territory. Both options are structurally legitimate — faster check-ins amplify sensing (Lever 1), scope reduction attenuates the variety the governance layer needs to track (Lever 2). Apply the Zenefits test to the scope reduction option: does reducing scope attenuate environmental variety (the number of program states that need to be visible to governance), or does it attenuate governance capacity? If scope reduction genuinely shrinks the program's complexity surface rather than just hiding it, Lever 2 is valid. The skill should note that finance-driven scope reduction often creates a hidden risk: the attenuated scope may still carry most of the integration complexity, so the apparent simplification doesn't actually reduce the variety the governance layer needs to track."
-    },
-    {
-      "id": "tp-09",
-      "category": "blurred_boundary",
-      "prompt": "I've been brought in to assess a failing program. The governance structure has authority — the steering committee can compel action — but they're not using it. Decisions keep getting deferred, the committee is conflict-averse, and everyone seems to be waiting for someone else to act. I've heard about requisite variety as a framework, and I'm wondering if this is a variety deficit or something else.",
-      "expected_behavior": "This is boundary territory. The authority is formally present but functionally unavailable due to organizational behavior — this is not a structural authority deficit in the Ashby sense, but it produces the same outcome. Governance-variety-lever-selection is partially relevant: the functional deficit here is a response deficit (governance has authority but cannot convert it into action). However, the root cause is behavioral/political rather than structural. The skill can identify this as a functional response deficit and suggest interventions (Lever 1 amplification of response options or decision forcing functions), but should acknowledge that Williams' framework primarily addresses structural variety deficits rather than behavioral constraints on using existing capacity. Political constraints on lever deployment are a boundary condition of the framework."
-    },
-    {
-      "id": "tp-10",
-      "category": "blurred_boundary",
-      "prompt": "Our variety audit shows the primary deficit is in model-building — no one in the governance structure holds an integrated view of the program's dependencies and failure modes. We're debating whether to hire a systems integrator (expensive, takes 3 months to get up to speed) or to reduce the number of contractors from 11 to 5 (cheaper but requires renegotiation). Both options could close the model deficit.",
-      "expected_behavior": "Both options are structurally valid for a model deficit: hiring a systems integrator is Lever 1 amplification of model-building capacity; reducing contractor count is Lever 2 attenuation of the complexity surface that needs to be modeled. The skill should help evaluate both against the specific deficit: if the model deficit is primarily about integration complexity (too many interfaces to track), Lever 2 (contractor reduction) directly reduces the problem. If the model deficit is about capability (no one has the cross-domain expertise to hold the integrated view), Lever 1 (systems integrator) addresses the root cause. The 3-month ramp-up risk for the systems integrator also matters: if the program is in active trouble, near-term relief may require a scope/boundary attenuation while the amplification intervention is being established. This is the Lever 3 sequencing case."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We did a variety gap assessment on our program governance last month and identified three deficits: the steering committee only gets updates every six weeks (sensing), the PMO doesn't have authority to compel action across contractor boundaries (authority), and the program director can't approve scope changes above $500K without going back to the board (response). I have a budget to make one significant governance change this quarter. How do I decide which deficit to tackle first?",
+    "expected": "Invoke governance-variety-lever-selection. A prior variety audit has been done — the deficit locations are known. All three deficits call for Lever 1 (amplify). Apply the sequencing rule for multiple simultaneous deficits: sensing and authority first, then response. The sensing and authority deficits are likely to compound each other (without sensing, authority cannot be exercised; without authority, faster sensing produces signals that cannot be acted on). Recommend addressing these two in sequence before the response/approval threshold issue.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm the program director for a digital transformation with 14 active workstreams. My governance board is overwhelmed — they can't meaningfully engage with 14 programs simultaneously and they're rubber-stamping everything. We've identified a clear variety deficit: the board has fewer decision cycles than the program has active decision points. The question on the table is whether to expand the board's capacity or to restructure the program to reduce the number of workstreams under active governance at any given time.",
+    "expected": "Invoke governance-variety-lever-selection. This is a Lever 2 or Lever 3 situation: the board's capacity cannot scale infinitely, so attenuation (reducing the number of concurrent workstreams requiring active governance) is structurally legitimate. Apply the Zenefits test to confirm attenuation is targeting environmental variety (the number of programs generating decision points) not governance capacity. If restructuring reduces programs under active oversight from 14 to, say, 6, that is legitimate Lever 2. If the restructuring works by making the board less capable of engaging with programs, that is a capacity reduction and fails the test.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our startup just hired a new COO from a Fortune 500 company to bring 'operational discipline.' Three months in, we've added approval layers, tightened expense processes, and created monthly all-hands governance reviews. The team is frustrated and things are actually moving slower. I'm trying to articulate why this feels wrong structurally — it's not just a culture fit issue.",
+    "expected": "Invoke governance-variety-lever-selection. This is the Zenefits anti-pattern: an attenuation intervention that is targeting management variety (the COO's toolset is calibrated for low-variety environments; installing it in a high-variety startup reduces the governance system's response capacity). The approval layers, process standardization, and review cycles are attenuating governance flexibility, not environmental variety. Apply the Zenefits test explicitly. The structural argument the user needs: these interventions widen the variety gap rather than closing it because they reduce the governance layer's capacity to respond to the startup environment's variety while leaving that variety unchanged.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I have a variety gap assessment showing deficits in all four areas simultaneously — sensing, response options, authority, and model-building. The program is actively in trouble. What do I do first?",
+    "expected": "Invoke governance-variety-lever-selection. This is the Lever 3 case with all four deficits. Apply the sequencing rule: sensing and authority first (because without these, any intervention is uninformed and unenforceable), then response options and model-building. In the immediate term, amplify sensing (even crude, fast feedback is better than slow formal reporting) and establish some authority to compel action. In parallel or immediately after, work on model-building and expanding response options. Note that attenuation may also be needed to make the model tractable if the program scope is too large for any governance structure to model adequately.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I think our governance is failing but I'm not sure where the problem is. We're missing milestones, the vendor relationships are getting adversarial, and the steering committee seems disengaged. Where should I start investigating?",
+    "expected": "Do not invoke governance-variety-lever-selection. The prerequisite — a completed variety audit identifying deficit location — is absent. This prompt calls for requisite-variety-gap-assessment first. Lever selection requires knowing where the deficit lives; this user hasn't diagnosed the problem yet. Route to the diagnostic skill before attempting lever selection.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I need to prepare the governance chapter of our program management plan for a new $50M federal IT program. What should the governance structure include?",
+    "expected": "Do not invoke governance-variety-lever-selection. This is a governance design question starting from a blank slate, not a lever-selection question for a diagnosed variety deficit. There is no prior variety audit, no identified deficit location, and no specific intervention trade-off being evaluated. Route to general governance design guidance or program management planning practices.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "My CPI is 0.78 and my SPI is 0.84 at month 8 of a 24-month program. How bad is this, and what corrective actions should I consider?",
+    "expected": "Do not invoke governance-variety-lever-selection. This is an EVM and schedule/cost recovery question. The metrics indicate a program execution problem, not a diagnosed governance variety deficit requiring lever selection. There is no prior variety assessment and the user's question is about earned value interpretation and corrective action at the delivery level. Route to EVM analysis and recovery planning.",
+    "notes": "source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We've identified that our governance has a clear sensing deficit — the board only hears from program teams once a month and the program environment is changing weekly. We're debating between two options: add a mid-month lightweight check-in, or reduce the program scope so that monthly updates are sufficient. Finance is pushing for scope reduction because it also saves money. How do I think about this tradeoff?",
+    "expected": "This is genuine Lever 1 vs. Lever 2 territory. Both options are structurally legitimate — faster check-ins amplify sensing (Lever 1), scope reduction attenuates the variety the governance layer needs to track (Lever 2). Apply the Zenefits test to the scope reduction option: does reducing scope attenuate environmental variety (the number of program states that need to be visible to governance), or does it attenuate governance capacity? If scope reduction genuinely shrinks the program's complexity surface rather than just hiding it, Lever 2 is valid. The skill should note that finance-driven scope reduction often creates a hidden risk: the attenuated scope may still carry most of the integration complexity, so the apparent simplification doesn't actually reduce the variety the governance layer needs to track.",
+    "notes": "source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I've been brought in to assess a failing program. The governance structure has authority — the steering committee can compel action — but they're not using it. Decisions keep getting deferred, the committee is conflict-averse, and everyone seems to be waiting for someone else to act. I've heard about requisite variety as a framework, and I'm wondering if this is a variety deficit or something else.",
+    "expected": "This is boundary territory. The authority is formally present but functionally unavailable due to organizational behavior — this is not a structural authority deficit in the Ashby sense, but it produces the same outcome. Governance-variety-lever-selection is partially relevant: the functional deficit here is a response deficit (governance has authority but cannot convert it into action). However, the root cause is behavioral/political rather than structural. The skill can identify this as a functional response deficit and suggest interventions (Lever 1 amplification of response options or decision forcing functions), but should acknowledge that Williams' framework primarily addresses structural variety deficits rather than behavioral constraints on using existing capacity. Political constraints on lever deployment are a boundary condition of the framework.",
+    "notes": "source id: tp-09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our variety audit shows the primary deficit is in model-building — no one in the governance structure holds an integrated view of the program's dependencies and failure modes. We're debating whether to hire a systems integrator (expensive, takes 3 months to get up to speed) or to reduce the number of contractors from 11 to 5 (cheaper but requires renegotiation). Both options could close the model deficit.",
+    "expected": "Both options are structurally valid for a model deficit: hiring a systems integrator is Lever 1 amplification of model-building capacity; reducing contractor count is Lever 2 attenuation of the complexity surface that needs to be modeled. The skill should help evaluate both against the specific deficit: if the model deficit is primarily about integration complexity (too many interfaces to track), Lever 2 (contractor reduction) directly reduces the problem. If the model deficit is about capability (no one has the cross-domain expertise to hold the integrated view), Lever 1 (systems integrator) addresses the root cause. The 3-month ramp-up risk for the systems integrator also matters: if the program is in active trouble, near-term relief may require a scope/boundary attenuation while the amplification intervention is being established. This is the Lever 3 sequencing case.",
+    "notes": "source id: tp-10"
+  }
+]

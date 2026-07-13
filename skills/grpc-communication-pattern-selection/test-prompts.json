@@ -1,74 +1,79 @@
 [
   {
-    "id": "tp01",
-    "segment": "A2",
-    "trigger": "naive bidirectional proposal for simple request-response",
+    "id": 1,
+    "type": "should_trigger",
     "prompt": "I'm building a gRPC endpoint that takes a user ID and returns their profile. Should I use bidirectional streaming to keep the connection open for future profile updates?",
-    "expected_behavior": "Should reject bidirectional streaming for this use case. The data flow is one-to-one: one input, one output. This is the canonical unary pattern. Bidirectional streaming is appropriate only when both sides need to send streams concurrently without waiting for the other to finish. Should explain that keeping a connection open for 'future updates' is not a valid justification for bidirectional streaming — server streaming (where the server pushes updates after the initial request) is the correct upgrade path if real-time updates are genuinely needed.",
-    "should_not": "Should not endorse bidirectional streaming for a single lookup operation. Should not frame bidirectional streaming as 'more powerful and therefore better.'"
+    "expected": "Should reject bidirectional streaming for this use case. The data flow is one-to-one: one input, one output. This is the canonical unary pattern. Bidirectional streaming is appropriate only when both sides need to send streams concurrently without waiting for the other to finish. Should explain that keeping a connection open for 'future updates' is not a valid justification for bidirectional streaming — server streaming (where the server pushes updates after the initial request) is the correct upgrade path if real-time updates are genuinely needed.",
+    "notes": "source id: tp01"
   },
   {
-    "id": "tp02",
-    "segment": "R",
-    "trigger": "direct source question",
+    "id": 2,
+    "type": "should_trigger",
     "prompt": "What does 'gRPC: Up and Running' say about how to choose between the four communication patterns?",
-    "expected_behavior": "Should quote or closely paraphrase: 'There is no hard-and-fast rule when it comes to selecting a communication pattern, but it's always good to analyze the business use case and then select the most appropriate pattern.' Should describe all four patterns: unary (simple request-response), server streaming (multiple server responses), client streaming (multiple client messages), bidirectional streaming (both sides send independently). Should note the decision is based on data-flow shape.",
-    "should_not": "Should not invent criteria not in the book. Should not claim one pattern is always superior to others."
+    "expected": "Should quote or closely paraphrase: 'There is no hard-and-fast rule when it comes to selecting a communication pattern, but it's always good to analyze the business use case and then select the most appropriate pattern.' Should describe all four patterns: unary (simple request-response), server streaming (multiple server responses), client streaming (multiple client messages), bidirectional streaming (both sides send independently). Should note the decision is based on data-flow shape.",
+    "notes": "source id: tp02"
   },
   {
-    "id": "tp03",
-    "segment": "I",
-    "trigger": "server streaming vs bidirectional distinction",
+    "id": 3,
+    "type": "should_trigger",
     "prompt": "My service returns a stream of real-time stock prices after the client subscribes with a symbol. The client never sends additional messages after the initial subscription. Should I use server streaming or bidirectional streaming?",
-    "expected_behavior": "Should recommend server streaming. The trigger condition for server streaming is: one request, many responses. The client sends one subscription request; the server streams prices indefinitely. Bidirectional streaming is for cases where both sides send concurrently — the client sends messages while also receiving messages, and neither waits for the other. Since the client only sends the initial symbol and then receives prices, server streaming is the correct and simpler pattern. Should note that using bidirectional streaming here adds lifecycle complexity with no benefit.",
-    "should_not": "Should not recommend bidirectional streaming when the client has no messages to send after the initial request."
+    "expected": "Should recommend server streaming. The trigger condition for server streaming is: one request, many responses. The client sends one subscription request; the server streams prices indefinitely. Bidirectional streaming is for cases where both sides send concurrently — the client sends messages while also receiving messages, and neither waits for the other. Since the client only sends the initial symbol and then receives prices, server streaming is the correct and simpler pattern. Should note that using bidirectional streaming here adds lifecycle complexity with no benefit.",
+    "notes": "source id: tp03"
   },
   {
-    "id": "tp04",
-    "segment": "A1",
-    "trigger": "book example — processOrders justification",
+    "id": 4,
+    "type": "should_trigger",
     "prompt": "In the gRPC Up and Running book, why was bidirectional streaming chosen for processOrders rather than client streaming?",
-    "expected_behavior": "Should explain that processOrders is the canonical bidirectional streaming example because: the client sends a continuous stream of order IDs, and the server starts responding with CombinedShipment batches before the client finishes sending. The server groups orders by delivery location and flushes batches when a threshold is reached — while the client is still sending more order IDs. Neither side waits for the other to finish. This genuine interleaving of send and receive — not just 'both sides send something' — is the defining characteristic that requires bidirectional over client streaming. With client streaming, the server could only respond after receiving all orders.",
-    "should_not": "Should not say bidirectional was chosen just because both sides communicate. Should identify the interleaved, concurrent nature of the exchange as the decisive factor."
+    "expected": "Should explain that processOrders is the canonical bidirectional streaming example because: the client sends a continuous stream of order IDs, and the server starts responding with CombinedShipment batches before the client finishes sending. The server groups orders by delivery location and flushes batches when a threshold is reached — while the client is still sending more order IDs. Neither side waits for the other to finish. This genuine interleaving of send and receive — not just 'both sides send something' — is the defining characteristic that requires bidirectional over client streaming. With client streaming, the server could only respond after receiving all orders.",
+    "notes": "source id: tp04"
   },
   {
-    "id": "tp05",
-    "segment": "E",
-    "trigger": "implementation — client streaming server-side handler",
+    "id": 5,
+    "type": "should_trigger",
     "prompt": "How do I implement the server-side handler for a client streaming RPC in Go?",
-    "expected_behavior": "Should describe the server-side loop pattern: implement the streaming server interface, call stream.Recv() in a loop until io.EOF is returned (indicating client closed the stream), process accumulated items, then call stream.SendAndClose(summaryMessage) with the aggregate result. Should note that SendAndClose both sends the response and signals end-of-stream for the server side. Should include or reference the proto definition: rpc UpdateOrders(stream Order) returns (StringValue).",
-    "should_not": "Should not describe unary or server-streaming handler patterns as the answer. Should not omit the io.EOF loop-termination check."
+    "expected": "Should describe the server-side loop pattern: implement the streaming server interface, call stream.Recv() in a loop until io.EOF is returned (indicating client closed the stream), process accumulated items, then call stream.SendAndClose(summaryMessage) with the aggregate result. Should note that SendAndClose both sends the response and signals end-of-stream for the server side. Should include or reference the proto definition: rpc UpdateOrders(stream Order) returns (StringValue).",
+    "notes": "source id: tp05"
   },
   {
-    "id": "tp06",
-    "segment": "A2",
-    "trigger": "bulk upload — which pattern",
+    "id": 6,
+    "type": "should_trigger",
     "prompt": "I need to design a gRPC endpoint for uploading thousands of log entries from an IoT device to a server. The server should acknowledge once all entries are stored. Which pattern should I use?",
-    "expected_behavior": "Should identify client streaming as the correct pattern. The trigger conditions match: many inputs (thousands of log entries) sent by the client, one aggregate response (acknowledgment with count or status) from the server. The proto signature would be: rpc UploadLogs(stream LogEntry) returns (UploadResult). Should explain why not bidirectional streaming: the server does not need to send messages while the client is uploading — the response comes only after the upload is complete.",
-    "should_not": "Should not recommend bidirectional streaming. Should not recommend multiple unary calls as an alternative without acknowledging the overhead."
+    "expected": "Should identify client streaming as the correct pattern. The trigger conditions match: many inputs (thousands of log entries) sent by the client, one aggregate response (acknowledgment with count or status) from the server. The proto signature would be: rpc UploadLogs(stream LogEntry) returns (UploadResult). Should explain why not bidirectional streaming: the server does not need to send messages while the client is uploading — the response comes only after the upload is complete.",
+    "notes": "source id: tp06"
   },
   {
-    "id": "tp07",
-    "segment": "I",
-    "trigger": "unary vs server streaming for large result sets",
+    "id": 7,
+    "type": "should_trigger",
     "prompt": "A search endpoint currently returns a repeated field in a single unary response. The result set can be up to 50,000 items. Should I refactor it to server streaming?",
-    "expected_behavior": "Should recommend server streaming. A result set of unknown or large count is the canonical server streaming use case. With unary + repeated field, the server must buffer all 50,000 items in memory before sending the response, and the client cannot process any result until all 50,000 arrive. Server streaming allows progressive delivery: the server sends items as found, the client processes them as received, and neither side buffers the full set. Should note the proto change: rpc Search(SearchRequest) returns (repeated Item) → rpc Search(SearchRequest) returns (stream Item). This is a breaking change that requires both sides to be updated.",
-    "should_not": "Should not say unary is fine for large result sets without mentioning the buffering and latency implications."
+    "expected": "Should recommend server streaming. A result set of unknown or large count is the canonical server streaming use case. With unary + repeated field, the server must buffer all 50,000 items in memory before sending the response, and the client cannot process any result until all 50,000 arrive. Server streaming allows progressive delivery: the server sends items as found, the client processes them as received, and neither side buffers the full set. Should note the proto change: rpc Search(SearchRequest) returns (repeated Item) → rpc Search(SearchRequest) returns (stream Item). This is a breaking change that requires both sides to be updated.",
+    "notes": "source id: tp07"
   },
   {
-    "id": "tp08",
-    "segment": "B",
-    "trigger": "boundary — flow control not covered",
+    "id": 8,
+    "type": "edge_case",
     "prompt": "We're building a bidirectional streaming RPC for a high-volume data pipeline. The server processes each message and sends back results, but the producer is faster than the consumer. How does gRPC handle this?",
-    "expected_behavior": "Should explain that gRPC uses HTTP/2 flow control to handle producer-consumer rate mismatches: if the receiver's flow control window is full, the sender is stalled at the transport level. Should acknowledge this is not covered in the book's pattern selection framework. Should note that application-level back-pressure design (e.g., the server not calling stream.Send until it has capacity) is a concern separate from pattern selection. The book does not cover flow control or back-pressure strategies for high-volume streaming.",
-    "should_not": "Should not claim the book covers HTTP/2 flow control in detail. Should not say gRPC has no back-pressure mechanism."
+    "expected": "Should explain that gRPC uses HTTP/2 flow control to handle producer-consumer rate mismatches: if the receiver's flow control window is full, the sender is stalled at the transport level. Should acknowledge this is not covered in the book's pattern selection framework. Should note that application-level back-pressure design (e.g., the server not calling stream.Send until it has capacity) is a concern separate from pattern selection. The book does not cover flow control or back-pressure strategies for high-volume streaming.",
+    "notes": "source id: tp08"
   },
   {
-    "id": "tp09",
-    "segment": "B",
-    "trigger": "boundary — streaming adds lifecycle complexity",
+    "id": 9,
+    "type": "edge_case",
     "prompt": "What are the downsides of choosing server streaming over unary for an endpoint?",
-    "expected_behavior": "Should describe the lifecycle complexity that streaming adds: the server must explicitly close the stream (return nil); errors mid-stream must be propagated differently than unary errors (the status code arrives at the end of the stream, not with a response message); the client must handle stream.Recv() returning io.EOF as normal termination vs. a non-nil error as failure. Should mention that deadline propagation over a streaming RPC means the entire stream lives within one deadline — if the deadline fires mid-stream, the stream is terminated. Should recommend starting with unary and upgrading to streaming only when there is a concrete reason (progressive delivery, large result sets).",
-    "should_not": "Should not present streaming as unconditionally superior to unary. Should not ignore lifecycle management concerns."
+    "expected": "Should describe the lifecycle complexity that streaming adds: the server must explicitly close the stream (return nil); errors mid-stream must be propagated differently than unary errors (the status code arrives at the end of the stream, not with a response message); the client must handle stream.Recv() returning io.EOF as normal termination vs. a non-nil error as failure. Should mention that deadline propagation over a streaming RPC means the entire stream lives within one deadline — if the deadline fires mid-stream, the stream is terminated. Should recommend starting with unary and upgrading to streaming only when there is a concrete reason (progressive delivery, large result sets).",
+    "notes": "source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "I have a unary gRPC method already chosen. How do I register a logging interceptor so it runs on every call, and does the registration differ for unary vs streaming interceptors?",
+    "expected": "skill should not activate — this is about interceptor registration and middleware wiring, not selecting which of the four communication patterns fits a method's data-flow shape.",
+    "notes": "Decoy: interceptor chain setup is adjacent gRPC territory but the pattern is already decided; no pattern-selection decision is being made."
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "We're adding two new fields to our existing Order proto message that a server-streaming RPC returns. How do I assign field numbers so old and new clients stay wire-compatible during a rolling deploy?",
+    "expected": "skill should not activate — this is about proto schema evolution and field-number/backward-compatibility rules, not choosing between unary, server, client, or bidirectional streaming.",
+    "notes": "Decoy: mentions a streaming RPC but the question is schema versioning, which is a different skill's concern."
   }
 ]

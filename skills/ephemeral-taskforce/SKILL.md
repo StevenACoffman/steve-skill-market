@@ -12,25 +12,7 @@ description: |
   compliance rollout (GDPR, EAA), a platform-wide observability change, a
   catalog migration, or any technical initiative that requires both knowledge
   and mandate from multiple teams simultaneously.
-
-  Do NOT call this skill when:
-  - The initiative lives entirely within one team's ownership boundary (no ETF needed).
-  - The initiative has no clear deliverable or no foreseeable end-state (use a
-    reorganization instead).
-  - A single technical leader can deliver the work in an acceptable timeframe.
-  - The group is being assembled because "more eyes are better" rather than because
-    multiple distinct areas of ownership must be represented.
-
-  Key trigger signal: "We need people from multiple teams with real mandate to make
-  changes in their own systems, plus a clear mission and a clear done condition."
 tags: [organization, leadership, cross-functional, delivery, ownership]
-related_skills:
-  - slug: ownership-trio
-    relation: depends-on
-  - slug: consumer-journey-org
-    relation: contrasts-with
-  - slug: t-pop
-    relation: composes-with
 ---
 
 # Ephemeral Taskforce (ETF) Design and Deployment
@@ -256,9 +238,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`ownership-trio`](../ownership-trio/SKILL.md): ETF composition requirements follow directly from the Ownership Trio — each member must hold all three elements for their slice of the cross-organizational mission.
-- **contrasts-with** → [`consumer-journey-org`](../consumer-journey-org/SKILL.md): ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries around consumer journeys.
-- **composes-with** → [`t-pop`](../t-pop/SKILL.md): T-POP provides the ETF leader with the full Tech/People/Operations/Product situational awareness needed to charter and operate the taskforce effectively.
+- **depends-on** → `ownership-trio`: ETF composition requirements follow directly from the Ownership Trio — each member must hold all three elements for their slice of the cross-organizational mission.
+- **contrasts-with** → `consumer-journey-org`: ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries around consumer journeys.
+- **composes-with** → `t-pop`: T-POP provides the ETF leader with the full Tech/People/Operations/Product situational awareness needed to charter and operate the taskforce effectively.
 
 ______________________________________________________________________
 

@@ -1,62 +1,58 @@
-{
-  "skill": "canary-as-error-budget-arithmetic",
-  "description": "Use this skill when sizing a canary deployment or evaluating whether a canary process is epistemically sound.",
-  "test_prompts": [
-    {
-      "id": "canary-as-error-budget-arithmetic-should-01",
-      "category": "should_invoke",
-      "prompt": "We're about to deploy a new payment processing library. Our team always does 5% canary as standard practice. We have about 72 hours of error budget remaining this month. The release touches the retry logic and we've seen retry storms in staging. How should we size this canary?",
-      "expected": "invoke",
-      "rationale": "Classic trigger: canary size chosen by convention ('we always do 5%') with a known risk signal (retry storm behavior). The skill's core value is replacing convention with arithmetic — the team needs to estimate a worst-case defect rate and compute budget consumed before starting."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-should-02",
-      "category": "should_invoke",
-      "prompt": "We use blue/green deployments for all our services. The plan is to flip from green to blue at 2am (low traffic) and monitor for 30 minutes before calling it good. Our SRE lead is pushing back but can't articulate why. What's the structural problem with this approach?",
-      "expected": "invoke",
-      "rationale": "Explicit blue/green-as-canary scenario — the canonical before/after invalidation case. The skill directly addresses why this is epistemically unsound: time is a confound, not a control variable, and 2am traffic is not representative of peak."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-should-03",
-      "category": "should_invoke",
-      "prompt": "Our canary dashboard shows CPU and memory looking completely normal on the canary pods. Latency P99 is fine too from the system metrics. But we just got a customer complaint about checkout failures. Could the canary be hiding a problem?",
-      "expected": "invoke",
-      "rationale": "Exactly the 'we canary on system metrics' anti-pattern from the skill's A2 section. System metrics (CPU, memory) can look healthy while user-visible error rate is elevated. The skill addresses this: SLI-correlated metrics split by population are required."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "Our error budget is at 8% remaining for the month and we have three feature releases queued. The product manager wants to know if we can still ship. What are the rules for deciding whether to freeze releases?",
-      "expected": "skip",
-      "rationale": "This is a release-freeze governance question, not a canary sizing question. The right skill is error-budget-policy-framework, which governs mandatory actions when the budget is exhausted or near-exhausted. No canary is being designed or evaluated here."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We're running an A/B test on our new recommendation algorithm. Group A gets the old ranker and group B gets the ML model. After two weeks we want to determine which drove higher click-through rates. How should we structure the analysis?",
-      "expected": "skip",
-      "rationale": "A/B testing for user behavior analysis is explicitly out of scope per the skill's boundary section. Different analysis methods (statistical significance, experiment design, uplift modeling) apply. This is not defect detection — it's product experimentation."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We're deploying a database schema migration that adds three new columns and a composite index. We want to canary this before applying to the full fleet. How should we approach it?",
-      "expected": "skip",
-      "rationale": "Schema migrations involve shared state that invalidates the canary/control population isolation — explicitly called out in the boundary section. Both populations share the same database state, so canary arithmetic doesn't apply cleanly. The right approach is a separate migration safety checklist (backward-compatible migrations, dual-write patterns)."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-boundary-01",
-      "category": "boundary",
-      "prompt": "We're deploying a config change that modifies request timeout values from 500ms to 2000ms across our API fleet. There's no code change — just a config update. We want to validate it on 10% of servers before rolling out everywhere. Should we treat this like a canary deployment and compute budget impact?",
-      "expected": "invoke",
-      "rationale": "Config-only changes can still have user-visible defect rates — a wrong timeout value could cause cascading failures. The canary arithmetic applies as long as the 10% population is concurrent with the 90% control. The key question is whether the config system supports concurrent population isolation (not a before/after flip), which makes this a valid canary scenario worth running the arithmetic on."
-    },
-    {
-      "id": "canary-as-error-budget-arithmetic-boundary-02",
-      "category": "boundary",
-      "prompt": "We have a service that gets ~50 requests per hour on weekends. Our standard practice is to do canary deployments, but at 5% traffic that's about 2-3 requests per hour going to the canary. Is canary arithmetic still meaningful here?",
-      "expected": "skip",
-      "rationale": "Low-traffic services are a known limitation of the framework. At 2-3 requests/hour to the canary population, single failed requests produce extreme and statistically meaningless signal. The skill's boundary section explicitly flags this: at low traffic, different strategies apply (deploy to a full low-traffic environment, use synthetic traffic, or accept the risk and rely on rollback speed). Applying canary arithmetic here would produce spurious numbers."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're about to deploy a new payment processing library. Our team always does 5% canary as standard practice. We have about 72 hours of error budget remaining this month. The release touches the retry logic and we've seen retry storms in staging. How should we size this canary?",
+    "expected": "invoke",
+    "notes": "rationale: Classic trigger: canary size chosen by convention ('we always do 5%') with a known risk signal (retry storm behavior). The skill's core value is replacing convention with arithmetic — the team needs to estimate a worst-case defect rate and compute budget consumed before starting.; source id: canary-as-error-budget-arithmetic-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We use blue/green deployments for all our services. The plan is to flip from green to blue at 2am (low traffic) and monitor for 30 minutes before calling it good. Our SRE lead is pushing back but can't articulate why. What's the structural problem with this approach?",
+    "expected": "invoke",
+    "notes": "rationale: Explicit blue/green-as-canary scenario — the canonical before/after invalidation case. The skill directly addresses why this is epistemically unsound: time is a confound, not a control variable, and 2am traffic is not representative of peak.; source id: canary-as-error-budget-arithmetic-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our canary dashboard shows CPU and memory looking completely normal on the canary pods. Latency P99 is fine too from the system metrics. But we just got a customer complaint about checkout failures. Could the canary be hiding a problem?",
+    "expected": "invoke",
+    "notes": "rationale: Exactly the 'we canary on system metrics' anti-pattern from the skill's A2 section. System metrics (CPU, memory) can look healthy while user-visible error rate is elevated. The skill addresses this: SLI-correlated metrics split by population are required.; source id: canary-as-error-budget-arithmetic-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "Our error budget is at 8% remaining for the month and we have three feature releases queued. The product manager wants to know if we can still ship. What are the rules for deciding whether to freeze releases?",
+    "expected": "skip",
+    "notes": "rationale: This is a release-freeze governance question, not a canary sizing question. The right skill is error-budget-policy-framework, which governs mandatory actions when the budget is exhausted or near-exhausted. No canary is being designed or evaluated here.; source id: canary-as-error-budget-arithmetic-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We're running an A/B test on our new recommendation algorithm. Group A gets the old ranker and group B gets the ML model. After two weeks we want to determine which drove higher click-through rates. How should we structure the analysis?",
+    "expected": "skip",
+    "notes": "rationale: A/B testing for user behavior analysis is explicitly out of scope per the skill's boundary section. Different analysis methods (statistical significance, experiment design, uplift modeling) apply. This is not defect detection — it's product experimentation.; source id: canary-as-error-budget-arithmetic-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're deploying a database schema migration that adds three new columns and a composite index. We want to canary this before applying to the full fleet. How should we approach it?",
+    "expected": "skip",
+    "notes": "rationale: Schema migrations involve shared state that invalidates the canary/control population isolation — explicitly called out in the boundary section. Both populations share the same database state, so canary arithmetic doesn't apply cleanly. The right approach is a separate migration safety checklist (backward-compatible migrations, dual-write patterns).; source id: canary-as-error-budget-arithmetic-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We're deploying a config change that modifies request timeout values from 500ms to 2000ms across our API fleet. There's no code change — just a config update. We want to validate it on 10% of servers before rolling out everywhere. Should we treat this like a canary deployment and compute budget impact?",
+    "expected": "invoke",
+    "notes": "rationale: Config-only changes can still have user-visible defect rates — a wrong timeout value could cause cascading failures. The canary arithmetic applies as long as the 10% population is concurrent with the 90% control. The key question is whether the config system supports concurrent population isolation (not a before/after flip), which makes this a valid canary scenario worth running the arithmetic on.; source id: canary-as-error-budget-arithmetic-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have a service that gets ~50 requests per hour on weekends. Our standard practice is to do canary deployments, but at 5% traffic that's about 2-3 requests per hour going to the canary. Is canary arithmetic still meaningful here?",
+    "expected": "skip",
+    "notes": "rationale: Low-traffic services are a known limitation of the framework. At 2-3 requests/hour to the canary population, single failed requests produce extreme and statistically meaningless signal. The skill's boundary section explicitly flags this: at low traffic, different strategies apply (deploy to a full low-traffic environment, use synthetic traffic, or accept the risk and rely on rollback speed). Applying canary arithmetic here would produce spurious numbers.; source id: canary-as-error-budget-arithmetic-boundary-02"
+  }
+]

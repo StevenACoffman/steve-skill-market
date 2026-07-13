@@ -10,19 +10,7 @@ description: |
   code for injection vulnerabilities across a large codebase. You are choosing between
   "train developers to sanitize" and "make the mistake impossible to compile." The
   vulnerability class is one that recurs despite code review and developer awareness.
-
-  WHEN NOT TO CALL: The vulnerability class is not about injection into a typed sink (e.g.,
-  logic bugs, race conditions, business logic errors — these cannot be type-encoded). You
-  are working with a language that lacks the type system expressiveness to enforce these
-  constraints (though the pattern can be approximated with runtime checks). You are fixing
-  a single known injection bug rather than eliminating the class.
-
-  KEY TRIGGER: "We keep finding XSS/SQLi bugs despite code review" or "how do we scale
-  injection prevention across hundreds of developers?" This is the skill.
-source_book: "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google)
-source_chapter: Chapter 6 — Design for Understandability; Chapter 12 — Writing Code
 tags: [secure-by-construction, type-safety, injection-prevention, api-design, XSS, SQL-injection]
-related_skills: []
 ---
 
 # Secure-by-Construction API Design — Eliminating Vulnerability Classes via Type Contracts
@@ -233,3 +221,9 @@ ______________________________________________________________________
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Source IDs: f07, p11
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Heather Adkins, Betsy Beyer et al. (Google) — Chapter 6 — Design for Understandability, Chapter 12 — Writing Code

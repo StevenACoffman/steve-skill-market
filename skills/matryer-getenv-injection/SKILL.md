@@ -2,12 +2,7 @@
 name: matryer-getenv-injection
 description: |
   Inject environment variable access as a `getenv func(string) string` parameter on the `run()` function instead of calling `os.Getenv` directly. Pass `os.Getenv` in `main()` and pass a closure returning test-specific values in tests. Invoke when Go service or CLI tests set environment variables with `t.Setenv` and cannot call `t.Parallel()`, or when a test suite is slowed by sequential env-var tests. DO NOT INVOKE when the codebase has no `run()` function pattern, when env vars are accessed only at startup outside of tests, or when the question is about a non-Go language.
-source_book: "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024)
-source_chapter: Controlling the environment
 tags: [go, testing, environment-variables, parallelism, dependency-injection]
-related_skills:
-  - matryer-run-function
-  - matryer-run-e2e-testing
 ---
 
 # Getenv Injection: Parallel-Safe Environment Variables via `func(string) string`
@@ -283,3 +278,9 @@ ______________________________________________________________________
 
 - **matryer-run-function** — depends-on: `getenv func(string) string` is a parameter of `run()`; adopting this pattern requires the `run()` entry-point refactor first.
 - **matryer-run-e2e-testing** — enables: replacing `t.Setenv` with an injected closure removes the parallelism restriction, allowing e2e tests to call `t.Parallel()` freely.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024) — Controlling the environment

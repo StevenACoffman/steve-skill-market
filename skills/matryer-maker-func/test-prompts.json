@@ -1,65 +1,72 @@
-{
-  "skill": "matryer-maker-func",
-  "prompts": [
-    {
-      "id": "si-01",
-      "type": "should_invoke",
-      "prompt": "My handler needs a database client and a logger. Should I put them on a Server struct or pass them as parameters?",
-      "rationale": "Direct V2 novel question from the triple-validation. Asks precisely how to inject handler dependencies — the skill's core trigger."
-    },
-    {
-      "id": "si-02",
-      "type": "should_invoke",
-      "prompt": "I have ten endpoints and each one needs different subsets of a logger, a cache client, and a Stripe client. What's the best way to organise that in Go?",
-      "rationale": "Multiple handlers with distinct dependency subsets — exactly the scenario maker functions solve by making each handler opt-in to only what it needs."
-    },
-    {
-      "id": "si-03",
-      "type": "should_invoke",
-      "prompt": "What should the signature of an HTTP handler function look like when it needs external dependencies in Go?",
-      "rationale": "Asks about handler function signature with dependencies — the maker function pattern defines this precisely."
-    },
-    {
-      "id": "si-04",
-      "type": "should_invoke",
-      "prompt": "I want to do some one-time setup work (like preparing a SQL statement) when my handler is registered, not on every request. How do I do that?",
-      "rationale": "Describes the setup-body layer of the maker function pattern. The answer is to put the setup in the maker body before the return."
-    },
-    {
-      "id": "sni-01",
-      "type": "should_not_invoke",
-      "prompt": "How do I add authentication middleware that runs before every handler in my Go HTTP service?",
-      "rationale": "Middleware construction is a different pattern (adapter pattern / newMiddleware). Maker funcs are about per-handler dependency injection, not cross-cutting middleware."
-    },
-    {
-      "id": "sni-02",
-      "type": "should_not_invoke",
-      "prompt": "How should I pass a request-scoped user ID from my auth middleware down to my handler?",
-      "rationale": "Request-scoped data belongs on context.Context, not in closure scope. This is a context propagation question, not a maker function question."
-    },
-    {
-      "id": "sni-03",
-      "type": "should_not_invoke",
-      "prompt": "How do I wire up my entire HTTP server with all its dependencies at startup in Go?",
-      "rationale": "Top-level server construction belongs to NewServer/addRoutes wiring, which is a broader architecture concern. The maker function pattern is a piece of that, but this prompt targets the NewServer constructor skill."
-    },
-    {
-      "id": "bb-01",
-      "type": "blurred_boundary",
-      "prompt": "Should I use a struct with methods or standalone functions for my HTTP handlers?",
-      "rationale": "Directly contrasts server-struct methods vs. maker functions. Should invoke the skill, but the question framing is abstract enough that a responder might answer with general Go design advice rather than Ryer's specific maker function pattern."
-    },
-    {
-      "id": "bb-02",
-      "type": "blurred_boundary",
-      "prompt": "I have a handler that compiles a template. I only want to compile it once, not on every request. Should I use sync.Once?",
-      "rationale": "Partially overlaps with the sync.Once extension of the maker function pattern. The skill covers this, but a responder might answer with a general sync.Once explanation without anchoring it to the maker function structure."
-    },
-    {
-      "id": "bb-03",
-      "type": "blurred_boundary",
-      "prompt": "My handler is modifying a shared counter. Do I need a mutex?",
-      "rationale": "The skill explicitly covers the read-only constraint and the mutex requirement for mutations in closure scope. But this could also be answered as a general Go concurrency question without invoking the maker function context."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My handler needs a database client and a logger. Should I put them on a Server struct or pass them as parameters?",
+    "expected": "Skill activates and answers: use a maker function — func handleXxx(logger, db) http.Handler that takes dependencies as explicit parameters and returns the handler closure — rather than a server struct, so dependencies are explicit at the routes.go call site with no surprise struct fields.",
+    "notes": "rationale: Direct V2 novel question from the triple-validation. Asks precisely how to inject handler dependencies — the skill's core trigger.; source id: si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I have ten endpoints and each one needs different subsets of a logger, a cache client, and a Stripe client. What's the best way to organise that in Go?",
+    "expected": "Skill activates and recommends one maker function per handler, each taking only the dependencies it actually needs as parameters, wired in addRoutes; this makes each handler opt-in to its own subset and keeps the dependency graph visible in routes.go.",
+    "notes": "rationale: Multiple handlers with distinct dependency subsets — exactly the scenario maker functions solve by making each handler opt-in to only what it needs.; source id: si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "What should the signature of an HTTP handler function look like when it needs external dependencies in Go?",
+    "expected": "Skill activates and prescribes the maker signature func handleXxx(dep1 T1, dep2 T2) http.Handler that returns an http.HandlerFunc closure, with dependencies as explicit typed parameters rather than implementing http.Handler directly.",
+    "notes": "rationale: Asks about handler function signature with dependencies — the maker function pattern defines this precisely.; source id: si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I want to do some one-time setup work (like preparing a SQL statement) when my handler is registered, not on every request. How do I do that?",
+    "expected": "Skill activates and directs the one-time setup (prepared statement, compiled template, parsed regex) into the maker function body before the return, so it runs once at startup when addRoutes wires the route; the returned closure then reads that state per request.",
+    "notes": "rationale: Describes the setup-body layer of the maker function pattern. The answer is to put the setup in the maker body before the return.; source id: si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I add authentication middleware that runs before every handler in my Go HTTP service?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Middleware construction is a different pattern (adapter pattern / newMiddleware). Maker funcs are about per-handler dependency injection, not cross-cutting middleware.; source id: sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How should I pass a request-scoped user ID from my auth middleware down to my handler?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Request-scoped data belongs on context.Context, not in closure scope. This is a context propagation question, not a maker function question.; source id: sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I wire up my entire HTTP server with all its dependencies at startup in Go?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Top-level server construction belongs to NewServer/addRoutes wiring, which is a broader architecture concern. The maker function pattern is a piece of that, but this prompt targets the NewServer constructor skill.; source id: sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Should I use a struct with methods or standalone functions for my HTTP handlers?",
+    "expected": "Skill activates and favors maker functions over struct methods: methods carry implicit access to every struct field (surprise dependencies), whereas a maker forces each handler to explicitly opt into only the dependencies it needs, keeping the graph readable in routes.go.",
+    "notes": "rationale: Directly contrasts server-struct methods vs. maker functions. Should invoke the skill, but the question framing is abstract enough that a responder might answer with general Go design advice rather than Ryer's specific maker function pattern.; source id: bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I have a handler that compiles a template. I only want to compile it once, not on every request. Should I use sync.Once?",
+    "expected": "Skill activates and anchors sync.Once inside the maker function structure: declare once/tpl/tplerr in the maker body and call once.Do to compile on first request within the returned closure (or compile eagerly in the maker body before return), not as a standalone sync.Once explanation.",
+    "notes": "rationale: Partially overlaps with the sync.Once extension of the maker function pattern. The skill covers this, but a responder might answer with a general sync.Once explanation without anchoring it to the maker function structure.; source id: bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "My handler is modifying a shared counter. Do I need a mutex?",
+    "expected": "Skill activates and surfaces the read-only-closure rule: closed-over state may only be read concurrently, so mutating a shared counter requires a sync.Mutex declared in the maker body and locked inside the returned closure around the mutation.",
+    "notes": "rationale: The skill explicitly covers the read-only constraint and the mutex requirement for mutations in closure scope. But this could also be answered as a general Go concurrency question without invoking the maker function context.; source id: bb-03"
+  }
+]

@@ -13,21 +13,7 @@ description: |
   realistically predict a system behavior; you are designing resilience patterns for
   an LLM-powered or multi-agent system; a team claims they can "unit test away" a
   class of failures that involves component interactions.
-
-  Do NOT call this skill when: the failure has a single, isolated cause with no
-  cascading effects (pure resultant — standard root-cause analysis applies); you
-  are designing the core SLI/SLO framework for a service (use `sli-monitoring-design-maturity`
-  or `slo-definition-calibration-framework` instead); the question is purely about team or organizational
-  structure rather than system behavior.
-
-  Key trigger signal: "Why did a small change cause a catastrophic cascading failure?"
-  or "We can't reproduce this incident" or "The AI behaved in a way we never anticipated."
 tags: [systems-thinking, incident-analysis, resilience, ai-reliability, emergence]
-related_skills:
-  - slug: multi-agent-reliability
-    relation: composes-with
-  - slug: ioc-ai-systems
-    relation: composes-with
 ---
 
 # Emergent Properties Classification for Reliability Engineering
@@ -246,8 +232,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → [`multi-agent-reliability`](../multi-agent-reliability/SKILL.md): Emergent-properties provides the classification framework (resultant/weak/strong); multi-agent-reliability provides the engineering patterns to address the specific failure modes of multi-agent AI systems.
-- **composes-with** → [`ioc-ai-systems`](../ioc-ai-systems/SKILL.md): Emergent-properties explains why giving LLMs full workflow control is dangerous (strong emergence); ioc-ai-systems is the architectural prescription that prevents these failures through deterministic control flow.
+- **composes-with** → `multi-agent-reliability`: Emergent-properties provides the classification framework (resultant/weak/strong); multi-agent-reliability provides the engineering patterns to address the specific failure modes of multi-agent AI systems.
+- **composes-with** → `ioc-ai-systems`: Emergent-properties explains why giving LLMs full workflow control is dangerous (strong emergence); ioc-ai-systems is the architectural prescription that prevents these failures through deterministic control flow.
 
 ______________________________________________________________________
 

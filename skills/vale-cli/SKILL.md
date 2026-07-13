@@ -1,6 +1,7 @@
 ---
 name: vale-cli
-description: Use when asked to run vale, lint prose or Markdown, check writing quality, fix false positives, or manage vocabulary files. Covers installation, .vale.ini configuration, style packages, CLI usage, inline suppression, and custom rule authoring.
+description: |
+  Use when asked to run vale, lint prose or Markdown, check writing quality, fix false positives, or manage vocabulary files. Covers installation, .vale.ini configuration, style packages, CLI usage, inline suppression, and custom rule authoring.
 ---
 
 # Vale CLI — Prose Linting for Markdown

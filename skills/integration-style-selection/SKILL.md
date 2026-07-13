@@ -1,9 +1,9 @@
 ---
-id: integration-style-selection
-title: Integration Style Selection
-description: Invoke when designing a new integration point between two or more systems and the question is how they should communicate, when evaluating an existing integration that is misbehaving, when choosing between REST and a message queue, when designing a microservice architecture, or when auditing an architecture for hidden coupling.
-source: Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)
+name: integration-style-selection
+description: |
+  Invoke when designing a new integration point between two or more systems and the question is how they should communicate, when evaluating an existing integration that is misbehaving, when choosing between REST and a message queue, when designing a microservice architecture, or when auditing an architecture for hidden coupling.
 ---
+# Integration Style Selection
 
 ## Integration Style Selection
 
@@ -95,8 +95,14 @@ ______________________________________________________________________
 
 ### Related Skills
 
-- **[Multidimensional Coupling Assessment](../multidimensional-coupling-assessment/SKILL.md)** — *enables* → Once you select an integration style, coupling assessment maps the precise coupling profile your choice introduces across all 8 dimensions.
-- **[EDA Coupling Diagnosis](../eda-coupling-diagnosis/SKILL.md)** — *enables* → When you select Messaging as the style, EDA coupling diagnosis verifies which specific coupling dimensions that choice actually reduces (and which it leaves unchanged).
-- **[Canonical Data Model Decision](../canonical-data-model-decision/SKILL.md)** — *enables* → Choosing Messaging at N ≥ 3 integration points creates the translator-proliferation problem that CDM solves; style selection precedes and motivates the CDM decision.
-- **[Queue Control Flow Model](../queue-control-flow-model/SKILL.md)** — *enables* → After selecting Messaging as the style, the control-flow model determines whether components should push or pull, which shapes the pipeline's ordering and latency properties.
-- **[Queue Flow Control Decision](../queue-flow-control-decision/SKILL.md)** — *precedes* → After selecting Messaging, flow control design is required to define what happens when producers outpace consumers; this is the next design question after style selection.
+- **Multidimensional Coupling Assessment** — *enables* → Once you select an integration style, coupling assessment maps the precise coupling profile your choice introduces across all 8 dimensions.
+- **EDA Coupling Diagnosis** — *enables* → When you select Messaging as the style, EDA coupling diagnosis verifies which specific coupling dimensions that choice actually reduces (and which it leaves unchanged).
+- **Canonical Data Model Decision** — *enables* → Choosing Messaging at N ≥ 3 integration points creates the translator-proliferation problem that CDM solves; style selection precedes and motivates the CDM decision.
+- **Queue Control Flow Model** — *enables* → After selecting Messaging as the style, the control-flow model determines whether components should push or pull, which shapes the pipeline's ordering and latency properties.
+- **Queue Flow Control Decision** — *precedes* → After selecting Messaging, flow control design is required to define what happens when producers outpace consumers; this is the next design question after style selection.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Enterprise Integration Patterns, Gregor Hohpe & Bobby Woolf (2003)

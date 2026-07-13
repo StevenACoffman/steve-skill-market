@@ -1,66 +1,72 @@
-{
-  "skill_id": "cynefin-pm-domain-identification",
-  "version": "1.0",
-  "prompts": [
-    {
-      "id": "tp-01",
-      "category": "should_invoke",
-      "prompt": "We're running a large infrastructure modernization program. Six months in, we've been doing everything by the book — weekly status reports, risk registers, architecture reviews — and the situation keeps getting worse, not better. The technical leads are confident in their analysis but every intervention produces unexpected downstream effects. My sponsor is asking what's wrong with our process. What should I be looking at?",
-      "expected_behavior": "Invoke cynefin-pm-domain-identification. The symptom pattern — competent team, rigorous process, consistent surprises despite strong expertise — is the signature of Complicated governance applied to a Complex situation. The skill should prompt domain diagnostic: test whether the situation is genuinely analyzable-in-advance (Complicated) or emergent (Complex), and whether governance instruments need to shift from analyze-then-act to act-sense-respond."
-    },
-    {
-      "id": "tp-02",
-      "category": "should_invoke",
-      "prompt": "A major supplier just filed for bankruptcy and will be unable to deliver a critical component. We have a program board meeting scheduled in three weeks to review options, and the standard change control process requires a 10-day review period before any substitution can be approved. Our delivery date is in six weeks. How do I handle this?",
-      "expected_behavior": "Invoke cynefin-pm-domain-identification. The supplier collapse is a cause-effect severing event — a Chaotic domain indicator. The scheduled board meeting and 10-day change control process are Complicated governance instruments. The skill should diagnose this as a Chaos-domain situation requiring the counterintuitive rule: act first, understand second. The PM should not wait for the board meeting; they should take immediate stabilizing action to move the program out of Chaos and into Complexity."
-    },
-    {
-      "id": "tp-03",
-      "category": "should_invoke",
-      "prompt": "We're setting up governance for a program that will deploy a novel AI-assisted case management system across 40 government offices. Nothing like this has been done in this agency before. The CIO wants a standard stage-gate framework — business case, preliminary design review, critical design review, test readiness review. Is that the right governance model?",
-      "expected_behavior": "Invoke cynefin-pm-domain-identification. This is the c16 pattern: novel technology with emergent user-behavior and adoption dimensions sitting at the Complex/Complicated boundary. The skill should raise the domain classification question explicitly: which dimensions of this program are analyzable in advance (warranting stage-gate), and which are emergent (requiring a parallel act-sense-respond track)? The answer is likely a split-domain governance design, not a standard stage-gate."
-    },
-    {
-      "id": "tp-04",
-      "category": "should_invoke",
-      "prompt": "I'm a program director and my technical leads have been consistently confident throughout this program. They gave me high-confidence estimates at the start, high confidence at month three, high confidence at month six. We're now at month nine and we're 40% over budget with no clear path to recovery. They're still confident. What's going on?",
-      "expected_behavior": "Invoke cynefin-pm-domain-identification. The pattern of sustained high confidence combined with consistent adverse surprises is the epistemic confidence failure signal Williams identifies as the 2008-type misclassification. The situation may have shifted from Complicated to Complex — or may have always been Complex — and the expertise of the technical leads is producing confidence in the wrong domain. The skill should prompt explicit domain reassessment and scrutiny of whether Complicated governance instruments are mismatched."
-    },
-    {
-      "id": "tp-05",
-      "category": "should_not_invoke",
-      "prompt": "I need to build a project schedule for a standard software deployment. We've done this type of deployment eight times before. What's the right approach for structuring the work breakdown?",
-      "expected_behavior": "Do not invoke cynefin-pm-domain-identification. This is a Clear domain situation — established best practice, repeated execution, no domain mismatch signal. Standard scheduling methodology applies. Cynefin domain identification adds overhead without value here."
-    },
-    {
-      "id": "tp-06",
-      "category": "should_not_invoke",
-      "prompt": "My stakeholder map shows three groups with conflicting priorities. The executive sponsor wants faster delivery, the end users want more features, and the compliance team wants more testing. How do I manage this conflict?",
-      "expected_behavior": "Do not invoke cynefin-pm-domain-identification. This is a stakeholder management problem, not a domain misclassification problem. The conflict described is a normal feature of program management, not a signal that governance is mismatched to the situation's domain. Stakeholder alignment tools apply."
-    },
-    {
-      "id": "tp-07",
-      "category": "should_not_invoke",
-      "prompt": "We missed our last three milestones because the development team keeps underestimating task effort. The estimates are consistently 60-70% of actual. How do I get better estimates?",
-      "expected_behavior": "Do not invoke cynefin-pm-domain-identification. This is an estimation calibration problem within a Complicated or Clear domain — the issue is systematic underestimation bias, not domain misclassification. Estimation techniques (reference class forecasting, historical velocity, buffer management) apply. There is no signal of governance-domain mismatch here."
-    },
-    {
-      "id": "tp-08",
-      "category": "blurred_boundary",
-      "prompt": "We've been running a digital transformation program for 18 months. The individual workstreams are all green on the dashboard. But the expected business outcomes — reduced processing time, lower error rates, improved customer satisfaction — aren't materializing. The steering committee keeps asking why the projects are succeeding but the program isn't.",
-      "expected_behavior": "Judgment required. The symptom pattern (strong component reporting, weak benefits realization) is the structural signature Williams identifies for ungoverned interaction layers, pointing toward emergence-conditions-audit. But the steering committee's question also requires domain classification: the gap between project success and program outcome may reflect a Complex domain (emergent interaction effects) being governed as Complicated (project-level reporting). Both skills are potentially relevant; cynefin-pm-domain-identification should be considered as part of a broader diagnosis."
-    },
-    {
-      "id": "tp-09",
-      "category": "blurred_boundary",
-      "prompt": "A new regulation just dropped with a 90-day implementation deadline. Nobody in the industry has implemented this yet — there are no best practices. My legal team says we need to comply but they can't tell us exactly what compliance looks like in practice. How do I set up governance for this effort?",
-      "expected_behavior": "Judgment required. This has features of both Complex (no established practice, outcomes emergent through regulatory interpretation and testing) and Complicated (legal analysis required, regulatory text is analyzable). Domain diagnosis is warranted — cynefin-pm-domain-identification applies — but the classification is genuinely uncertain. The skill should be invoked to structure the diagnostic, acknowledging the domain may be split and that governance design should reflect that uncertainty."
-    },
-    {
-      "id": "tp-10",
-      "category": "blurred_boundary",
-      "prompt": "We're three months into a program and the team is reporting that their original technical assumptions don't hold. They're asking to go back and redo the architecture. The sponsor is resisting because we've already spent $2M and restarting the architecture feels like sunk cost. Who's right?",
-      "expected_behavior": "Judgment required. This could be a domain misclassification problem (architecture was designed in Complicated mode but the situation is Complex, so the architecture keeps failing to match emerging reality) or it could be a normal Complicated situation where the initial analysis was wrong but a better analysis would produce a valid answer. Cynefin domain identification applies as a diagnostic: is the architecture failing because the analysis was inadequate (Complicated — do better analysis), or because the situation is emergent and architecture-first is the wrong approach (Complex — redesign governance)? The answer changes the response to the sponsor completely."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're running a large infrastructure modernization program. Six months in, we've been doing everything by the book — weekly status reports, risk registers, architecture reviews — and the situation keeps getting worse, not better. The technical leads are confident in their analysis but every intervention produces unexpected downstream effects. My sponsor is asking what's wrong with our process. What should I be looking at?",
+    "expected": "Invoke cynefin-pm-domain-identification. The symptom pattern — competent team, rigorous process, consistent surprises despite strong expertise — is the signature of Complicated governance applied to a Complex situation. The skill should prompt domain diagnostic: test whether the situation is genuinely analyzable-in-advance (Complicated) or emergent (Complex), and whether governance instruments need to shift from analyze-then-act to act-sense-respond.",
+    "notes": "source id: tp-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "A major supplier just filed for bankruptcy and will be unable to deliver a critical component. We have a program board meeting scheduled in three weeks to review options, and the standard change control process requires a 10-day review period before any substitution can be approved. Our delivery date is in six weeks. How do I handle this?",
+    "expected": "Invoke cynefin-pm-domain-identification. The supplier collapse is a cause-effect severing event — a Chaotic domain indicator. The scheduled board meeting and 10-day change control process are Complicated governance instruments. The skill should diagnose this as a Chaos-domain situation requiring the counterintuitive rule: act first, understand second. The PM should not wait for the board meeting; they should take immediate stabilizing action to move the program out of Chaos and into Complexity.",
+    "notes": "source id: tp-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're setting up governance for a program that will deploy a novel AI-assisted case management system across 40 government offices. Nothing like this has been done in this agency before. The CIO wants a standard stage-gate framework — business case, preliminary design review, critical design review, test readiness review. Is that the right governance model?",
+    "expected": "Invoke cynefin-pm-domain-identification. This is the c16 pattern: novel technology with emergent user-behavior and adoption dimensions sitting at the Complex/Complicated boundary. The skill should raise the domain classification question explicitly: which dimensions of this program are analyzable in advance (warranting stage-gate), and which are emergent (requiring a parallel act-sense-respond track)? The answer is likely a split-domain governance design, not a standard stage-gate.",
+    "notes": "source id: tp-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm a program director and my technical leads have been consistently confident throughout this program. They gave me high-confidence estimates at the start, high confidence at month three, high confidence at month six. We're now at month nine and we're 40% over budget with no clear path to recovery. They're still confident. What's going on?",
+    "expected": "Invoke cynefin-pm-domain-identification. The pattern of sustained high confidence combined with consistent adverse surprises is the epistemic confidence failure signal Williams identifies as the 2008-type misclassification. The situation may have shifted from Complicated to Complex — or may have always been Complex — and the expertise of the technical leads is producing confidence in the wrong domain. The skill should prompt explicit domain reassessment and scrutiny of whether Complicated governance instruments are mismatched.",
+    "notes": "source id: tp-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "I need to build a project schedule for a standard software deployment. We've done this type of deployment eight times before. What's the right approach for structuring the work breakdown?",
+    "expected": "Do not invoke cynefin-pm-domain-identification. This is a Clear domain situation — established best practice, repeated execution, no domain mismatch signal. Standard scheduling methodology applies. Cynefin domain identification adds overhead without value here.",
+    "notes": "source id: tp-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My stakeholder map shows three groups with conflicting priorities. The executive sponsor wants faster delivery, the end users want more features, and the compliance team wants more testing. How do I manage this conflict?",
+    "expected": "Do not invoke cynefin-pm-domain-identification. This is a stakeholder management problem, not a domain misclassification problem. The conflict described is a normal feature of program management, not a signal that governance is mismatched to the situation's domain. Stakeholder alignment tools apply.",
+    "notes": "source id: tp-06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We missed our last three milestones because the development team keeps underestimating task effort. The estimates are consistently 60-70% of actual. How do I get better estimates?",
+    "expected": "Do not invoke cynefin-pm-domain-identification. This is an estimation calibration problem within a Complicated or Clear domain — the issue is systematic underestimation bias, not domain misclassification. Estimation techniques (reference class forecasting, historical velocity, buffer management) apply. There is no signal of governance-domain mismatch here.",
+    "notes": "source id: tp-07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We've been running a digital transformation program for 18 months. The individual workstreams are all green on the dashboard. But the expected business outcomes — reduced processing time, lower error rates, improved customer satisfaction — aren't materializing. The steering committee keeps asking why the projects are succeeding but the program isn't.",
+    "expected": "Judgment required. The symptom pattern (strong component reporting, weak benefits realization) is the structural signature Williams identifies for ungoverned interaction layers, pointing toward emergence-conditions-audit. But the steering committee's question also requires domain classification: the gap between project success and program outcome may reflect a Complex domain (emergent interaction effects) being governed as Complicated (project-level reporting). Both skills are potentially relevant; cynefin-pm-domain-identification should be considered as part of a broader diagnosis.",
+    "notes": "source id: tp-08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "A new regulation just dropped with a 90-day implementation deadline. Nobody in the industry has implemented this yet — there are no best practices. My legal team says we need to comply but they can't tell us exactly what compliance looks like in practice. How do I set up governance for this effort?",
+    "expected": "Judgment required. This has features of both Complex (no established practice, outcomes emergent through regulatory interpretation and testing) and Complicated (legal analysis required, regulatory text is analyzable). Domain diagnosis is warranted — cynefin-pm-domain-identification applies — but the classification is genuinely uncertain. The skill should be invoked to structure the diagnostic, acknowledging the domain may be split and that governance design should reflect that uncertainty.",
+    "notes": "source id: tp-09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're three months into a program and the team is reporting that their original technical assumptions don't hold. They're asking to go back and redo the architecture. The sponsor is resisting because we've already spent $2M and restarting the architecture feels like sunk cost. Who's right?",
+    "expected": "Judgment required. This could be a domain misclassification problem (architecture was designed in Complicated mode but the situation is Complex, so the architecture keeps failing to match emerging reality) or it could be a normal Complicated situation where the initial analysis was wrong but a better analysis would produce a valid answer. Cynefin domain identification applies as a diagnostic: is the architecture failing because the analysis was inadequate (Complicated — do better analysis), or because the situation is emergent and architecture-first is the wrong approach (Complex — redesign governance)? The answer changes the response to the sponsor completely.",
+    "notes": "source id: tp-10"
+  }
+]

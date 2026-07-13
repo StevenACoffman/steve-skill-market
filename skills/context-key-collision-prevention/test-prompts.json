@@ -1,86 +1,79 @@
-{
-  "skill": "context-key-collision-prevention",
-  "version": "0.1.0",
-  "source_book": "Go Advice — Redowan Delowar (rednafi)",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "I'm using context.WithValue to store a request ID in middleware and retrieve it in handlers, but I keep reading that string keys are dangerous. What's the right way to define context keys?",
-      "expected_behavior": "Skill explains using unexported concrete types (e.g., `type ctxKey int; const requestIDKey ctxKey = iota`) as context keys so they cannot collide with keys from other packages that use the same string.",
-      "notes": "String key danger awareness — direct path to typed key pattern."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Two of our middleware packages both store a value in context using the string key 'userID'. One overwrites the other and the handler gets the wrong value. How do we fix this?",
-      "expected_behavior": "Skill identifies this as a key collision, explains why string keys collide across packages, and shows how unexported typed keys are package-scoped and cannot collide even if they have the same underlying string representation.",
-      "notes": "Live collision bug — exactly the problem typed keys prevent."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "How do I safely pass request-scoped data like a trace ID and authenticated user through my middleware chain without risking key conflicts?",
-      "expected_behavior": "Skill recommends typed unexported context key constants, one per value, so each package's keys are isolated and cannot be accidentally overwritten by other middleware.",
-      "notes": "Multi-middleware context value storage — key isolation is the design concern."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "I'm writing a library that stores data in context. How do I make sure my context keys don't collide with keys used by the application or other libraries?",
-      "expected_behavior": "Skill explains that unexported typed keys are package-local by the Go type system — even if two packages use an identical-looking key constant, they are distinct types and cannot collide.",
-      "notes": "Library author perspective — preventing inter-package collision is the core guarantee."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "What's wrong with using context.WithValue(ctx, \"logger\", logger) and how should I do it instead?",
-      "expected_behavior": "Skill explains that string literal keys can collide with any other package using the same string, and shows the typed unexported key pattern as the safe replacement.",
-      "notes": "String literal as key — clearest violation of the pattern."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I cancel a context when an HTTP request is finished so I can stop background work?",
-      "expected_behavior": "Context cancellation via request lifecycle is unrelated to key collision. Skill should not activate.",
-      "notes": "Cancellation concern — different context mechanism."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "Should I use context.Background() or context.TODO() at the top of my main function?",
-      "expected_behavior": "Background vs TODO is a semantic question about context root creation, not about value storage or key safety. Skill should not activate.",
-      "notes": "Context root selection — unrelated to WithValue key design."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "What's the best way to pass a context through a long call chain without losing the cancellation signal?",
-      "expected_behavior": "Context propagation through function arguments is a basic usage pattern, not a key collision concern. Skill should not activate.",
-      "notes": "Context propagation — no WithValue or key design involved."
-    },
-    {
-      "id": "edge-case-01",
-      "type": "edge_case",
-      "prompt": "My middleware sets a user object in context but the handler always gets nil when it calls ctx.Value(\"user\"). What's going on?",
-      "expected_behavior": "Yes — should trigger. Getting nil from ctx.Value when a value was definitely stored is the classic symptom of a key mismatch (often caused by using string keys inconsistently or from different packages). Skill should activate and explain typed keys as the fix.",
-      "notes": "Nil from ctx.Value is the runtime symptom of a key collision or type mismatch."
-    },
-    {
-      "id": "edge-case-02",
-      "type": "edge_case",
-      "prompt": "How do I share state between goroutines that are handling the same request?",
-      "expected_behavior": "No — should not trigger. Sharing state between goroutines should use channels or sync primitives, not context values. Context is not the right tool here. Skill should not activate.",
-      "notes": "Goroutine state sharing — context.WithValue is the wrong tool; channels/sync are correct."
-    },
-    {
-      "id": "edge-case-03",
-      "type": "edge_case",
-      "prompt": "Is it okay to store a database connection in context.WithValue and retrieve it in repository functions?",
-      "expected_behavior": "Partial trigger. Storing a db connection in context is a debated practice and the skill may address it. But the key concern here is whether it is a good idea at all (generally no — prefer dependency injection), not just key safety. Skill may activate to discuss both key safety and the anti-pattern of hiding dependencies in context.",
-      "notes": "Context-as-dependency-injection is a broader anti-pattern; key safety is a sub-concern."
-    }
-  ],
-  "minimum_pass_rate": 0.8
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm using context.WithValue to store a request ID in middleware and retrieve it in handlers, but I keep reading that string keys are dangerous. What's the right way to define context keys?",
+    "expected": "Skill explains using unexported concrete types (e.g., `type ctxKey int; const requestIDKey ctxKey = iota`) as context keys so they cannot collide with keys from other packages that use the same string.",
+    "notes": "String key danger awareness — direct path to typed key pattern.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Two of our middleware packages both store a value in context using the string key 'userID'. One overwrites the other and the handler gets the wrong value. How do we fix this?",
+    "expected": "Skill identifies this as a key collision, explains why string keys collide across packages, and shows how unexported typed keys are package-scoped and cannot collide even if they have the same underlying string representation.",
+    "notes": "Live collision bug — exactly the problem typed keys prevent.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How do I safely pass request-scoped data like a trace ID and authenticated user through my middleware chain without risking key conflicts?",
+    "expected": "Skill recommends typed unexported context key constants, one per value, so each package's keys are isolated and cannot be accidentally overwritten by other middleware.",
+    "notes": "Multi-middleware context value storage — key isolation is the design concern.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm writing a library that stores data in context. How do I make sure my context keys don't collide with keys used by the application or other libraries?",
+    "expected": "Skill explains that unexported typed keys are package-local by the Go type system — even if two packages use an identical-looking key constant, they are distinct types and cannot collide.",
+    "notes": "Library author perspective — preventing inter-package collision is the core guarantee.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "What's wrong with using context.WithValue(ctx, \"logger\", logger) and how should I do it instead?",
+    "expected": "Skill explains that string literal keys can collide with any other package using the same string, and shows the typed unexported key pattern as the safe replacement.",
+    "notes": "String literal as key — clearest violation of the pattern.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I cancel a context when an HTTP request is finished so I can stop background work?",
+    "expected": "Context cancellation via request lifecycle is unrelated to key collision. Skill should not activate.",
+    "notes": "Cancellation concern — different context mechanism.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Should I use context.Background() or context.TODO() at the top of my main function?",
+    "expected": "Background vs TODO is a semantic question about context root creation, not about value storage or key safety. Skill should not activate.",
+    "notes": "Context root selection — unrelated to WithValue key design.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What's the best way to pass a context through a long call chain without losing the cancellation signal?",
+    "expected": "Context propagation through function arguments is a basic usage pattern, not a key collision concern. Skill should not activate.",
+    "notes": "Context propagation — no WithValue or key design involved.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My middleware sets a user object in context but the handler always gets nil when it calls ctx.Value(\"user\"). What's going on?",
+    "expected": "Yes — should trigger. Getting nil from ctx.Value when a value was definitely stored is the classic symptom of a key mismatch (often caused by using string keys inconsistently or from different packages). Skill should activate and explain typed keys as the fix.",
+    "notes": "Nil from ctx.Value is the runtime symptom of a key collision or type mismatch.; source id: edge-case-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "How do I share state between goroutines that are handling the same request?",
+    "expected": "No — should not trigger. Sharing state between goroutines should use channels or sync primitives, not context values. Context is not the right tool here. Skill should not activate.",
+    "notes": "Goroutine state sharing — context.WithValue is the wrong tool; channels/sync are correct.; source id: edge-case-02"
+  },
+  {
+    "id": 11,
+    "type": "edge_case",
+    "prompt": "Is it okay to store a database connection in context.WithValue and retrieve it in repository functions?",
+    "expected": "Partial trigger. Storing a db connection in context is a debated practice and the skill may address it. But the key concern here is whether it is a good idea at all (generally no — prefer dependency injection), not just key safety. Skill may activate to discuss both key safety and the anti-pattern of hiding dependencies in context.",
+    "notes": "Context-as-dependency-injection is a broader anti-pattern; key safety is a sub-concern.; source id: edge-case-03"
+  }
+]

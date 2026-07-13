@@ -6,12 +6,7 @@ description: |
   The framework begins from the empirical finding that pre-written playbooks for known failure modes reduce MTTR by approximately 3x compared to on-call engineers troubleshooting from scratch under stress. A playbook is not a substitute for engineer judgment — it is a cognitive load reduction tool that preserves expert-level decision quality when the engineer is fatigued, time-pressured, or unfamiliar with a specific failure mode.
 
   Key trigger signal: an alert fires repeatedly without a documented response procedure, an on-call handoff produces inconsistent resolutions for the same alert, or an engineer reports "winging it" during a 3am page.
-
-  Do not call this skill for novel failure modes (no playbook exists yet — use hypothetico-deductive-troubleshooting-loop). Do not use to replace troubleshooting skill — a playbook that prescribes actions without diagnostic reasoning produces mechanical responses that fail when the alert is ambiguous.
-source_book: "Site Reliability Engineering" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 1: Introduction / Chapter 11: Being On-Call"
 tags: [playbook, runbook, mttr, on-call, documentation, incident-response, cognitive-load]
-related_skills: []
 ---
 
 # Playbook-as-MTTR-Reduction Framework
@@ -160,3 +155,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Site Reliability Engineering" by Betsy Beyer et al. (Google) — Chapter 1: Introduction / Chapter 11: Being On-Call

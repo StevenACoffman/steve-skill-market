@@ -14,21 +14,7 @@ description: |
   - A user asks "how do I handle transactions when the interface hides storage details"
   - A user asks "how do I make two stores share a single transaction"
   - A user says "my stock decremented but the order failed and now inventory is wrong"
-
-  Do NOT activate when:
-  - All queries are read-only — no transaction needed, use the repository interface without Tx
-  - The service has exactly one store with no cross-store atomicity — a single per-store Tx
-    method is sufficient; full UoW is overkill
-  - Storage is non-SQL (Redis, S3, DynamoDB) — DBTX is specific to database/sql; the
-    conceptual pattern may apply but the implementation does not transfer directly
-source_book: "Go Advice" by Redowan Delowar (rednafi)
-source_chapter: repo_txn_uow
 tags: [go, database, transactions, repository-pattern, unit-of-work]
-related_skills:
-  - slug: error-translation-layer-boundaries
-    relation: composes-with
-  - slug: test-state-not-interactions
-    relation: composes-with
 ---
 
 # Repository Pattern with Unit of Work for Atomic Transactions
@@ -349,8 +335,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`error-translation-layer-boundaries`](../error-translation-layer-boundaries/SKILL.md): Repository methods are the primary translation point — they catch `sql.ErrNoRows` and return `ErrNotFound` wrapped with `%w`. The repository pattern (DBTX + Store interface) creates the boundary; error translation defines what crosses it. Implement both: a repository that translates errors cleanly.
-- **composes-with** [`test-state-not-interactions`](../test-state-not-interactions/SKILL.md): The repository's `Store` interface, once defined, can be backed by a handwritten in-memory fake (`memStore` with a mutex-protected map) for unit tests. Tests then assert on the observable state of the fake — what's in the map after a `Create` call — rather than on which SQL methods were called.
+- **composes-with** `error-translation-layer-boundaries`: Repository methods are the primary translation point — they catch `sql.ErrNoRows` and return `ErrNotFound` wrapped with `%w`. The repository pattern (DBTX + Store interface) creates the boundary; error translation defines what crosses it. Implement both: a repository that translates errors cleanly.
+- **composes-with** `test-state-not-interactions`: The repository's `Store` interface, once defined, can be backed by a handwritten in-memory fake (`memStore` with a mutex-protected map) for unit tests. Tests then assert on the observable state of the fake — what's in the map after a `Create` call — rather than on which SQL methods were called.
 
 ______________________________________________________________________
 
@@ -359,3 +345,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: pending
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Go Advice" by Redowan Delowar (rednafi) — repo_txn_uow

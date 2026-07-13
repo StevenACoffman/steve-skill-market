@@ -1,66 +1,72 @@
-{
-  "skill": "matryer-getenv-injection",
-  "description": "Test prompts for getenv injection into run() enabling t.Parallel() in integration tests",
-  "prompts": [
-    {
-      "id": "si-01",
-      "category": "should_invoke",
-      "prompt": "My Go service reads DATABASE_URL and API_KEY with os.Getenv inside run(). My integration tests use t.Setenv to set those variables, but I can't call t.Parallel() — the test framework panics. How do I fix this?",
-      "expected_behavior": "Explain adding getenv func(string) string to run()'s signature, replacing os.Getenv calls with getenv, passing os.Getenv in main(), and passing a closure per test so t.Parallel() is safe."
-    },
-    {
-      "id": "si-02",
-      "category": "should_invoke",
-      "prompt": "I'm writing a Go CLI tool that reads config from environment variables. I want to test it with different env values across many parallel tests. What's the idiomatic approach from the Mat Ryer HTTP services style?",
-      "expected_behavior": "Describe injecting getenv func(string) string into run(), constructing per-test closures, and passing os.Getenv in main(). Contrast with t.Setenv and why it prevents parallelism."
-    },
-    {
-      "id": "si-03",
-      "category": "should_invoke",
-      "prompt": "I have a run() function in Go that calls os.Getenv(\"LOG_LEVEL\") and os.Getenv(\"PORT\") in several places. My test suite is slow because all env-var integration tests run sequentially. How do I refactor to allow parallel execution?",
-      "expected_behavior": "Walk through adding getenv func(string) string parameter, replacing direct os.Getenv calls, updating main() to pass os.Getenv, and rewriting tests to pass closures and call t.Parallel()."
-    },
-    {
-      "id": "si-04",
-      "category": "should_invoke",
-      "prompt": "What does Mat Ryer mean when he says 'using the getenv technique beats using t.SetEnv'? How does injecting a function enable t.Parallel()?",
-      "expected_behavior": "Explain that t.Setenv mutates the global process environment (preventing parallel use), while an injected closure is local to each test goroutine with no shared state, so t.Parallel() is safe."
-    },
-    {
-      "id": "sni-01",
-      "category": "should_not_invoke",
-      "prompt": "How do I read environment variables in a Python Flask app using python-dotenv?",
-      "expected_behavior": "Answer with Python-specific advice (os.environ, python-dotenv). Do not invoke getenv injection — this is not Go."
-    },
-    {
-      "id": "sni-02",
-      "category": "should_not_invoke",
-      "prompt": "My Go tests are slow. How do I use t.Parallel() to speed them up?",
-      "expected_behavior": "Give general t.Parallel() guidance (subtests, avoiding shared state, etc.). Only invoke getenv injection if the question specifically involves environment variables and run(); do not invoke on a general parallelism question."
-    },
-    {
-      "id": "sni-03",
-      "category": "should_not_invoke",
-      "prompt": "How do I mock the AWS SDK in Go so it doesn't call real AWS services during tests?",
-      "expected_behavior": "Discuss AWS SDK interface mocking or localstack. The getenv injection skill does not apply — the AWS SDK's internal os.Getenv calls cannot be intercepted by this pattern and the question is about SDK mocking, not run() env injection."
-    },
-    {
-      "id": "bb-01",
-      "category": "blurred_boundary",
-      "prompt": "I use t.Setenv in my Go tests and I know it serializes them, but my run() function also reads config from a YAML file and from env vars. Should I inject getenv, or is there a simpler way?",
-      "expected_behavior": "Discuss getenv injection for the env-var portion and note it doesn't help with YAML file reads. Acknowledge the hybrid case: inject getenv for env vars; abstract file reads separately if parallel tests conflict on them. The skill partially applies."
-    },
-    {
-      "id": "bb-02",
-      "category": "blurred_boundary",
-      "prompt": "I don't have a run() function — my Go service wires everything up in main() directly with init() functions and package-level vars reading os.Getenv. Can I still use the getenv injection technique?",
-      "expected_behavior": "Explain that init() and package-level var reads cannot be injected (they run before main). The getenv injection pattern requires the run() refactor first. Suggest extracting startup logic into run() as a prerequisite, but acknowledge this is a larger refactor."
-    },
-    {
-      "id": "bb-03",
-      "category": "blurred_boundary",
-      "prompt": "I'm testing a Go HTTP handler that reads os.Getenv(\"FEATURE_FLAG\") directly inside the handler function — not inside run(). I want parallel tests. Should I inject getenv?",
-      "expected_behavior": "The getenv injection into run() won't reach a handler that calls os.Getenv directly. Options: move the env read into run() and pass the value down, or inject getenv into the handler via its maker function. The skill applies in spirit but requires a different injection point — note the boundary."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "My Go service reads DATABASE_URL and API_KEY with os.Getenv inside run(). My integration tests use t.Setenv to set those variables, but I can't call t.Parallel() — the test framework panics. How do I fix this?",
+    "expected": "Explain adding getenv func(string) string to run()'s signature, replacing os.Getenv calls with getenv, passing os.Getenv in main(), and passing a closure per test so t.Parallel() is safe.",
+    "notes": "source id: si-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I'm writing a Go CLI tool that reads config from environment variables. I want to test it with different env values across many parallel tests. What's the idiomatic approach from the Mat Ryer HTTP services style?",
+    "expected": "Describe injecting getenv func(string) string into run(), constructing per-test closures, and passing os.Getenv in main(). Contrast with t.Setenv and why it prevents parallelism.",
+    "notes": "source id: si-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I have a run() function in Go that calls os.Getenv(\"LOG_LEVEL\") and os.Getenv(\"PORT\") in several places. My test suite is slow because all env-var integration tests run sequentially. How do I refactor to allow parallel execution?",
+    "expected": "Walk through adding getenv func(string) string parameter, replacing direct os.Getenv calls, updating main() to pass os.Getenv, and rewriting tests to pass closures and call t.Parallel().",
+    "notes": "source id: si-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "What does Mat Ryer mean when he says 'using the getenv technique beats using t.SetEnv'? How does injecting a function enable t.Parallel()?",
+    "expected": "Explain that t.Setenv mutates the global process environment (preventing parallel use), while an injected closure is local to each test goroutine with no shared state, so t.Parallel() is safe.",
+    "notes": "source id: si-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I read environment variables in a Python Flask app using python-dotenv?",
+    "expected": "Answer with Python-specific advice (os.environ, python-dotenv). Do not invoke getenv injection — this is not Go.",
+    "notes": "source id: sni-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My Go tests are slow. How do I use t.Parallel() to speed them up?",
+    "expected": "Give general t.Parallel() guidance (subtests, avoiding shared state, etc.). Only invoke getenv injection if the question specifically involves environment variables and run(); do not invoke on a general parallelism question.",
+    "notes": "source id: sni-02"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I mock the AWS SDK in Go so it doesn't call real AWS services during tests?",
+    "expected": "Discuss AWS SDK interface mocking or localstack. The getenv injection skill does not apply — the AWS SDK's internal os.Getenv calls cannot be intercepted by this pattern and the question is about SDK mocking, not run() env injection.",
+    "notes": "source id: sni-03"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I use t.Setenv in my Go tests and I know it serializes them, but my run() function also reads config from a YAML file and from env vars. Should I inject getenv, or is there a simpler way?",
+    "expected": "Discuss getenv injection for the env-var portion and note it doesn't help with YAML file reads. Acknowledge the hybrid case: inject getenv for env vars; abstract file reads separately if parallel tests conflict on them. The skill partially applies.",
+    "notes": "source id: bb-01"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I don't have a run() function — my Go service wires everything up in main() directly with init() functions and package-level vars reading os.Getenv. Can I still use the getenv injection technique?",
+    "expected": "Explain that init() and package-level var reads cannot be injected (they run before main). The getenv injection pattern requires the run() refactor first. Suggest extracting startup logic into run() as a prerequisite, but acknowledge this is a larger refactor.",
+    "notes": "source id: bb-02"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm testing a Go HTTP handler that reads os.Getenv(\"FEATURE_FLAG\") directly inside the handler function — not inside run(). I want parallel tests. Should I inject getenv?",
+    "expected": "The getenv injection into run() won't reach a handler that calls os.Getenv directly. Options: move the env read into run() and pass the value down, or inject getenv into the handler via its maker function. The skill applies in spirit but requires a different injection point — note the boundary.",
+    "notes": "source id: bb-03"
+  }
+]

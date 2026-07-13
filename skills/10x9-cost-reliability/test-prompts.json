@@ -1,62 +1,58 @@
-{
-  "skill": "10x9-cost-reliability",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "Our CTO walked into the planning meeting and said we need to achieve five-nines availability for our streaming platform. That's what Netflix has, and our reliability has been embarrassing. I need to respond to this. How do I push back with data?",
-      "expected_behavior": "Invokes 10x9-cost-reliability, applies the 10x/9 rule: five-nines allows 26 seconds of downtime per month — faster than a human can be paged. Each additional nine costs roughly 10x more. Translates the abstract percentage into economic terms: the engineering investment required (geographic redundancy, automated failover, 5-8 person on-call rotation with SLA compensation, full automation of incident response) is described concretely. Prescribes asking what consumer tolerance actually requires rather than matching a competitor's prestige number.",
-      "notes": "Positive scenario: exact case from the book — CTO mandating five-nines without cost analysis."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "We're currently at 99.9% availability. Our VP wants to go to 99.99%. How much more expensive is that to achieve?",
-      "expected_behavior": "Invokes 10x9-cost-reliability, applies the 10x/9 rule: going from 99.9% to 99.99% reduces the error budget from 8.7 hours/year to 52.6 minutes/year — a 10x reduction. The cost to sustain that level is roughly 10x higher across architecture redundancy, automation, and on-call infrastructure. At 99.9%, manual incident response is feasible; at 99.99%, you need automated recovery for most classes of failure. Provides the economic framing to evaluate whether the VP's request is justified by consumer need or business value.",
-      "notes": "Positive scenario: explicit 'how much more expensive' question about adding a nine; direct application of the 10x/9 rule."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We need to justify the budget for building active-active multi-region infrastructure. Finance is asking why reliability improvements cost so much more than proportionally to the improvement we're getting. How do I explain this?",
-      "expected_behavior": "Invokes 10x9-cost-reliability, provides the economic explanation: reliability improvement is not linear — it follows a curve that steepens toward 100%. Each order of magnitude improvement costs roughly 10x more because easy wins (second server, retries) come first; subsequent improvements require progressively more sophisticated and expensive interventions (geographic redundancy, automated failover, eliminating humans from incident loops). The 10x/9 rule makes this intuition explicit and justifiable to finance.",
-      "notes": "Positive scenario: justifying reliability investment to finance; the skill provides the economic framing for why costs accelerate."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We're a B2B SaaS company and a key enterprise customer is demanding a 99.99% SLA in their contract. Our current architecture delivers about 99.7%. They're threatening to walk if we don't commit. Should we commit?",
-      "expected_behavior": "Invokes 10x9-cost-reliability, frames the decision economically: committing to 99.99% from 99.7% is jumping more than one nine. The investment required (multiple nines of improvement simultaneously) is very large. The question is not 'should we commit' but 'does the contract value justify the investment required?' Also raises the option of a business-process fallback (like the premium e-commerce phone-call case) that achieves near-100% effective reliability at lower architectural cost.",
-      "notes": "Positive scenario: enterprise customer demanding a specific SLA level; forces cost-of-reliability analysis against contract value."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How many minutes of downtime per year does a 99.9% SLO allow?",
-      "expected_behavior": "Pure arithmetic question. Should not invoke 10x9-cost-reliability; calculate directly: 0.1% of 525,600 minutes = 525.6 minutes = 8.76 hours per year.",
-      "notes": "Decoy: SLO math question requiring arithmetic, not economic reasoning or decision-making framework."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "How do I track our SLO compliance over time? We want a dashboard that shows our error budget consumption.",
-      "expected_behavior": "Tooling/measurement question. Should not invoke 10x9-cost-reliability; answer with guidance on SLO tracking dashboards and error budget burn rate visualization.",
-      "notes": "Decoy: SLO measurement tooling question, not a cost-of-reliability decision."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "Our platform has been at 99.5% availability and we want to improve. We're not sure whether to aim for 99.9% or 99.99%. How do we decide which target is right?",
-      "expected_behavior": "Likely invokes 10x9-cost-reliability in combination with lagom-slo. The 10x/9 rule quantifies the relative cost difference (99.9% is roughly 10x more expensive than 99.5%; 99.99% is 100x more expensive). The target decision requires consumer tolerance analysis (lagom: what is the worst level consumers can live with?) combined with the 10x/9 cost framing. The answer is not 'pick 99.9%' but 'ask consumers what they need and apply the cost rule to evaluate the investment.'",
-      "notes": "Boundary: target selection question that requires both 10x9 (cost analysis) and lagom-slo (consumer tolerance). The two skills are complementary here."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "Our service is a payment processing API for a financial institution. They're telling us we need to meet banking regulatory requirements for uptime, which effectively means near-five-nines. The cost-benefit calculation isn't really the point here — we have to comply. How do we approach this?",
-      "expected_behavior": "Likely invokes 10x9-cost-reliability with the caveat from the WHEN NOT TO CALL section: safety-critical and regulatory scenarios are outside the cost-argument framing. The skill should acknowledge this boundary and shift to practical guidance: given that five-nines is a regulatory requirement, the 10x/9 rule informs *how* to allocate the reliability investment (what architecture decisions make sense at this level) rather than *whether* to invest.",
-      "notes": "Boundary: regulatory mandate removes the cost-benefit question; the skill should recognize this is outside its core use case and shift to implementation guidance."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our CTO walked into the planning meeting and said we need to achieve five-nines availability for our streaming platform. That's what Netflix has, and our reliability has been embarrassing. I need to respond to this. How do I push back with data?",
+    "expected": "Invokes 10x9-cost-reliability, applies the 10x/9 rule: five-nines allows 26 seconds of downtime per month — faster than a human can be paged. Each additional nine costs roughly 10x more. Translates the abstract percentage into economic terms: the engineering investment required (geographic redundancy, automated failover, 5-8 person on-call rotation with SLA compensation, full automation of incident response) is described concretely. Prescribes asking what consumer tolerance actually requires rather than matching a competitor's prestige number.",
+    "notes": "Positive scenario: exact case from the book — CTO mandating five-nines without cost analysis.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're currently at 99.9% availability. Our VP wants to go to 99.99%. How much more expensive is that to achieve?",
+    "expected": "Invokes 10x9-cost-reliability, applies the 10x/9 rule: going from 99.9% to 99.99% reduces the error budget from 8.7 hours/year to 52.6 minutes/year — a 10x reduction. The cost to sustain that level is roughly 10x higher across architecture redundancy, automation, and on-call infrastructure. At 99.9%, manual incident response is feasible; at 99.99%, you need automated recovery for most classes of failure. Provides the economic framing to evaluate whether the VP's request is justified by consumer need or business value.",
+    "notes": "Positive scenario: explicit 'how much more expensive' question about adding a nine; direct application of the 10x/9 rule.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We need to justify the budget for building active-active multi-region infrastructure. Finance is asking why reliability improvements cost so much more than proportionally to the improvement we're getting. How do I explain this?",
+    "expected": "Invokes 10x9-cost-reliability, provides the economic explanation: reliability improvement is not linear — it follows a curve that steepens toward 100%. Each order of magnitude improvement costs roughly 10x more because easy wins (second server, retries) come first; subsequent improvements require progressively more sophisticated and expensive interventions (geographic redundancy, automated failover, eliminating humans from incident loops). The 10x/9 rule makes this intuition explicit and justifiable to finance.",
+    "notes": "Positive scenario: justifying reliability investment to finance; the skill provides the economic framing for why costs accelerate.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're a B2B SaaS company and a key enterprise customer is demanding a 99.99% SLA in their contract. Our current architecture delivers about 99.7%. They're threatening to walk if we don't commit. Should we commit?",
+    "expected": "Invokes 10x9-cost-reliability, frames the decision economically: committing to 99.99% from 99.7% is jumping more than one nine. The investment required (multiple nines of improvement simultaneously) is very large. The question is not 'should we commit' but 'does the contract value justify the investment required?' Also raises the option of a business-process fallback (like the premium e-commerce phone-call case) that achieves near-100% effective reliability at lower architectural cost.",
+    "notes": "Positive scenario: enterprise customer demanding a specific SLA level; forces cost-of-reliability analysis against contract value.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How many minutes of downtime per year does a 99.9% SLO allow?",
+    "expected": "Pure arithmetic question. Should not invoke 10x9-cost-reliability; calculate directly: 0.1% of 525,600 minutes = 525.6 minutes = 8.76 hours per year.",
+    "notes": "Decoy: SLO math question requiring arithmetic, not economic reasoning or decision-making framework.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I track our SLO compliance over time? We want a dashboard that shows our error budget consumption.",
+    "expected": "Tooling/measurement question. Should not invoke 10x9-cost-reliability; answer with guidance on SLO tracking dashboards and error budget burn rate visualization.",
+    "notes": "Decoy: SLO measurement tooling question, not a cost-of-reliability decision.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "Our platform has been at 99.5% availability and we want to improve. We're not sure whether to aim for 99.9% or 99.99%. How do we decide which target is right?",
+    "expected": "Likely invokes 10x9-cost-reliability in combination with lagom-slo. The 10x/9 rule quantifies the relative cost difference (99.9% is roughly 10x more expensive than 99.5%; 99.99% is 100x more expensive). The target decision requires consumer tolerance analysis (lagom: what is the worst level consumers can live with?) combined with the 10x/9 cost framing. The answer is not 'pick 99.9%' but 'ask consumers what they need and apply the cost rule to evaluate the investment.'",
+    "notes": "Boundary: target selection question that requires both 10x9 (cost analysis) and lagom-slo (consumer tolerance). The two skills are complementary here.; source id: edge-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our service is a payment processing API for a financial institution. They're telling us we need to meet banking regulatory requirements for uptime, which effectively means near-five-nines. The cost-benefit calculation isn't really the point here — we have to comply. How do we approach this?",
+    "expected": "Likely invokes 10x9-cost-reliability with the caveat from the WHEN NOT TO CALL section: safety-critical and regulatory scenarios are outside the cost-argument framing. The skill should acknowledge this boundary and shift to practical guidance: given that five-nines is a regulatory requirement, the 10x/9 rule informs *how* to allocate the reliability investment (what architecture decisions make sense at this level) rather than *whether* to invest.",
+    "notes": "Boundary: regulatory mandate removes the cost-benefit question; the skill should recognize this is outside its core use case and shift to implementation guidance.; source id: edge-02"
+  }
+]

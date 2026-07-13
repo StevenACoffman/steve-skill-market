@@ -1,62 +1,58 @@
-{
-  "skill": "change-as-primary-outage-cause",
-  "description": "Use this skill when designing a release or deployment process, when a team is experiencing frequent production outages of unclear origin, or when management is debating change control policies.",
-  "test_prompts": [
-    {
-      "id": "change-as-primary-outage-cause-should-01",
-      "category": "should_invoke",
-      "prompt": "We've had four production outages in the last six weeks. My VP wants to institute a two-week change freeze before the holiday shopping season. The argument is that fewer deployments means fewer things can go wrong. I'm skeptical but can't articulate why this is a bad idea.",
-      "expected": "invoke",
-      "rationale": "This is the canonical change freeze proposal scenario, one of the three explicit trigger scenarios in the skill. The 70% rule analysis explains exactly why change freezes are counterproductive — they don't reduce blast radius per change and create pre-freeze deployment rushes."
-    },
-    {
-      "id": "change-as-primary-outage-cause-should-02",
-      "category": "should_invoke",
-      "prompt": "Our team just pushed a config update to all 8,000 instances at once. Within 10 minutes error rates are climbing across all of them. We're now debating internally whether to roll back immediately or spend another 20 minutes diagnosing the issue first so we 'know for sure' it's the config.",
-      "expected": "invoke",
-      "rationale": "This is the 'rollback after diagnosis' instinct scenario from the skill's A2 section. The skill provides a clear answer: roll back first, diagnose second, because the 70% prior means the recent change is the most likely cause and the cost asymmetry strongly favors rollback."
-    },
-    {
-      "id": "change-as-primary-outage-cause-should-03",
-      "category": "should_invoke",
-      "prompt": "We deploy code changes through a careful canary process but treat infrastructure config changes differently — we push those to all environments simultaneously because 'it's just config, not code.' We've been having weird production incidents we can't explain and I'm trying to identify the pattern.",
-      "expected": "invoke",
-      "rationale": "This is the classic failure pattern the skill warns about: exempting config changes from canary/progressive rollout. The skill explicitly states that config changes are one of the most common outage causes and must participate in the same staged process as code changes."
-    },
-    {
-      "id": "change-as-primary-outage-cause-should-not-01",
-      "category": "should_not_invoke",
-      "prompt": "We've been having production incidents tied to our 99th percentile latency blowing up under heavy load. Traffic is growing 40% month-over-month and our infrastructure can't keep up. How do we figure out how much capacity to provision?",
-      "expected": "skip",
-      "rationale": "This is a capacity planning problem, not a change management problem. The skill's boundary explicitly states it does not apply when the primary source of outages is capacity-related (traffic spikes beyond provisioned capacity). The right approach is capacity planning methodology."
-    },
-    {
-      "id": "change-as-primary-outage-cause-should-not-02",
-      "category": "should_not_invoke",
-      "prompt": "We need to migrate our user table from MySQL to Postgres. The table has 200 million rows and is written to constantly. I'm trying to design the migration plan, including what to do if the migration goes wrong partway through.",
-      "expected": "skip",
-      "rationale": "This is a database migration design question. The skill's boundary explicitly excludes automated rollback for stateful changes like schema migrations, noting that automated rollback 'may cause data loss or corruption.' The right approach involves careful manual migration design, dual-write strategies, and rollback procedures that are specific to stateful data migrations."
-    },
-    {
-      "id": "change-as-primary-outage-cause-should-not-03",
-      "category": "should_not_invoke",
-      "prompt": "We had a major outage last week caused by a bad config push. I want to run a proper blameless postmortem on it. What should the structure of that postmortem look like, and what questions should we be asking?",
-      "expected": "skip",
-      "rationale": "The user is asking about how to conduct a postmortem, not about change management principles. The right skill is blameless-postmortem-process. While the change-as-primary-outage-cause skill provides the 70% framing that would inform what questions the postmortem asks, the process of conducting a postmortem is a different skill."
-    },
-    {
-      "id": "change-as-primary-outage-cause-boundary-01",
-      "category": "boundary",
-      "prompt": "We have an SLO of 99.5% and we've burned through 60% of our error budget this quarter. Our VP of Product wants to know if we should pause the next release cycle. Is this a change management decision or something else?",
-      "expected": "skip",
-      "rationale": "This is an error budget governance question, not a change management engineering question. The skill's distinguishing section explicitly states: 'Error budget governs the policy question of when to slow releases. Change management governs the engineering question of how to make each individual release safer.' The right skill is error-budget-conflict-resolution, which governs release velocity decisions against a known SLO."
-    },
-    {
-      "id": "change-as-primary-outage-cause-boundary-02",
-      "category": "boundary",
-      "prompt": "We're setting up our first real CI/CD pipeline. Right now we deploy manually once a week after a big batch of changes. Should we switch to continuous deployment, and if so, how do we make sure we don't break production constantly?",
-      "expected": "invoke",
-      "rationale": "This is a genuine boundary case — it's both a deployment process design question and implicitly a change management question. The skill applies because this team is about to change its deployment architecture and the 70% rule directly informs the right answer: move to smaller, more frequent deploys with progressive rollout and automated rollback, not larger infrequent batches. The 'weekly big batch' pattern is exactly what the skill warns creates high blast-radius deployments."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We've had four production outages in the last six weeks. My VP wants to institute a two-week change freeze before the holiday shopping season. The argument is that fewer deployments means fewer things can go wrong. I'm skeptical but can't articulate why this is a bad idea.",
+    "expected": "invoke",
+    "notes": "rationale: This is the canonical change freeze proposal scenario, one of the three explicit trigger scenarios in the skill. The 70% rule analysis explains exactly why change freezes are counterproductive — they don't reduce blast radius per change and create pre-freeze deployment rushes.; source id: change-as-primary-outage-cause-should-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our team just pushed a config update to all 8,000 instances at once. Within 10 minutes error rates are climbing across all of them. We're now debating internally whether to roll back immediately or spend another 20 minutes diagnosing the issue first so we 'know for sure' it's the config.",
+    "expected": "invoke",
+    "notes": "rationale: This is the 'rollback after diagnosis' instinct scenario from the skill's A2 section. The skill provides a clear answer: roll back first, diagnose second, because the 70% prior means the recent change is the most likely cause and the cost asymmetry strongly favors rollback.; source id: change-as-primary-outage-cause-should-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We deploy code changes through a careful canary process but treat infrastructure config changes differently — we push those to all environments simultaneously because 'it's just config, not code.' We've been having weird production incidents we can't explain and I'm trying to identify the pattern.",
+    "expected": "invoke",
+    "notes": "rationale: This is the classic failure pattern the skill warns about: exempting config changes from canary/progressive rollout. The skill explicitly states that config changes are one of the most common outage causes and must participate in the same staged process as code changes.; source id: change-as-primary-outage-cause-should-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "We've been having production incidents tied to our 99th percentile latency blowing up under heavy load. Traffic is growing 40% month-over-month and our infrastructure can't keep up. How do we figure out how much capacity to provision?",
+    "expected": "skip",
+    "notes": "rationale: This is a capacity planning problem, not a change management problem. The skill's boundary explicitly states it does not apply when the primary source of outages is capacity-related (traffic spikes beyond provisioned capacity). The right approach is capacity planning methodology.; source id: change-as-primary-outage-cause-should-not-01"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We need to migrate our user table from MySQL to Postgres. The table has 200 million rows and is written to constantly. I'm trying to design the migration plan, including what to do if the migration goes wrong partway through.",
+    "expected": "skip",
+    "notes": "rationale: This is a database migration design question. The skill's boundary explicitly excludes automated rollback for stateful changes like schema migrations, noting that automated rollback 'may cause data loss or corruption.' The right approach involves careful manual migration design, dual-write strategies, and rollback procedures that are specific to stateful data migrations.; source id: change-as-primary-outage-cause-should-not-02"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We had a major outage last week caused by a bad config push. I want to run a proper blameless postmortem on it. What should the structure of that postmortem look like, and what questions should we be asking?",
+    "expected": "skip",
+    "notes": "rationale: The user is asking about how to conduct a postmortem, not about change management principles. The right skill is blameless-postmortem-process. While the change-as-primary-outage-cause skill provides the 70% framing that would inform what questions the postmortem asks, the process of conducting a postmortem is a different skill.; source id: change-as-primary-outage-cause-should-not-03"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "We have an SLO of 99.5% and we've burned through 60% of our error budget this quarter. Our VP of Product wants to know if we should pause the next release cycle. Is this a change management decision or something else?",
+    "expected": "skip",
+    "notes": "rationale: This is an error budget governance question, not a change management engineering question. The skill's distinguishing section explicitly states: 'Error budget governs the policy question of when to slow releases. Change management governs the engineering question of how to make each individual release safer.' The right skill is error-budget-conflict-resolution, which governs release velocity decisions against a known SLO.; source id: change-as-primary-outage-cause-boundary-01"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We're setting up our first real CI/CD pipeline. Right now we deploy manually once a week after a big batch of changes. Should we switch to continuous deployment, and if so, how do we make sure we don't break production constantly?",
+    "expected": "invoke",
+    "notes": "rationale: This is a genuine boundary case — it's both a deployment process design question and implicitly a change management question. The skill applies because this team is about to change its deployment architecture and the 70% rule directly informs the right answer: move to smaller, more frequent deploys with progressive rollout and automated rollback, not larger infrequent batches. The 'weekly big batch' pattern is exactly what the skill warns creates high blast-radius deployments.; source id: change-as-primary-outage-cause-boundary-02"
+  }
+]

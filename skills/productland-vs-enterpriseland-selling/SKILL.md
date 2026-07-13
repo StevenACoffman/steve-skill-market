@@ -12,23 +12,7 @@ description: |
   - "How do I explain the value of data modeling to [non-technical stakeholder]?"
   - Any situation where the user must persuade someone to fund or approve a data
     work initiative
-
-  Do NOT use this skill when:
-  - The pitch audience has already been identified and the question is a purely
-    technical one — the pitch framing is not needed
-  - The question is about ongoing stakeholder management after buy-in is secured —
-    use power-interest-grid-stakeholders for sustained engagement planning
-  - The question is about discovering requirements, not selling solutions —
-    use business-process-discovery
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Politics chapter —
-  How Politics and Power Influence Data Models.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: How Politics and Power Influence Data Models
 tags: [selling, stakeholders, buy-in, productland, enterpriseland, pitch, politics]
-related_skills:
-  - slug: power-interest-grid-stakeholders
-    relation: composes-with
 ---
 
 # Productland Vs. Enterpriseland — Context-Calibrated Selling Framework
@@ -228,7 +212,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`power-interest-grid-stakeholders`](../power-interest-grid-stakeholders/SKILL.md): The grid identifies which organizational quadrant the audience occupies and what engagement format they require; this skill then prescribes the specific pitch frame (growth vs. defense) and the concrete metrics to lead with for that audience.
+- **composes-with** `power-interest-grid-stakeholders`: The grid identifies which organizational quadrant the audience occupies and what engagement format they require; this skill then prescribes the specific pitch frame (growth vs. defense) and the concrete metrics to lead with for that audience.
 
 ______________________________________________________________________
 
@@ -238,3 +222,9 @@ ______________________________________________________________________
 - **Source IDs**: f23+p41 (framework extractor + principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — How Politics and Power Influence Data Models

@@ -1,95 +1,107 @@
-{
-  "skill": "messaging-observability-design",
-  "prompts": [
-    {
-      "id": "t01",
-      "type": "should_invoke",
-      "prompt": "We're designing a new async messaging integration. What observability should we build in from the start?",
-      "why": "Direct design-time observability question — the skill's core purpose"
-    },
-    {
-      "id": "t02",
-      "type": "should_invoke",
-      "prompt": "A message enters our system and we have no idea where it goes after that. We can see it was published but we can't trace its path through the processing pipeline. How do we fix this?",
-      "why": "Missing Message History — the skill's pattern selection algorithm points directly to Message History"
-    },
-    {
-      "id": "t03",
-      "type": "should_invoke",
-      "prompt": "We need to measure the latency of our order fulfillment service. It uses a callback pattern where the caller specifies a reply queue dynamically. How do we instrument this without modifying the service?",
-      "why": "Smart Proxy scenario — dynamic Return Address with a packaged service that cannot be modified"
-    },
-    {
-      "id": "t04",
-      "type": "should_invoke",
-      "prompt": "We need to audit all messages on our payment channel for compliance purposes. The messages must be preserved without interrupting the primary flow. What's the right pattern?",
-      "why": "Wire Tap feeding a Message Store — compliance audit requirement without disrupting primary channel"
-    },
-    {
-      "id": "t05",
-      "type": "should_invoke",
-      "prompt": "We want to report on message throughput, error rates, and processing latency over the last 30 days across our integration platform. What do we need to build?",
-      "why": "Cross-message, cross-time reporting — Message Store is the pattern; the skill covers its design"
-    },
-    {
-      "id": "t06",
-      "type": "should_invoke",
-      "prompt": "Our Pub-Sub system keeps delivering messages back to the same service that published them, creating processing loops. How do we detect and prevent this?",
-      "why": "Message History for loop detection — explicitly called out in p14 and the skill"
-    },
-    {
-      "id": "t07",
-      "type": "should_invoke",
-      "prompt": "A third-party packaged application is in our integration path. We can't modify it. We need to log every message it receives and sends. How?",
-      "why": "Wire Tap for packaged application observation — the pattern is designed for this scenario"
-    },
-    {
-      "id": "t08",
-      "type": "should_invoke",
-      "prompt": "Our async system is failing silently. Everything looks green — queues are drained, workers are running — but business outcomes are wrong. We suspect messages are being lost or misrouted. How do we diagnose this?",
-      "why": "Classic 'all lights green, system is down' — requires the full observability toolkit to diagnose"
-    },
-    {
-      "id": "t09",
-      "type": "should_not_invoke",
-      "prompt": "How do I configure AWS CloudWatch alarms for an SQS queue?",
-      "why": "Infrastructure monitoring configuration — operational CloudWatch question, not integration observability design"
-    },
-    {
-      "id": "t10",
-      "type": "should_not_invoke",
-      "prompt": "Should I use Kafka or RabbitMQ for our new messaging system?",
-      "why": "Messaging technology selection — not an observability design question"
-    },
-    {
-      "id": "t11",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement idempotent message processing to handle duplicate deliveries?",
-      "why": "Idempotent Receiver pattern — a message processing correctness concern, not observability design"
-    },
-    {
-      "id": "t12",
-      "type": "should_not_invoke",
-      "prompt": "What's the best way to add distributed tracing to our Node.js microservices using OpenTelemetry?",
-      "why": "OpenTelemetry instrumentation in application code — standard APM, not integration pattern observability design (though related conceptually)"
-    },
-    {
-      "id": "t13",
-      "type": "should_not_invoke",
-      "prompt": "How do I scale my message consumers to handle 10x traffic?",
-      "why": "Competing Consumers / throughput scaling — not observability design"
-    },
-    {
-      "id": "t14",
-      "type": "blurred_boundary",
-      "prompt": "We're adopting asynchronous messaging to decouple our services. What should we design upfront to make sure we can debug problems in production?",
-      "why": "Blurred: could invoke integration style selection (messaging adoption) OR observability design (what to build upfront). The observability skill is the right answer to the second half of the question."
-    },
-    {
-      "id": "t15",
-      "type": "blurred_boundary",
-      "prompt": "We have a message that enters the system but never triggers the expected downstream business action. How do we figure out what happened to it?",
-      "why": "Blurred: if observability is already in place, this is a debugging question (use the instruments). If not, it's an observability design question (build the instruments first). The skill covers both the design and the selection algorithm for diagnosis."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're designing a new async messaging integration. What observability should we build in from the start?",
+    "expected": "Skill activates and treats observability as a design-time integration concern, walking the four-pattern selection framework — Wire Tap for channel inspection, Message History for single-message path tracing, Message Store for cross-message/SLA reporting, Smart Proxy for request-reply latency — and prescribes placing non-invasive instruments before the system reaches production.",
+    "notes": "source id: t01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "A message enters our system and we have no idea where it goes after that. We can see it was published but we can't trace its path through the processing pipeline. How do we fix this?",
+    "expected": "Skill activates and points to Message History: each component appends its identifier and timestamp to a history header as it processes the message, so by the final destination (or dead letter channel) the header carries the full ordered routing trace — the direct answer to 'which components did this message pass through?'",
+    "notes": "source id: t02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We need to measure the latency of our order fulfillment service. It uses a callback pattern where the caller specifies a reply queue dynamically. How do we instrument this without modifying the service?",
+    "expected": "Skill activates and prescribes a Smart Proxy: it intercepts the request, records the original dynamic Return Address and a correlation ID, substitutes its own reply channel, receives the reply and forwards it to the original requester while timing the round trip — measuring latency through the dynamic-reply service without modifying it (with timeout cleanup to avoid state leaks).",
+    "notes": "source id: t03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We need to audit all messages on our payment channel for compliance purposes. The messages must be preserved without interrupting the primary flow. What's the right pattern?",
+    "expected": "Skill activates and prescribes a Wire Tap feeding a Message Store: the Wire Tap (a fixed two-output Recipient List) copies each message to a secondary channel without consuming it, and the durable Message Store persists the audited fields — preserving a compliance audit trail without disturbing the primary payment flow, with a defined retention/purge schedule.",
+    "notes": "source id: t04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We want to report on message throughput, error rates, and processing latency over the last 30 days across our integration platform. What do we need to build?",
+    "expected": "Skill activates and identifies this as the Message Store pattern for cross-message, cross-time reporting: pair a Wire Tap (or component self-publishing) with a durable store persisting message ID, correlation ID, channel, timestamp, and status so throughput, error-rate, and P95 latency queries can run over time; it specifies the schema fields and a retention window.",
+    "notes": "source id: t05"
+  },
+  {
+    "id": 6,
+    "type": "should_trigger",
+    "prompt": "Our Pub-Sub system keeps delivering messages back to the same service that published them, creating processing loops. How do we detect and prevent this?",
+    "expected": "Skill activates and applies Message History for loop detection: because each component appends its identifier to the history, a receiving component can check whether its own identifier already appears in the message's history and discard the message if so, breaking the cycle — the standard answer for cycle detection in Pub-Sub topologies.",
+    "notes": "source id: t06"
+  },
+  {
+    "id": 7,
+    "type": "should_trigger",
+    "prompt": "A third-party packaged application is in our integration path. We can't modify it. We need to log every message it receives and sends. How?",
+    "expected": "Skill activates and prescribes Wire Taps on the packaged application's input and output channels: because the Wire Tap observes non-invasively by copying messages to a secondary channel, it logs every message the unmodifiable application receives and sends without touching the application itself (togglable via Control Bus for production).",
+    "notes": "source id: t07"
+  },
+  {
+    "id": 8,
+    "type": "should_trigger",
+    "prompt": "Our async system is failing silently. Everything looks green — queues are drained, workers are running — but business outcomes are wrong. We suspect messages are being lost or misrouted. How do we diagnose this?",
+    "expected": "Skill activates on the classic 'all lights green, system is down' signal and prescribes the full observability toolkit: Message History to trace where individual messages actually went, Wire Tap plus Message Store to capture evidence of loss/misrouting across many messages, and Dead Letter Channel monitoring — identifying which of the four instruments are missing as the diagnostic gap.",
+    "notes": "source id: t08"
+  },
+  {
+    "id": 9,
+    "type": "should_not_trigger",
+    "prompt": "How do I configure AWS CloudWatch alarms for an SQS queue?",
+    "expected": "skill should not activate",
+    "notes": "source id: t09"
+  },
+  {
+    "id": 10,
+    "type": "should_not_trigger",
+    "prompt": "Should I use Kafka or RabbitMQ for our new messaging system?",
+    "expected": "skill should not activate",
+    "notes": "source id: t10"
+  },
+  {
+    "id": 11,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement idempotent message processing to handle duplicate deliveries?",
+    "expected": "skill should not activate",
+    "notes": "source id: t11"
+  },
+  {
+    "id": 12,
+    "type": "should_not_trigger",
+    "prompt": "What's the best way to add distributed tracing to our Node.js microservices using OpenTelemetry?",
+    "expected": "skill should not activate",
+    "notes": "source id: t12"
+  },
+  {
+    "id": 13,
+    "type": "should_not_trigger",
+    "prompt": "How do I scale my message consumers to handle 10x traffic?",
+    "expected": "skill should not activate",
+    "notes": "source id: t13"
+  },
+  {
+    "id": 14,
+    "type": "edge_case",
+    "prompt": "We're adopting asynchronous messaging to decouple our services. What should we design upfront to make sure we can debug problems in production?",
+    "expected": "Skill answers the observability half of a question that blurs into integration-style selection: since loose coupling makes async systems hard to debug, it prescribes designing the four observability patterns in from the start (Wire Tap, Message History, Message Store, Smart Proxy) as non-invasive instruments, rather than deferring to APM added later.",
+    "notes": "source id: t14"
+  },
+  {
+    "id": 15,
+    "type": "edge_case",
+    "prompt": "We have a message that enters the system but never triggers the expected downstream business action. How do we figure out what happened to it?",
+    "expected": "Skill covers both branches: if observability is already in place this is a debugging task — read the Message History header and Message Store to see where the message stopped or was misrouted; if it is not, the answer is an observability design gap and the instruments (Message History plus Wire Tap/Message Store) must be built first, then used via the selection algorithm to diagnose.",
+    "notes": "source id: t15"
+  }
+]

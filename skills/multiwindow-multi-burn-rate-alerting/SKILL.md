@@ -6,12 +6,7 @@ description: |
   Trigger scenarios: an alert fires hours after an incident resolved (false positive), a service bleeds 35% of error budget from intermittent spikes without paging anyone (false negative), or a team asks "how should we configure our SLO alerts in Prometheus/Datadog/Grafana?"
 
   Do not use for low-traffic services where single failed requests produce extreme burn rates (requires separate low-traffic strategy). Do not use as a replacement for symptom-based alerting on non-SLO signals (saturation, dependency health). Do not copy the specific Google parameters without deriving them from your own SLO percentage and time window.
-
-  Key trigger: "Our SLO alerting has too many false positives" or "we had a slow burn that never paged."
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 5 - Alerting on SLOs; Chapter 2 - Implementing SLOs"
 tags: [alerting, burn-rate, slo, precision-recall, prometheus, multiwindow, derivation]
-related_skills: []
 ---
 
 # Multiwindow Multi-Burn-Rate Alerting Framework
@@ -167,3 +162,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 5 - Alerting on SLOs, Chapter 2 - Implementing SLOs

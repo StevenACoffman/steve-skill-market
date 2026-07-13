@@ -1,76 +1,72 @@
-{
-  "skill": "sli-formula-measurement",
-  "version": "0.1.0",
-  "test_cases": [
-    {
-      "id": "should-trigger-01",
-      "type": "should_trigger",
-      "prompt": "We want to start measuring reliability for our API. What should we actually measure? We have CPU utilization, request count, error rate, and response time available. Where do we start?",
-      "expected_behavior": "Invokes sli-formula-measurement, applies the wake-up test to filter out CPU utilization (infrastructure metric, not always consumer-visible), identifies error rate and response time as consumer-grounded SLI candidates, guides through defining 'valid' events (authenticated API calls, not health checks or DDoS traffic), and recommends measurement at the edge/load balancer rather than inside the instance.",
-      "notes": "Positive scenario: selecting metrics for a first SLI from a list of available candidates."
-    },
-    {
-      "id": "should-trigger-02",
-      "type": "should_trigger",
-      "prompt": "Our on-call engineer gets paged whenever CPU spikes above 80%, but half the time users don't notice anything. The alerts feel like noise. What's the problem with our current approach?",
-      "expected_behavior": "Invokes sli-formula-measurement, diagnoses the infrastructure-metric-as-SLI anti-pattern — CPU utilization fails the wake-up test (bad CPU does not always mean consumer-visible failure), recommends replacing it with a consumer-grounded SLI (error rate or latency at the API boundary), and explains that infrastructure metrics belong in root cause analysis dashboards, not SLI alerting.",
-      "notes": "Positive scenario: CPU-based SLI producing false alert noise — the infrastructure metric anti-pattern."
-    },
-    {
-      "id": "should-trigger-03",
-      "type": "should_trigger",
-      "prompt": "We're computing our availability SLI as 'successful requests divided by all requests.' Last week our error rate spiked because our upstream dependency failed, and now our SLO looks terrible even though our code was fine. How do we fix the formula?",
-      "expected_behavior": "Invokes sli-formula-measurement, identifies the 'all requests' denominator problem — dependency failures are not within the team's control, so they should be excluded from 'valid' events. Prescribes scoping the denominator to requests that failed due to the team's own service, explicitly excluding dependency-caused errors from valid events.",
-      "notes": "Positive scenario: total vs. valid denominator problem — the team being penalized for upstream failures."
-    },
-    {
-      "id": "should-trigger-04",
-      "type": "should_trigger",
-      "prompt": "We measure our service availability by pinging our /health endpoint every minute from inside our Kubernetes cluster. It shows 99.9% but users keep reporting errors they can't complete. What are we missing?",
-      "expected_behavior": "Invokes sli-formula-measurement, diagnoses the measurement location problem — measuring from inside the cluster misses failures between the cluster edge and the user (CDN issues, load balancer failures, authentication failures). Recommends moving the measurement point outward toward the consumer boundary, and explains the fidelity-vs-cost trade-off of each measurement location.",
-      "notes": "Positive scenario: synthetic SLI inside the cluster masking real consumer failures — the measurement location problem."
-    },
-    {
-      "id": "should-trigger-05",
-      "type": "should_trigger",
-      "prompt": "Our team owns the mobile app layer. We're being held accountable for end-to-end latency, but most of the latency is coming from the backend APIs we don't control. How do we scope our SLI correctly?",
-      "expected_behavior": "Invokes sli-formula-measurement, applies the control boundary test — end-to-end latency includes components the mobile team cannot optimize (network, backend response time). Recommends decomposing the latency budget: define 'valid' as the mobile processing time only (excluding network transit and backend latency), so the SLI reflects only what the team can act on.",
-      "notes": "Positive scenario: SLI scoping to control boundary — the mobile team latency decomposition example from the book."
-    },
-    {
-      "id": "should-not-trigger-01",
-      "type": "should_not_trigger",
-      "prompt": "How do I set up Prometheus to collect metrics from my Kubernetes cluster?",
-      "expected_behavior": "Tooling and infrastructure question — should provide Prometheus setup guidance without invoking sli-formula-measurement. The skill addresses what to measure and how to design the formula, not how to configure the collection infrastructure.",
-      "notes": "Decoy: Prometheus setup question, not an SLI formula or measurement design question."
-    },
-    {
-      "id": "should-not-trigger-02",
-      "type": "should_not_trigger",
-      "prompt": "What is the difference between a metric and an SLI?",
-      "expected_behavior": "Definitional question — should explain that any observable metric can be a monitoring metric, but only metrics that pass the wake-up test (consumer-visible failure when bad, team-controllable) qualify as SLIs. Does not invoke the full sli-formula-measurement framework; this is a conceptual distinction question.",
-      "notes": "Decoy: terminology definition question, not a formula design or measurement location question."
-    },
-    {
-      "id": "should-not-trigger-03",
-      "type": "should_not_trigger",
-      "prompt": "Our SLI is well-defined and we're happy with it. Now we need to decide what percentage target to set for our SLO. Where do we start?",
-      "expected_behavior": "SLO target calibration question — the SLI formula is already settled; the question is about calibrating the target percentage based on consumer tolerance and cost. Should use lagom-slo, not sli-formula-measurement.",
-      "notes": "Decoy: SLO target setting question after the SLI is already defined — belongs to lagom-slo."
-    },
-    {
-      "id": "edge-01",
-      "type": "edge_case",
-      "prompt": "We want to measure data freshness as an SLI — how stale is the data our API returns? It's hard to define as a simple 'good/bad' event. How do we formulate it?",
-      "expected_behavior": "Ambiguous SLI type: data freshness is a range-bound or upper-bound SLI, not a simple success/failure. The skill should guide through the good event definition (event is good if data age < threshold), help define 'valid' events (which endpoints serve time-sensitive data?), and address the measurement location challenge (freshness must be measured from a consumer-accessible point, not inside the cache).",
-      "notes": "Boundary: non-standard SLI type (freshness) — tests whether the skill can apply the formula framework to a quality-of-data SLI beyond simple availability."
-    },
-    {
-      "id": "edge-02",
-      "type": "edge_case",
-      "prompt": "We handle both automated API calls from integrations and real human users from our UI. Should we include both in our SLI denominator?",
-      "expected_behavior": "Multi-consumer valid-set question — the skill should probe whether the consumer experience being measured is the human user or the integration partner. If the SLI is intended to represent human user experience, automated integration calls may not be 'valid' events because they have different SLO requirements and their failures may not represent human user impact. Recommends segmenting the SLI or defining separate SLIs for each consumer class.",
-      "notes": "Boundary: mixed human and automated traffic in the denominator — tests the valid-event scoping when consumer types differ."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We want to start measuring reliability for our API. What should we actually measure? We have CPU utilization, request count, error rate, and response time available. Where do we start?",
+    "expected": "Invokes sli-formula-measurement, applies the wake-up test to filter out CPU utilization (infrastructure metric, not always consumer-visible), identifies error rate and response time as consumer-grounded SLI candidates, guides through defining 'valid' events (authenticated API calls, not health checks or DDoS traffic), and recommends measurement at the edge/load balancer rather than inside the instance.",
+    "notes": "Positive scenario: selecting metrics for a first SLI from a list of available candidates.; source id: should-trigger-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our on-call engineer gets paged whenever CPU spikes above 80%, but half the time users don't notice anything. The alerts feel like noise. What's the problem with our current approach?",
+    "expected": "Invokes sli-formula-measurement, diagnoses the infrastructure-metric-as-SLI anti-pattern — CPU utilization fails the wake-up test (bad CPU does not always mean consumer-visible failure), recommends replacing it with a consumer-grounded SLI (error rate or latency at the API boundary), and explains that infrastructure metrics belong in root cause analysis dashboards, not SLI alerting.",
+    "notes": "Positive scenario: CPU-based SLI producing false alert noise — the infrastructure metric anti-pattern.; source id: should-trigger-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're computing our availability SLI as 'successful requests divided by all requests.' Last week our error rate spiked because our upstream dependency failed, and now our SLO looks terrible even though our code was fine. How do we fix the formula?",
+    "expected": "Invokes sli-formula-measurement, identifies the 'all requests' denominator problem — dependency failures are not within the team's control, so they should be excluded from 'valid' events. Prescribes scoping the denominator to requests that failed due to the team's own service, explicitly excluding dependency-caused errors from valid events.",
+    "notes": "Positive scenario: total vs. valid denominator problem — the team being penalized for upstream failures.; source id: should-trigger-03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We measure our service availability by pinging our /health endpoint every minute from inside our Kubernetes cluster. It shows 99.9% but users keep reporting errors they can't complete. What are we missing?",
+    "expected": "Invokes sli-formula-measurement, diagnoses the measurement location problem — measuring from inside the cluster misses failures between the cluster edge and the user (CDN issues, load balancer failures, authentication failures). Recommends moving the measurement point outward toward the consumer boundary, and explains the fidelity-vs-cost trade-off of each measurement location.",
+    "notes": "Positive scenario: synthetic SLI inside the cluster masking real consumer failures — the measurement location problem.; source id: should-trigger-04"
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our team owns the mobile app layer. We're being held accountable for end-to-end latency, but most of the latency is coming from the backend APIs we don't control. How do we scope our SLI correctly?",
+    "expected": "Invokes sli-formula-measurement, applies the control boundary test — end-to-end latency includes components the mobile team cannot optimize (network, backend response time). Recommends decomposing the latency budget: define 'valid' as the mobile processing time only (excluding network transit and backend latency), so the SLI reflects only what the team can act on.",
+    "notes": "Positive scenario: SLI scoping to control boundary — the mobile team latency decomposition example from the book.; source id: should-trigger-05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up Prometheus to collect metrics from my Kubernetes cluster?",
+    "expected": "Tooling and infrastructure question — should provide Prometheus setup guidance without invoking sli-formula-measurement. The skill addresses what to measure and how to design the formula, not how to configure the collection infrastructure.",
+    "notes": "Decoy: Prometheus setup question, not an SLI formula or measurement design question.; source id: should-not-trigger-01"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "What is the difference between a metric and an SLI?",
+    "expected": "Definitional question — should explain that any observable metric can be a monitoring metric, but only metrics that pass the wake-up test (consumer-visible failure when bad, team-controllable) qualify as SLIs. Does not invoke the full sli-formula-measurement framework; this is a conceptual distinction question.",
+    "notes": "Decoy: terminology definition question, not a formula design or measurement location question.; source id: should-not-trigger-02"
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our SLI is well-defined and we're happy with it. Now we need to decide what percentage target to set for our SLO. Where do we start?",
+    "expected": "SLO target calibration question — the SLI formula is already settled; the question is about calibrating the target percentage based on consumer tolerance and cost. Should use lagom-slo, not sli-formula-measurement.",
+    "notes": "Decoy: SLO target setting question after the SLI is already defined — belongs to lagom-slo.; source id: should-not-trigger-03"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We want to measure data freshness as an SLI — how stale is the data our API returns? It's hard to define as a simple 'good/bad' event. How do we formulate it?",
+    "expected": "Ambiguous SLI type: data freshness is a range-bound or upper-bound SLI, not a simple success/failure. The skill should guide through the good event definition (event is good if data age \u003c threshold), help define 'valid' events (which endpoints serve time-sensitive data?), and address the measurement location challenge (freshness must be measured from a consumer-accessible point, not inside the cache).",
+    "notes": "Boundary: non-standard SLI type (freshness) — tests whether the skill can apply the formula framework to a quality-of-data SLI beyond simple availability.; source id: edge-01"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We handle both automated API calls from integrations and real human users from our UI. Should we include both in our SLI denominator?",
+    "expected": "Multi-consumer valid-set question — the skill should probe whether the consumer experience being measured is the human user or the integration partner. If the SLI is intended to represent human user experience, automated integration calls may not be 'valid' events because they have different SLO requirements and their failures may not represent human user impact. Recommends segmenting the SLI or defining separate SLIs for each consumer class.",
+    "notes": "Boundary: mixed human and automated traffic in the denominator — tests the valid-event scoping when consumer types differ.; source id: edge-02"
+  }
+]

@@ -4,14 +4,7 @@ description: |
   Use this skill when an engineer needs to understand a large or deeply tangled legacy code module well enough to change it safely, but reading the code has not produced a working mental model. The technique is: check out a branch (or scratch copy), refactor aggressively purely to understand — extract methods, rename variables, reorganize classes, expose dependencies — then delete the branch without checking it in. The understanding persists; the mess is discarded.
 
   Call this skill when an engineer expresses that they have been reading legacy code for a long time without gaining comprehension, cannot follow the control flow, does not know where to put a seam, or is about to make a change they do not yet fully understand. It is a pre-condition technique: it builds the mental model before safe change work begins.
-
-  Do not call this skill when the code already has tests (use covered refactoring instead — structural changes under test coverage), when the engineer already understands the code well enough to identify seams and add characterization tests, or when the goal is to produce shippable improvement rather than understanding. The defining constraint is: the scratch refactoring must never be checked in.
-
-  Key trigger signal: an engineer expressing incomprehension — "I don't understand this code," "I've been reading this for hours," "I can't even follow the control flow" — in the context of needing to make a safe change.
-source_book: "Working Effectively with Legacy Code" by Michael C. Feathers (2005)
-source_chapter: "Chapter 16: I Don't Understand the Code Well Enough to Change It; Chapter 17: My Application Has No Structure"
 tags: [legacy-code, comprehension, refactoring, mental-model, exploration, characterization-tests, understanding]
-related_skills: [welc-legacy-code-change-algorithm, welc-characterization-test, welc-interception-point-selection]
 ---
 
 # Scratch Refactoring as Understanding Technique
@@ -160,3 +153,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Working Effectively with Legacy Code" by Michael C. Feathers (2005) — Chapter 16: I Don't Understand the Code Well Enough to Change It, Chapter 17: My Application Has No Structure

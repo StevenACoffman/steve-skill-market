@@ -1,9 +1,8 @@
 ---
-id: letsgo-db-sentinel-error-translation
-title: Database Model Sentinel Error Translation
+name: letsgo-db-sentinel-error-translation
 description: Invoke when designing the model layer of a Go web app — specifically when handlers need to distinguish "not found" from "server error", or when database driver errors must not leak into handler code.
-source: Let's Go, Alex Edwards, 2023
 ---
+# Database Model Sentinel Error Translation
 
 ## R — Reading
 
@@ -113,8 +112,14 @@ This pattern applies at any persistence boundary — Redis, S3, external HTTP AP
 
 ## Related Skills
 
-- **[go-http-service-di-composition](../go-http-service-di-composition/SKILL.md)** — depends on: model fields on `application` use interface types; the sentinel errors are what handlers test after calling those interfaces
-- **[letsgo-session-token-renewal](../letsgo-session-token-renewal/SKILL.md)** — informs: `ErrInvalidCredentials` is what the login handler checks before calling `AddNonFieldError`; the sentinel translation pattern defines what session-renewal code branches on
+- **go-http-service-di-composition** — depends on: model fields on `application` use interface types; the sentinel errors are what handlers test after calling those interfaces
+- **letsgo-session-token-renewal** — informs: `ErrInvalidCredentials` is what the login handler checks before calling `AddNonFieldError`; the sentinel translation pattern defines what session-renewal code branches on
 - **go-http-service-test-strategy** — informs: mock models return sentinel errors by value so integration tests can assert on `models.ErrNoRecord` and `models.ErrInvalidCredentials` without a live database
-- **[letsgo-form-validator](../letsgo-form-validator/SKILL.md)** — informs: when `Authenticate()` returns `ErrInvalidCredentials`, the login handler calls `form.AddNonFieldError(...)` — the sentinel error is the bridge between model and form validation layers
-- **[letsgo-postform-not-postformvalue](../letsgo-postform-not-postformvalue/SKILL.md)** — relates: both skills are about handling errors correctly at a layer boundary — one at the persistence boundary, the other at the HTTP input boundary
+- **letsgo-form-validator** — informs: when `Authenticate()` returns `ErrInvalidCredentials`, the login handler calls `form.AddNonFieldError(...)` — the sentinel error is the bridge between model and form validation layers
+- **letsgo-postform-not-postformvalue** — relates: both skills are about handling errors correctly at a layer boundary — one at the persistence boundary, the other at the HTTP input boundary
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Let's Go, Alex Edwards, 2023

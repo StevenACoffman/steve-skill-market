@@ -1,54 +1,44 @@
-{
-  "skill": "six-aggregation-properties",
-  "version": "0.1.0",
-  "source_book": "Practical Data Modeling — Joe Reis",
-  "darwin_compatible": true,
-  "test_cases": [
-    {
-      "id": "tc-01",
-      "type": "should_trigger",
-      "prompt": "We're shipping a new 'Revenue by Product Category' dashboard card next week. The metric sums order revenue grouped by category. Products can belong to multiple categories via a junction table. Can we trust this number before it goes live?",
-      "expected": "trigger",
-      "rationale": "Pre-deployment metric review on an already-built aggregation. The user explicitly has the metric built and is asking if it is correct before shipping — matches A2 scenario 1 and language signal 'We're shipping this dashboard next week'. The many-to-many junction table signals a Disjointness violation (Property 2). This is the exact scenario from the book's ce04 counter-example."
-    },
-    {
-      "id": "tc-02",
-      "type": "should_trigger",
-      "prompt": "Our company-wide average order value metric is computed by taking each store's pre-calculated AOV and averaging those together. Two analysts got different numbers running the same metric on different Redshift nodes last week. What's wrong with it?",
-      "expected": "trigger",
-      "rationale": "Production metric producing inconsistent results across distributed compute nodes — matches A2 scenario 6 (distributed system correctness) and language signal 'Why does this metric change when I rerun it?' The symptom (different results on different nodes) is the exact observable failure for Property 4 (Decomposability) — AVG is not associative across partitions. The metric already exists; this is validation/diagnosis, not design."
-    },
-    {
-      "id": "tc-03",
-      "type": "should_trigger",
-      "prompt": "Before we deploy our ML model next sprint, I need to verify the 'average session duration per user in the last 30 days' feature won't silently break. We pre-compute it as a float column in our feature store.",
-      "expected": "trigger",
-      "rationale": "Pre-deployment ML feature verification — matches A2 scenario 1 and the skill's explicit trigger 'We're about to deploy a new dashboard / metric / ML feature'. The feature is already built (pre-computed float column). Storing AVG as a float violates Property 3 (Additivity — ratio stored as pre-computed column) and Property 4 (Decomposability — can't combine partial AVGs). The user wants structural safety verification before production deployment."
-    },
-    {
-      "id": "tc-04",
-      "type": "should_not_trigger",
-      "prompt": "I need to design a 'customer lifetime value' metric from scratch. We have an events table with one row per purchase. I need to aggregate per customer across their full history. Where do I start?",
-      "expected": "no_trigger",
-      "rationale": "DECOY for aggregation-workflow-four-steps. The user is designing an aggregation from scratch ('from scratch', 'Where do I start?'). No metric exists yet. The BOUNDARY section explicitly states: 'For designing an aggregation from scratch: use aggregation-workflow-four-steps first to design the correct aggregation, then bring it here for verification before shipping.' This must NOT trigger six-aggregation-properties.",
-      "correct_skill": "aggregation-workflow-four-steps"
-    },
-    {
-      "id": "tc-05",
-      "type": "should_not_trigger",
-      "prompt": "Our events table has rows at two different levels of detail — some rows represent full sessions and some represent individual clicks within a session. What should the grain of this table be?",
-      "expected": "no_trigger",
-      "rationale": "DECOY for grain-decision-four-questions. This is a grain design question on a source table before any aggregation exists. The BOUNDARY section states: 'For grain design: use grain-decision-four-questions. That decision must happen before any aggregation can be checked here.' The six-property checklist cannot be run because there is no aggregation to check — the underlying table's grain is not yet settled. This must NOT trigger six-aggregation-properties.",
-      "correct_skill": "grain-decision-four-questions"
-    },
-    {
-      "id": "tc-06",
-      "type": "edge_case",
-      "prompt": "Our weekly active users (WAU) metric is already built and running in production. But the numbers look off — last week's WAU plus this week's WAU doesn't match our 'rolling 14-day active users' metric. We're not sure if that's expected or a bug. How do I check if the WAU metric is correct?",
-      "expected": "trigger",
-      "rationale": "EDGE CASE: Two signals compete. The user has a production metric already built (points to six-aggregation-properties validation). But the symptom — WAU + WAU not equaling 14-day distinct users — could be read as a design confusion ('is this expected behavior for COUNT DISTINCT?'), which might route to aggregation-workflow-four-steps for a design explanation. The correct answer is six-aggregation-properties: WAU is a COUNT DISTINCT metric, which is non-additive (Property 3) and semi-additive at best. Adding two weekly COUNT DISTINCTs cannot produce a 14-day COUNT DISTINCT because overlapping users are counted twice. Property 2 (Disjointness) also applies — the two weekly cohorts are not disjoint (the same user can be active both weeks). This is a validation question on an existing metric with an observable symptom, not a design-from-scratch question. Risk: Claude may focus on the 'explain the math' aspect and answer without invoking the skill, or may incorrectly route to aggregation-workflow-four-steps for the design explanation."
-    }
-  ],
-  "minimum_pass_rate": 0.8,
-  "notes": "At least 3 should_triggers + 2 should_not_triggers + 1 edge_case. All should_not_triggers must pass (decoy tolerance is 0). tc-04 targets the design/validate boundary — design from scratch must route to aggregation-workflow-four-steps not here. tc-05 targets the grain-not-yet-settled boundary — grain design must route to grain-decision-four-questions. tc-06 is a stress case: a built production metric with a symptom (non-additive COUNT DISTINCT behavior) that could be misread as a design confusion question."
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're shipping a new 'Revenue by Product Category' dashboard card next week. The metric sums order revenue grouped by category. Products can belong to multiple categories via a junction table. Can we trust this number before it goes live?",
+    "expected": "trigger",
+    "notes": "rationale: Pre-deployment metric review on an already-built aggregation. The user explicitly has the metric built and is asking if it is correct before shipping — matches A2 scenario 1 and language signal 'We're shipping this dashboard next week'. The many-to-many junction table signals a Disjointness violation (Property 2). This is the exact scenario from the book's ce04 counter-example.; source id: tc-01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our company-wide average order value metric is computed by taking each store's pre-calculated AOV and averaging those together. Two analysts got different numbers running the same metric on different Redshift nodes last week. What's wrong with it?",
+    "expected": "trigger",
+    "notes": "rationale: Production metric producing inconsistent results across distributed compute nodes — matches A2 scenario 6 (distributed system correctness) and language signal 'Why does this metric change when I rerun it?' The symptom (different results on different nodes) is the exact observable failure for Property 4 (Decomposability) — AVG is not associative across partitions. The metric already exists; this is validation/diagnosis, not design.; source id: tc-02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Before we deploy our ML model next sprint, I need to verify the 'average session duration per user in the last 30 days' feature won't silently break. We pre-compute it as a float column in our feature store.",
+    "expected": "trigger",
+    "notes": "rationale: Pre-deployment ML feature verification — matches A2 scenario 1 and the skill's explicit trigger 'We're about to deploy a new dashboard / metric / ML feature'. The feature is already built (pre-computed float column). Storing AVG as a float violates Property 3 (Additivity — ratio stored as pre-computed column) and Property 4 (Decomposability — can't combine partial AVGs). The user wants structural safety verification before production deployment.; source id: tc-03"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "I need to design a 'customer lifetime value' metric from scratch. We have an events table with one row per purchase. I need to aggregate per customer across their full history. Where do I start?",
+    "expected": "no_trigger",
+    "notes": "rationale: DECOY for aggregation-workflow-four-steps. The user is designing an aggregation from scratch ('from scratch', 'Where do I start?'). No metric exists yet. The BOUNDARY section explicitly states: 'For designing an aggregation from scratch: use aggregation-workflow-four-steps first to design the correct aggregation, then bring it here for verification before shipping.' This must NOT trigger six-aggregation-properties.; source id: tc-04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our events table has rows at two different levels of detail — some rows represent full sessions and some represent individual clicks within a session. What should the grain of this table be?",
+    "expected": "no_trigger",
+    "notes": "rationale: DECOY for grain-decision-four-questions. This is a grain design question on a source table before any aggregation exists. The BOUNDARY section states: 'For grain design: use grain-decision-four-questions. That decision must happen before any aggregation can be checked here.' The six-property checklist cannot be run because there is no aggregation to check — the underlying table's grain is not yet settled. This must NOT trigger six-aggregation-properties.; source id: tc-05"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "Our weekly active users (WAU) metric is already built and running in production. But the numbers look off — last week's WAU plus this week's WAU doesn't match our 'rolling 14-day active users' metric. We're not sure if that's expected or a bug. How do I check if the WAU metric is correct?",
+    "expected": "trigger",
+    "notes": "rationale: EDGE CASE: Two signals compete. The user has a production metric already built (points to six-aggregation-properties validation). But the symptom — WAU + WAU not equaling 14-day distinct users — could be read as a design confusion ('is this expected behavior for COUNT DISTINCT?'), which might route to aggregation-workflow-four-steps for a design explanation. The correct answer is six-aggregation-properties: WAU is a COUNT DISTINCT metric, which is non-additive (Property 3) and semi-additive at best. Adding two weekly COUNT DISTINCTs cannot produce a 14-day COUNT DISTINCT because overlapping users are counted twice. Property 2 (Disjointness) also applies — the two weekly cohorts are not disjoint (the same user can be active both weeks). This is a validation question on an existing metric with an observable symptom, not a design-from-scratch question. Risk: Claude may focus on the 'explain the math' aspect and answer without invoking the skill, or may incorrectly route to aggregation-workflow-four-steps for the design explanation.; source id: tc-06"
+  }
+]

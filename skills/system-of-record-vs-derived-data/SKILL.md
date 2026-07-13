@@ -1,16 +1,11 @@
 ---
-allowed-tools: Bash, Read, Edit
 name: system-of-record-vs-derived-data
 description: |
   Invoke this skill when a system writes to multiple storage systems and you must determine which one is authoritative, or when two systems have diverged and you need to reason about how to fix them permanently. Specific triggers: application code writes to both a database and a search index (or cache, or data warehouse) in the same request; two systems have diverged and no one knows which is "right"; a team is debating "which should we trust, the database or the cache?"; a new downstream system needs to be kept in sync; a schema migration must be applied to multiple stores simultaneously.
 
   Do NOT invoke when: there is only one storage system; the question is about replication topology within a single system (see `replication-topology-selection`); the question is about latency of derived data production (see `batch-vs-stream-processing-selection`).
-
-  Key signals: "the database and Elasticsearch are out of sync," "we write to both places on every user action," "which one is the source of truth?", "if we rebuild the search index from scratch, what do we rebuild from?", "the cache and database disagree," "we had a dual-write bug," "all our systems are slowly drifting apart."
-source_book: Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini
-source_chapter: 'Chapter 13: A Philosophy of Streaming Systems'
 tags: [derived-data, system-of-record, CDC, dual-write, data-architecture, event-sourcing]
-related_skills: [replication-topology-selection, batch-vs-stream-processing-selection, consistency-model-selection, schema-evolution-compatibility-planning]
+allowed-tools: Bash, Read, Edit
 ---
 
 # Systems of Record Vs. Derived Data Architecture
@@ -170,3 +165,9 @@ ______________________________________________________________________
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Designing Data-Intensive Applications, 2nd Edition — Martin Kleppmann & Chris Riccomini — Chapter 13: A Philosophy of Streaming Systems

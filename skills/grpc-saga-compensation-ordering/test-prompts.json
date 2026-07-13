@@ -1,65 +1,72 @@
-{
-  "skill_id": "grpc-saga-compensation-ordering",
-  "prompts": [
-    {
-      "id": "tp01",
-      "type": "should_invoke",
-      "prompt": "In a saga with three steps — create order, charge payment, start shipping — if shipping fails, in what order do the compensations run?",
-      "rationale": "Direct match: the bottom-up compensation ordering rule."
-    },
-    {
-      "id": "tp02",
-      "type": "should_invoke",
-      "prompt": "Why do saga compensating transactions need to be idempotent? What happens if they're not?",
-      "rationale": "Direct match: compensation idempotency requirement and retry consequences."
-    },
-    {
-      "id": "tp03",
-      "type": "should_invoke",
-      "prompt": "What are the trade-offs between choreography-based and orchestrator-based sagas for my e-commerce checkout flow?",
-      "rationale": "Direct match: choreography vs orchestration trade-off analysis."
-    },
-    {
-      "id": "tp04",
-      "type": "should_invoke",
-      "prompt": "We're calling three microservices sequentially with no compensation logic. Payment succeeds but shipping fails and now we have a charged-but-never-shipped order. How do we prevent this?",
-      "rationale": "Direct match: the ce02 counter-example — sequential calls without saga and compensation design."
-    },
-    {
-      "id": "tp05",
-      "type": "should_not_invoke",
-      "prompt": "How do I use Kafka to publish and consume events in a Go microservice?",
-      "rationale": "Kafka implementation details, not saga design or compensation ordering."
-    },
-    {
-      "id": "tp06",
-      "type": "should_not_invoke",
-      "prompt": "What is two-phase commit and when should I use it instead of eventual consistency?",
-      "rationale": "2PC vs eventual consistency — the Boundary section references this but it's not the core of this skill."
-    },
-    {
-      "id": "tp07",
-      "type": "should_not_invoke",
-      "prompt": "How do I implement a state machine in Go for order status transitions?",
-      "rationale": "State machine implementation — related to saga state but not the compensation ordering or choreography/orchestration choice."
-    },
-    {
-      "id": "tp08",
-      "type": "blurred_boundary",
-      "prompt": "My saga orchestrator is in the Order service. After a crash, I need to resume compensation from where it left off. How do I persist saga state?",
-      "rationale": "Blurred: the Execution section mentions persisting saga state; the specific persistence mechanism (database, saga log) is a common extension that this skill identifies as needed but doesn't fully specify."
-    },
-    {
-      "id": "tp09",
-      "type": "blurred_boundary",
-      "prompt": "I'm using choreography-based saga. If the payment_failed event is lost, the order will be stuck in PENDING state. How do I handle event loss?",
-      "rationale": "Blurred: event reliability and saga timeout/reconciliation are natural follow-ons to the choreography pattern described here but require messaging infrastructure knowledge beyond this skill's scope."
-    },
-    {
-      "id": "tp10",
-      "type": "blurred_boundary",
-      "prompt": "I need to add a 4th step to my existing 3-step saga. Do I need to redesign the compensation sequence?",
-      "rationale": "Blurred: the bottom-up ordering rule applies — compensation for the new step must be defined before deployment — but this is also a proto/schema evolution and backward compatibility question."
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "In a saga with three steps — create order, charge payment, start shipping — if shipping fails, in what order do the compensations run?",
+    "expected": "The skill activates and applies the bottom-up ordering rule: compensations run in reverse order of the completed steps. Since shipping (step 3) failed and did nothing to undo, compensation runs Payment:refund() first, then Order:cancel() — from step N-1 back to step 1. It should note that steps not yet executed are never compensated, and that each compensation should be idempotent because it may be retried.",
+    "notes": "rationale: Direct match: the bottom-up compensation ordering rule.; source id: tp01"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Why do saga compensating transactions need to be idempotent? What happens if they're not?",
+    "expected": "The skill activates and explains that compensating transactions must be idempotent because they may be retried after network failures or orchestrator/coordinator restarts — applying a refund twice must have the same effect as applying it once. If they are not idempotent, retries cause duplicate compensations (e.g., double refunds, cancelling an already-cancelled order raising an error), leaving the system inconsistent. It should recommend making each compensation a no-op when already applied (e.g., Payment:refund checks whether a refund already exists; Order:cancel is a no-op if already cancelled).",
+    "notes": "rationale: Direct match: compensation idempotency requirement and retry consequences.; source id: tp02"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "What are the trade-offs between choreography-based and orchestrator-based sagas for my e-commerce checkout flow?",
+    "expected": "The skill activates and contrasts the two variants: choreography uses pub/sub events (Order publishes order_created, Payment consumes and publishes payment_created/payment_failed, each service self-compensates on failure events) — decentralized with no coordinator, but the global saga state is implicit/distributed and hard to debug, with possible cyclic dependencies. Orchestration uses a central coordinator (typically the Order service) that issues explicit commands, persists saga state, and knows the full compensation sequence — easier to debug and recover, but the orchestrator becomes a single point of coupling holding the compensation logic. For an e-commerce checkout it should recommend orchestration when explicit/debuggable failure paths and crash recovery matter.",
+    "notes": "rationale: Direct match: choreography vs orchestration trade-off analysis.; source id: tp03"
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're calling three microservices sequentially with no compensation logic. Payment succeeds but shipping fails and now we have a charged-but-never-shipped order. How do we prevent this?",
+    "expected": "The skill activates and identifies the missing pattern: sequential cross-service calls with no compensation logic is exactly the failure the saga pattern prevents. It should prescribe modeling the flow as a saga — an ordered sequence of local transactions each with a defined compensating transaction — so that when shipping fails, compensation runs bottom-up (Payment:refund then Order:cancel) to avoid the charged-but-never-shipped inconsistency. It should recommend an orchestrator that persists saga state and idempotent compensations, and note the outcome is eventual (not strong) consistency.",
+    "notes": "rationale: Direct match: the ce02 counter-example — sequential calls without saga and compensation design.; source id: tp04"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "How do I use Kafka to publish and consume events in a Go microservice?",
+    "expected": "skill should not activate",
+    "notes": "rationale: Kafka implementation details, not saga design or compensation ordering.; source id: tp05"
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "What is two-phase commit and when should I use it instead of eventual consistency?",
+    "expected": "skill should not activate",
+    "notes": "rationale: 2PC vs eventual consistency — the Boundary section references this but it's not the core of this skill.; source id: tp06"
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I implement a state machine in Go for order status transitions?",
+    "expected": "skill should not activate",
+    "notes": "rationale: State machine implementation — related to saga state but not the compensation ordering or choreography/orchestration choice.; source id: tp07"
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "My saga orchestrator is in the Order service. After a crash, I need to resume compensation from where it left off. How do I persist saga state?",
+    "expected": "The defensible outcome is that the orchestrator must persist saga state (which step completed, current status such as PENDING/SUCCESS/FAILED) to durable storage after each step, so a coordinator crash can resume compensation from where it left off rather than restarting or losing track. The skill should surface that this persistence is a required property of orchestrator-based sagas and that recovery relies on idempotent compensations (replaying a compensation after a crash must be safe), while acknowledging the specific mechanism — a database saga table or an append-only saga log — is an implementation extension it identifies as needed but does not fully prescribe.",
+    "notes": "rationale: Blurred: the Execution section mentions persisting saga state; the specific persistence mechanism (database, saga log) is a common extension that this skill identifies as needed but doesn't fully specify.; source id: tp08"
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm using choreography-based saga. If the payment_failed event is lost, the order will be stuck in PENDING state. How do I handle event loss?",
+    "expected": "The defensible outcome is that choreography's implicit, distributed saga state makes lost failure events a real hazard, so the design needs a reliability layer: durable/at-least-least-once event delivery and a timeout-and-reconciliation mechanism (a saga timeout that detects an order stuck in PENDING past a deadline and triggers reconciliation or compensation). The skill should surface adding correlation IDs to every event so the saga sequence can be reconstructed from logs, and note this event-reliability/timeout work depends on messaging infrastructure that is a natural follow-on beyond the compensation-ordering core it owns.",
+    "notes": "rationale: Blurred: event reliability and saga timeout/reconciliation are natural follow-ons to the choreography pattern described here but require messaging infrastructure knowledge beyond this skill's scope.; source id: tp09"
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I need to add a 4th step to my existing 3-step saga. Do I need to redesign the compensation sequence?",
+    "expected": "The defensible outcome is that you do not redesign the existing sequence but you must extend it correctly: the new 4th step needs its own idempotent compensating transaction defined before deployment, and it slots into the bottom-up ordering so a failure at step 4 compensates steps 3→2→1 and a failure at step 4 itself adds step 4's compensation to the front of the rollback chain. The skill should surface the bottom-up rule and the compensation-completeness requirement, and note the adjacent concern that adding a step is also a proto/schema-evolution and backward-compatibility change to coordinate across participants.",
+    "notes": "rationale: Blurred: the bottom-up ordering rule applies — compensation for the new step must be defined before deployment — but this is also a proto/schema evolution and backward compatibility question.; source id: tp10"
+  }
+]

@@ -9,22 +9,7 @@ description: |
   to a CLI; (c) code review of a CLI shows a --password, --token, or --api-key flag; (d) a user is
   about to use shell substitution like --password $(cat file.txt) and wants to know if it is safe;
   (e) a user asks "how should my CLI accept credentials?"
-
-  WHEN NOT TO CALL: Do not call for non-secret configuration values — API endpoint URLs, AWS regions,
-  feature flags, log levels, and timeouts are not secrets and environment variables are appropriate for
-  them. Do not call when the environment variable is injected by a secrets manager (Vault, AWS Secrets
-  Manager, Kubernetes Secrets) and never appears directly in shell substitutions or process arguments —
-  that threat model is managed by the secrets manager, not by the CLI.
-
-  KEY TRIGGER SIGNAL: Any phrasing that includes "--password", "--token", "--api-key", "--secret",
-  "env var for credentials", "is it safe to use an environment variable", or "pass a secret to my CLI."
-
-source_book: "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish (2020, cli-guidelines.github.io)
-source_chapter: Configuration — Secrets
 tags: [cli, security, secrets, credentials, authentication]
-related_skills:
-  - slug: cli-configuration-hierarchy
-    relation: composes-with
 ---
 
 # CLI Secret Handling
@@ -243,7 +228,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`cli-configuration-hierarchy`](../cli-configuration-hierarchy/SKILL.md):
+- **composes-with** `cli-configuration-hierarchy`:
   Secrets are a special category of configuration value. Use cli-configuration-hierarchy to
   determine placement in the precedence hierarchy, then apply this skill for the additional
   security constraints that apply when the value is a secret (file-based input, no flags or
@@ -255,3 +240,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Command Line Interface Guidelines" by Aanand Prasad, Ben Firshman, Carl Tashian, Eva Parish (2020, cli-guidelines.github.io) — Configuration — Secrets

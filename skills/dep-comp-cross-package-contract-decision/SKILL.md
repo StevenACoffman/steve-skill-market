@@ -13,21 +13,7 @@ description: |
   shared package only when confident types will NEVER diverge. Use duplicate
   types + adapter when uncertain about divergence — merging separated types
   later is cheap; pulling apart merged types with many callers is expensive.
-
-  Do NOT invoke when the question is whether to use dependency injection at
-  all — that is dep-comp-function-first-composition. Do NOT invoke for
-  non-Go languages; Go's structural interface typing is the mechanism that
-  makes options 1 and 4 work without ceremony.
-
-  Key trigger signals: "should I extract this to a shared package?", "my
-  types package is getting huge", "how do I avoid import cycles?", "should
-  I define an interface or use the concrete type?", "my billing package
-  needs the User type from auth".
-source_book: '"Dependency Composition (Go Adaptation)" by Daniel Somerfield (2023, updated 2026)'
-source_chapter: Type Exposure Decision Framework
 tags: [go, dependency-injection, interfaces, type-design, package-design, coupling, architecture]
-related_skills:
-  - dep-comp-function-first-composition  # prerequisite: this skill assumes you already use Dependencies structs; the cross-package contract arises once two packages share types
 ---
 
 # Cross-Package Contract Decision: Four Options for Sharing a Type Between Go Packages
@@ -353,9 +339,14 @@ Run `go list -f '{{.ImportPath}}: {{join .Imports " "}}' ./...` and inspect for 
 ## Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: `/Users/steve/Documents/agent-orange/bookSource/misc/dependency-composition.md`
 - Book overview: `/Users/steve/Documents/agent-orange/books/dependency-composition/BOOK_OVERVIEW.md`
 - Cases used: Restaurant (option 3), RestaurantRating (option 3), Rating (option 2) — from Type Exposure Decision Framework section
 - Counter-examples used: premature shared types package, provider-defines-interface anti-pattern
 - Pipeline stage: Phase 2 (RIA++)
 - Version: 0.1.0
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Dependency Composition (Go Adaptation)" by Daniel Somerfield (2023, updated 2026) — Type Exposure Decision Framework

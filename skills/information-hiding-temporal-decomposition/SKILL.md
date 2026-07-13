@@ -1,3 +1,9 @@
+---
+name: information-hiding-temporal-decomposition
+description: |
+  Invoke this skill whenever you encounter these structural patterns: - Pipeline class designs: classes named `XReader`, `XParser`, `XProcessor`, `XWriter` for the same data format. Each boundary is a candidate for temporal decomposition. - Step-by-step processing classes: any decomposition where the class names describe stages rather than responsibilities (e.g., `RequestReceiver` + `RequestHandler` rather than `RequestProcessor`). - "Open → process → close" triads: a class that opens a resource, a second that consumes it, a third that closes or flushes it. If open and close both require format or protocol knowledge, they belong together. - Microservice decompositions that follow workflow steps: services named after saga steps ("CreateOrder", "ReserveInventory", "ChargePayment") where adjacent services must agree on the shared data schema — the schema is a design decision that both services now encode.
+---
+
 # Skill: Information Hiding and Temporal Decomposition
 
 **Source:** *A Philosophy of Software Design*, John Ousterhout (2018), Chapter 5
@@ -101,4 +107,4 @@ ______________________________________________________________________
 ## Related Skills
 
 - **Deep Module / Classitis Diagnosis (`structural-diagnosis-smells-depth`)** — *composes-with* → Depth requires hiding decisions; leakage causes shallowness. These skills diagnose the same problem from different angles: depth evaluates the outcome; information hiding evaluates the mechanism.
-- **[Pass-Through Method / Wrong Layer Count](../pass-through-method-wrong-layer-count/SKILL.md)** — *composes-with* → Two diagnostics for wrong module boundaries: leakage = design decision appearing in multiple interfaces; pass-through = same abstraction at adjacent layers. Apply both when refactoring a layered system.
+- **Pass-Through Method / Wrong Layer Count** — *composes-with* → Two diagnostics for wrong module boundaries: leakage = design decision appearing in multiple interfaces; pass-through = same abstraction at adjacent layers. Apply both when refactoring a layered system.

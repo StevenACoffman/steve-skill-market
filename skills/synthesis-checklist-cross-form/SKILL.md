@@ -12,31 +12,7 @@ description: |
   - "Multiple teams are getting different numbers from what should be the same data"
   - "We have data in multiple systems and need to join them"
   - Any multi-form or multi-system integration design question
-
-  Do NOT use this skill when:
-  - The design involves only a single data form (a new relational table, a single
-    feature table) — use grain-decision-four-questions instead
-  - The grain is already declared and the question is about validating it before
-    deployment — use grain-audit-checklist
-  - The question is about aggregation correctness over an already-designed model —
-    use six-aggregation-properties or aggregation-workflow-four-steps
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 12 — Stringing Together
-  the Building Blocks.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 12 — Stringing Together the Building Blocks
 tags: [synthesis, cross-form, integration, schema-design, multi-form, checklist]
-related_skills:
-  - slug: grain-decision-four-questions
-    relation: depends-on
-  - slug: four-types-of-time
-    relation: depends-on
-  - slug: business-process-discovery
-    relation: depends-on
-  - slug: semantic-vocabulary-ladder
-    relation: composes-with
-  - slug: bounded-context-swimlane-detection
-    relation: composes-with
 ---
 
 # Seven-Question Synthesis Checklist for Cross-Form Data Models
@@ -251,11 +227,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`grain-decision-four-questions`](../grain-decision-four-questions/SKILL.md): Question 4 of this checklist (target grain) is answered by applying grain-decision-four-questions to the integration anchor entity — grain must be correctly declared before cross-form integration can proceed.
-- **depends-on** [`four-types-of-time`](../four-types-of-time/SKILL.md): Question 5 of this checklist (time alignment) requires classifying each data source by time type using the four-types framework before a common event-time reference can be designated.
-- **depends-on** [`business-process-discovery`](../business-process-discovery/SKILL.md): Questions 1 and 2 of this checklist (business question and data forms inventory) are answered by the output of business process discovery — the process map identifies which entities and forms are integration-critical.
-- **composes-with** [`semantic-vocabulary-ladder`](../semantic-vocabulary-ladder/SKILL.md): Question 6 of this checklist (semantic bridge) is answered by applying the vocabulary ladder to select the appropriate rung of shared vocabulary formalization for each contested term across forms.
-- **composes-with** [`bounded-context-swimlane-detection`](../bounded-context-swimlane-detection/SKILL.md): Question 3 of this checklist (entity convergence) uses swimlane crossing analysis to identify where entity definitions diverge across forms before designating the integration anchor.
+- **depends-on** `grain-decision-four-questions`: Question 4 of this checklist (target grain) is answered by applying grain-decision-four-questions to the integration anchor entity — grain must be correctly declared before cross-form integration can proceed.
+- **depends-on** `four-types-of-time`: Question 5 of this checklist (time alignment) requires classifying each data source by time type using the four-types framework before a common event-time reference can be designated.
+- **depends-on** `business-process-discovery`: Questions 1 and 2 of this checklist (business question and data forms inventory) are answered by the output of business process discovery — the process map identifies which entities and forms are integration-critical.
+- **composes-with** `semantic-vocabulary-ladder`: Question 6 of this checklist (semantic bridge) is answered by applying the vocabulary ladder to select the appropriate rung of shared vocabulary formalization for each contested term across forms.
+- **composes-with** `bounded-context-swimlane-detection`: Question 3 of this checklist (entity convergence) uses swimlane crossing analysis to identify where entity definitions diverge across forms before designating the integration anchor.
 
 ______________________________________________________________________
 
@@ -265,3 +241,9 @@ ______________________________________________________________________
 - **Source IDs**: f21+p33 (framework extractor + principle extractor) — merged at Phase 1.5
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 12 — Stringing Together the Building Blocks

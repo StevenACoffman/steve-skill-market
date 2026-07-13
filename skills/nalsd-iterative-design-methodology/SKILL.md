@@ -6,12 +6,7 @@ description: |
   Trigger scenarios: system design interviews or reviews where proposals say "we'll scale horizontally," pre-production capacity planning, architecture reviews for new services, or any design where the team doesn't know what the bottleneck is at each scale tier.
 
   Do not use for single-machine applications or scripts where scale is not a design concern. Do not use as a replacement for post-production profiling — NALSD is a pre-production design discipline. Do not use the AdWords CTR worked example numbers as templates; derive your own from your actual traffic and data volumes.
-
-  Key trigger: "We'll handle scale by adding more machines" — this is the specific anti-pattern NALSD addresses.
-source_book: "The Site Reliability Workbook" by Betsy Beyer et al. (Google)
-source_chapter: "Chapter 12 - Introducing Non-Abstract Large System Design; Chapter 11 - Managing Load"
 tags: [system-design, capacity-planning, resilience, iterative, distributed-systems, feasibility]
-related_skills: []
 ---
 
 # NALSD Iterative Design Methodology
@@ -153,3 +148,9 @@ ______________________________________________________________________
 
 - Verification Passed: V1 ✓ / V2 ✓ / V3 ✓
 - Distillation Time: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "The Site Reliability Workbook" by Betsy Beyer et al. (Google) — Chapter 12 - Introducing Non-Abstract Large System Design, Chapter 11 - Managing Load

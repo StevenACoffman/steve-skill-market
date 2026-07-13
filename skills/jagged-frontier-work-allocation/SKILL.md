@@ -1,9 +1,9 @@
 ---
-id: jagged-frontier-work-allocation
-title: Jagged Frontier Work Allocation
-description: Invoke when a PM or knowledge worker needs to decide which portions of a specific task or workflow to delegate to AI versus retain for human judgment — particularly when facing a mix of synthesis/formatting work and consequential judgment calls, or when AI output quality has been inconsistent in ways that are hard to explain.
-source: Project Management Research and the Critical Path, Nicole Williams, 2026
+name: jagged-frontier-work-allocation
+description: |
+  Invoke when a PM or knowledge worker needs to decide which portions of a specific task or workflow to delegate to AI versus retain for human judgment — particularly when facing a mix of synthesis/formatting work and consequential judgment calls, or when AI output quality has been inconsistent in ways that are hard to explain.
 ---
+# Jagged Frontier Work Allocation
 
 ## R — Reading
 
@@ -63,4 +63,10 @@ Applying this framework well requires honest self-assessment about your own doma
 
 ## Related Skills
 
-- **[four-forces-situational-assessment](../four-forces-situational-assessment/SKILL.md)** — *combines*: when Velocity force is dominant, AI tool usage becomes a leverage point; Four Forces identifies whether Velocity is the primary driver
+- **four-forces-situational-assessment** — *combines*: when Velocity force is dominant, AI tool usage becomes a leverage point; Four Forces identifies whether Velocity is the primary driver
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Project Management Research and the Critical Path, Nicole Williams, 2026

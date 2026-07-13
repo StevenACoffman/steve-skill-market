@@ -1,8 +1,6 @@
 ---
 name: grpc-test-pyramid-interceptors-and-infrastructure
-allowed-tools: Bash, Read, Edit
-id: grpc-test-pyramid-interceptors-and-infrastructure
-description: >
+description: |
   Invoke when structuring a test suite for a gRPC service that has both interceptors
   (auth, rate-limit, TLS) and infrastructure dependencies (database, downstream
   services). Key trigger: "my unit tests pass but integration is flaky" or "I'm
@@ -11,22 +9,8 @@ description: >
   stay separate — (1) interceptor chain with real TLS via bufconn, and (2)
   infrastructure adapters with real containers via testcontainers + wait.ForSQL.
   Collapsing them mixes setup complexity and obscures root cause on failure.
-type: merged-skill
-source_skills:
-  - slug: grpc-go-for-professionals/grpc-testing-level-selection
-    book: gRPC Go for Professionals
-    author: Clément Jean
-  - slug: grpc-microservices-in-go/grpc-testcontainers-pyramid
-    book: gRPC Microservices in Go
-    author: Hüseyin Babal
-related_skills:
-  - slug: grpc-go-for-professionals/grpc-testing-level-selection
-    relation: supersedes
-    note: Covers tier ownership without testcontainers infrastructure tooling.
-  - slug: grpc-microservices-in-go/grpc-testcontainers-pyramid
-    relation: supersedes
-    note: Covers testcontainers tooling without interceptor-tier ownership principles.
 tags: []
+allowed-tools: Bash, Read, Edit
 ---
 
 # gRPC Test Pyramid — Interceptors and Infrastructure as Separate Integration Concerns
@@ -339,3 +323,11 @@ The gRPC testing tier model itself — unit/integration(interceptors)/integratio
 A team can write a three-tier test suite and still have: (a) an auth interceptor that was never tested at the integration tier (Go for Professionals failure mode), (b) flaky infrastructure tests from MySQL not being ready (Microservices in Go failure mode), (c) both concerns mixed in a single integration suite — so when either fails, it is unclear whether the cause is a TLS issue or a database startup race. The synthesis-specific failure is the mixed suite: integration tests that require both real credentials and real containers are harder to diagnose than suites that isolate each concern. The solution is explicit separation of the two integration sub-concerns into different test files with different `SetupSuite` implementations.
 
 **Third-tier divergence:** Go for Professionals defines the third tier as `ghz` load testing (performance). Microservices in Go defines it as `LocalDockerCompose` e2e testing (correctness). There is no contradiction — both types of validation are needed above the integration tier. The merged skill treats them as co-equal fourth-tier and top-tier concerns, not as competing definitions of the same tier. If your pipeline can only support one above-integration tier, prioritize `LocalDockerCompose` e2e for correctness validation and schedule `ghz` load testing separately.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Merged from:** gRPC Go for Professionals (Clément Jean); gRPC Microservices in Go (Hüseyin Babal)
+- **Type:** merged-skill
+- **Related skills:** grpc-go-for-professionals/grpc-testing-level-selection (supersedes; Covers tier ownership without testcontainers infrastructure tooling.); grpc-microservices-in-go/grpc-testcontainers-pyramid (supersedes; Covers testcontainers tooling without interceptor-tier ownership principles.)

@@ -11,23 +11,7 @@ description: |
   a composite metric (latency, availability, error rate) spans a control boundary; (e) a team is
   being held accountable for a dependency they don't control; (f) the user asks "how do we
   split the latency budget?" or "which team should own the availability SLO?"
-
-  WHEN NOT TO CALL: Do not call for questions purely about SLO numeric targets or error budgets
-  (use the Lagom SLO framework). Do not call when the question is about whether a team should
-  exist at all or how to restructure the organization (use `ownership-trio` and
-  `oncall-ownership-sustainability`). Do not call for SLI measurement tooling selection.
-
-  KEY TRIGGER SIGNAL: "The team gets paged but has to escalate because the issue is in another
-  team's service", "we measure end-to-end latency but the frontend team controls only part of
-  it", "how do we assign the SLO when the metric includes network we don't control."
-source_book: "Reliability Engineering Mindset" by Alex Ewerlöf
-source_chapter: 20240220_185447_responsible-for-control.md, 20230808_153608_valid-vs-total.md, 20250803_112619_service-level-topology.md
 tags: [ownership, slo, team-boundaries, accountability, organizational-design, sli]
-related_skills:
-  - slug: ownership-trio
-    relation: depends-on
-  - slug: composite-slo
-    relation: composes-with
 ---
 
 # Responsibility-Control Alignment for SLO Assignment
@@ -257,8 +241,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → [`ownership-trio`](../ownership-trio/SKILL.md): The Ownership Trio provides the organizational principle (mandate = control boundary); this skill operationalizes that principle as the SLI valid-denominator scoping rule.
-- **composes-with** → [`composite-slo`](../composite-slo/SKILL.md): Responsibility-Control SLO decomposes a top-level target into per-team budgets; composite-slo provides the math for how those per-team SLOs recombine into a system-level number.
+- **depends-on** → `ownership-trio`: The Ownership Trio provides the organizational principle (mandate = control boundary); this skill operationalizes that principle as the SLI valid-denominator scoping rule.
+- **composes-with** → `composite-slo`: Responsibility-Control SLO decomposes a top-level target into per-team budgets; composite-slo provides the math for how those per-team SLOs recombine into a system-level number.
 
 ______________________________________________________________________
 
@@ -266,3 +250,9 @@ ______________________________________________________________________
 
 - **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
 - **Distillation Time**: 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Reliability Engineering Mindset" by Alex Ewerlöf

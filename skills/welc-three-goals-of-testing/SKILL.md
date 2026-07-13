@@ -15,22 +15,7 @@ description: |
   - "We have a regression suite but refactoring always breaks everything"
   - "How do we know if users will actually accept this feature?"
   - Any question about the purpose, mix, or value of a test suite
-
-  Do NOT use this skill when:
-  - The question is specifically about how to write characterization tests for an
-    existing legacy codebase (use welc-characterization-test instead)
-  - The question is about how to apply TDD to force a specific design decision
-    (use welc-property-based-design-pressure for the property/universal-quantification
-    variant, or general TDD advice for the example-based variant)
-  - The question is about how tended vs. untended system type changes testing
-    investment decisions (use welc-tended-untended-systems instead)
-
-  Based on: Michael Feathers, "Testing Patience" talks (GeekFest 2016, YOW! 2016,
-  slide deck) combined with "Working Effectively with Legacy Code" (2005), Ch. 8–13.
-source_book: "Working Effectively with Legacy Code" by Michael Feathers (2005) + "Testing Patience" talks (2016)
-source_chapter: Testing Patience slide deck + GeekFest / YOW! 2016 talks; WELC Ch. 8–13
 tags: [testing, tdd, characterization-tests, acceptance-tests, test-strategy, legacy-code]
-related_skills: [welc-tended-untended-systems, welc-characterization-test, welc-legacy-code-change-algorithm, welc-property-based-design-pressure]
 ---
 
 # The Three Goals of Testing
@@ -237,3 +222,9 @@ ______________________________________________________________________
 - **Source IDs**: f11 (framework extractor) merged with p15, p16 (quality from deliberate thought, three goals principle)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-05
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Working Effectively with Legacy Code" by Michael Feathers (2005) + "Testing Patience" talks (2016) — Testing Patience slide deck + GeekFest / YOW! 2016 talks, WELC Ch. 8–13

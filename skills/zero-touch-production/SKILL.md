@@ -19,15 +19,7 @@ description: |
     supply-chain-binary-provenance-deployment-policy
   - The question is about least privilege scoping without the human-access
     framing — use least-privilege-tooling-enforced-time-bounded
-
-  ZTP addresses two simultaneous threats with one mechanism: insider attacks
-  (security) and human error under stress (reliability). These concerns reinforce
-  each other — the same automation that prevents malicious unilateral action also
-  prevents the accidental typo that takes down a service.
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: "Chapter 3 — Case Study: Safe Proxies; Chapter 5 — Design for Least Privilege"
 tags: [zero-touch-production, automation, safe-proxy, insider-risk, reliability, MPA, breakglass, audit]
-related_skills: []
 ---
 
 # Zero Touch Production — All Production Changes via Automation or Audited Breakglass
@@ -264,3 +256,9 @@ ______________________________________________________________________
 - **Source IDs**: p03
 - **Verification**: All three validation tests passed (cross-domain, predictive power,
   exclusivity) — see verified.md entry for p03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 3 — Case Study: Safe Proxies, Chapter 5 — Design for Least Privilege

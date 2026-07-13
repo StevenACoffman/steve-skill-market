@@ -10,20 +10,7 @@ description: |
   Apply when: migrating from VPN to identity-based access, designing service-to-service
   authentication, evaluating the access model for production systems, designing incident
   isolation mechanisms, or post-breach architectural redesign.
-
-  Do NOT apply as a wholesale replacement for other security controls — Zero Trust is a
-  network access model, not a complete security architecture. It does not eliminate the need
-  for least privilege, MPA, binary provenance, or defense in depth. And do not apply without
-  a plan for the breakglass (panic rooms): the irony of BeyondCorp is that the fallback for
-  a system that distrusts location is…location-restricted trust.
-
-  Trigger phrases: "VPN access," "internal network trust," "lateral movement," "conference
-  room network port," "plugged into the office network," "device certificate," "access
-  proxy," "Operation Aurora type attack."
-source_book: "Building Secure and Reliable Systems" by Google
-source_chapter: Chapter 5 — Design for Least Privilege
 tags: [zero-trust, beyondcorp, network-security, identity-based-access, least-privilege, lateral-movement]
-related_skills: []
 ---
 
 # Zero Trust Networking — BeyondCorp Identity-Based Access Design
@@ -252,3 +239,9 @@ ______________________________________________________________________
 ## Audit Information
 
 - V1 ✓ / V2 ✓ / V3 ✓ — 2026-05-04
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Building Secure and Reliable Systems" by Google — Chapter 5 — Design for Least Privilege

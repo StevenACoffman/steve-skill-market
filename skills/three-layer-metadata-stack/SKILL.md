@@ -14,27 +14,8 @@ description: |
   - "What metadata should we attach to our tables?"
   - "Our data catalog has column names and types — is that enough?"
   - Any question about making data understandable to both humans and AI systems
-
-  Do NOT use this skill when:
-  - The question is about which vocabulary structure to build (controlled vocabulary,
-    thesaurus, taxonomy, ontology) — use semantic-vocabulary-ladder instead; this
-    skill defines the architecture that the vocabulary lives within
-  - The question is specifically about how to design a data model for AI agent
-    consumers (use context-intent-action-for-ai-models instead — that skill extends
-    this one with Intent and Action layers specific to agentic consumption)
-  - The question is about aggregation correctness or grain validation
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 11 — Context, Intent,
-  and Action: The Semantic Foundation.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 11 — Context, Intent, and Action: The Semantic Foundation
 tags: [metadata, data-catalog, semantic-layer, AI-grounding, technical-metadata,
        business-metadata, semantic-metadata, knowledge-camp]
-related_skills:
-  - slug: semantic-vocabulary-ladder
-    relation: depends-on
-  - slug: context-intent-action-for-ai-models
-    relation: composes-with
 ---
 
 # Three-Layer Metadata Stack — Technical / Business / Semantic
@@ -406,8 +387,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** [`semantic-vocabulary-ladder`](../semantic-vocabulary-ladder/SKILL.md): The vocabulary artifact built by the ladder (controlled vocabulary up to ontology) is what fills the semantic metadata layer — this skill defines the architecture; the ladder determines the vocabulary content that goes into it.
-- **composes-with** [`context-intent-action-for-ai-models`](../context-intent-action-for-ai-models/SKILL.md): The three-layer stack is the required foundation for all data consumers; when the consumer is an AI agent, CIA extends it with Intent and Action layers — the stack must be complete before CIA is layered on top.
+- **depends-on** `semantic-vocabulary-ladder`: The vocabulary artifact built by the ladder (controlled vocabulary up to ontology) is what fills the semantic metadata layer — this skill defines the architecture; the ladder determines the vocabulary content that goes into it.
+- **composes-with** `context-intent-action-for-ai-models`: The three-layer stack is the required foundation for all data consumers; when the consumer is an AI agent, CIA extends it with Intent and Action layers — the stack must be complete before CIA is layered on top.
 
 ______________________________________________________________________
 
@@ -417,3 +398,9 @@ ______________________________________________________________________
 - **Source IDs**: f15+p32 (framework + principle merged at Phase 1.5)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 11 — Context, Intent, and Action: The Semantic Foundation

@@ -1,15 +1,13 @@
 ---
-id: grpc-vs-rest-vs-graphql
-title: gRPC vs. REST vs. GraphQL Selection Framework
-description: >
+name: grpc-vs-rest-vs-graphql
+description: |
   Invoke when an architecture decision requires choosing between gRPC, REST/HTTP-JSON,
   or GraphQL for a service interface. Key trigger: "should we use gRPC for this API?"
   or "should we expose gRPC to external consumers?" The framework resolves internal
   vs. external, synchronous vs. event-driven, and field-selection requirements.
-source: "gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)"
 tags: [grpc, rest, graphql, api-design, external-vs-internal, architecture]
-related_skills:
 ---
+# gRPC vs. REST vs. GraphQL Selection Framework
 
 ## gRPC Vs. REST Vs. GraphQL Selection Framework
 
@@ -157,13 +155,18 @@ gRPC vs. REST vs. GraphQL decision logic itself.
 ### Audit Information
 
 - Source extraction date: 2026-05-05
-- Primary source: candidates/frameworks.md fw02; candidates/counter-examples.md ce04
 - Verified entry: verified.md fw02, ce04
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
 ### Related Skills
 
-- **[grpc-not-for-external-apis](../grpc-not-for-external-apis/SKILL.md)** — prerequisite for: this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.
-- **[grpc-communication-pattern-selection](../grpc-communication-pattern-selection/SKILL.md)** — prerequisite for: only relevant once gRPC has been confirmed as the correct choice for a given boundary.
-- **[grpc-load-balancer-selection](../grpc-load-balancer-selection/SKILL.md)** — informs: the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
+- **grpc-not-for-external-apis** — prerequisite for: this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.
+- **grpc-communication-pattern-selection** — prerequisite for: only relevant once gRPC has been confirmed as the correct choice for a given boundary.
+- **grpc-load-balancer-selection** — informs: the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)

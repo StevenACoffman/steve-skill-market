@@ -13,27 +13,7 @@ description: |
   - Any data catalog design, metadata governance, or glossary question
   - Any question involving term reconciliation after a merger or acquisition
   - "Do we need an ontology, or is a glossary enough?"
-
-  Do NOT use this skill when:
-  - The question is about which metadata layers to attach to tables and columns
-    (use three-layer-metadata-stack instead — this skill builds the vocabulary
-    that goes INTO the semantic metadata layer of that stack)
-  - The question is about how to deliver vocabulary context to an AI agent at
-    runtime (use context-intent-action-for-ai-models instead)
-  - The grain or aggregation of a dataset is the issue, not the meaning of terms
-
-  Based on: "Practical Data Modeling" by Joe Reis (2026), Ch. 11 — Context, Intent,
-  and Action: The Semantic Foundation.
-source_book: "Practical Data Modeling" by Joe Reis
-source_chapter: Ch. 11 — Context, Intent, and Action: The Semantic Foundation
 tags: [semantics, vocabulary, ontology, taxonomy, thesaurus, knowledge-camp, AI-grounding]
-related_skills:
-  - slug: three-layer-metadata-stack
-    relation: composes-with
-  - slug: bounded-context-swimlane-detection
-    relation: composes-with
-  - slug: synthesis-checklist-cross-form
-    relation: composes-with
 ---
 
 # Semantic Vocabulary Ladder — Controlled Vocabulary to Ontology
@@ -378,9 +358,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** [`three-layer-metadata-stack`](../three-layer-metadata-stack/SKILL.md): The vocabulary artifact produced by this skill (controlled vocabulary through ontology) populates the semantic metadata layer of the three-layer stack — the ladder determines what level of vocabulary to build; the stack determines where it lives.
-- **composes-with** [`bounded-context-swimlane-detection`](../bounded-context-swimlane-detection/SKILL.md): Confirmed bounded context boundaries identify which terms require explicit vocabulary formalization; this skill then provides the framework for deciding what rung of structure the translation layer requires.
-- **composes-with** [`synthesis-checklist-cross-form`](../synthesis-checklist-cross-form/SKILL.md): Question 6 of the synthesis checklist (the semantic bridge) is answered by applying this ladder to select the appropriate rung of shared vocabulary before any cross-form join is executed.
+- **composes-with** `three-layer-metadata-stack`: The vocabulary artifact produced by this skill (controlled vocabulary through ontology) populates the semantic metadata layer of the three-layer stack — the ladder determines what level of vocabulary to build; the stack determines where it lives.
+- **composes-with** `bounded-context-swimlane-detection`: Confirmed bounded context boundaries identify which terms require explicit vocabulary formalization; this skill then provides the framework for deciding what rung of structure the translation layer requires.
+- **composes-with** `synthesis-checklist-cross-form`: Question 6 of the synthesis checklist (the semantic bridge) is answered by applying this ladder to select the appropriate rung of shared vocabulary before any cross-form join is executed.
 
 ______________________________________________________________________
 
@@ -390,3 +370,9 @@ ______________________________________________________________________
 - **Source IDs**: f14+p31 (framework + principle merged at Phase 1.5)
 - **Test pass rate**: TBD (see test-prompts.json)
 - **Distillation Date**: 2026-05-03
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "Practical Data Modeling" by Joe Reis — Ch. 11 — Context, Intent, and Action: The Semantic Foundation

@@ -7,12 +7,7 @@ description: |
   200 response arrives or the context is cancelled. This doubles as a production health-check
   used by Kubernetes probes, load-balancer checks, and orchestrators, so the test requirement
   surfaces a feature the production system needs anyway.
-source_book: "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024)
-source_chapter: Designing for testability — Waiting for readiness
 tags: [go, testing, health-checks, readiness, http-services, e2e-testing]
-related_skills:
-  - matryer-run-function
-  - matryer-run-e2e-testing
 ---
 
 # Wait for Readiness via a Health Endpoint
@@ -346,3 +341,9 @@ continuously throughout the pod's lifetime.
 
 - **matryer-run-function** — depends-on: the server that `waitForReady` polls is started in a goroutine by `run()`; without the `run()` pattern there is no in-process server to wait for.
 - **matryer-run-e2e-testing** — required-by: e2e tests that call `go run(ctx)` must call `waitForReady` before making assertions; it is the synchronisation primitive that makes the e2e pattern race-free.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** "How I Write HTTP Services in Go After 13 Years" — Mat Ryer (2024) — Designing for testability — Waiting for readiness

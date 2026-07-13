@@ -1,9 +1,8 @@
 ---
-id: terraform-moved-block-refactoring
-title: 'Terraform moved Block: Safe Rename and Module Extraction Without Destroy'
+name: terraform-moved-block-refactoring
 description: Invoke when a user wants to rename a Terraform resource, move a resource into a module, or restructure module layout without destroying and recreating live infrastructure.
-source: "Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)"
 ---
+# Terraform moved Block: Safe Rename and Module Extraction Without Destroy
 
 ## R — Reading
 
@@ -92,6 +91,12 @@ moved {
 
 ## Related Skills
 
-- **[terraform-for-each-over-count](../terraform-for-each-over-count/SKILL.md)** — prerequisite for: count-to-for_each migration requires one moved block per resource instance to map positional keys to identity keys without destroying live resources.
-- **[terraform-module-size-smell](../terraform-module-size-smell/SKILL.md)** — prerequisite for: decomposing a large module into smaller modules changes resource addresses; moved blocks are the mechanism that makes this refactor safe.
-- **[terraform-no-cluster-app-same-module](../terraform-no-cluster-app-same-module/SKILL.md)** — informs: separating a combined cluster+app module into two modules relocates resource addresses; moved blocks handle the state migration during that split.
+- **terraform-for-each-over-count** — prerequisite for: count-to-for_each migration requires one moved block per resource instance to map positional keys to identity keys without destroying live resources.
+- **terraform-module-size-smell** — prerequisite for: decomposing a large module into smaller modules changes resource addresses; moved blocks are the mechanism that makes this refactor safe.
+- **terraform-no-cluster-app-same-module** — informs: separating a combined cluster+app module into two modules relocates resource addresses; moved blocks handle the state migration during that split.
+
+______________________________________________________________________
+
+## Provenance
+
+- **Source:** Terraform: Up and Running (3rd Edition), Yevgeniy Brikman, 2022 (O'Reilly)

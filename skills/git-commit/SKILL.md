@@ -1,13 +1,8 @@
 ---
-allowed-tools: Bash
-description: Use when user asks to commit changes, create a git commit, or mentions "/commit". Covers conventional commit message generation, auto-detecting type and scope from changes, intelligent file staging, and optional type/scope/description overrides.
-license: MIT
-metadata:
-  github-path: skills/git-commit
-  github-ref: refs/heads/main
-  github-repo: https://github.com/github/awesome-copilot
-  github-tree-sha: 883a6a7466f55a9cd9f22cf1cce2d9333fc9b998
 name: git-commit
+description: |
+  Use when user asks to commit changes, create a git commit, or mentions "/commit". Covers conventional commit message generation, auto-detecting type and scope from changes, intelligent file staging, and optional type/scope/description overrides.
+allowed-tools: Bash
 ---
 
 # Git Commit with Conventional Commits
@@ -128,3 +123,9 @@ EOF
 - NEVER skip hooks (--no-verify) unless user asks
 - NEVER force push to main/master
 - If commit fails due to hooks, fix and create NEW commit (don't amend)
+
+______________________________________________________________________
+
+## Provenance
+
+- **License:** MIT
