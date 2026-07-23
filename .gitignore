@@ -239,4 +239,5 @@ khanx/ui/build
 
 # Rumdl - markdown linter cache
 .rumdl_cache
-
+# Vale - grammar checker and style lint
+.vale

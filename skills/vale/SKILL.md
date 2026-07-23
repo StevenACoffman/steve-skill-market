@@ -1,6 +1,6 @@
 ---
 name: vale
-description: Use when the user asks to run vale, lint markdown, or check prose style. Covers running vale, fixing genuine errors, and suppressing false positives by adding terms to the project vocabulary.
+description: Use when the user asks to run vale, lint markdown, or check prose style. Covers running vale, fixing genuine errors, and suppressing false positives by adding terms to the project vocabulary. Also covers linting a git commit message with the vale-ai-tells `ai-tells-commits` style before committing.
 allowed-tools: Bash, Read, Edit
 ---
 
@@ -147,6 +147,73 @@ Apply the same triage logic. These categories are expected false positives in en
 The request was processed by the server.
 <!-- vale write-good.Passive = YES -->
 ```
+
+## Linting a Commit Message (vale-ai-tells)
+
+Use this to polish a git commit message — especially an AI-generated one — before
+committing, catching filler, hedging, and the phrasings that mark machine-written text.
+The [`vale-ai-tells`](https://github.com/StevenACoffman/vale-ai-tells) package provides an
+`ai-tells-commits` style: 13 rules purpose-built for commit messages, kept separate from
+the prose rules so linting a commit doesn't drag doc checks along. This pairs with the
+`unconventional-commits` skill, which owns the message *structure* (scope-first subject,
+why-focused body); Vale cleans up the *prose*.
+
+Lint the message in a scratch directory with its own config, rather than the repo's
+`.vale/.vale.ini` — the commit message isn't a repo doc, and this keeps `ai-tells-commits`
+out of the project's doc linting. For installing Vale, discovering the latest
+`vale-ai-tells` release, and the exact `.vale.ini`, follow the **`vale-cli`** skill; the
+resulting scratch config looks like:
+
+```ini
+StylesPath = styles
+MinAlertLevel = suggestion
+
+Packages = https://github.com/StevenACoffman/vale-ai-tells/releases/download/v1.26.0/ai-tells.zip, \
+  https://github.com/StevenACoffman/vale-ai-tells/releases/download/v1.26.0/ai-tells-commits.zip
+
+[*.md]
+BasedOnStyles = ai-tells, ai-tells-commits
+```
+
+### Workflow
+
+```bash
+# 0. One-time per scratch dir: install the packages declared in the scratch .vale.ini.
+vale --config="$SCRATCH/.vale.ini" sync
+
+# 1. Write the drafted commit message to a .md file in the scratch dir.
+#    (Get the structure right first via the unconventional-commits skill.)
+$EDITOR "$SCRATCH/COMMIT_EDITMSG.md"
+
+# 2. Lint it. --no-global is essential here: without it Vale merges the global
+#    platform config and its styles (Readability, Elastic/Vale spelling, write-good)
+#    leak in, flagging identifiers like 'JWTs'/'iat' and burying the ai-tells alerts.
+vale --config="$SCRATCH/.vale.ini" --no-global "$SCRATCH/COMMIT_EDITMSG.md"
+
+# 3. Triage each alert (see below), edit the message, and re-run until clean.
+
+# 4. Commit from the cleaned file.
+git commit -F "$SCRATCH/COMMIT_EDITMSG.md"
+```
+
+### Triage
+
+Apply the same judgement as prose linting: fix genuine smells, don't mangle an accurate
+message to satisfy a rule.
+
+- **Genuine smell — reword:** hollow openers ("This commit refactors…"), throat-clearing,
+  vague hedging, and AI-tell phrasing the `ai-tells-commits` rules flag. Tightening these
+  almost always makes the message better.
+- **False positive — suppress or ignore:** a flagged token that is a real code symbol,
+  identifier, error string, or file path quoted in the message. Prefer leaving the message
+  accurate over satisfying the rule; use an inline `<!-- vale <Rule> = NO -->` guard around
+  the specific line if you must keep it and the alert is noise.
+
+With `--no-global` and `BasedOnStyles = ai-tells, ai-tells-commits`, the config runs *only*
+the AI-tell rules — no spelling or readability checks — so false positives are rare and the
+alerts you see are almost always genuine prose smells worth fixing. (Drop `--no-global` and
+the global styles flood back in: readability grades and spelling errors on identifiers like
+`JWTs`/`iat` that mean nothing for a commit message.)
 
 ## Output Formats
 
