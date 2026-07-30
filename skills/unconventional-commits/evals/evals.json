@@ -1,0 +1,26 @@
+{
+  "skill_name": "unconventional-commits",
+  "evals": [
+    {
+      "id": 0,
+      "name": "auth-bugfix-single-scope",
+      "prompt": "I just fixed a bug in our auth service. Expired JWTs were still being accepted because the check compared the issued-at (`iat`) field instead of the expiry (`exp`) field, so any token that had ever been valid kept working forever. The fixed file is token.py (it lives at services/auth/token.py in the repo). Write me a good git commit message for this change. Save the final commit message to commit_msg.txt.",
+      "expected_output": "A commit message with a scope-first subject (e.g. `auth:` or `services/auth:`), imperative mood, ~50 char subject, NO conventional-commits type prefix (no `fix:`), and a body explaining that expired tokens were wrongly accepted and why (wrong field compared).",
+      "files": ["token.py"]
+    },
+    {
+      "id": 1,
+      "name": "ambiguous-type-feature-and-refactor",
+      "prompt": "I reworked the config loader in the `config` package (loader.go). It now supports YAML config files in addition to JSON, chosen by file extension. While I was in there I also collapsed two nearly-identical decode blocks into a single decode() helper. I'm honestly not sure whether to call this a feature or a refactor since it's kind of both. Write the commit message and save it to commit_msg.txt.",
+      "expected_output": "A commit message that leads with the scope `config:` and does NOT agonize over or include a feat/refactor type label. Subject is imperative and scope-first; body mentions adding YAML support and the dedup of decode logic.",
+      "files": ["loader.go"]
+    },
+    {
+      "id": 2,
+      "name": "multi-change-should-split",
+      "prompt": "Can you help me commit my staged changes? See changes.md for what's staged. Heads up: my team uses Linux/kernel-style commit messages (scope-prefixed), we do NOT use the feat:/fix: conventional commits style. Write the commit message(s) and save them to commit_msg.txt.",
+      "expected_output": "Recommends splitting the three unrelated changes into separate atomic commits, each with a scope-first subject (e.g. `api:`/`health:`, `api/db:`, `go.mod:` or `deps:`) and NO type prefix. Should not cram everything into one commit.",
+      "files": ["changes.md"]
+    }
+  ]
+}

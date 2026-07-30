@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "multi-change-should-split",
+  "prompt": "Can you help me commit my staged changes? See changes.md for what's staged. Heads up: my team uses Linux/kernel-style commit messages (scope-prefixed), we do NOT use the feat:/fix: conventional commits style. Write the commit message(s) and save them to commit_msg.txt.",
+  "assertions": [
+    {"text": "Recommends splitting the three unrelated changes into separate commits (does NOT cram them into a single commit)"},
+    {"text": "Produces at least 2 (ideally 3) distinct commit messages"},
+    {"text": "Every subject line is scope-first (e.g. 'api:', 'health:', 'api/db:', 'deps:'/'go.mod:')"},
+    {"text": "No subject line uses a conventional-commits type prefix (feat:/fix:/chore:/build:)"},
+    {"text": "Subjects are imperative mood and roughly 50 characters or fewer"}
+  ]
+}

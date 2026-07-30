@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends splitting into separate commits",
+      "passed": true,
+      "evidence": "Produced 3 separate commits."
+    },
+    {
+      "text": "At least 2 (ideally 3) distinct commit messages",
+      "passed": true,
+      "evidence": "3 commits: api, api/db, go.mod."
+    },
+    {
+      "text": "Every subject is scope-first",
+      "passed": true,
+      "evidence": "api:, api/db:, go.mod: all lead with scope."
+    },
+    {
+      "text": "No conventional-commits type prefix on any subject",
+      "passed": true,
+      "evidence": "None use feat:/fix:; prompt explicitly asked for kernel-style."
+    },
+    {
+      "text": "Subjects imperative and ~50 chars or fewer",
+      "passed": true,
+      "evidence": "add/rename/bump; lengths 29/37/43."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

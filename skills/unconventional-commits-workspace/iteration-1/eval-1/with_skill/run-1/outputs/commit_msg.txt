@@ -1,0 +1,9 @@
+config: support YAML config files alongside JSON
+
+Load previously handled only JSON. Choose the decoder by file
+extension so callers can supply .yaml/.yml files as well as .json,
+returning a clear error for any unrecognized extension.
+
+While here, collapse the two nearly-identical JSON/YAML decode paths
+into a single decode() helper that switches on the extension, so Load
+just reads the file and delegates.

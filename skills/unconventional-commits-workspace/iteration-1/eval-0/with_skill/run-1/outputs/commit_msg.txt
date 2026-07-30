@@ -1,0 +1,12 @@
+auth: reject expired JWTs by checking exp instead of iat
+
+The token verifier compared the issued-at (`iat`) claim against the
+current time instead of the expiry (`exp`) claim. Since `iat` is always
+in the past for any genuinely issued token, the check passed
+unconditionally and expired tokens were accepted indefinitely — any
+token that had ever been valid kept working forever.
+
+Compare `exp` against the current time so tokens are rejected once they
+pass their expiry, which is what the check was meant to enforce all
+along. This closes an authentication bypass: sessions now actually end
+when the token expires.

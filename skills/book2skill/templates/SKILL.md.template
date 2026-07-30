@@ -1,0 +1,136 @@
+---
+name: {{skill-slug}}
+description: >-
+  {{Third person. When to invoke + when NOT to + trigger phrases. Condensed
+  from A2, used for Claude activation. ≤1024 characters. Plain text only — no
+  angle-brackets or XML tags. Example: "Invoke when a user is struggling with a
+  decision, listing positive reasons but unable to make sense of them, or asks
+  'how can I succeed at X?'. Not for pure information retrieval or trivial
+  everyday choices."}}
+tags: [{{tag1}}, {{tag2}}]
+---
+
+<!--
+Frontmatter carries ONLY spec-allowed fields (name, description, tags, and
+allowed-tools when the skill runs tools). Book provenance and related-skill
+links live in the body (## Provenance / ## Related skills) so `exegesis lint` passes.
+Never add source_book / source_chapter / related_skills / id / title as
+frontmatter keys.
+-->
+
+
+# {{Skill Title}}
+
+## R — Original Text (Reading)
+
+> {{Original text quotation, ≤150 words, must indicate chapter/page number}}
+>
+> — {{AUTHOR}}, {{CHAPTER}}
+
+---
+
+## I — Methodological Framework (Interpretation)
+
+Rewrite in your own words, lines 5-15.
+   After reading this passage, someone who hasn't read the original book should be able to understand what this methodology is about.
+   Copying the original text verbatim is prohibited, as is piling up rhetoric.
+
+---
+
+## A1 — Past Application (from the book)
+
+### Case 1: {{Case Name}}
+- **Question:** What did the author encounter?
+- **Use of Methodology:** {{How the author uses this methodology in thinking}}
+- **Conclusion:** What was concluded?
+- **Result**: {{What actually happened}}
+
+### Case 2 (if any)
+...
+
+---
+
+## A2 — Trigger Scenario (Future Trigger) ★
+
+In what situations would a user need this skill?
+
+1. {{Scenario 1 — Specific to the recognizable situation}}
+2. {{Scenario 2}}
+3. {{Scenario 3}}
+
+### Language Signals (These should be activated when they appear in the user's speech)
+
+- "{{Typical wording 1}}"
+- "{{Typical wording 2}}"
+- "{{Typical wording 3}}"
+
+### Distinguishing from adjacent skills
+
+- Difference from `{{related-skill-a}}`: {{ ... }}
+- Difference from `{{related-skill-b}}`: {{ ... }}
+
+---
+
+## E — Execution Step
+
+Once the skill is activated, the agent should perform the following steps:
+
+1. **{{Step 1}}**
+   - Completion criteria: {{How to determine if this step is complete}}
+
+2. **{{Step 2}}**
+   - Completion criteria: {{ ... }}
+   - Stop condition: If {{X}}, then jump to step {{N}}
+
+3. **Step 3**
+   - Completion criteria: {{ ... }}
+
+---
+
+## B — Boundary ★
+
+### Do not use this skill in the following situations
+
+- {{Counter-Scenario 1 — Why it's not applicable}}
+- {{Anti-Scene 2}}
+
+### Failure Patterns Warning by the Author in the Book
+
+- {{ Corresponding counterexample from counter-example-extractor}}
+
+### Author's Blind Spots / Limitations of the Era
+
+- {{From Phase 0, Critical Phase}}
+
+### Easily Confused Proximity Methodology
+
+- {{ ... }}
+
+---
+
+## Related skills (Stage 3 Filling)
+
+<!-- Reference skills by backticked slug only — NEVER as ../slug/SKILL.md file
+     links (those escape the skill directory and fail `exegesis lint`).
+     One bullet per relationship in the exact form
+     `- <kind>: `<target-slug>` — <rationale>`; <kind> is depends-on,
+     contrasts-with, or composes-with. `exegesis index` reads these back to
+     regenerate INDEX.md, so keep the format and slugs accurate. -->
+
+- depends-on: `{{skill-slug}}` — {{why this skill needs it}}
+- contrasts-with: `{{skill-slug}}` — {{how they differ}}
+- composes-with: `{{skill-slug}}` — {{how they combine}}
+
+---
+
+## Provenance
+
+- **Source:** 《{{BOOK_TITLE}}》 {{AUTHOR}} — {{chapter}}
+
+---
+
+## Audit Information
+
+- **Verification Passed**: V1 ✓ / V2 ✓ / V3 ✓
+- **Test pass rate**: {{%}} (See test-prompts.json for details)
+- **Distillation Time**: {{DATE}}

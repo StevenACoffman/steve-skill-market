@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "{{Scenario that clearly calls for the merged skill's unified framework}}",
+    "expected": "the merged skill is invoked",
+    "notes": "core use case — both source skills would also fire here"
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "{{Second core scenario}}",
+    "expected": "the merged skill is invoked",
+    "notes": "positive"
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "{{Third core scenario}}",
+    "expected": "the merged skill is invoked",
+    "notes": "positive"
+  },
+  {
+    "id": 4,
+    "type": "should_not_trigger",
+    "prompt": "{{Scenario that sounds related but neither source skill applies}}",
+    "expected": "no methodology skill is invoked",
+    "notes": "decoy — tests that the merged A2 is not over-broad"
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "{{Second decoy}}",
+    "expected": "no methodology skill is invoked",
+    "notes": "decoy"
+  },
+  {
+    "id": 6,
+    "type": "edge_case",
+    "prompt": "{{Boundary between the merged skill and source skill A}}",
+    "expected": "either the merged skill or source-skill-a, with a reason",
+    "notes": "boundary with {{source-skill-a}}"
+  },
+  {
+    "id": 7,
+    "type": "edge_case",
+    "prompt": "{{Boundary between the merged skill and source skill B}}",
+    "expected": "either the merged skill or source-skill-b, with a reason",
+    "notes": "boundary with {{source-skill-b}}"
+  },
+  {
+    "id": 8,
+    "type": "prefer_merged_over_source",
+    "prompt": "{{Scenario where the conditional E step or extended B is specifically needed}}",
+    "expected": "the merged skill produces what neither source alone would",
+    "notes": "source A does X; source B does Y; merged does Z via the conditional E / contradiction in B / cross-domain A1"
+  },
+  {
+    "id": 9,
+    "type": "prefer_merged_over_source",
+    "prompt": "{{Second prefer-merged scenario}}",
+    "expected": "the merged skill outperforms both sources here",
+    "notes": "why merged outperforms both sources"
+  }
+]

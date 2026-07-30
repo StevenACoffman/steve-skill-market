@@ -1,0 +1,333 @@
+{
+  "metadata": {
+    "skill_name": "unconventional-commits",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-07-21T06:02:34Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 18.6,
+        "tokens": 26125,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No conventional-commits type prefix",
+          "passed": true,
+          "evidence": "Subject is 'auth: reject expired JWTs...' \u2014 no fix:/feat: prefix."
+        },
+        {
+          "text": "Subject is scope-first",
+          "passed": true,
+          "evidence": "Leads with scope 'auth:'."
+        },
+        {
+          "text": "Imperative mood",
+          "passed": true,
+          "evidence": "First word 'reject'."
+        },
+        {
+          "text": "Subject ~50 chars or fewer",
+          "passed": true,
+          "evidence": "56 chars \u2014 over the 50 target but well within the 72 hard limit; acceptable."
+        },
+        {
+          "text": "Blank line between subject and body",
+          "passed": true,
+          "evidence": "Line 2 is blank."
+        },
+        {
+          "text": "Body explains the why (iat vs exp)",
+          "passed": true,
+          "evidence": "Body explains iat is always in the past so the check passed unconditionally; notes auth bypass."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 17.2,
+        "tokens": 25931,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No conventional-commits type prefix",
+          "passed": true,
+          "evidence": "Subject 'config: support YAML...' \u2014 no feat:/refactor:."
+        },
+        {
+          "text": "Leads with scope 'config:'",
+          "passed": true,
+          "evidence": "Scope 'config' leads the subject."
+        },
+        {
+          "text": "Imperative and ~50 chars or fewer",
+          "passed": true,
+          "evidence": "48 chars, first word 'support'."
+        },
+        {
+          "text": "Body mentions adding YAML support",
+          "passed": true,
+          "evidence": "Body: 'callers can supply .yaml/.yml files as well as .json'."
+        },
+        {
+          "text": "Does not force a single feature-vs-refactor type label",
+          "passed": true,
+          "evidence": "No type label; treats scope as the important thing, mentions dedup as a 'while here' note."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 16.7,
+        "tokens": 25969,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends splitting into separate commits",
+          "passed": true,
+          "evidence": "Produced 3 separate commits for the 3 unrelated changes."
+        },
+        {
+          "text": "At least 2 (ideally 3) distinct commit messages",
+          "passed": true,
+          "evidence": "3 commits: api, api/db, go.mod."
+        },
+        {
+          "text": "Every subject is scope-first",
+          "passed": true,
+          "evidence": "api:, api/db:, go.mod: all lead with scope."
+        },
+        {
+          "text": "No conventional-commits type prefix on any subject",
+          "passed": true,
+          "evidence": "None use feat:/fix:/chore:/build:."
+        },
+        {
+          "text": "Subjects imperative and ~50 chars or fewer",
+          "passed": true,
+          "evidence": "add/rename/bump; lengths 29/33/32."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 3,
+        "failed": 3,
+        "total": 6,
+        "time_seconds": 11.8,
+        "tokens": 22473,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No conventional-commits type prefix",
+          "passed": false,
+          "evidence": "Subject is 'fix(auth): ...' \u2014 uses the fix: type prefix."
+        },
+        {
+          "text": "Subject is scope-first",
+          "passed": false,
+          "evidence": "Leads with the type 'fix', not the scope."
+        },
+        {
+          "text": "Imperative mood",
+          "passed": true,
+          "evidence": "First word 'reject'."
+        },
+        {
+          "text": "Subject ~50 chars or fewer",
+          "passed": false,
+          "evidence": "61 chars; the fix(auth) prefix consumes subject budget."
+        },
+        {
+          "text": "Blank line between subject and body",
+          "passed": true,
+          "evidence": "Line 2 is blank."
+        },
+        {
+          "text": "Body explains the why (iat vs exp)",
+          "passed": true,
+          "evidence": "Body explains the iat/exp mixup and its effect."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": 13.7,
+        "tokens": 22568,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No conventional-commits type prefix",
+          "passed": false,
+          "evidence": "Subject 'feat(config): ...' uses the feat: prefix."
+        },
+        {
+          "text": "Leads with scope 'config:'",
+          "passed": false,
+          "evidence": "Leads with type 'feat'; scope is parenthetical."
+        },
+        {
+          "text": "Imperative and ~50 chars or fewer",
+          "passed": true,
+          "evidence": "54 chars, imperative 'support'."
+        },
+        {
+          "text": "Body mentions adding YAML support",
+          "passed": true,
+          "evidence": "Body describes .yaml/.yml selection."
+        },
+        {
+          "text": "Does not force a single feature-vs-refactor type label",
+          "passed": false,
+          "evidence": "Explicitly classified the change as 'feat', which is exactly the forced choice the skill avoids."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 13.9,
+        "tokens": 22536,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends splitting into separate commits",
+          "passed": true,
+          "evidence": "Produced 3 separate commits."
+        },
+        {
+          "text": "At least 2 (ideally 3) distinct commit messages",
+          "passed": true,
+          "evidence": "3 commits: api, api/db, go.mod."
+        },
+        {
+          "text": "Every subject is scope-first",
+          "passed": true,
+          "evidence": "api:, api/db:, go.mod: all lead with scope."
+        },
+        {
+          "text": "No conventional-commits type prefix on any subject",
+          "passed": true,
+          "evidence": "None use feat:/fix:; prompt explicitly asked for kernel-style."
+        },
+        {
+          "text": "Subjects imperative and ~50 chars or fewer",
+          "passed": true,
+          "evidence": "add/rename/bump; lengths 29/37/43."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 17.5,
+        "stddev": 0.9849,
+        "min": 16.7,
+        "max": 18.6
+      },
+      "tokens": {
+        "mean": 26008.3333,
+        "stddev": 102.8073,
+        "min": 25931,
+        "max": 26125
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.6333,
+        "stddev": 0.3215,
+        "min": 0.4,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 13.1333,
+        "stddev": 1.159,
+        "min": 11.8,
+        "max": 13.9
+      },
+      "tokens": {
+        "mean": 22525.6667,
+        "stddev": 48.3356,
+        "min": 22473,
+        "max": 22568
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.37",
+      "time_seconds": "+4.4",
+      "tokens": "+3483"
+    }
+  },
+  "notes": []
+}

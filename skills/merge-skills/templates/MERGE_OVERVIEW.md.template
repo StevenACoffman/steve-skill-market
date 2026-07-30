@@ -1,0 +1,46 @@
+# Merge Overview — {{merge-slug}}
+
+**Merge date**: {{DATE}}
+**Source books**: {{N}} books, {{M}} skills scanned
+
+## Source books
+
+| Book | Slug | Skills scanned |
+|---|---|---|
+| *{{Book A Title}}* by {{Author A}} | `{{slug-a}}` | {{N}} |
+| *{{Book B Title}}* by {{Author B}} | `{{slug-b}}` | {{N}} |
+
+## Overlap scan results
+
+| Classification | Count |
+|---|---|
+| Genuine convergence (proceeded to Phase 1) | {{N}} |
+| Surface resemblance (rejected at Phase 0) | {{N}} |
+| Complementary (Zettelkasten links added) | {{N}} |
+| Failed source verification (Phase 1.5) | {{N}} |
+| Failed enhanced triple validation (Phase 1.5.5) | {{N}} |
+| **Successfully merged** | **{{N}}** |
+
+## Merged skills produced
+
+| Merged skill | Source A | Source B | V4 scenario |
+|---|---|---|---|
+| [`{{merged-slug-1}}`](./{{merged-slug-1}}/SKILL.md) | `{{skill-a}}` | `{{skill-b}}` | {{one-line V4 pass}} |
+
+## Dissolved pairs (with disposition)
+
+| Pair | Reason | Disposition |
+|---|---|---|
+| `{{skill-a}}` vs `{{skill-b}}` | surface-resemblance | `contrasts-with` link added |
+| `{{skill-c}}` vs `{{skill-d}}` | v4-failed | `composes-with` link added |
+
+## Source verification summary
+
+| Pair | R-A status | R-B status | A1-A status | A1-B status |
+|---|---|---|---|---|
+| {{pair-id}} | accurate | drifted-minor (corrected) | verified | verified |
+
+## Notes
+
+{{Any observations about the overall merge — recurring patterns across books,
+surprising divergences, recommendations for follow-up book2skill runs.}}
