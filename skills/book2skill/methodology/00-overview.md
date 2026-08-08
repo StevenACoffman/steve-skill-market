@@ -19,7 +19,7 @@ This article is the design specification of the SOP used by book2skill, explaini
 | Niklas Luhmann Zettelkasten                 | Atomization + Linking + Rewritten in your own words                                 |
 | Tiago Forte Progressive Summarization       | The idea of ​​"verifiable compressed chains" in Phase 4                               |
 | nuwa-skill                                  | Phase 1 Parallel extractor + Phase 1.5 Triple verification                          |
-| darwin-skill                                | Stage 4 test-prompts.json format + evolvability                                     |
+| darwin-skill                                | Stage 4 test-prompts.json format + evolvability (its loop is now driven deterministically by the skillsaw CLI via skillsaw-skill) |
 
 ## Fundamental Insight
 
@@ -66,7 +66,7 @@ Therefore, all the "extensions" of RIA-TV++ (TV / E / B / test-prompts) are desi
           └───────────────────┘
                     │
                     ▼
-          It can be fed to darwin-skill for automatic evolution.
+          Then hand off to skillsaw-skill (skillsaw CLI) to optimize each skill's quality.
 ```
 
 ## Invariants (Must Be Violated in Any Iteration)
@@ -74,5 +74,5 @@ Therefore, all the "extensions" of RIA-TV++ (TV / E / B / test-prompts) are desi
 1. **Atomicity:** A skill should only serve as a methodological unit; it cannot be "all-encompassing."
 2. **Traceability:** Each skill must have a direct quote pointing to the original book chapter.
 3. **Verifiable:** Each skill must pass triple verification + stress testing.
-4. **Evolvable:** Each skill must be accompanied by a Darwin-compatible test-prompts.json file.
+4. **Evolvable:** Each skill must be accompanied by a test-prompts.json (trigger composition); it seeds the downstream skillsaw-skill / skillsaw optimizer, which hill-climbs quality.
 5. **User Engagement:** After Phase 0, users must confirm the skeleton before proceeding.
