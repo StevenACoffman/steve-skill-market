@@ -495,17 +495,24 @@ func TestMyTestSuite(t *testing.T) {
 ```go
 // Outside All() — use Require (fails fast)
 func (suite *MyTestSuite) TestFoo() {
-	result, err := doThing(suite.Ctx())
+	result, err := doThing("input")
 	suite.Require().NoError(err) // not suite.Assert()
 	suite.Require().NotNil(result)
 
 	// Multiple soft assertions — use All
-	suite.All(func() {
-		suite.Assert().Equal(expected, result.Name)
-		suite.Assert().Equal(42, result.Count)
-	})
+	suite.All(
+		suite.Assert().Equal(expected, result.Name),
+		suite.Assert().Equal(42, result.Count))
 }
 ```
+
+`All` is `All(assertions ...bool)`. It takes the **results** of assertions that
+have already run — `suite.Assert().Equal(...)` returns a bool — so passing it a
+closure is a compile error. It reports every failure, then calls `FailNow`.
+
+`khantest.Suite` has no context accessor; it is for pure logic that needs no
+`KAContext`. Anything needing one belongs on `servicetest.Suite`, whose
+`suite.KAContext()` returns a `kacontext.TestContext`.
 
 Do **not** use `suite.Nil(err)` for errors — use `suite.Require().NoError(err)`.
 
@@ -877,6 +884,34 @@ x := context.Background()
 
 ______________________________________________________________________
 
+## Pull Requests
+
+**Never open a webapp PR against `master`.** webapp deploys through
+per-developer branches, so `master` is the wrong integration point. Base the PR
+on the author's personal deploy branch:
+
+```bash
+gh pr create --base "$MY_DEPLOY_BRANCH" --head my-feature-branch
+```
+
+Branch names are per-user, so this skill cannot name yours — keep it wherever
+your per-user preferences live and confirm the base before creating.
+
+Check it up front: **a closed PR's base cannot be changed.** `gh pr edit --base`
+fails with `Cannot change the base branch of a closed pull request`, so getting
+it wrong means opening a replacement.
+
+`git push` runs a pre-push hook that invokes `ka-lint`, which lives at
+`testing/ka-lint` (a symlink to `tools/runlint.sh`). If `webapp/testing` is not
+on your `PATH` the push aborts with `FileNotFoundError: 'ka-lint'`. Put it on
+`PATH` rather than reaching for `--no-verify`:
+
+```bash
+PATH="$PWD/testing:$PATH" git push -u origin my-feature-branch
+```
+
+______________________________________________________________________
+
 ## Code Review Checklist
 
 Walk through these for every PR touching Go code in webapp.
@@ -954,3 +989,7 @@ Walk through these for every PR touching Go code in webapp.
 - [ ] JSON-marshalled structs have `json:"..."` tags on all exported fields
 - [ ] Exported functions documented in multi-file packages
 - [ ] `//nolint` comments name the linter and include a reason
+
+## Pull Request
+
+- [ ] Base branch is the author's deploy branch, never `master`
