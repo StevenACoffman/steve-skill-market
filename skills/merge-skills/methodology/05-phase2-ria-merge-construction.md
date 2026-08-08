@@ -34,19 +34,45 @@ tags: [<unified tag set>]
 ---
 ```
 
-Allowed frontmatter keys (`exegesis lint`): `name`, `description`, `tags`,
-`allowed-tools`, `author`, `version`. Do **not** emit `id`, `title`, `type`,
-`source_skills`, or `related_skills` — they are unknown fields. Capture the two
-source skills in the body instead:
+Allowed frontmatter keys (`exegesis lint`): `name`, `description`, `license`,
+`compatibility`, `metadata`, `allowed-tools`, and `tags`. The first six are the set
+[agentskills.io](https://agentskills.io/specification) defines; `tags` is a
+family-wide deviation the linter permits because every book2skill output carries it.
 
-```markdown
+`author` and `version` are **not** top-level keys — an earlier version of this file
+said they were. The spec puts both under `metadata`, which is a map of string keys to
+string values.
+
+Do **not** emit `id`, `title`, `type`, `source_skills`, or `related_skills` — they are
+unknown fields. `metadata` cannot hold them either: it takes string values only, and a
+merged skill's composition is a list of records. Capture the two source skills in the
+body instead, as prose plus a fenced `yaml` block the tooling reads — the same shape
+the `## Merge Status` ledger uses, for the same reason (machine-readable without
+putting a non-spec key in frontmatter):
+
+````markdown
 ## Provenance
 
 - **Type:** merged skill
 - **Merged from:**
   - `<book-slug-a>/<source-skill-slug-a>` — *<Book A Title>* by <Author A>
   - `<book-slug-b>/<source-skill-slug-b>` — *<Book B Title>* by <Author B>
+
+```yaml
+type: merged-skill
+source_skills:
+  - slug: <book-slug-a>/<source-skill-slug-a>
+    book: <Book A Title>
+    author: <Author A>
+    note: <what this source contributed, if worth recording>
+  - slug: <book-slug-b>/<source-skill-slug-b>
+    book: <Book B Title>
+    author: <Author B>
 ```
+````
+
+The merged skill supersedes exactly the skills listed in `source_skills`; that fact is
+not recorded a second time as edges. `exegesis merge-index` reads this block.
 
 ______________________________________________________________________
 

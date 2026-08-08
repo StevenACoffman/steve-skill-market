@@ -159,6 +159,19 @@ Do not resolve contradictions by picking a winner.}}
   - `{{book-slug-a}}/{{source-skill-slug-a}}` — *{{Book A Title}}* by {{Author A}}
   - `{{book-slug-b}}/{{source-skill-slug-b}}` — *{{Book B Title}}* by {{Author B}}
 
+```yaml
+type: merged-skill
+source_skills:
+  - slug: {{book-slug-a}}/{{source-skill-slug-a}}
+    book: {{Book A Title}}
+    author: {{Author A}}
+    note: {{what this source contributed}}
+  - slug: {{book-slug-b}}/{{source-skill-slug-b}}
+    book: {{Book B Title}}
+    author: {{Author B}}
+    note: {{what this source contributed}}
+```
+
 ---
 
 ## Audit
