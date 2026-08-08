@@ -24,6 +24,15 @@ The merged skill passes if its response — using the conditional E steps, the
 cross-domain A1 cases, or the extended B failure map — produces guidance that
 neither source skill alone would produce.
 
+**Include a no-skill baseline arm.** Compare the merged skill against source A,
+source B, **and** invoking no skill at all. A merge that beats both sources but
+loses to no skill is a net loss and must dissolve (a loaded skill can actively
+hurt). Runtime scoring across the arms stays with darwin — there is no
+`skillsaw pairwise`. As a cheap deterministic pre-check that the merged A2 actually
+sharpened rather than unioning the two source triggers, run
+`skillsaw activation books/merged/<merge-slug>/<merged-skill>/`; a low or negative
+net_utility sends you back to Phase 1.5.5 to re-check V4.
+
 **Auto-dissolve check before writing tests**: Before writing any `prefer_merged_over_source`
 tests, verify that you can identify ≥2 concrete scenarios where the merged skill
 outperforms both sources. Use the A2 language signals from Phase 2 as starting points.

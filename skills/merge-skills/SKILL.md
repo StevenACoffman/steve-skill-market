@@ -323,8 +323,24 @@ a pre-existing foreign `test-prompts.json` (object wrapper, `prompts`/
 fields in `notes`, reporting any case still needing an `expected`.
 
 The `prefer_merged_over_source` tests are the unique quality gate for merged skills.
-If no scenario can be found where the merged skill outperforms both sources, the
-merge failed V4 and should be dissolved back into two independent skills.
+The comparison must include a **no-skill baseline arm**, not just the two sources: a
+merge that beats both sources but loses to invoking no skill at all is a net loss and
+must dissolve (the ablation discipline — a loaded skill can actively hurt). Runtime
+pass-rate scoring across the arms stays with darwin; there is no `skillsaw pairwise`.
+If no scenario can be found where the merged skill outperforms both sources **and**
+the no-skill baseline, the merge failed V4 and should be dissolved back into two
+independent skills.
+
+Run the deterministic trigger-accuracy check on the merged skill as well — its A2 is
+supposed to be *sharper* than either source, so make that claim legible:
+
+```text
+skillsaw activation books/merged/<merge-slug>/<merged-skill>/
+```
+
+A low or negative net_utility (TPR/FPR with Wilson intervals) means the merged A2 did
+not actually sharpen — it fires like the union of the two source triggers — so return
+to Phase 1.5.5 and re-check V4.
 
 Pass criteria: 100% on `should_trigger` and `should_not_trigger`; ≥80% overall.
 Failure triggers Phase 2 rework — not A2 surface patching.
@@ -448,8 +464,10 @@ remain the agent's.
    (advisory; `--strict` to fail). A `WARN` means return to Phase 1.5.5 and
    re-evaluate V4. Passing the count is necessary but not sufficient — the signals
    must also be genuinely, semantically distinct, which is your judgment.
-4. **Additive gate** — at least 1 `prefer_merged_over_source` test must pass in Phase 4.
-   If none can even be written, auto-dissolve before running tests.
+4. **Additive gate** — the merged skill must beat **both sources and a no-skill
+   baseline** on at least 1 `prefer_merged_over_source` scenario in Phase 4. A merge
+   that beats the sources but loses to no skill at all is a net loss. If no such
+   scenario can even be written, auto-dissolve before running tests.
 5. **Synthesis-specific B** — at least one failure mode in B Part 3 that applies to
    the merged skill but not either source alone. Generic "convergence authority trap"
    boilerplate counts only if it is also instantiated for this specific merge.
