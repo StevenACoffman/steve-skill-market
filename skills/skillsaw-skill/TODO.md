@@ -37,7 +37,15 @@ with it). That is the gap.
 
 ## The binding constraint: no skill has checks (measured 2026-08-08)
 
-- [ ] **Author `checks` for the corpus. DECIDED 2026-08-08: corpus-wide, with a
+- [ ] **Author `checks` for the corpus — the SUBSET is the only thing still open.**
+      **The skill now carries the corpus path** (Phase 0.5, "Authoring Checks Across a
+      Corpus"): scope by whole skill rather than by case, the ~1017 honest remainder, and
+      the deriver's measured yield so nobody retries it. What is left is authoring, and
+      choosing which skills to do first — a decision about coverage, not method.
+      **Scope by skill, never by case**, because a base is a mean over a skill's scored
+      cases and nothing marks it partial: 3 cases in 60 skills yields 60 unusable bases,
+      10 cases in 18 skills yields 18 usable ones.
+      Original entry: **DECIDED 2026-08-08: corpus-wide, with a
       directory limit so it can be done in parts. METHOD DECIDED 2026-08-15: improving
       `DeriveChecks` first was tried and closed by measurement — hand-authoring is the only
       path, and the open question is now the subset.**
