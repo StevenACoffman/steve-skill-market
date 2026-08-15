@@ -100,7 +100,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Queue Control Flow Model** — *depends-on* → The order-preservation rule from the control-flow model — Queue + Competing Consumers destroys order; only a single Driver preserves it — is the prerequisite for choosing Competing Consumers safely.
 - **Queue Flow Control Decision** — *composes-with* → Adding more competing consumers changes the queue drain rate and flow control threshold; the two skills are applied together when both throughput and overload behavior must be designed.

@@ -196,7 +196,7 @@ limitation — gRPC-Web was maturing at the time of publication.
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-vs-rest-vs-graphql** — depends on: this skill is the actionable consequence of the broader protocol-selection framework; run grpc-vs-rest-vs-graphql first for the full decision logic.
 - **grpc-security-credential-composition** — informs: introducing a gRPC gateway changes the TLS topology — the gateway terminates TLS from external clients while the backend may use mTLS internally.

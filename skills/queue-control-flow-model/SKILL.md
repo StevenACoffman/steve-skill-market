@@ -105,7 +105,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Integration Style Selection** — *depends-on* → Control-flow modeling only applies after Messaging is selected as the integration style; this skill makes precise the operational properties that style creates.
 - **Queue Flow Control Decision** — *enables* → Identifying that a component is a Driver (controls fetch rate) vs. a Sender (cannot self-throttle) is the prerequisite for choosing the correct flow control mechanism — a Driver can implement backpressure; a Sender cannot.

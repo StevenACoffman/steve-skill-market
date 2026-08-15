@@ -191,7 +191,7 @@ when making an initial architecture decision.
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-load-balancer-selection** — compares: grpc-load-balancer-selection is the prescriptive framework for initial architecture decisions; this skill is the diagnostic companion for an existing production problem — use this skill when traffic skew is already observed.
 - **grpc-observability-three-pillar** — depends on: per-pod Prometheus metrics are required to confirm and measure the L4 LB failure mode; observability must be installed before this diagnostic skill can be applied.

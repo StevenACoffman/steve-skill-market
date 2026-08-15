@@ -415,7 +415,7 @@ ______________________________________________________________________
 - **Treating `ff.ErrHelp` and `ff.ErrNoExec` as errors** — both must be handled as exit code 0 in `main()`.
 - **Putting post-parse initialization in `New()`** — `New()` runs before parsing; flags are not yet resolved. Post-parse setup (logger, derived config) belongs in `cmd.go` between `ParseFlags` and `Run`.
 
-### Related Skills
+## Related Skills
 
 - **composes_with**: `go-constructor-option-pattern-selection` — the `New()` factory pattern climax generates is an instance of the constructor pattern; functional options can extend it for complex flag sets.
 - **composes_with**: `go-http-service-di-composition` — a climax `serve` command's `exec()` is the natural place to wire up an HTTP server using the `run()`/application-struct DI pattern.

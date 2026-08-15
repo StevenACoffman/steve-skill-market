@@ -92,7 +92,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Multidimensional Coupling Assessment** — *composes-with* → EDA coupling diagnosis is a specialization of the full 8-dimension coupling assessment, applied to the specific question of whether event-driven architectures deliver on their decoupling claims.
 - **Integration Style Selection** — *depends-on* → Integration style selection provides the foundational vocabulary (Messaging vs. RPC vs. File Transfer); EDA coupling diagnosis refines the analysis when Messaging/Pub-Sub is the chosen style.

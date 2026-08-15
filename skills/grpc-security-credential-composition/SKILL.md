@@ -194,7 +194,7 @@ This does not affect the credential composition logic.
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-observability-three-pillar** — combines: both skills use server interceptors; security auth validation and observability signals are typically chained in the same `ChainUnaryInterceptor` call — set up together when instrumenting a service.
 - **grpc-load-balancer-selection** — informs: a service mesh (Istio/Linkerd) absorbs mTLS channel credentials transparently; knowing the LB topology determines which credential layer is app-managed vs. mesh-managed.
