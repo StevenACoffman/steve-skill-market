@@ -257,8 +257,23 @@ skillsaw eval --json "$DIR" > eval.json     # machine-readable
    reports no FULL total at all — not a partial one. Do this in an **independent context**
    — never in the same reasoning thread that will later edit the skill (that is the
    #1 self-evaluation bias; see blacklist B1).
-   - For dims 1,2,3,5,7: read the skill and rate the quality the deterministic
-     penalties cannot see.
+   - For dims 1,2,7: read the skill and rate the quality the deterministic penalties
+     cannot see.
+   - For dims 3 and 5, do **not** score from the dimension's name — both carry published
+     criteria, and these two are scored in an independent context whose scale nobody else
+     can see. Dim 5 is weight 17, the heaviest non-behavioral dimension, and FULL totals
+     are compared across rounds to decide keep-or-revert, so an unstated rubric makes the
+     heaviest judged number the least reproducible one. Score these:
+     - **dim 3 — failure-mode encoding.** Does the skill name a *concrete failure
+       condition and the causal chain to task failure* — "the API caps pages at 100; an
+       agent that assumes one response holds everything silently drops rows beyond page
+       1" — or does it warn generically ("handle errors carefully")? A heading named for
+       failure with nothing under it is not encoding; `eval` already counts the heading,
+       so the base is where an empty one gets priced.
+     - **dim 5 — actionable specificity.** Is the procedure executable *without further
+       interpretation*, naming domain objects, tools or APIs — "re-query the object for
+       the server-assigned ID before referencing it" — or is it abstract ("decompose into
+       smaller steps")? Numbered is not the same as executable.
    - For dim 8 (behavioral): run the skill on each **behavioral** test prompt — the
      `should_trigger` and `edge_case` ones — writing each output to `out-<id>.txt`, then
      let `judge` score them and report the base:
@@ -343,6 +358,20 @@ cp "$DIR/SKILL.md" /tmp/skill.orig
 
 **STEP 3 — Agent proposes and applies exactly ONE edit** targeting the diagnosed
 dimension. One dimension per round — never batch edits (breaks attribution).
+
+**Prefer domain-specific failure knowledge over general advice.** SkillLens's headline
+finding, stated here because this is where the edit gets written:
+
+> A rough, narrow skill that encodes one domain-specific failure mechanism with an
+> executable fix is MORE valuable than an elegant, well-structured skill full of generic
+> best practices.
+
+Asked to improve a document, the natural thing to write is a more polished one — and
+"polished, comprehensive-sounding guidance that lacks concrete failure knowledge" is the
+second anti-pattern on SkillLens's list. Adding one concrete failure mechanism with its fix
+beats tightening three paragraphs, even when the tightening reads better. This is the same
+"rework, not surface-patch" principle the loop already applies elsewhere, at the moment it
+is easiest to violate.
 
 Before running STEP 5, record how strongly you expect this edit to pass the gate, as
 an integer 1-10, in `CONF`. Write it **now**: a confidence recorded after seeing the

@@ -38,10 +38,28 @@ with it). That is the gap.
 ## The binding constraint: no skill has checks (measured 2026-08-08)
 
 - [ ] **Author `checks` for the corpus. DECIDED 2026-08-08: corpus-wide, with a
-      directory limit so it can be done in parts.** Across the
-      real tree, of **1275 behavioral cases in 183 skills**, **zero** carry checks, and
-      `DeriveChecks` derives none from their `expected` text (it is activation prose:
-      "Invokes X, applies …", and in some skills literally `"trigger"`). So **dim 8 cannot
+      directory limit so it can be done in parts. METHOD DECIDED 2026-08-15: improving
+      `DeriveChecks` first was tried and closed by measurement — hand-authoring is the only
+      path, and the open question is now the subset.**
+      **Do not attempt to improve `DeriveChecks` for this; it has been measured.** Over all
+      **1284** behavioral `expected` strings: **none** carry any cue the deriver looks for,
+      **1%** hold a backticked span, and **15% are the single word "invoke"**. The strings
+      are prose written for a human judge — "a single generic decodeValid[T Validator]
+      helper" appears with no markup at all — so there is nothing to read. The one widening
+      with real yield (a `contains` over identifier-shaped tokens, ~20%) is wrong: a
+      CamelCase word in prose is not an assertion that the output contains that literal, so
+      it fails correct answers and lowers the base of the heaviest dimension. Recorded in
+      `skillet/testprompts/derive.go` so it is not re-derived.
+      **What the measurement gives step D:** the **198** cases whose `expected` is just
+      "invoke" can never carry an output check — they assert activation, which skillsaw
+      scores separately and keeps out of the rubric. Excluding those and the other short
+      forms takes the work from 1284 to about **1017** before anyone writes a line. Choose
+      the subset from what remains.
+      **A forward-looking fix, out of scope here:** `expected` is authored as prose. If
+      `exegesis tests --scaffold` asked for a checkable assertion alongside it, new skills
+      would derive for free. That changes the authoring contract and belongs in exegesis.
+      Corrected count: **1284**, not 1275 — 183 files, 1809 total cases. Across the
+      real tree, of those behavioral cases, **zero** carry checks. So **dim 8 cannot
       be scored for any skill in the tree today**, and every piece of dim-8 machinery built
       for this loop — `judge --all`, the base aggregation, the hash-bound `scores` file —
       is inert until checks exist.
@@ -146,7 +164,13 @@ dimensions come from `microsoft/SkillLens` (arXiv:2605.23899), not from darwin: 
 blacklist). Each was validated at 65–66% predictive accuracy against downstream utility,
 and each ships with a stated test and an explicit anti-example.
 
-- [ ] **Give the judge step the SkillLens tests for dims 3 and 5.** Phase 1 step 3 says,
+- [x] **Give the judge step the SkillLens tests for dims 3 and 5.** DONE 2026-08-15.
+      Phase 1 step 3 now splits the list: dims 1/2/7 keep the general instruction, and
+      dims 3 and 5 carry their published criteria with the anti-example for each. Added a
+      line the entry did not ask for but the corpus argues for: a failure heading with
+      nothing under it is not encoding, and since `eval` already credits the heading, the
+      base is where an empty one gets priced.
+      Original entry: Phase 1 step 3 says,
       for dims 1/2/3/5/7: *"read the skill and rate the quality the deterministic penalties
       cannot see."* That is the entire instruction. For dims 3 and 5 it does not have to be
       — those two carry published criteria:
@@ -163,8 +187,12 @@ and each ships with a stated test and an explicit anti-example.
       rounds to decide keep-or-revert. An unstated rubric makes the heaviest judged number
       the least reproducible one.
       Cost is a few lines in Phase 1 step 3, no new machinery, no extra model call.
-- [ ] **Record SkillLens's priority rule where the edit is proposed, not just where it is
-      scored.** Its headline finding is that *domain-specific failure knowledge beats
+- [x] **Record SkillLens's priority rule where the edit is proposed.** DONE 2026-08-15,
+      at STEP 3 as a block quote plus the concrete steer — one concrete failure mechanism
+      with its fix beats tightening three paragraphs, even when the tightening reads
+      better. Wording kept identical to book2skill's Phase 1 statement of the same rule,
+      which landed the same day; the two stages state one rule, so they must not drift.
+      Original entry: Its headline finding is that *domain-specific failure knowledge beats
       general advice* — "a rough, narrow skill that encodes one domain-specific failure
       mechanism with an executable fix is MORE valuable than an elegant, well-structured
       skill full of generic best practices." STEP 3 has the agent propose one edit against
