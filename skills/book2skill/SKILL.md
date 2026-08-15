@@ -94,6 +94,24 @@ books/<book-slug>/
 
 Each sub-agent independently reads, extracts, and outputs data to `books/<slug>/candidates/<type>.md`.
 
+**The priority rule, stated verbatim because it decides what survives extraction:**
+
+> Domain-specific failure knowledge over general advice.
+
+> A rough, narrow skill that encodes one domain-specific failure mechanism with an
+> executable fix is MORE valuable than an elegant, well-structured skill full of generic
+> best practices.
+
+**This cuts against the grain of what you are doing, which is why it is here and not in a
+later stage.** You are distilling a *book*, and book prose is the input most likely to yield
+polished, comprehensive-sounding guidance that carries no concrete failure knowledge — the
+second anti-pattern below. An I segment that faithfully rewrites a chapter's framework in
+your own words can be an excellent I segment and still produce a skill that scores badly,
+because the book was written to persuade a reader, not to stop an agent failing.
+
+The Counterexample Extractor is the sub-agent that finds this material; when its output is
+thin, that is a signal about the chapter, not a quota to fill from the other four.
+
 ### Phase 1.5 — Triple Validation Screening
 
 Read `methodology/03-stage1.5-triple-verify.md` and execute the following for each candidate unit:
@@ -112,8 +130,23 @@ For each passed cell, populate `templates/SKILL.md.template`:
 - **I (Interpretation)**: Rewrite the methodology framework in your own words (avoiding simply copying the translation).
 - **A1 (Past Application)**: Case studies used by the author in the book
 - **A2 (Future Trigger)** ★: In what situations would a user need this → the `description` field of a skill.
-- **E (Execution)**: 1-2-3 Executable Steps
-- **B (Boundary)**: When is it inapplicable/Blind spots of the author from Stage 0, the critical stage.
+- **E (Execution)**: 1-2-3 steps, **executable without further interpretation**. "Numbered"
+  is not the bar — a step must name the domain objects, tools or APIs concretely enough to
+  run. *"Decompose into smaller steps"* is a numbered executable step by the old wording and
+  tells an agent nothing; that gap is the whole of dim 5's 17 points.
+  **Where a step has a characteristic failure, state it and what to do instead** — the
+  concrete condition and the causal chain, not a warning. *"The API caps pages at 100; an
+  agent that assumes one response holds everything silently drops rows beyond page 1 — page
+  until the cursor is empty."* This is dim 3, the dimension SkillLens ranks first, and
+  nothing else in RIA-TV++ asks for it: B says what not to do, E says what goes wrong when
+  you do the right thing.
+  State it where a step *has* one, not on every step. A failure mechanism per step would
+  bury the real ones — that is the fourth anti-pattern below, edge-case completionism.
+- **B (Boundary)**: Two jobs, both required. **Scope** — when is it inapplicable, and the
+  author's blind spots from Stage 0. **A high-risk action blacklist** — the specific actions
+  that look correct here and reliably go wrong, stated as prohibitions ("do not …", "never
+  …"). Most authors already write both; the definition, not the practice, was the narrow
+  one. A B segment that only says when the framework does not apply is half a segment.
 
 See `methodology/04-stage2-ria-plus.md` for details.
 
@@ -290,7 +323,19 @@ For each skill, per `methodology/06-stage4-pressure-test.md`:
    skillsaw version >/dev/null 2>&1 || go install github.com/StevenACoffman/skillsaw@latest
    ```
 
-   What `skillsaw` adds on top of the `exegesis` gates, per generated skill:
+   **`skillsaw` does not add scrutiny on top of `exegesis` — for three of its nine
+   dimensions it measures what Stage 2 was supposed to produce.** Dim 3 (failure-mode
+   encoding) and dim 5 (actionable specificity) score the E segment; dim 9
+   (counter-examples) scores the B segment. They are the same rubric those segment
+   definitions were written to, read back.
+
+   So treat a low score there the way Phase 4 already treats a failed `activation` run:
+   **rework Stage 2, do not patch the prose.** A low dim 5 means E's steps were never
+   executable without interpretation; a low dim 3 means no step stated its failure
+   mechanism; a low dim 9 means B carried scope but no action blacklist. Editing the
+   wording until the number moves optimizes the measurement instead of the skill.
+
+   What `skillsaw` runs, per generated skill:
 
    - `skillsaw scan <skill-dir>` — runtime-neutrality gate. book2skill skills MUST
      be agent-agnostic, so this must stay clean; fix any hit before optimizing.
@@ -357,8 +402,10 @@ Stage-0 overview gate, per-skill lint (#2, #3, #5 and #4's presence via
 `--check redlines`), the per-skill test-prompts composition (#4), the
 relationship graph (every `## Related skills` edge must point at a skill that
 exists — `index` drops the others silently, so this is the only place a typo'd
-target surfaces), and INDEX.md staleness. Only #1 (triple verification) is a
-judgment the agent must make.
+target surfaces), and INDEX.md staleness. Two are judgments the agent must make,
+with no command behind them: #1 (triple verification) and #7 (the four
+anti-patterns). Treat an all-green `verify` as silence about those two, not
+approval of them.
 
 A note on reading its output: if a skill's frontmatter is not valid YAML,
 `verify` reports **that** and nothing else about the frontmatter. It will not
@@ -390,6 +437,19 @@ consequences of the same syntax error. Fix the reported line and re-run.
    `New[T](x)` inside a code block are **not** misread as broken links (a false
    positive the retired `uvx skillcheck` produced). Add `--check redlines` (or
    `--check all`) to also enforce the mechanical Quality Red Lines below.
+
+7. **No skill may exhibit SkillLens's four anti-patterns.** These are **judgments, like
+   #1 — no command checks them.** Nothing in `exegesis verify` will fail a skill for any of
+   these today, so read them yourself before finalizing and do not expect a gate to catch
+   what you skip:
+
+   - **Generic process advice** that could apply to any domain.
+   - **Polished guidance without concrete failure knowledge** — the one book prose produces
+     most readily; see the priority rule in Phase 1.
+   - **Abstract principles without executable procedures** — an I segment that never became
+     an E segment.
+   - **Edge-case completionism** instead of the top failure modes. More failure cases is not
+     better; the rare ones bury the common ones.
 
 ## Ecosystem Positioning (Nuwa-Skill / Skillsaw-Skill / Darwin-Skill)
 
