@@ -1,0 +1,75 @@
+<!-- Stage-0 overview. The level-2 (##) headings below are a SCHEMA: `exegesis
+     verify --gates overview books/<slug>/` parses them to enforce the Stage-0
+     quality gate (one-sentence summary; 3–7 skeleton items; ≥5 key terms;
+     ≥3 critique items total). Do NOT rename or renumber these headings, and
+     keep list items as `- ` bullets. This mirrors what `exegesis distill`
+     emits, so hand-authored and generated overviews share one format.
+     Guidance in HTML comments and prose is ignored by the parser. -->
+
+# {{Book Title}} — Book Overview
+
+- **Author:** {{Author}}
+- **Year:** {{Year}}
+- **Genre:** {{Methodology / Biography / Philosophy / Practical Manual / …}}
+
+## One-sentence summary
+
+{{Exactly one sentence capturing what the whole book is about.}}
+
+## Skeleton
+
+<!-- 3–7 primary arguments (Adler step 1). -->
+
+- {{Primary argument 1}}
+- {{Primary argument 2}}
+- {{Primary argument 3}}
+
+**Argument relationship:** {{parallel / progressive / contrast / refutation / layered}}
+
+**Core problem:** {{The question the author set out to answer.}}
+
+## Key terms
+
+<!-- At least 5 terms in the author's own usage (Adler step 2). Keep the
+     "- **Term:** definition (differs from common usage: …)" shape. -->
+
+- **{{term 1}}:** {{author's definition}} (differs from common usage: {{how}})
+- **{{term 2}}:** {{author's definition}} (differs from common usage: {{how}})
+- **{{term 3}}:** {{author's definition}} (differs from common usage: {{how}})
+- **{{term 4}}:** {{author's definition}} (differs from common usage: {{how}})
+- **{{term 5}}:** {{author's definition}} (differs from common usage: {{how}})
+
+## Core propositions
+
+- {{Proposition 1, in your own words}}
+- {{Proposition 2}}
+
+## Era limitations
+
+<!-- Era limitations + Author blind spots + Unproven assumptions must total ≥ 3
+     (Adler step 3). These three lists are the SOLE source of each skill's
+     Boundary (B) section downstream. -->
+
+- {{ … }}
+
+## Author blind spots
+
+- {{ … }}
+
+## Unproven assumptions
+
+- {{ … }}
+
+**Strongest objection:** {{If someone refuted this book, the strongest argument.}}
+
+## Skillable topics
+
+<!-- Candidate topics worth turning into skills (Adler step 4). The final skill
+     count is decided by Phase 1.5 triple verification, not here. -->
+
+- {{Candidate topic 1}}
+- {{Candidate topic 2}}
+
+<!-- Quality gate: run `exegesis verify --gates overview books/<slug>/` — it must
+     pass before Phase 1. Then show this file to the user and get confirmation
+     that the framework is understood correctly. -->

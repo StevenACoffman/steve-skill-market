@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "No conventional-commits type prefix",
+      "passed": false,
+      "evidence": "Subject 'feat(config): ...' uses the feat: prefix."
+    },
+    {
+      "text": "Leads with scope 'config:'",
+      "passed": false,
+      "evidence": "Leads with type 'feat'; scope is parenthetical."
+    },
+    {
+      "text": "Imperative and ~50 chars or fewer",
+      "passed": true,
+      "evidence": "54 chars, imperative 'support'."
+    },
+    {
+      "text": "Body mentions adding YAML support",
+      "passed": true,
+      "evidence": "Body describes .yaml/.yml selection."
+    },
+    {
+      "text": "Does not force a single feature-vs-refactor type label",
+      "passed": false,
+      "evidence": "Explicitly classified the change as 'feat', which is exactly the forced choice the skill avoids."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.4,
+    "passed": 2,
+    "failed": 3,
+    "total": 5
+  }
+}

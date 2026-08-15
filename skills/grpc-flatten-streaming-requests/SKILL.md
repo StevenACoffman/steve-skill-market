@@ -46,7 +46,7 @@ Flattening is a binary-incompatible schema change if deployed clients are alread
 
 ## Related Skills
 
-- **grpc-payload-optimization** — prerequisite for: flattening is step 3 of the 5-step payload optimization sequence; payload-optimization frames when to apply flattening vs. field tag assignment vs. gzip.
+- **grpc-payload-optimization** — depends on: flattening is step 3 of the 5-step payload optimization sequence; payload-optimization frames when to apply flattening vs. field tag assignment vs. gzip.
 - **grpc-fieldmask-partial-updates** — compares: both are streaming bandwidth reduction techniques — flattening reduces request overhead on client-streaming writes; FieldMask reduces response overhead on server-streaming reads; apply both for bidirectional streaming endpoints.
 
 ______________________________________________________________________

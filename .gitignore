@@ -205,24 +205,8 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
-roster/clever
 
-# rostering output files
-roster/*.json
-admin-reports/*.json
-pull-test-results/*.json
-pull-demographics/*.json
-*.pb
 
-# Test results files
-*.csv
-
-# Emulator runtime files (single shared emulator, replaces lockfiles/ pool)
-pkg/gcpapi/datastore/dstest/emulator.lockfile
-pkg/gcpapi/datastore/dstest/emulator.out
-pkg/gcpapi/datastore/dstest/emulator.data/
-# Legacy per-emulator lockfiles (no longer used)
-pkg/gcpapi/datastore/dstest/lockfiles/
 
 # tooling debris we do not want to check in 
 cover.html
@@ -231,12 +215,11 @@ lint.txt
 gha-creds-*.json
 gha-kubeconfig-*
 
-# khanx assets
-khanx/ui/build
 
 # Claude Code — generated skill symlinks (source lives in .agents/skills/)
 .claude/skills/
 
 # Rumdl - markdown linter cache
 .rumdl_cache
-
+# Vale - grammar checker and style lint
+.vale

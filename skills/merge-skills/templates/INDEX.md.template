@@ -1,0 +1,85 @@
+# Merged Skills Index — {{merge-slug}}
+
+**Merge date**: {{DATE}}
+**Source books**: {{N}} books
+
+## Source books
+
+| Book | Author | Slug | Skills scanned |
+|---|---|---|---|
+| *{{Book A Title}}* | {{Author A}} | `{{slug-a}}` | {{N}} |
+| *{{Book B Title}}* | {{Author B}} | `{{slug-b}}` | {{N}} |
+
+---
+
+## Provenance table
+
+| Merged skill | Source A | Source B | Merge type | Status |
+|---|---|---|---|---|
+| [`{{merged-slug-1}}`](./{{merged-slug-1}}/SKILL.md) | `{{slug-a}}/{{skill-a}}` | `{{slug-b}}/{{skill-b}}` | convergence | active |
+
+---
+
+## Cross-book skill graph
+
+```mermaid
+graph LR
+    subgraph "{{Book A Title}}"
+        A_dep[{{dependency-skill-a}}]
+        A_skill[{{skill-a}}]:::superseded
+        A_dep -->|depends-on| A_skill
+    end
+    subgraph "{{Book B Title}}"
+        B_dep[{{dependency-skill-b}}]
+        B_skill[{{skill-b}}]:::superseded
+        B_dep -->|depends-on| B_skill
+    end
+    A_skill -->|superseded-by| M[{{merged-slug-1}}]:::merged
+    B_skill -->|superseded-by| M
+    M -->|depends-on| A_dep
+    M -.->|contrasts-with| B_dep
+
+    classDef merged fill:#c8e6c9,stroke:#388e3c
+    classDef superseded fill:#ffe0b2,stroke:#e65100,stroke-dasharray:4 4
+```
+
+*Dashed border = superseded (retained for audit). Green = active merged skill.*
+
+---
+
+## Dissolved pairs
+
+Pairs detected in Phase 0 but not merged, with their final disposition:
+
+| Pair | Detection reason | Disposition | Link type added |
+|---|---|---|---|
+| `{{skill-a}}` vs `{{skill-b}}` | surface-resemblance | Both retained | `contrasts-with` |
+| `{{skill-c}}` vs `{{skill-d}}` | complementary | Both retained | `composes-with` |
+| `{{skill-e}}` vs `{{skill-f}}` | v4-failed | Both retained | `composes-with` |
+
+---
+
+## Superseded source skills
+
+The following source skills have been superseded by merged skills in this index.
+They are retained for audit purposes and continue to work — the merged skill is preferred.
+
+| Source skill | Superseded by | Since |
+|---|---|---|
+| `{{slug-a}}/{{skill-a}}` | `{{merged-slug-1}}` | {{DATE}} |
+| `{{slug-b}}/{{skill-b}}` | `{{merged-slug-1}}` | {{DATE}} |
+
+---
+
+## Source verification summary
+
+| Pair | R-A status | R-B status | A1-A status | A1-B status | V1–V4 |
+|---|---|---|---|---|---|
+| {{pair-id}} | accurate | drifted-minor (corrected) | verified | verified | all pass |
+
+---
+
+## Notes
+
+{{Any observations about the overall merge — recurring patterns, surprising divergences,
+recommendations for follow-up book2skill runs or additional candidates to investigate.}}

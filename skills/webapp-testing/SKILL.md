@@ -64,13 +64,38 @@ func TestMyPackage(t *testing.T) {
 | `s.AddCleanup(func())`       | Registers a teardown function; runs after each test in LIFO order             |
 | `s.Setenv(key, value)`       | Sets an env var for the duration of the test; restores original on teardown   |
 | `s.Unsetenv(key)`            | Unsets an env var for the duration of the test; restores original on teardown |
-| `s.SkipIfNoGCPCredentials()` | Skips the test if GCP application-default credentials are unavailable         |
 | `s.All(assertions ...bool)`  | Evaluates all assertions; fails fast (`FailNow`) on the first false           |
 | `khantest.TestdataDir()`     | Returns the `testdata/` directory sibling to the calling test file            |
 | `khantest.Run(t, suite)`     | Re-export of `testify/suite.Run` — use instead of importing testify directly  |
 
-`SetupTest` sets `GOOGLE_CLOUD_PROJECT=khan-test` to prevent accidental prod
-calls. `TearDownTest` runs all registered cleanups in reverse order.
+`All` takes the **results** of already-evaluated assertions, not a closure —
+`suite.Assert().Equal(...)` returns a bool:
+
+```go
+s.All(
+	s.Assert().Equal(http.StatusOK, rr.Code),
+	s.Assert().Equal("pong\n", rr.Body.String()))
+```
+
+`SetupSuite` and `SetupTest` both set `GOOGLE_CLOUD_PROJECT=khan-test` to
+prevent accidental prod calls. `TearDownTest` runs all registered cleanups in
+reverse order.
+
+### Running One Suite Method
+
+`go test -run` matches the top-level `Test...` function, not suite methods. To
+run a single method, name both, separated by a slash:
+
+```bash
+# Runs nothing — silently reports ok, "[no tests to run]"
+go test ./services/foo/ -run TestSomething
+
+# Correct
+go test ./services/foo/ -run 'TestMyPackage/TestSomething'
+```
+
+The first form is dangerous: it exits 0, so a mistyped or never-registered
+method looks like a pass.
 
 ______________________________________________________________________
 
@@ -107,6 +132,19 @@ func TestMyPackage(t *testing.T) {
 Datastore, GCS, Pub/Sub, Secrets, Tasks). Any attempt to talk to a real GCP
 service from a test panics.
 
+### Assertion Helpers
+
+`servicetest.Suite` adds three assertions on top of testify's:
+
+| Method                                                            | What It Does                                                                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `s.RequireSomeLogEntryMatches(ctx, messageContains, dataIncludes)` | Asserts some log entry contains the substring and the given `log.Fields`           |
+| `s.RequireNoLogEntryAtLevelOrHigher(ctx, minLogLevel)`             | Asserts nothing was logged at that severity or worse — good for "no errors" checks  |
+| `s.RequireJSONEqual(expected, actual js.Obj)`                      | Compares two `js.Obj` values with `js.Equal`, giving a readable diff on failure     |
+
+The log assertions read from `ctx.Log().(*log.TestLogger).AllEntries()`, so
+they work only under a test context.
+
 ### What `KAContext()` Provides
 
 On first call per test, `KAContext()` initialises a `kacontext.TestContext`
@@ -133,14 +171,14 @@ The context is reset between tests (`kaContext` is cleared in `SetupTest`).
 
 ### Time Travel in Tests
 
-The `Time` entry above means `ctx.Time()` returns a deterministic
-`timectx.AdvancingTimer` rather than the real wall clock. You can advance it or
-freeze it to test time-sensitive logic without `time.Sleep`:
+`timectx.NewAdvancingTimer()` is the constructor, but the type it returns is
+**`*timectx.FakeTimer`** — there is no `AdvancingTimer` type. Assert to
+`*timectx.FakeTimer`, which offers `Now`, `Since`, `Advance` and `Set`:
 
 ```go
 func (s *mySuite) TestExpiredToken() {
 	ctx := s.KAContext()
-	timer := ctx.Time().(*timectx.AdvancingTimer)
+	timer := ctx.Time().(*timectx.FakeTimer)
 
 	// Code under test sets an expiry 30 minutes from now
 	err := createToken(ctx)
@@ -156,39 +194,71 @@ func (s *mySuite) TestExpiredToken() {
 }
 ```
 
+For an absolute instant rather than a delta, use `Set`:
+
+```go
+ctx.Time().(*timectx.FakeTimer).Set(now)
+```
+
+`Timer` is an exported field, so a test may also install its own timer with
+`ctx.Timer = timer` (see "Replacing a Fake Client" below).
+
 Production code must call `ctx.Time().Now()` (never `time.Now()`) for this to
 work. The `timectx.KAContext` interface enforces this at the context boundary.
 
 ### Accessing Test-Specific Methods on Fake Clients
 
-The `KAContext` interfaces expose only the production API. Cast to the concrete
-type to reach test helpers:
-
-```go
-ctx := s.KAContext()
-
-// Access published pub/sub messages
-server := ctx.Pubsub().ServerForTests()
-
-// Run all enqueued Cloud Tasks immediately
-ctx.Tasks().(*taskstest.TestClient).RunAllTasks(ctx)
-
-// Mock a feature flag value
-ctx.FeatureFlags().(*featureflags.TestClient).MockFlagValue("my-flag", true)
-
-// Register a secret value
-ctx.Secrets().(*secrets.TestClient).RegisterSecret(mySecretKey, "test-value")
-```
-
-### Customising the Test Context
-
-Clone and override individual fields for a single test:
+The `KAContext` interfaces expose only the production API. Assert to the
+concrete type to reach test helpers:
 
 ```go
 ctx := s.KAContext().Clone()
-// Set a specific user for this test
-ctx = ctx.WithRequestUser(myTestUser)
+
+// Published pub/sub messages
+server := ctx.Pubsub().ServerForTests()
+
+// Feature flags — assert to the pointer type and check the assertion
+testClient, ok := ctx.FeatureFlags().(*featureflags.TestClient)
+s.Require().True(ok)
+testClient.MockFlagValue("my-flag", true)
+
+// Freeze or advance the clock
+ctx.Time().(*timectx.FakeTimer).Set(now)
 ```
+
+### Replacing a Fake Client
+
+Some clients are exported fields on the context, specifically so tests can swap
+them; the rest are lazily initialised and reachable only through their
+accessor. Construct your own and assign it:
+
+```go
+ctx := s.KAContext().Clone()
+
+// Secrets: build a client, register values, install it
+secretsClient := secrets.NewTestClient()
+secretsClient.RegisterSecret(myServiceSecret, "test-value")
+ctx.SecretsClient = secretsClient
+
+// Tasks: the default client is built with a nil handler and panics when a
+// task runs, so a test that exercises tasks must install its own.
+// RunAllTasks lives on the *server*, reached from the client.
+taskClient := taskstest.NewTestClient(handler)
+ctx.TasksClient = taskClient
+taskServer := taskClient.TestServer()
+s.Require().Len(taskServer.QueuedTasks(), 3)
+s.Require().NoError(taskServer.RunAllTasks(ctx))
+```
+
+| Replaceable by field assignment                                                                                     | Lazily initialised — use the accessor                            |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `Timer`, `Logger`, `HTTPClient`, `SecretsClient`, `PubsubClient`, `TasksClient`, `EmailsClient`, `GraphQLClient`, `SlackClient`, `FastlyClient`, `ServiceDiscoveryClient` | datastore, alloydb, memorystore, GCS, BigQuery, feature flags |
+
+Lazy clients start an emulator or background traffic on first use, which is why
+they are not created up front.
+
+`Clone()` before mutating — it returns a copy, so per-test changes do not leak
+into other tests in the suite.
 
 ______________________________________________________________________
 
@@ -233,7 +303,7 @@ client.
 | `gqltest.Query(ctx, client, operation, vars)`                  | Executes a single `query` operation; returns `js.Obj`                                                        |
 | `gqltest.Mutate(ctx, client, operation, vars)`                 | Executes a single `mutation` operation; returns `js.Obj`                                                     |
 | `gqltest.QueryType(ctx, client, representation, fields, vars)` | Simulates an Apollo Federation `_entities` query for testing resolvers on types that have no top-level query |
-| `gqltest.Enum(value)`                                          | Wraps a string so it is rendered as a GraphQL enum (no quotes) in variables                                  |
+| `gqltest.Enum(value)`                                          | A named string **type**, not a function — converting to it renders the value as a GraphQL enum in variables  |
 
 ### `gqltest.QueryType` — Federation Entity Testing
 

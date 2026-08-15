@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "No conventional-commits type prefix",
+      "passed": false,
+      "evidence": "Subject is 'fix(auth): ...' \u2014 uses the fix: type prefix."
+    },
+    {
+      "text": "Subject is scope-first",
+      "passed": false,
+      "evidence": "Leads with the type 'fix', not the scope."
+    },
+    {
+      "text": "Imperative mood",
+      "passed": true,
+      "evidence": "First word 'reject'."
+    },
+    {
+      "text": "Subject ~50 chars or fewer",
+      "passed": false,
+      "evidence": "61 chars; the fix(auth) prefix consumes subject budget."
+    },
+    {
+      "text": "Blank line between subject and body",
+      "passed": true,
+      "evidence": "Line 2 is blank."
+    },
+    {
+      "text": "Body explains the why (iat vs exp)",
+      "passed": true,
+      "evidence": "Body explains the iat/exp mixup and its effect."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.5,
+    "passed": 3,
+    "failed": 3,
+    "total": 6
+  }
+}

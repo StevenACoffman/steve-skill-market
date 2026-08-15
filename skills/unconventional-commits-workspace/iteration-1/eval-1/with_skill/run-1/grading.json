@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "No conventional-commits type prefix",
+      "passed": true,
+      "evidence": "Subject 'config: support YAML...' \u2014 no feat:/refactor:."
+    },
+    {
+      "text": "Leads with scope 'config:'",
+      "passed": true,
+      "evidence": "Scope 'config' leads the subject."
+    },
+    {
+      "text": "Imperative and ~50 chars or fewer",
+      "passed": true,
+      "evidence": "48 chars, first word 'support'."
+    },
+    {
+      "text": "Body mentions adding YAML support",
+      "passed": true,
+      "evidence": "Body: 'callers can supply .yaml/.yml files as well as .json'."
+    },
+    {
+      "text": "Does not force a single feature-vs-refactor type label",
+      "passed": true,
+      "evidence": "No type label; treats scope as the important thing, mentions dedup as a 'while here' note."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

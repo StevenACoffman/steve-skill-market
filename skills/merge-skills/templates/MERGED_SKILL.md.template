@@ -1,0 +1,185 @@
+---
+name: {{merged-skill-slug}}
+description: >-
+  {{Derived from merged A2 — must be MORE specific than either source A2.
+  Third person. State: when to use, what linguistic signals trigger it, and
+  explicitly: "Use instead of [source-skill-a] or [source-skill-b] when
+  [condition]." ≤1024 characters. Plain text only — no angle-brackets/XML.}}
+tags: [{{unified-tag-1}}, {{unified-tag-2}}]
+---
+
+<!--
+Frontmatter carries ONLY spec-allowed keys (name, description, tags, and
+allowed-tools if the skill runs tools). `name` MUST equal the folder name.
+Merge provenance (type, the two source skills with their books/authors) and
+related-skill links live in the body (## Provenance / ## Related skills) so
+`exegesis lint` passes. Do NOT emit id / title / type / source_skills / related_skills
+as frontmatter keys.
+-->
+
+# {{Merged Skill Title}}
+
+## R — Dual-Citation Reading
+
+> {{Verified verbatim quote from Book A, ≤150 words}}
+>
+> — {{Author A}}, *{{Book A Title}}*, {{Chapter/Page}}
+
+> {{Verified verbatim quote from Book B, ≤150 words}}
+>
+> — {{Author B}}, *{{Book B Title}}*, {{Chapter/Page}}
+
+**Convergence note**: {{2–4 sentences: what both quotes share at the level of
+mechanism, what Book A adds that Book B lacks, what Book B adds that Book A lacks.
+This is the only place the convergence is asserted — it must be earned by Phase 1.5.}}
+
+---
+
+## I — Unified Synthesis
+
+{{8–15 lines. A single framework that subsumes both books' interpretations.
+The reader should understand and apply this methodology without having read either book.
+
+Do NOT write "Author A says X; Author B says Y."
+DO encode genuine divergences as conditionals: "When [context A], the principle
+operates as X; when [context B], it operates as Y."}}
+
+---
+
+## A1 — Cross-Domain Application
+
+### Case 1: {{Case name}} — from *{{Book A Title}}*
+- **Domain**: {{Name it explicitly — this is the generalizability proof}}
+- **Problem**: {{What situation prompted use of this methodology?}}
+- **Application**: {{How was the methodology applied — specific to the E steps}}
+- **Result**: {{What happened}}
+
+### Case 2: {{Case name}} — from *{{Book B Title}}*
+- **Domain**: {{Must differ from Case 1's domain where possible}}
+- **Problem**: {{What situation prompted use of this methodology?}}
+- **Application**: {{How was the methodology applied — specific to the E steps}}
+- **Result**: {{What happened}}
+
+---
+
+## A2 — Trigger Scenarios
+
+{{Identify scenarios where the *merged framing* adds something neither source alone
+provides. These must be MORE specific than either source A2, not the union of both.}}
+
+1. {{Scenario 1 — specific and recognisable}}
+2. {{Scenario 2}}
+3. {{Scenario 3}}
+
+### Language signals
+
+- "{{Phrase that would trigger this skill but not either source skill alone}}"
+- "{{Phrase 2}}"
+- "{{Phrase 3}}"
+
+### Use this instead of source skills when
+
+- Use instead of `{{source-skill-a}}` when: {{condition}}
+- Use instead of `{{source-skill-b}}` when: {{condition}}
+- Use either source skill directly when: {{condition where the merged skill is overkill}}
+
+---
+
+## E — Reconciled Execution
+
+{{Steps derived from E-Reconciliation agent. Agreed steps as-is.
+Disagreed steps as conditionals. One-sided steps with scope notes.
+Must not exceed max(len(E_A), len(E_B)) + 2 steps.}}
+
+1. **{{Step 1}}**
+   - Completion criterion: {{measurable}}
+
+2. **{{Step 2}}**
+   - If {{Book A's context}}: {{Book A's action}}
+   - If {{Book B's context}}: {{Book B's action}}
+   - Completion criterion: {{measurable, or context-specific}}
+   - Stop condition: if {{X}}, jump to step {{N}}
+
+3. **{{Step 3}}**
+   - Completion criterion: {{measurable}}
+
+---
+
+## B — Extended Failure Map
+
+### Part 1 — Failure patterns (from both sources)
+
+- {{Failure mode 1}} *({{Book A}} + {{Book B}})*
+- {{Failure mode 2}} *({{Book A}} only)*
+- {{Failure mode 3}} *({{Book B}} only)*
+
+### Part 2 — Contradictions between sources
+
+{{If Author A warns against X and Author B demonstrates X, surface it here.
+Do not resolve contradictions by picking a winner.}}
+
+- **Contradiction**: {{Author A}} cautions against {{X}}; {{Author B}} demonstrates {{X}}.
+  *This is unresolved — verify your context matches the specific scope each author had in mind.*
+
+*(If no contradictions: "No contradictions found between source failure maps.")*
+
+### Part 3 — Synthesis-specific failure modes
+
+- **Convergence authority trap**: The fact that two authors agree can create false
+  confidence. Verify your situation matches both authors' *contexts*, not just their
+  conclusions. {{Author A}}'s principle applies in {{context A}}; {{Author B}}'s in
+  {{context B}}. These may not be the same as your situation.
+- {{Any additional failure modes arising from the conditional E steps}}
+
+### Easily confused with
+
+- `{{source-skill-a}}` — use when {{narrower condition}}; the merged skill adds
+  value when {{what the merged skill adds}}
+- `{{adjacent-skill}}` — differs because {{contrast}}
+
+---
+
+## Related Skills (Phase 3 fill)
+
+<!-- Reference skills by backticked slug text only — NEVER as
+     [slug](../../path/SKILL.md) file links (those escape the skill directory and
+     fail `exegesis lint`). -->
+
+- supersedes: `{{slug-a}}/{{skill-slug-a}}`, `{{slug-b}}/{{skill-slug-b}}`
+- depends-on: `{{skill-slug}}`
+- contrasts-with: `{{skill-slug}}`
+- composes-with: `{{skill-slug}}`
+
+---
+
+## Provenance
+
+- **Type:** merged skill
+- **Merged from:**
+  - `{{book-slug-a}}/{{source-skill-slug-a}}` — *{{Book A Title}}* by {{Author A}}
+  - `{{book-slug-b}}/{{source-skill-slug-b}}` — *{{Book B Title}}* by {{Author B}}
+
+```yaml
+type: merged-skill
+source_skills:
+  - slug: {{book-slug-a}}/{{source-skill-slug-a}}
+    book: {{Book A Title}}
+    author: {{Author A}}
+    note: {{what this source contributed}}
+  - slug: {{book-slug-b}}/{{source-skill-slug-b}}
+    book: {{Book B Title}}
+    author: {{Author B}}
+    note: {{what this source contributed}}
+```
+
+---
+
+## Audit
+
+- **V1** ✓ — {{one-line evidence}}
+- **V2** ✓ — {{novel scenario tested}}
+- **V3** ✓ — {{what makes the synthesis non-obvious}}
+- **V4** ✓ — {{scenario where merged outperforms both sources}}
+- **Source verification**: R quotes verified {{date}}; A1 cases verified {{date}}
+- **Test pass rate**: {{%}} (see test-prompts.json)
+- **Merge date**: {{DATE}}

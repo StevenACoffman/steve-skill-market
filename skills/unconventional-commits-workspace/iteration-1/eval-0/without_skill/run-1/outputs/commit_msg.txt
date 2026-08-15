@@ -1,0 +1,10 @@
+fix(auth): reject expired JWTs by checking exp instead of iat
+
+Token verification compared the issued-at (`iat`) claim against the
+current time instead of the expiry (`exp`) claim. Because `iat` is
+always in the past for any legitimately issued token, the expiry check
+could never fail and expired tokens were accepted indefinitely. Any
+token that had ever been valid remained usable forever.
+
+Compare `claims["exp"]` against the current time so that tokens are
+rejected once they pass their expiry.

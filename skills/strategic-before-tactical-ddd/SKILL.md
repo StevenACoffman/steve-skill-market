@@ -55,7 +55,6 @@ Event Storming is not the only strategic tool. User Story Mapping, Impact Mappin
 
 ## Related Skills
 
-- **microservices-dont-fix-coupling** — prerequisite for: strategic DDD (Event Storming, Bounded Context mapping) is the specific cure for the distributed monolith problem; run this skill first to provide the boundary analysis that skill requires.
 - **anti-dry-separate-read-write-models** — informs: separate read/write models are a tactical DDD pattern; strategic analysis determines which bounded context owns each model and prevents premature sharing across context boundaries.
 
 ______________________________________________________________________

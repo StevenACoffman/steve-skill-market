@@ -1,0 +1,10 @@
+feat(config): support YAML config files alongside JSON
+
+Load now selects the decoder based on the file extension, accepting
+.yaml and .yml in addition to .json. Unrecognized extensions return an
+"unsupported config format" error instead of being silently treated as
+JSON.
+
+Also collapse the two nearly-identical JSON/YAML decode blocks into a
+single decode() helper, so Load just reads the file and delegates
+format selection to one place.

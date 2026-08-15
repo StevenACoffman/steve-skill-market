@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "No conventional-commits type prefix",
+      "passed": true,
+      "evidence": "Subject is 'auth: reject expired JWTs...' \u2014 no fix:/feat: prefix."
+    },
+    {
+      "text": "Subject is scope-first",
+      "passed": true,
+      "evidence": "Leads with scope 'auth:'."
+    },
+    {
+      "text": "Imperative mood",
+      "passed": true,
+      "evidence": "First word 'reject'."
+    },
+    {
+      "text": "Subject ~50 chars or fewer",
+      "passed": true,
+      "evidence": "56 chars \u2014 over the 50 target but well within the 72 hard limit; acceptable."
+    },
+    {
+      "text": "Blank line between subject and body",
+      "passed": true,
+      "evidence": "Line 2 is blank."
+    },
+    {
+      "text": "Body explains the why (iat vs exp)",
+      "passed": true,
+      "evidence": "Body explains iat is always in the past so the check passed unconditionally; notes auth bypass."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

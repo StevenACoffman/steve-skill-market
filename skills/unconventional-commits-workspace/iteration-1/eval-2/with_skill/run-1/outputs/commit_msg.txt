@@ -1,0 +1,18 @@
+api: add GET /health endpoint
+
+Add a lightweight health check endpoint that returns 200 with a
+{"status":"ok"} JSON body, wired into the router. This gives load
+balancers and uptime monitors a cheap liveness signal that does not
+touch the database or any downstream dependency.
+---
+api/db: rename GetConn to Connect
+
+Rename the connection helper from GetConn() to Connect() and update
+all six call sites across the api package. The new name reads better
+at the call site and matches the verb-first naming used elsewhere in
+the package. Pure rename, no behavior change.
+---
+go.mod: bump jackc/pgx to v5.6.0
+
+Update github.com/jackc/pgx from v5.5.1 to v5.6.0 to pick up upstream
+fixes. No API changes on our side; go.sum updated to match.

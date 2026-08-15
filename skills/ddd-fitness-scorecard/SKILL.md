@@ -57,10 +57,6 @@ The claim that a score over 7 makes a system a "great candidate" does not accoun
 
 ## Related Skills
 
-- **entity-vs-value-object-decision** — prerequisite for: the scorecard determines whether to adopt DDD tactical patterns at all; if the score clears the threshold, entity-vs-value-object-decision is the first tactical modeling tool to reach for.
-- **internal-package-bounded-context-enforcement** — prerequisite for: a positive scorecard result commits the team to bounded contexts; internal-package-bounded-context-enforcement provides the Go structural mechanism to enforce those boundaries.
-- **strong-consistency-across-bounded-contexts** — prerequisite for: DDD adoption implies multiple bounded contexts; the consistency asymmetry rule must be understood before designing inter-context communication.
-- **domain-service-interface-composition** — prerequisite for: the layered domain/application service pattern is only justified by the complexity DDD is adopted to manage; the scorecard establishes that justification.
 
 ______________________________________________________________________
 

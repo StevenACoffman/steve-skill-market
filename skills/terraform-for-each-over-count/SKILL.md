@@ -62,7 +62,7 @@ After the switch, removing "neo" produces a single `destroy` on `aws_iam_user.ex
 
 ## Related Skills
 
-- **terraform-moved-block-refactoring** — prerequisite for: migrating an existing count-based resource to for_each requires moved blocks per instance to avoid destroy/create on all existing infrastructure.
+- **terraform-moved-block-refactoring** — depends on: migrating an existing count-based resource to for_each requires moved blocks per instance to avoid destroy/create on all existing infrastructure.
 - **terraform-module-size-smell** — informs: count-based loops in large modules compound blast radius; switching to for_each is often part of the same refactor that splits a module.
 - **terraform-directory-layout-isolation** — informs: stable for_each keys become especially important when the same module is reused across multiple environment directories.
 

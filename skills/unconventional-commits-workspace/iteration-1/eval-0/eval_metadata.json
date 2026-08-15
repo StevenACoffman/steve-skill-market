@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "auth-bugfix-single-scope",
+  "prompt": "I just fixed a bug in our auth service. Expired JWTs were still being accepted because the check compared the issued-at (`iat`) field instead of the expiry (`exp`) field, so any token that had ever been valid kept working forever. The fixed file is token.py (it lives at services/auth/token.py in the repo). Write me a good git commit message for this change. Save the final commit message to commit_msg.txt.",
+  "assertions": [
+    {"text": "Subject line does NOT start with a conventional-commits type prefix (fix:, feat:, chore:, docs:, refactor:, etc.)"},
+    {"text": "Subject line is scope-first (starts with an area like 'auth:' or 'services/auth:')"},
+    {"text": "Subject line is in imperative mood (e.g. 'Reject'/'Check'/'Compare', not 'Fixed'/'Fixes')"},
+    {"text": "Subject line is roughly 50 characters or fewer"},
+    {"text": "There is a blank line separating the subject from the body"},
+    {"text": "The body explains the why: expired tokens were wrongly accepted because the wrong field (iat vs exp) was compared"}
+  ]
+}

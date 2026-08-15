@@ -1,0 +1,13 @@
+api: add GET /health endpoint
+
+Add a health-check endpoint that returns 200 with a JSON body
+{"status":"ok"} and wire it into the router.
+---
+api/db: rename GetConn() to Connect()
+
+Rename the connection helper for clarity and update all six call
+sites across the api package. Pure rename, no behavior change.
+---
+go.mod: bump github.com/jackc/pgx to v5.6.0
+
+Update pgx from v5.5.1 to v5.6.0.

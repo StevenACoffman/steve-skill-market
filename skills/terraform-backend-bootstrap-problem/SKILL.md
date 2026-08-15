@@ -120,8 +120,7 @@ terraform {
 
 ## Related Skills
 
-- **terraform-directory-layout-isolation** — prerequisite for: file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
-- **terraform-secrets-in-state** — prerequisite for: the S3 bucket created during bootstrap is the same bucket that must be encrypted and access-controlled to protect plaintext secrets in state.
+- **terraform-directory-layout-isolation** — depends on: file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
 
 ______________________________________________________________________
 
