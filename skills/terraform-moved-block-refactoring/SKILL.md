@@ -91,8 +91,6 @@ moved {
 
 ## Related Skills
 
-- **terraform-for-each-over-count** — prerequisite for: count-to-for_each migration requires one moved block per resource instance to map positional keys to identity keys without destroying live resources.
-- **terraform-module-size-smell** — prerequisite for: decomposing a large module into smaller modules changes resource addresses; moved blocks are the mechanism that makes this refactor safe.
 - **terraform-no-cluster-app-same-module** — informs: separating a combined cluster+app module into two modules relocates resource addresses; moved blocks handle the state migration during that split.
 
 ______________________________________________________________________

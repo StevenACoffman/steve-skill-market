@@ -169,3 +169,7 @@ ______________________________________________________________________
 ## Provenance
 
 - **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)
+
+## Related Skills
+
+- depends-on: `grpc-vs-rest-vs-graphql` — only relevant once gRPC has been confirmed as the correct choice for a given boundary.

@@ -161,8 +161,6 @@ gRPC vs. REST vs. GraphQL decision logic itself.
 
 ### Related Skills
 
-- **grpc-not-for-external-apis** — prerequisite for: this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.
-- **grpc-communication-pattern-selection** — prerequisite for: only relevant once gRPC has been confirmed as the correct choice for a given boundary.
 - **grpc-load-balancer-selection** — informs: the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
 
 ______________________________________________________________________

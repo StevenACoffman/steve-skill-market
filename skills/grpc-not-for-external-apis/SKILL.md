@@ -207,3 +207,7 @@ ______________________________________________________________________
 ## Provenance
 
 - **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)
+
+## Related Skills
+
+- depends-on: `grpc-vs-rest-vs-graphql` — this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.

@@ -50,8 +50,6 @@ Business capability decomposition is not always the right granularity. A payment
 
 ## Related Skills
 
-- **grpc-saga-compensation-ordering** — prerequisite for: sagas arise from decomposition; the step sequence, compensation ownership, and orchestrator location all follow directly from which services own which capabilities
-- **grpc-kubernetes-deployment-topology** — prerequisite for: each service in the decomposition maps to one Deployment + ClusterIP Service + Ingress path rule; the topology directly encodes the capability boundaries
 
 ______________________________________________________________________
 

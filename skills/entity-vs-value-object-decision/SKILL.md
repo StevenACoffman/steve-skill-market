@@ -52,8 +52,7 @@ Boyle does not discuss the complication introduced when a value object must be p
 
 ## Related Skills
 
-- **ddd-fitness-scorecard** — prerequisite for: run the scorecard first to confirm DDD adoption is warranted before investing in tactical modeling decisions like entity vs value object.
-- **go-value-object-immutability** — prerequisite for: once this framework classifies a type as a value object, go-value-object-immutability provides the Go-specific implementation mechanics (unexported fields, value receivers, replacement semantics).
+- **ddd-fitness-scorecard** — depends on: run the scorecard first to confirm DDD adoption is warranted before investing in tactical modeling decisions like entity vs value object.
 - **domain-service-interface-composition** — informs: the domain types produced by this classification (entity vs value object) become the method signatures in domain service interfaces.
 
 ______________________________________________________________________

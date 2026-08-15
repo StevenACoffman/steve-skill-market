@@ -86,7 +86,6 @@ The explicit `r.ParseForm()` requirement applies to `application/x-www-form-urle
 
 ## Related Skills
 
-- **letsgo-form-validator** — prerequisite for: explicit `r.ParseForm()` must be called before `app.formDecoder.Decode(&form, r.PostForm)` populates the form struct that the embedded Validator operates on
 - **go-http-service-di-composition** — informs: the `internal/` directory structure (models, validator, assert, mocks) that compiler-enforces encapsulation is established at the same time as the application struct; knowing `internal/` is required to lay out the project correctly
 - **letsgo-db-sentinel-error-translation** — relates: both skills address correct error handling at a layer boundary — this skill at the HTTP input boundary (`ParseForm` errors), that skill at the persistence boundary (driver error translation)
 - **go-http-service-test-strategy** — informs: `internal/assert` and `internal/models/mocks` are compiler-enforced private packages; understanding the `internal/` rule is needed when setting up the test helper layout
