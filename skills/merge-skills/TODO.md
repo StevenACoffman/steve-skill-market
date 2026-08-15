@@ -60,8 +60,31 @@ matching the same triggers where it held two — the dilution the Mission names 
 increased by one, not reduced. The `excluded:` field, the one piece of evidence that
 separates "still has value" from "has none", drives nothing.
 
-- [ ] **Decide a retirement policy for `merged`-state parents.** The three options are
-      spelled out below, in increasing cost.
+- [x] **Decide a retirement policy for `merged`-state parents.** DECIDED 2026-08-15:
+      **Option 2** — a `merged` parent stays in the book tree and leaves the market corpus.
+      Written into Phase 3 step 1, where `superseded-by` is added, as a description of the
+      two trees' existing roles rather than a new mechanism.
+      **The premise this entry argued from is false today, which is why option 2 was
+      cheap.** Measured over the corpus: exactly **one** real merge exists
+      (`go-test-state-driven-table`), and **both its parents are absent from the market
+      corpus** — they live in the book tree, qualified `rednafi/…` and `hashimoto/…`. So
+      "the corpus now holds three skills matching the same triggers" describes nothing that
+      has happened, and option 2 documents what already occurs. This entry asked for exactly
+      that test before building; it has now been run.
+      **Trigger to revisit:** a merge that leaves parent and child both in the market
+      corpus. `skillsaw activation` is the instrument — a fully-subsumed parent competing
+      with its child should surface as false positives, and the claim is untested until it
+      does.
+      Also recorded in the skill: `partial` must not become a way to avoid retirement. If
+      `excluded` is trivial, the honest ledger state is `merged`. And `superseded-by` alone
+      retires nothing — it is a Markdown bullet no runtime parses; the retirement is the
+      publishing decision. The catalog consequence (`verify --registry` reporting a retired
+      parent as unexpected or missing) is called out where the policy is stated.
+      Option 3 (`metadata: {superseded-by: …}`) was rejected for now: legal since the
+      speclint correction, but no agent runtime honours it, so it informs tooling only —
+      the same limitation as the bullet — while requiring discovery changes in both exegesis
+      and skillsaw. It buys nothing over option 2 for a population of zero.
+      The three options as originally spelled out:
 
 **Option 1 — do nothing; document it.** Declare that merge-skills is overlap-extraction
 only and that noise reduction is out of scope. Cheapest, and it makes the Mission

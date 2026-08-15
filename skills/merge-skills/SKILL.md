@@ -272,6 +272,30 @@ See `methodology/06-phase3-zettelkasten-cross-book.md`.
    exegesis link --kind superseded-by --to <merged-skill-slug> books/<slug>/<source-skill>/
    ```
 
+   **Retirement policy for a `merged`-state parent: it stays in the book tree and leaves
+   the market corpus.** The two trees already have different jobs and this is the rule that
+   says so. The book tree is the archive — it carries provenance, source verification, and
+   duty as an input to a later merge run. The market corpus is what an agent actually loads.
+   A parent the ledger marks `merged` has all its key content represented in the child, so
+   leaving it loadable is the dilution the Mission exists to reduce; leaving it *readable*
+   is what the Source Skill Reuse Policy requires. Publishing to the corpus is the only step
+   it drops.
+
+   This keys on the ledger state, so state it accurately: a `partial` parent stays in both
+   trees, because `excluded` names content the child does not carry. If `excluded` is
+   trivial — a sentence, a duplicate example — the honest ledger entry is `merged`, not
+   `partial` with a token remainder. Do not use `partial` to avoid retiring a parent.
+
+   Two consequences to handle rather than discover:
+
+   - **Catalog.** `exegesis verify --registry` checks discovered skills against
+     `expected_skills`. A retired parent must leave the *market corpus* catalog and stay in
+     the book tree's, or `verify` reports it as unexpected on one side or missing on the
+     other.
+   - **`superseded-by` alone does not retire anything.** It is a bullet in a Markdown
+     section no agent runtime parses, so it informs a human reader. The retirement is the
+     publishing decision above, not the link.
+
 2. Link the merged skill back into both source books with `exegesis link` (e.g.
    `--kind composes-with` / `--kind contrasts-with` to a related skill in each book).
 
