@@ -94,7 +94,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Multidimensional Coupling Assessment** — *depends-on* → Coupling assessment identifies tight data-format coupling across N applications; the CDM decision follows as the structural remedy once that coupling is diagnosed.
 - **EDA Coupling Diagnosis** — *depends-on* → EDA coupling diagnosis reveals that data-format coupling persists regardless of channel type; CDM is the pattern that addresses this dimension specifically when N ≥ 3 systems are involved.

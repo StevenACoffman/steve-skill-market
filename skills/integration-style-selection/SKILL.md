@@ -93,7 +93,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Multidimensional Coupling Assessment** — *enables* → Once you select an integration style, coupling assessment maps the precise coupling profile your choice introduces across all 8 dimensions.
 - **EDA Coupling Diagnosis** — *enables* → When you select Messaging as the style, EDA coupling diagnosis verifies which specific coupling dimensions that choice actually reduces (and which it leaves unchanged).

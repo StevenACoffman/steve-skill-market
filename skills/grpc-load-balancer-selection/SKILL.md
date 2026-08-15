@@ -175,7 +175,7 @@ Current gRPC-Go uses `grpc.NewClient`. The load balancing configuration via
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-l4-lb-failure-mode** — compares: this skill is the prescriptive selection framework; grpc-l4-lb-failure-mode is the diagnostic companion for an existing production problem — use this skill for initial design, the other for incident diagnosis.
 - **grpc-observability-three-pillar** — combines: per-pod Prometheus metrics (`grpc_server_handled_total` by pod) are the verification step after any load-balancing fix; run observability setup before or alongside LB changes.

@@ -324,7 +324,7 @@ The `ioutil.TempFile` and `ioutil.ReadFile` calls in the source examples are
 deprecated since Go 1.16. Use `os.CreateTemp`, `os.ReadFile`, and `os.WriteFile`
 in all new code.
 
-### Related Skills
+## Related Skills
 
 - **never-mock-net-conn-use-loopback** (composes-with): The `testConn` helper is a direct application of this contract — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and never returns an error. Both skills are in effect whenever a connection helper is written.
 - **testing-go-public-test-api** (composes-with): Every factory function exported in `testing.go` (e.g., `TestServer(t)`, `TestConfig(t)`) must follow this contract — no error return, `t.Fatalf` internally, cleanup via `t.Cleanup` or returned `func()`. The `testing.go` skill governs location; this skill governs signature.

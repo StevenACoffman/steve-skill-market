@@ -159,7 +159,7 @@ gRPC vs. REST vs. GraphQL decision logic itself.
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-load-balancer-selection** — informs: the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
 

@@ -159,7 +159,7 @@ is slow. This is a production concern not addressed by pattern selection alone.
 - Pipeline stage: Phase 2 (SKILL.md)
 - Version: 0.1.0
 
-### Related Skills
+## Related Skills
 
 - **grpc-vs-rest-vs-graphql** — informs: confirms gRPC is the right protocol before selecting which of its four patterns to use.
 - **grpc-observability-three-pillar** — relates: streaming interceptors must be registered separately from unary interceptors; pattern selection determines which interceptor variants are needed.

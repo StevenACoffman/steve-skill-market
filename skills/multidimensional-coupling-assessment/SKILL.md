@@ -122,7 +122,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Integration Style Selection** — *depends-on* → Style selection identifies which integration approach to use; coupling assessment deepens that decision by quantifying exactly which coupling dimensions each style introduces.
 - **EDA Coupling Diagnosis** — *composes-with* → EDA coupling diagnosis applies the 8-dimension model specifically to event-driven patterns, focusing on the asymmetric topology coupling that Pub-Sub creates; the two skills apply the same vocabulary to overlapping scenarios.

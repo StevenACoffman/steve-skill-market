@@ -96,7 +96,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-### Related Skills
+## Related Skills
 
 - **Queue Control Flow Model** — *depends-on* → The control-flow model identifies who controls the cadence of a pipeline; flow control decision applies once you know whether the active component is a Driver (can slow fetch rate) or a Sender (requires a queue buffer before flow control is possible).
 - **Competing Consumers vs. Dispatcher** — *composes-with* → The number of competing consumers directly affects queue drain rate and therefore the correct flow control threshold; flow control sizing and consumer count are co-determined.
