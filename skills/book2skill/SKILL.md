@@ -97,7 +97,7 @@ Each sub-agent independently reads, extracts, and outputs data to `books/<slug>/
 **The priority rule, stated verbatim because it decides what survives extraction:**
 
 > Domain-specific failure knowledge over general advice.
-
+>
 > A rough, narrow skill that encodes one domain-specific failure mechanism with an
 > executable fix is MORE valuable than an elegant, well-structured skill full of generic
 > best practices.
@@ -192,8 +192,14 @@ Per `methodology/05-stage3-zettelkasten.md`:
 
 2. Add a `## Related skills` section to the end of each SKILL.md, one bullet per
    relationship in the exact form `` - <kind>: `<target-slug>` — <rationale> ``,
-   where `<kind>` is `depends-on`, `contrasts-with`, or `composes-with`. Bullets
-   with any other kind are ignored on read.
+   where `<kind>` is `depends-on`, `contrasts-with`, `composes-with`, or `informs`.
+   Bullets with any other kind are ignored on read. (`superseded-by` is the fifth
+   valid kind, but merge-skills writes it — not this stage.)
+
+   **`depends-on` is the only kind that orders anything**: `index` topologically
+   sorts the learning path on those edges alone. Use `informs` when a skill shapes
+   how another is applied without being needed first — it is directional but carries
+   no ordering, so two skills may inform each other without creating a cycle.
 
    **For a whole book, write one edge table and apply it in a single pass** —
    `link` appends one edge at a time and cold-starting 20+ skills that way means
