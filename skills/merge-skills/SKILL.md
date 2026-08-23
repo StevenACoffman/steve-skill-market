@@ -281,6 +281,20 @@ See `methodology/06-phase3-zettelkasten-cross-book.md`.
    is what the Source Skill Reuse Policy requires. Publishing to the corpus is the only step
    it drops.
 
+   **Generalised 2026-08-23: the market is a curated end product, and the archive is a
+   separate private repository.** The rule above was written for two trees in one place;
+   the same reasoning now separates two repositories. Book distillation and merging happen
+   in the archive, which carries provenance, source verification and reuse-input duty. The
+   market receives only what is meant to be loaded — which is why **23 of 27 merged children
+   are not in it**, and why a merged parent's absence is the policy working rather than an
+   omission.
+   **A curated tree is deliberately incomplete, and its dangling references are not
+   defects.** A market skill naming a target that lives only in the archive is recording
+   provenance, and erasing the reference would destroy the record of where the skill came
+   from. Measured across the market corpus: 7 distinct dangling targets across 13
+   references. They stay; what they must not do is stay *silent*, which is exegesis's side
+   of this — a curated tree should report as incomplete rather than broken.
+
    This keys on the ledger state, so state it accurately: a `partial` parent stays in both
    trees, because `excluded` names content the child does not carry. If `excluded` is
    trivial — a sentence, a duplicate example — the honest ledger entry is `merged`, not
