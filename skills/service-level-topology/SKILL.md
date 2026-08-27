@@ -150,9 +150,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `sli-monitoring-design-maturity`: The topology methodology is the structural scaffold for Stage 3 and Stage 4 SLI design; traversing Offer→Use→Risk→Metrics is how you identify consumer tasks and failures.
-- **composes-with** → `sli-compass`: The topology identifies which SLIs to derive; the compass evaluates how to instrument them and guides the fidelity/granularity investment.
-- **composes-with** → `consumer-journey-org`: The consumer journey is the starting point for the topology's Use section; consumer-journey-org determines which topology to draw, while topology provides the SLI derivation methodology.
+- composes-with: `sli-monitoring-design-maturity` — The topology methodology is the structural scaffold for Stage 3 and Stage 4 SLI design; traversing Offer→Use→Risk→Metrics is how you identify consumer tasks and failures.
+- composes-with: `sli-compass` — The topology identifies which SLIs to derive; the compass evaluates how to instrument them and guides the fidelity/granularity investment.
+- composes-with: `consumer-journey-org` — The consumer journey is the starting point for the topology's Use section; consumer-journey-org determines which topology to draw, while topology provides the SLI derivation methodology.
 
 ______________________________________________________________________
 

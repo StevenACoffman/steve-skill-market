@@ -336,8 +336,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `error-translation-layer-boundaries`: The `Wrap` adapter's error path calls `writeError`/`toStatus` — a single function that maps domain sentinels to wire status codes. That mapping is the wire boundary translation defined by error translation. The two skills together produce handlers with no storage imports and no duplicated error mapping across endpoints.
-- **composes-with** `consumer-side-interface-segregation`: Transport-agnostic service functions eliminate inbound transport coupling (the service accepts domain types, not `http.Request`). Consumer-side interfaces eliminate outbound infrastructure coupling (the service accepts an `Emailer` interface, not a `*sendgrid.Client`). Together they give a service layer with no transport or SDK imports in either direction.
+- composes-with: `error-translation-layer-boundaries` — The `Wrap` adapter's error path calls `writeError`/`toStatus` — a single function that maps domain sentinels to wire status codes. That mapping is the wire boundary translation defined by error translation. The two skills together produce handlers with no storage imports and no duplicated error mapping across endpoints.
+- composes-with: `consumer-side-interface-segregation` — Transport-agnostic service functions eliminate inbound transport coupling (the service accepts domain types, not `http.Request`). Consumer-side interfaces eliminate outbound infrastructure coupling (the service accepts an `Emailer` interface, not a `*sendgrid.Client`). Together they give a service layer with no transport or SDK imports in either direction.
 
 ______________________________________________________________________
 

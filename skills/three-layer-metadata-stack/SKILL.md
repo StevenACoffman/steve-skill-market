@@ -387,8 +387,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `semantic-vocabulary-ladder`: The vocabulary artifact built by the ladder (controlled vocabulary up to ontology) is what fills the semantic metadata layer — this skill defines the architecture; the ladder determines the vocabulary content that goes into it.
-- **composes-with** `context-intent-action-for-ai-models`: The three-layer stack is the required foundation for all data consumers; when the consumer is an AI agent, CIA extends it with Intent and Action layers — the stack must be complete before CIA is layered on top.
+- depends-on: `semantic-vocabulary-ladder` — The vocabulary artifact built by the ladder (controlled vocabulary up to ontology) is what fills the semantic metadata layer — this skill defines the architecture; the ladder determines the vocabulary content that goes into it.
+- composes-with: `context-intent-action-for-ai-models` — The three-layer stack is the required foundation for all data consumers; when the consumer is an AI agent, CIA extends it with Intent and Action layers — the stack must be complete before CIA is layered on top.
 
 ______________________________________________________________________
 

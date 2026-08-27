@@ -153,9 +153,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → `vsi-cargo-culting`: VSI diagnoses the mechanism of prestige-driven adoption; fit-practice is the corrective evaluation framework that determines what would actually fit the context.
-- **composes-with** → `vsi-cargo-culting`: When VSI diagnosis reveals cargo culting, fit-practice provides the four-question framework to extract the underlying wisdom and derive a context-appropriate alternative.
-- **composes-with** → `3ts-premature-optimization`: 3Ts tests whether an optimization is justified in this moment; fit-practice tests whether the approach is appropriate for this context — together they cover both timing and fit.
+- contrasts-with: `vsi-cargo-culting` — VSI diagnoses the mechanism of prestige-driven adoption; fit-practice is the corrective evaluation framework that determines what would actually fit the context.
+- composes-with: `vsi-cargo-culting` — When VSI diagnosis reveals cargo culting, fit-practice provides the four-question framework to extract the underlying wisdom and derive a context-appropriate alternative.
+- composes-with: `3ts-premature-optimization` — 3Ts tests whether an optimization is justified in this moment; fit-practice tests whether the approach is appropriate for this context — together they cover both timing and fit.
 
 ______________________________________________________________________
 

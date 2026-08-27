@@ -52,9 +52,9 @@ Boyle's claim that `internal/` "enforces" the domain boundary is accurate for im
 
 ## Related Skills
 
-- **ddd-fitness-scorecard** — depends on: internal/ enforcement only makes sense once bounded contexts are established; the scorecard confirms the project warrants that architectural investment.
-- **strong-consistency-across-bounded-contexts** — combines: internal/ defines where context lines are drawn structurally; the consistency rule defines what those lines mean at runtime — use both together to design the full bounded-context boundary.
-- **domain-service-interface-composition** — informs: internal/ ensures that domain service interfaces defined inside internal/ are not accidentally exposed as a public API; the composition root in main.go sits outside internal/ and wires concrete implementations in.
+- depends-on: `ddd-fitness-scorecard` — internal/ enforcement only makes sense once bounded contexts are established; the scorecard confirms the project warrants that architectural investment.
+- composes-with: `strong-consistency-across-bounded-contexts` — internal/ defines where context lines are drawn structurally; the consistency rule defines what those lines mean at runtime — use both together to design the full bounded-context boundary.
+- informs: `domain-service-interface-composition` — internal/ ensures that domain service interfaces defined inside internal/ are not accidentally exposed as a public API; the composition root in main.go sits outside internal/ and wires concrete implementations in.
 
 ______________________________________________________________________
 

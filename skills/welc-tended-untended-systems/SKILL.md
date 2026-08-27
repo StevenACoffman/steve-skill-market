@@ -419,7 +419,7 @@ profile), and the mechanisms chosen (which test types, at which layers).
 
 ## Related Skills
 
-- **welc-three-goals-of-testing** — depends-on: the three goals (Quality / Maintenance / Validation) are the justification framework for why different investment levels are warranted; tended-untended-systems applies that framework to decide how much of each goal to fund.
+- depends-on: `welc-three-goals-of-testing` — the three goals (Quality / Maintenance / Validation) are the justification framework for why different investment levels are warranted; tended-untended-systems applies that framework to decide how much of each goal to fund.
 - **welc-legacy-code-change-algorithm** — calibrates: the tended/untended classification determines whether to run the full five-step algorithm (tended systems may justify shortcuts) or to invest in the complete workflow before any change.
 - **welc-characterization-test** — combines-with: tended systems justify full characterization investment as a maintenance mechanism; untended systems make characterization tests urgent and non-negotiable before any change; the classification drives the urgency level.
 - **welc-sprout-wrap-decision** — combines-with: untended systems may only warrant sprout or wrap techniques rather than full test coverage for surrounding legacy code; the tended/untended axis calibrates how far to extend the test safety net.

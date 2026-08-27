@@ -161,8 +161,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `ephemeral-taskforce`: The ETF is the People-dimension execution tool for T-POP; T-POP provides the leader with the Tech/People/Ops/Product context needed to charter and run an ETF effectively.
-- **composes-with** → `fit-practice`: T-POP helps technical leaders identify which practices are appropriate for their context; fit-practice provides the four-question framework to formally evaluate each candidate practice.
+- composes-with: `ephemeral-taskforce` — The ETF is the People-dimension execution tool for T-POP; T-POP provides the leader with the Tech/People/Ops/Product context needed to charter and run an ETF effectively.
+- composes-with: `fit-practice` — T-POP helps technical leaders identify which practices are appropriate for their context; fit-practice provides the four-question framework to formally evaluate each candidate practice.
 
 ______________________________________________________________________
 

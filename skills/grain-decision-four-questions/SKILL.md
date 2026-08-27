@@ -172,9 +172,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `grain-audit-checklist`: Once grain is declared using the four questions, run the audit checklist immediately before production deployment to verify the implementation matches the declaration.
-- **composes-with** `aggregation-workflow-four-steps`: Step 1 of the aggregation workflow — defining the grain identity — must be resolved using this skill before aggregation design can proceed.
-- **composes-with** `synthesis-checklist-cross-form`: Question 4 of the synthesis checklist (target grain) is answered by applying this skill's four questions to the integration anchor entity across all data forms.
+- composes-with: `grain-audit-checklist` — Once grain is declared using the four questions, run the audit checklist immediately before production deployment to verify the implementation matches the declaration.
+- composes-with: `aggregation-workflow-four-steps` — Step 1 of the aggregation workflow — defining the grain identity — must be resolved using this skill before aggregation design can proceed.
+- composes-with: `synthesis-checklist-cross-form` — Question 4 of the synthesis checklist (target grain) is answered by applying this skill's four questions to the integration anchor entity across all data forms.
 
 ______________________________________________________________________
 

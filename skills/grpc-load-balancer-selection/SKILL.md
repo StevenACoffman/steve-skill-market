@@ -177,10 +177,10 @@ Current gRPC-Go uses `grpc.NewClient`. The load balancing configuration via
 
 ## Related Skills
 
-- **grpc-l4-lb-failure-mode** — compares: this skill is the prescriptive selection framework; grpc-l4-lb-failure-mode is the diagnostic companion for an existing production problem — use this skill for initial design, the other for incident diagnosis.
-- **grpc-observability-three-pillar** — combines: per-pod Prometheus metrics (`grpc_server_handled_total` by pod) are the verification step after any load-balancing fix; run observability setup before or alongside LB changes.
-- **grpc-security-credential-composition** — informs: service mesh deployments (the preferred LB option) absorb mTLS at the sidecar layer, removing the need to configure channel credentials in application code.
-- **grpc-vs-rest-vs-graphql** — informs: the internal-vs-external service topology established by the protocol selection skill determines what load-balancing infrastructure is appropriate.
+- contrasts-with: `grpc-l4-lb-failure-mode` — this skill is the prescriptive selection framework; grpc-l4-lb-failure-mode is the diagnostic companion for an existing production problem — use this skill for initial design, the other for incident diagnosis.
+- composes-with: `grpc-observability-three-pillar` — per-pod Prometheus metrics (`grpc_server_handled_total` by pod) are the verification step after any load-balancing fix; run observability setup before or alongside LB changes.
+- informs: `grpc-security-credential-composition` — service mesh deployments (the preferred LB option) absorb mTLS at the sidecar layer, removing the need to configure channel credentials in application code.
+- informs: `grpc-vs-rest-vs-graphql` — the internal-vs-external service topology established by the protocol selection skill determines what load-balancing infrastructure is appropriate.
 
 ______________________________________________________________________
 

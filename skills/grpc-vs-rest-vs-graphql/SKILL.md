@@ -161,7 +161,7 @@ gRPC vs. REST vs. GraphQL decision logic itself.
 
 ## Related Skills
 
-- **grpc-load-balancer-selection** — informs: the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
+- informs: `grpc-load-balancer-selection` — the internal-vs-external decision shapes the load-balancing topology (public L7 proxy vs. internal service mesh).
 
 ______________________________________________________________________
 

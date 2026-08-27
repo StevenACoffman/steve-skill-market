@@ -166,8 +166,8 @@ ______________________________________________________________________
 
 - **welc-legacy-code-change-algorithm** — prerequisite-for: interception point selection is step 2 of the five-step algorithm ("find test points"); it must be executed before any changes are made.
 - **welc-characterization-test** — prerequisite-for: the interception point must be chosen before characterization tests can be written; this skill selects the target, welc-characterization-test provides the writing technique.
-- **welc-seam-model** — depends-on: seams are the candidate interception points; identifying available seams is the prerequisite for evaluating which point to select.
-- **welc-sensing-vs-separation** — depends-on: the axis diagnosis (sensing vs. separation) determines which interception points are viable; if sensing is not yet resolved, no candidate point is observable.
+- depends-on: `welc-seam-model` — seams are the candidate interception points; identifying available seams is the prerequisite for evaluating which point to select.
+- depends-on: `welc-sensing-vs-separation` — the axis diagnosis (sensing vs. separation) determines which interception points are viable; if sensing is not yet resolved, no candidate point is observable.
 
 ______________________________________________________________________
 

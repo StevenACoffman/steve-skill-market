@@ -60,9 +60,9 @@ DRY still applies to behavior. If two command handlers share identical business 
 
 ## Related Skills
 
-- **strategic-before-tactical-ddd** — depends on: Bounded Context analysis determines which read/write model separations are meaningful vs. which are over-engineering; don't separate models before understanding the domain boundaries.
-- **test-layer-architecture-mapping** — informs: separate read and write models produce clearly scoped test targets; command handlers test write models, query handlers test read projections — aligning naturally with the four-layer test taxonomy.
-- **microservices-dont-fix-coupling** — compares: both skills address coupling, but at different granularities — this skill addresses struct-level coupling within a service; microservices coupling is the same problem at service-boundary level.
+- depends-on: `strategic-before-tactical-ddd` — Bounded Context analysis determines which read/write model separations are meaningful vs. which are over-engineering; don't separate models before understanding the domain boundaries.
+- informs: `test-layer-architecture-mapping` — separate read and write models produce clearly scoped test targets; command handlers test write models, query handlers test read projections — aligning naturally with the four-layer test taxonomy.
+- contrasts-with: `microservices-dont-fix-coupling` — both skills address coupling, but at different granularities — this skill addresses struct-level coupling within a service; microservices coupling is the same problem at service-boundary level.
 
 ______________________________________________________________________
 

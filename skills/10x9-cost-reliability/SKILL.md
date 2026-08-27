@@ -134,8 +134,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `slo-definition-calibration-framework`: The 10x/9 rule provides the cost-scaling argument; slo-definition-calibration-framework uses that as one input and adds the consumer-tolerance side to find the calibrated target.
-- **composes-with** → `wardley-pace-slo`: Wardley/Pace classifies the system's evolutionary tier; 10x/9 is the cost-reasoning tool applied when evaluating whether a candidate SLO level within that tier is economically justified.
+- composes-with: `slo-definition-calibration-framework` — The 10x/9 rule provides the cost-scaling argument; slo-definition-calibration-framework uses that as one input and adds the consumer-tolerance side to find the calibrated target.
+- composes-with: `wardley-pace-slo` — Wardley/Pace classifies the system's evolutionary tier; 10x/9 is the cost-reasoning tool applied when evaluating whether a candidate SLO level within that tier is economically justified.
 
 ______________________________________________________________________
 

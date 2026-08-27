@@ -227,7 +227,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `context-cancellation-cause`: Both skills address correct usage of `context.Context` within the same request lifecycle. A middleware layer typically adds both typed value keys (request ID, auth token) via `WithValue` and cancellation tracking via `WithCancelCause`. Typed context keys prevent value shadowing across middleware packages; `WithCancelCause` preserves the specific cancellation reason. Apply both when building request context instrumentation.
+- composes-with: `context-cancellation-cause` — Both skills address correct usage of `context.Context` within the same request lifecycle. A middleware layer typically adds both typed value keys (request ID, auth token) via `WithValue` and cancellation tracking via `WithCancelCause`. Typed context keys prevent value shadowing across middleware packages; `WithCancelCause` preserves the specific cancellation reason. Apply both when building request context instrumentation.
 
 ______________________________________________________________________
 

@@ -124,9 +124,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `toil-six-property-identification-test`, `on-call-sustainability-model`
+- depends-on: `toil-six-property-identification-test` — 
+- depends-on: `on-call-sustainability-model` — 
 - contrasts-with: (traditional ops team headcount-scaling model)
-- composes-with: `error-budget-conflict-resolution`, `embedding-sre-ops-overload-recovery`
+- composes-with: `error-budget-conflict-resolution` — 
+- composes-with: `embedding-sre-ops-overload-recovery` — 
 
 ______________________________________________________________________
 

@@ -139,10 +139,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: toil-six-property-identification-test (Phase 2 fire classification uses the six-property test)
-- depends-on: sli-slo-sla-tier-framework (Phase 3 requires SLO establishment as first action)
-- depends-on: blameless-postmortem-process (Phase 2 includes writing a blameless postmortem to demonstrate the model)
-- contrasts-with: fifty-percent-engineering-time-cap (the cap is the steady-state enforcement mechanism; this is the recovery intervention when the cap has already been violated chronically)
+- depends-on: `toil-six-property-identification-test` — (Phase 2 fire classification uses the six-property test)
+- depends-on: `sli-slo-sla-tier-framework` — (Phase 3 requires SLO establishment as first action)
+- depends-on: `blameless-postmortem-process` — (Phase 2 includes writing a blameless postmortem to demonstrate the model)
+- contrasts-with: `fifty-percent-engineering-time-cap` — (the cap is the steady-state enforcement mechanism; this is the recovery intervention when the cap has already been violated chronically)
 
 ______________________________________________________________________
 

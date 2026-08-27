@@ -402,11 +402,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **welc-seam-model** — composes-with: Step 3 (break dependencies) is executed by locating seams; the seam model is the conceptual tool that makes dependency-breaking tractable and bounded.
-- **welc-sensing-vs-separation** — composes-with: Step 3 uses the sensing/separation two-axis diagnostic to select the correct dependency-breaking technique for each blocking dependency.
-- **welc-characterization-test** — composes-with: Step 4 (write tests) is executed using the characterization test write-fail-observe-pin approach; that skill provides the detailed mechanics of Step 4.
-- **welc-interception-point-selection** — composes-with: Step 2 (find test points) is deepened by interception point selection when multiple change points must be covered efficiently via pinch points.
-- **welc-sprout-wrap-decision** — composes-with: When Steps 3–4 are too risky or expensive for a given episode, sprout/wrap provides a safe alternative for Step 5 that avoids touching untested existing code.
+- composes-with: `welc-seam-model` — Step 3 (break dependencies) is executed by locating seams; the seam model is the conceptual tool that makes dependency-breaking tractable and bounded.
+- composes-with: `welc-sensing-vs-separation` — Step 3 uses the sensing/separation two-axis diagnostic to select the correct dependency-breaking technique for each blocking dependency.
+- composes-with: `welc-characterization-test` — Step 4 (write tests) is executed using the characterization test write-fail-observe-pin approach; that skill provides the detailed mechanics of Step 4.
+- composes-with: `welc-interception-point-selection` — Step 2 (find test points) is deepened by interception point selection when multiple change points must be covered efficiently via pinch points.
+- composes-with: `welc-sprout-wrap-decision` — When Steps 3–4 are too risky or expensive for a given episode, sprout/wrap provides a safe alternative for Step 5 that avoids touching untested existing code.
 - **welc-scratch-refactoring** — precedes: When the codebase is too unfamiliar to identify change points (Step 1), scratch refactoring builds the mental model needed before the algorithm can be entered.
 - **welc-tended-untended-systems** — calibrates: The tended/untended binary determines whether the full algorithm with comprehensive characterization is warranted, or whether a lighter-touch approach is acceptable for the given system.
 

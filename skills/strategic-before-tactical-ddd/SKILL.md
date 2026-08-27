@@ -55,7 +55,7 @@ Event Storming is not the only strategic tool. User Story Mapping, Impact Mappin
 
 ## Related Skills
 
-- **anti-dry-separate-read-write-models** — informs: separate read/write models are a tactical DDD pattern; strategic analysis determines which bounded context owns each model and prevents premature sharing across context boundaries.
+- informs: `anti-dry-separate-read-write-models` — separate read/write models are a tactical DDD pattern; strategic analysis determines which bounded context owns each model and prevents premature sharing across context boundaries.
 
 ______________________________________________________________________
 

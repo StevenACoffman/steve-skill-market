@@ -339,8 +339,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `grain-decision-four-questions`: This checklist requires a declared grain as its input — grain-decision-four-questions is the upstream tool that produces the grain declaration this checklist then validates.
-- **composes-with** `six-aggregation-properties`: Property 1 of the six-aggregation-properties checklist (grain alignment) maps directly to Checks 1 and 2 here; running both pre-deployment closes the full structural validation loop.
+- depends-on: `grain-decision-four-questions` — This checklist requires a declared grain as its input — grain-decision-four-questions is the upstream tool that produces the grain declaration this checklist then validates.
+- composes-with: `six-aggregation-properties` — Property 1 of the six-aggregation-properties checklist (grain alignment) maps directly to Checks 1 and 2 here; running both pre-deployment closes the full structural validation loop.
 
 ______________________________________________________________________
 

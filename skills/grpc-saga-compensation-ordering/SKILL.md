@@ -48,7 +48,7 @@ Sagas guarantee eventual consistency, not strong consistency — there is a wind
 
 ## Related Skills
 
-- **grpc-service-decomposition-by-capability** — depends on: sagas only exist because services are decomposed; the decomposition determines the saga participants, step ordering, and compensation ownership
+- depends-on: `grpc-service-decomposition-by-capability` — sagas only exist because services are decomposed; the decomposition determines the saga participants, step ordering, and compensation ownership
 
 ______________________________________________________________________
 

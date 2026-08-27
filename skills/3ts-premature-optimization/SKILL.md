@@ -154,8 +154,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → `vsi-cargo-culting`: VSI diagnoses prestige-driven adoption decisions; 3Ts diagnoses whether the timing, target, and trade-offs of a specific optimization are sound. They address different root causes of engineering misjudgment.
-- **composes-with** → `fit-practice`: 3Ts validates whether an optimization is justified; fit-practice evaluates whether the approach being optimized fits the context — use together when evaluating both the timing and the fit of a proposed change.
+- contrasts-with: `vsi-cargo-culting` — VSI diagnoses prestige-driven adoption decisions; 3Ts diagnoses whether the timing, target, and trade-offs of a specific optimization are sound. They address different root causes of engineering misjudgment.
+- composes-with: `fit-practice` — 3Ts validates whether an optimization is justified; fit-practice evaluates whether the approach being optimized fits the context — use together when evaluating both the timing and the fit of a proposed change.
 
 ______________________________________________________________________
 

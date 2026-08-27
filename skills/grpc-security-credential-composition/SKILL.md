@@ -196,9 +196,9 @@ This does not affect the credential composition logic.
 
 ## Related Skills
 
-- **grpc-observability-three-pillar** — combines: both skills use server interceptors; security auth validation and observability signals are typically chained in the same `ChainUnaryInterceptor` call — set up together when instrumenting a service.
-- **grpc-load-balancer-selection** — informs: a service mesh (Istio/Linkerd) absorbs mTLS channel credentials transparently; knowing the LB topology determines which credential layer is app-managed vs. mesh-managed.
-- **grpc-not-for-external-apis** — informs: the external boundary pattern (gRPC gateway) changes the TLS termination point; the gateway handles TLS from external clients while internal gRPC traffic uses mTLS separately.
+- composes-with: `grpc-observability-three-pillar` — both skills use server interceptors; security auth validation and observability signals are typically chained in the same `ChainUnaryInterceptor` call — set up together when instrumenting a service.
+- informs: `grpc-load-balancer-selection` — a service mesh (Istio/Linkerd) absorbs mTLS channel credentials transparently; knowing the LB topology determines which credential layer is app-managed vs. mesh-managed.
+- informs: `grpc-not-for-external-apis` — the external boundary pattern (gRPC gateway) changes the TLS termination point; the gateway handles TLS from external clients while internal gRPC traffic uses mTLS separately.
 
 ______________________________________________________________________
 

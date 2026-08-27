@@ -45,8 +45,8 @@ Field tag assignment is a schema design decision that is binary-incompatible onc
 
 ## Related Skills
 
-- **grpc-fieldmask-partial-updates** — combines: FieldMask is step 4 of the 5-step optimization sequence described here; apply fieldmask-partial-updates for the detailed server-side implementation.
-- **grpc-flatten-streaming-requests** — combines: message flattening is step 3 of the same sequence; apply flatten-streaming-requests for the detailed before/after byte count analysis and migration guidance.
+- composes-with: `grpc-fieldmask-partial-updates` — FieldMask is step 4 of the 5-step optimization sequence described here; apply fieldmask-partial-updates for the detailed server-side implementation.
+- composes-with: `grpc-flatten-streaming-requests` — message flattening is step 3 of the same sequence; apply flatten-streaming-requests for the detailed before/after byte count analysis and migration guidance.
 
 ______________________________________________________________________
 

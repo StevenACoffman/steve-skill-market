@@ -248,7 +248,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** `structured-goroutine-lifetime`: Both address correctness problems in concurrent code, but at different levels. The mutex closure pattern makes a compound read-modify-write atomic within one operation — it prevents lost updates the race detector cannot see. Structured goroutine lifetime management controls when goroutines start, stop, and propagate errors — it prevents goroutine leaks and unbounded fan-out. A function can leak goroutines while having perfect mutex discipline; it can have correct lifetime management while losing counter updates. Choose based on whether the problem is in shared memory mutation or goroutine coordination.
+- contrasts-with: `structured-goroutine-lifetime` — Both address correctness problems in concurrent code, but at different levels. The mutex closure pattern makes a compound read-modify-write atomic within one operation — it prevents lost updates the race detector cannot see. Structured goroutine lifetime management controls when goroutines start, stop, and propagate errors — it prevents goroutine leaks and unbounded fan-out. A function can leak goroutines while having perfect mutex discipline; it can have correct lifetime management while losing counter updates. Choose based on whether the problem is in shared memory mutation or goroutine coordination.
 
 ______________________________________________________________________
 

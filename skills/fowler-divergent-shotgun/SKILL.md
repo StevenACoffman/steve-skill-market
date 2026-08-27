@@ -159,7 +159,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `fowler-code-smells`: Divergent Change and Shotgun Surgery are two specific named smells from the code-smells vocabulary. Understanding this skill requires the broader framework: that named smells map structural friction to specific treatments via a sense→name→map→act workflow. The divergent-shotgun skill is a deep-dive into one specific inverse pair within that vocabulary — the "reasons to change" test, the 2×2 diagnostic grid, and the split vs. consolidate treatment sequences. The broader smell vocabulary is the prerequisite context for understanding why these two smells are paired as inverses and how their treatments relate to the full catalog.
+- depends-on: `fowler-code-smells` — Divergent Change and Shotgun Surgery are two specific named smells from the code-smells vocabulary. Understanding this skill requires the broader framework: that named smells map structural friction to specific treatments via a sense→name→map→act workflow. The divergent-shotgun skill is a deep-dive into one specific inverse pair within that vocabulary — the "reasons to change" test, the 2×2 diagnostic grid, and the split vs. consolidate treatment sequences. The broader smell vocabulary is the prerequisite context for understanding why these two smells are paired as inverses and how their treatments relate to the full catalog.
 
 ______________________________________________________________________
 

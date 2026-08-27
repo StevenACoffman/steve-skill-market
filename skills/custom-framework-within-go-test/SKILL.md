@@ -409,7 +409,7 @@ single pluggable system.
 
 ## Related Skills
 
-- **testing-go-public-test-api** (composes-with): The custom harness (`TestCase` struct and `Test(t, tc)` function) needs to be importable by plugin authors in other packages. Publishing it in a `testing.go` file (not `_test.go`) provides that importability. The public test API skill provides the mechanism; this skill provides the structure. The two appear together in every production use of this pattern (e.g., Vault's `logicaltest`).
+- composes-with: `testing-go-public-test-api` — The custom harness (`TestCase` struct and `Test(t, tc)` function) needs to be importable by plugin authors in other packages. Publishing it in a `testing.go` file (not `_test.go`) provides that importability. The public test API skill provides the mechanism; this skill provides the structure. The two appear together in every production use of this pattern (e.g., Vault's `logicaltest`).
 
 ______________________________________________________________________
 

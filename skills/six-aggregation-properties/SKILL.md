@@ -396,8 +396,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `aggregation-workflow-four-steps`: This checklist validates an aggregation that was designed using the four-step workflow — the workflow produces the artifact; this skill confirms it is structurally safe before shipping.
-- **composes-with** `decompose-averages-sum-count`: Properties 3 (Additivity) and 4 (Decomposability) of this checklist are precisely what the decompose rule implements — when those properties fail, that rule provides the structural fix.
+- depends-on: `aggregation-workflow-four-steps` — This checklist validates an aggregation that was designed using the four-step workflow — the workflow produces the artifact; this skill confirms it is structurally safe before shipping.
+- composes-with: `decompose-averages-sum-count` — Properties 3 (Additivity) and 4 (Decomposability) of this checklist are precisely what the decompose rule implements — when those properties fail, that rule provides the structural fix.
 
 ______________________________________________________________________
 

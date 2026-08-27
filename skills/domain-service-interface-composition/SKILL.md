@@ -55,10 +55,10 @@ Boyle's domain service examples are stateless (domain service with injected inte
 
 ## Related Skills
 
-- **ddd-fitness-scorecard** — depends on: the layered domain/application service architecture is tactical DDD overhead; the scorecard confirms it is justified before this pattern is applied.
-- **internal-package-bounded-context-enforcement** — informs: domain service interfaces defined via this pattern belong inside internal/ (enforced by that skill); the composition root in main.go sits outside internal/ and provides the wiring.
-- **strong-consistency-across-bounded-contexts** — informs: the consistency rule determines whether a domain service calls another service directly (within-context, strong consistency) or publishes an event (cross-context, eventual consistency); this choice determines the interface design and composition structure.
-- **go-value-object-immutability** — informs: value objects are the primary types in domain service interface method signatures; their value-type vs pointer-type semantics affect the API contract design.
+- depends-on: `ddd-fitness-scorecard` — the layered domain/application service architecture is tactical DDD overhead; the scorecard confirms it is justified before this pattern is applied.
+- informs: `internal-package-bounded-context-enforcement` — domain service interfaces defined via this pattern belong inside internal/ (enforced by that skill); the composition root in main.go sits outside internal/ and provides the wiring.
+- informs: `strong-consistency-across-bounded-contexts` — the consistency rule determines whether a domain service calls another service directly (within-context, strong consistency) or publishes an event (cross-context, eventual consistency); this choice determines the interface design and composition structure.
+- informs: `go-value-object-immutability` — value objects are the primary types in domain service interface method signatures; their value-type vs pointer-type semantics affect the API contract design.
 
 ______________________________________________________________________
 

@@ -72,8 +72,8 @@ This avoids secrets appearing in `.tfvars` files, CLI arguments, or environment 
 
 ## Related Skills
 
-- **terraform-backend-bootstrap-problem** — depends on: the S3 backend that holds plaintext secrets must be set up before the secrets concern is addressable; the bootstrap skill covers SSE and versioning configuration of that bucket.
-- **terraform-directory-layout-isolation** — combines: per-environment state buckets with separate IAM roles reduce the blast radius of a state file compromise; pair with state bucket encryption for full defense in depth.
+- depends-on: `terraform-backend-bootstrap-problem` — the S3 backend that holds plaintext secrets must be set up before the secrets concern is addressable; the bootstrap skill covers SSE and versioning configuration of that bucket.
+- composes-with: `terraform-directory-layout-isolation` — per-environment state buckets with separate IAM roles reduce the blast radius of a state file compromise; pair with state bucket encryption for full defense in depth.
 
 ______________________________________________________________________
 

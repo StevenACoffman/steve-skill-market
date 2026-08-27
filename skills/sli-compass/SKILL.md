@@ -287,8 +287,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `sli-monitoring-design-maturity`: The stage model must be understood first to know what the SLI should measure; the compass then evaluates how the measurement is collected.
-- **composes-with** → `service-level-topology`: The topology identifies which SLIs to create; the compass evaluates how to instrument them and guides investment toward higher fidelity.
+- depends-on: `sli-monitoring-design-maturity` — The stage model must be understood first to know what the SLI should measure; the compass then evaluates how the measurement is collected.
+- composes-with: `service-level-topology` — The topology identifies which SLIs to create; the compass evaluates how to instrument them and guides investment toward higher fidelity.
 
 ______________________________________________________________________
 

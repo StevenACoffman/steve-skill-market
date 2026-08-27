@@ -389,7 +389,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `six-aggregation-properties`: Properties 3 and 4 of that checklist (Additivity and Decomposability) are the structural justification for this rule — understanding why AVG is non-additive and non-decomposable is the prerequisite for applying the SUM + COUNT fix correctly.
+- depends-on: `six-aggregation-properties` — Properties 3 and 4 of that checklist (Additivity and Decomposability) are the structural justification for this rule — understanding why AVG is non-additive and non-decomposable is the prerequisite for applying the SUM + COUNT fix correctly.
 
 ______________________________________________________________________
 

@@ -283,9 +283,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `slo-definition-calibration-framework`: Use slo-definition-calibration-framework to calibrate each individual tier value (threshold and window) to consumer tolerance and cost before deciding whether multiple tiers are warranted.
-- **contrasts-with** → `composite-slo`: Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They solve different SLO complexity problems and are often applied together.
-- **composes-with** → `sli-formula-measurement`: A well-designed SLI formula (good/valid) must exist before applying multi-tier thresholds or window structures to it.
+- depends-on: `slo-definition-calibration-framework` — Use slo-definition-calibration-framework to calibrate each individual tier value (threshold and window) to consumer tolerance and cost before deciding whether multiple tiers are warranted.
+- contrasts-with: `composite-slo` — Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They solve different SLO complexity problems and are often applied together.
+- composes-with: `sli-formula-measurement` — A well-designed SLI formula (good/valid) must exist before applying multi-tier thresholds or window structures to it.
 
 ______________________________________________________________________
 

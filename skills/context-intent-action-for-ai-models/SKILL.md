@@ -418,7 +418,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `three-layer-metadata-stack`: CIA's Context layer draws from the semantic metadata layer, and its Intent and Action layers annotate the business and semantic layers — the three-layer stack must be present and correct before CIA extensions are meaningful.
+- depends-on: `three-layer-metadata-stack` — CIA's Context layer draws from the semantic metadata layer, and its Intent and Action layers annotate the business and semantic layers — the three-layer stack must be present and correct before CIA extensions are meaningful.
 
 ______________________________________________________________________
 

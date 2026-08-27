@@ -360,10 +360,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `bounded-context-swimlane-detection`: The sequence map produced by discovery feeds directly into swimlane crossing analysis — every department hand-off in the sequence is a candidate bounded context boundary to verify.
-- **composes-with** `process-to-model-translation`: Discovery produces the five-component process description that the four mapping rules of process-to-model-translation require as input — the two skills are strictly sequential.
-- **composes-with** `tacit-knowledge-extraction`: When process documentation is missing or unreliable, the three field-research techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) supply the raw evidence that completes the five-component description.
-- **composes-with** `synthesis-checklist-cross-form`: Questions 1 and 2 of the synthesis checklist (business question and data forms inventory) are answered by the output of business process discovery before cross-form integration design begins.
+- composes-with: `bounded-context-swimlane-detection` — The sequence map produced by discovery feeds directly into swimlane crossing analysis — every department hand-off in the sequence is a candidate bounded context boundary to verify.
+- composes-with: `process-to-model-translation` — Discovery produces the five-component process description that the four mapping rules of process-to-model-translation require as input — the two skills are strictly sequential.
+- composes-with: `tacit-knowledge-extraction` — When process documentation is missing or unreliable, the three field-research techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) supply the raw evidence that completes the five-component description.
+- composes-with: `synthesis-checklist-cross-form` — Questions 1 and 2 of the synthesis checklist (business question and data forms inventory) are answered by the output of business process discovery before cross-form integration design begins.
 
 ______________________________________________________________________
 

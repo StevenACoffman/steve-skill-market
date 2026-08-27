@@ -335,8 +335,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `error-translation-layer-boundaries`: Repository methods are the primary translation point — they catch `sql.ErrNoRows` and return `ErrNotFound` wrapped with `%w`. The repository pattern (DBTX + Store interface) creates the boundary; error translation defines what crosses it. Implement both: a repository that translates errors cleanly.
-- **composes-with** `test-state-not-interactions`: The repository's `Store` interface, once defined, can be backed by a handwritten in-memory fake (`memStore` with a mutex-protected map) for unit tests. Tests then assert on the observable state of the fake — what's in the map after a `Create` call — rather than on which SQL methods were called.
+- composes-with: `error-translation-layer-boundaries` — Repository methods are the primary translation point — they catch `sql.ErrNoRows` and return `ErrNotFound` wrapped with `%w`. The repository pattern (DBTX + Store interface) creates the boundary; error translation defines what crosses it. Implement both: a repository that translates errors cleanly.
+- composes-with: `test-state-not-interactions` — The repository's `Store` interface, once defined, can be backed by a handwritten in-memory fake (`memStore` with a mutex-protected map) for unit tests. Tests then assert on the observable state of the fake — what's in the map after a `Create` call — rather than on which SQL methods were called.
 
 ______________________________________________________________________
 

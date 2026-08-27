@@ -120,7 +120,7 @@ terraform {
 
 ## Related Skills
 
-- **terraform-directory-layout-isolation** — depends on: file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
+- depends-on: `terraform-directory-layout-isolation` — file-layout isolation creates one backend block per environment; the DRY backend configuration strategies in this skill (partial config, Terragrunt) prevent copy-paste drift across those blocks.
 
 ______________________________________________________________________
 

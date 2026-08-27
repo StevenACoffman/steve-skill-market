@@ -257,9 +257,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `repository-unit-of-work`: The repository layer is the primary translation point — storage errors (`sql.ErrNoRows`) become domain sentinels (`ErrNotFound`) inside repository methods. Error translation defines the discipline; the repository pattern creates the boundary where it must be applied.
-- **composes-with** `transport-agnostic-service-functions`: The generic `Wrap` adapter calls `writeError`/`toStatus` to map domain sentinels to HTTP/gRPC status codes — that mapping is the wire boundary translation this skill defines. Transport-agnostic services rely on error translation being in place at both translation points.
-- **depends-on** `domain-driven-package-structure`: Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live in a domain package (`order/`, `user/`) so they have no dependency on storage libraries. Without domain-driven package structure, there is no natural home for sentinels that is independent of the storage driver.
+- composes-with: `repository-unit-of-work` — The repository layer is the primary translation point — storage errors (`sql.ErrNoRows`) become domain sentinels (`ErrNotFound`) inside repository methods. Error translation defines the discipline; the repository pattern creates the boundary where it must be applied.
+- composes-with: `transport-agnostic-service-functions` — The generic `Wrap` adapter calls `writeError`/`toStatus` to map domain sentinels to HTTP/gRPC status codes — that mapping is the wire boundary translation this skill defines. Transport-agnostic services rely on error translation being in place at both translation points.
+- depends-on: `domain-driven-package-structure` — Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live in a domain package (`order/`, `user/`) so they have no dependency on storage libraries. Without domain-driven package structure, there is no natural home for sentinels that is independent of the storage driver.
 
 ______________________________________________________________________
 

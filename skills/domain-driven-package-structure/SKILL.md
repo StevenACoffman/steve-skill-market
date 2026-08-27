@@ -346,8 +346,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `manual-dependency-injection`: Domain-driven package structure determines which packages exist and which direction they import. Manual DI in `cmd/main.go` wires concrete implementations into those packages' interfaces. Domain packages are already decoupled when you reach `cmd/`; constructors compose naturally because technology packages never import domain packages.
-- **composes-with** `error-translation-layer-boundaries`: Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live inside domain packages (`order/`, `user/`) with no imports from storage libraries. Domain-driven structure gives these sentinels a clear, technology-free home, making the `%w`-for-domain / `%v`-for-storage discipline structurally enforceable.
+- composes-with: `manual-dependency-injection` — Domain-driven package structure determines which packages exist and which direction they import. Manual DI in `cmd/main.go` wires concrete implementations into those packages' interfaces. Domain packages are already decoupled when you reach `cmd/`; constructors compose naturally because technology packages never import domain packages.
+- composes-with: `error-translation-layer-boundaries` — Domain sentinel errors (`ErrNotFound`, `ErrConflict`) must live inside domain packages (`order/`, `user/`) with no imports from storage libraries. Domain-driven structure gives these sentinels a clear, technology-free home, making the `%w`-for-domain / `%v`-for-storage discipline structurally enforceable.
 
 ______________________________________________________________________
 

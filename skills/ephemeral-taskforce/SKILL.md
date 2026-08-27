@@ -238,9 +238,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `ownership-trio`: ETF composition requirements follow directly from the Ownership Trio — each member must hold all three elements for their slice of the cross-organizational mission.
-- **contrasts-with** → `consumer-journey-org`: ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries around consumer journeys.
-- **composes-with** → `t-pop`: T-POP provides the ETF leader with the full Tech/People/Operations/Product situational awareness needed to charter and operate the taskforce effectively.
+- depends-on: `ownership-trio` — ETF composition requirements follow directly from the Ownership Trio — each member must hold all three elements for their slice of the cross-organizational mission.
+- contrasts-with: `consumer-journey-org` — ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries around consumer journeys.
+- composes-with: `t-pop` — T-POP provides the ETF leader with the full Tech/People/Operations/Product situational awareness needed to charter and operate the taskforce effectively.
 
 ______________________________________________________________________
 

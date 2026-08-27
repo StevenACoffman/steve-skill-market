@@ -314,8 +314,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `context-cancellation-cause`: Context cancellation is the signal mechanism — `ctx.Done()` tells goroutines to stop. Structured lifetime management is the enforcement mechanism — errgroup/WaitGroup ensures goroutines have actually stopped before the parent returns. Both are needed: cancellation without waiting leaks; waiting without cancellation hangs.
-- **contrasts-with** `mutex-closure-atomic-mutation`: Both address problems that arise from concurrent execution, but at different levels. Goroutine lifetime management controls when goroutines start and stop. The mutex closure pattern makes compound mutations inside a single operation atomic. A function can have correct lifetime management and still have logical mutex races; a function can use the closure pattern and still leak goroutines.
+- composes-with: `context-cancellation-cause` — Context cancellation is the signal mechanism — `ctx.Done()` tells goroutines to stop. Structured lifetime management is the enforcement mechanism — errgroup/WaitGroup ensures goroutines have actually stopped before the parent returns. Both are needed: cancellation without waiting leaks; waiting without cancellation hangs.
+- contrasts-with: `mutex-closure-atomic-mutation` — Both address problems that arise from concurrent execution, but at different levels. Goroutine lifetime management controls when goroutines start and stop. The mutex closure pattern makes compound mutations inside a single operation atomic. A function can have correct lifetime management and still have logical mutex races; a function can use the closure pattern and still leak goroutines.
 
 ______________________________________________________________________
 

@@ -389,7 +389,7 @@ with comments identifying which test case each case serves.
 
 ## Related Skills
 
-- **never-mock-net-conn-use-loopback** (contrasts-with): Both patterns reject shallow, inadequate mocks in favor of real implementations. `TestHelperProcess` rejects OS-level subprocess mocking by re-executing the real test binary. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real loopback TCP pair. Same underlying philosophy — "use a real instance of the thing" — applied to different problem domains (subprocesses vs. networking).
+- contrasts-with: `never-mock-net-conn-use-loopback` — Both patterns reject shallow, inadequate mocks in favor of real implementations. `TestHelperProcess` rejects OS-level subprocess mocking by re-executing the real test binary. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real loopback TCP pair. Same underlying philosophy — "use a real instance of the thing" — applied to different problem domains (subprocesses vs. networking).
 
 ______________________________________________________________________
 
