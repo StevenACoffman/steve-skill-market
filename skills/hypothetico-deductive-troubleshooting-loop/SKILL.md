@@ -112,7 +112,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: four-golden-signals-monitoring (Examine step requires golden signal telemetry)
 - contrasts-with: playbook-as-mttr-reduction (playbook replaces the loop for known failure modes)

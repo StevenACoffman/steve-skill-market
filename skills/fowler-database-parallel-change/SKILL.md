@@ -323,7 +323,7 @@ with hundreds of millions of rows may require online DDL options (e.g., `pt-onli
 `gh-ost`, or `ALGORITHM=INSTANT`) to avoid table locks. The pattern is sound; the operational
 tooling required to execute it safely is not covered.
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - **composes-with** `fowler-branch-by-abstraction`: Both are large-scale incremental migration techniques that spread a change across multiple production releases to keep the system always deployable. They operate in complementary layers: Branch By Abstraction handles the code layer (replacing a library or module behind an abstraction seam across many call sites), while Database Parallel Change handles the schema layer (expanding old and new columns in parallel, migrating data, then contracting the old structure). An ORM replacement that also changes the database schema requires both: Branch By Abstraction to migrate call sites incrementally in code, and expand-contract to migrate the schema safely across deployment boundaries. The key difference is rollback asymmetry — code rollbacks are easy; schema removals are irreversible, which is why database parallel change requires the stabilization period that Branch By Abstraction does not.
 

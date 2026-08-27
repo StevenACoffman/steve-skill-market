@@ -137,7 +137,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: toil-six-property-identification-test (Phase 2 fire classification uses the six-property test)
 - depends-on: sli-slo-sla-tier-framework (Phase 3 requires SLO establishment as first action)

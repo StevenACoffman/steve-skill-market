@@ -122,7 +122,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: `toil-six-property-identification-test`, `on-call-sustainability-model`
 - contrasts-with: (traditional ops team headcount-scaling model)

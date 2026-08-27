@@ -131,7 +131,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: hypothetico-deductive-troubleshooting-loop (playbooks are the encoded output of prior troubleshooting loops; novel incidents require the loop because no playbook exists yet)
 - depends-on: blameless-postmortem-process (postmortem action items are the primary input for creating and updating playbooks)

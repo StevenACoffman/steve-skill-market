@@ -181,7 +181,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: go-beyond-four-tenet-layout — transactions live in tenet 2 subpackages (database adapters)
 - composes-with: go-beyond-three-consumer-error — service methods own both transactions and error translation

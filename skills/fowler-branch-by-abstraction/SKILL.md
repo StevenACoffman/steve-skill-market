@@ -138,7 +138,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - **composes-with** `fowler-database-parallel-change`: Branch By Abstraction handles the code layer of a large-scale migration — replacing a library or module across many call sites using an abstraction seam. Database Parallel Change (expand-contract) handles the schema layer. An ORM replacement that also changes the database schema needs both: Branch By Abstraction to migrate the code call sites incrementally, and Database Parallel Change to migrate the schema across multiple production releases without data loss. They operate in complementary layers and are frequently used together in the same migration project.
 

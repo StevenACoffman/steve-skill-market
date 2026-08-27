@@ -170,7 +170,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: go-beyond-four-tenet-layout — Error type placement in root package follows tenet 1
 - composes-with: go-beyond-service-transaction-boundary — service methods both own transactions and translate errors at the boundary

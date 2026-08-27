@@ -131,7 +131,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - **composes-with** `fowler-two-hats`: Performance sequencing establishes a macro-level order: write well-factored code first (using Two Hats discipline to keep refactoring and feature work separated), then add features, then profile, then tune. Two Hats operates at the session level within each phase; performance sequencing positions those phases in the correct sequence. Together they form a complete picture of disciplined development: separate modes at the micro scale, correct ordering at the macro scale.
 

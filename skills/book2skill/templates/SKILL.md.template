@@ -13,7 +13,7 @@ tags: [{{tag1}}, {{tag2}}]
 <!--
 Frontmatter carries ONLY spec-allowed fields (name, description, tags, and
 allowed-tools when the skill runs tools). Book provenance and related-skill
-links live in the body (## Provenance / ## Related skills) so `exegesis lint` passes.
+links live in the body (## Provenance / ## Related Skills) so `exegesis lint` passes.
 Never add source_book / source_chapter / related_skills / id / title as
 frontmatter keys.
 -->
@@ -108,7 +108,7 @@ Once the skill is activated, the agent should perform the following steps:
 
 ---
 
-## Related skills (Stage 3 Filling)
+## Related Skills
 
 <!-- Reference skills by backticked slug only — NEVER as ../slug/SKILL.md file
      links (those escape the skill directory and fail `exegesis lint`).

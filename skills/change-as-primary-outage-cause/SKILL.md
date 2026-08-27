@@ -128,7 +128,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: four-golden-signals-monitoring (progressive rollout requires monitoring at each stage to detect problems before proceeding)
 - contrasts-with: error-budget-conflict-resolution (error budget governs release policy decisions; change management governs per-release engineering safety)

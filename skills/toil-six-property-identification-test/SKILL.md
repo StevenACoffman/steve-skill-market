@@ -116,7 +116,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: sli-slo-sla-tier-framework (SLO context needed to assess whether a task genuinely affects reliability)
 - contrasts-with: fifty-percent-engineering-time-cap (cap enforces the consequences of toil; this test defines what counts)

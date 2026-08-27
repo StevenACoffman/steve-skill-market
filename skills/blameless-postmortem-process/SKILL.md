@@ -114,7 +114,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - depends-on: `hypothetico-deductive-troubleshooting-loop`
 - contrasts-with: (blame-based accountability models)

@@ -300,7 +300,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
 - **composes-with** `fowler-two-hats`: Opportunistic refactoring governs *when* to enter refactoring mode; Two Hats governs *how* to work while in that mode. Both apply simultaneously in any refactoring session — opportunistic refactoring decides the trigger, Two Hats enforces the separation from feature work during execution.
 
