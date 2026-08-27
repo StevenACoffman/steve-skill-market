@@ -88,4 +88,4 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Pull Complexity Downward** — *composes-with* → Both relocate unavoidable complexity. Apply this skill first: can the error condition be eliminated entirely? If yes, no caller-side handling is needed. If no, apply pull-complexity-downward: absorb the error handling into the module's implementation rather than exposing it to callers.
+- **pull-complexity-downward** — *composes-with* → Both relocate unavoidable complexity. Apply this skill first: can the error condition be eliminated entirely? If yes, no caller-side handling is needed. If no, apply pull-complexity-downward: absorb the error handling into the module's implementation rather than exposing it to callers.

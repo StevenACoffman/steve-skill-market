@@ -99,7 +99,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Architect Elevator** — *depends-on* → The elevator architect needs principles that can survive cross-level scrutiny; the checklist is the mechanism for verifying that principles carry genuine decision-forcing content before they are communicated to either penthouse or engine room.
+- depends-on: `architect-elevator` — The elevator architect needs principles that can survive cross-level scrutiny; the checklist is the mechanism for verifying that principles carry genuine decision-forcing content before they are communicated to either penthouse or engine room.
 - **First-Derivative Thinking** — *precedes* → A team writing cloud principles must understand whether their organization operates in Economies of Scale or Economies of Speed — a principle like "we manage cloud as a fixed-budget line item" would pass none of the six checklist tests once first-derivative thinking is applied.
 - **Lock-In Cost Optimization** — *composes-with* → An architecture principle of "avoid vendor lock-in" is a classic checklist failure (no threshold, no cost model, fails the opposite test); applying both skills together produces a principle that can actually guide decisions.
-- **Multicloud: 5-Option Decision Table** — *precedes* → A sound multicloud strategy requires principles that express the organization's actual driver (availability, autonomy, workload fit); the checklist should be run on any multicloud principles before the 5-option decision is locked in.
+- **multicloud-5-option-decision** — *precedes* → A sound multicloud strategy requires principles that express the organization's actual driver (availability, autonomy, workload fit); the checklist should be run on any multicloud principles before the 5-option decision is locked in.

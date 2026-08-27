@@ -404,7 +404,7 @@ Do NOT invoke when:
 
 The 50% cap is an enforced ceiling on operational work (toil, on-call, interrupt-driven tasks) as a fraction of each SRE's time. It is not a guideline — it is the structural mechanism that prevents SRE from devolving into a conventional ops team. The cap has a specific safety valve: when operational work exceeds 50%, the correct response is to redirect the excess back to the development team, not to hire more SREs. This feedback loop is what creates the incentive for the dev team to fix the reliability problems that generate the operational load.
 
-Key trigger signal: SREs report spending >50% of their time on toil across more than one quarter, or management proposes solving on-call overload by adding headcount.
+Key trigger signal: SREs report spending over 50% of their time on toil across more than one quarter, or management proposes solving on-call overload by adding headcount.
 - **first-derivative-economies-of-speed** — Invoke this skill when you encounter any of the following: - A team argues about cloud savings by comparing per-unit server prices across providers rather than modeling actual consumption over time - An IT organization budgets cloud as a fixed annual line item rather than a variable rate to be managed continuously - A cloud migration is measured by percentage of servers migrated as if that were a proxy for value delivered - Someone asks "how many engineers do we need?" rather than "what delivery rate do we need to achieve?" - A roadmap is structured as projects with start/end dates instead of a continuous delivery pipeline with prioritized throughput - An organization resists per-consumption billing and insists on reserved capacity because "we like to know what we're spending" - A team frames cloud adoption as a one-time transformation project with a target end state - A CIO presents cloud strategy progress by counting servers moved rather than by improvements in deployment frequency o
 - **fit-practice** — Use this skill to evaluate whether an externally-sourced practice, methodology, or technical approach is appropriate for the current context — and to derive a context-specific alternative when it is not. The fit-practice framework replaces the binary "best practice / not best practice" judgment with a four-question evaluation that exposes the conditions required for a practice to work and tests whether those conditions are present.
 
@@ -672,7 +672,7 @@ on "leafwiki", "self-hosted wiki", "LLM wiki", "ingest this source into the
 wiki", "update the wiki", "wiki lint pass", or any request to accumulate/curate
 knowledge as interlinked markdown that a wiki serves and an OKF consumer can
 read. Covers the LeafWiki on-disk layout (sections = folder + index.md, leaf
-pages = <slug>.md, assets/<pageID>/), reserved vs. preservable frontmatter, the
+pages = slug.md, assets/pageID/), reserved vs. preservable frontmatter, the
 edit-then-resync loop (SIGUSR1/SIGHUP), and the exact frontmatter to add so
 pages carry OKF provenance/trust/lifecycle without breaking LeafWiki.
 - **least-privilege-tooling-enforced** — Use this skill when designing or auditing an access control system where the question
@@ -725,7 +725,7 @@ converging evidence from multiple authors, or reduce skill-set noise before
 feeding to darwin-skill.
 
 Trigger signals: "merge these skills", "consolidate overlapping skills",
-"these two skills cover the same thing", "combine books/<slug-a>/ and books/<slug-b>/".
+"these two skills cover the same thing", "combine two books/ output directories".
 
 NOT for: merging skills that are merely related or adjacent (use Zettelkasten
 links instead), merging skills without their source book2skill output directories
@@ -773,7 +773,7 @@ would find unacceptable.
 - An SLO needs to constrain both frequency and duration of incidents simultaneously
 - **multicloud-5-option-decision** — Invoke this skill when you encounter any of the following: - Someone says "we're going multicloud" without specifying which of the five scenarios they intend. - A team is building an abstraction layer to make applications run on any cloud, and you need to evaluate the cost of that decision. - An organization has workloads spread across multiple cloud providers and is trying to decide whether this is intentional or accidental. - Leadership wants "cloud portability" as a hedge against vendor lock-in and you need to evaluate whether that goal justifies the cost. - Different business units are using different cloud providers and you need to decide whether to centralize, formalize, or leave it. - A team is evaluating cloud options and the word "multicloud" is being used to justify native-service avoidance. - You need to explain to a CTO why their stated multicloud ambition is more complex than they realize.
 - **multidimensional-coupling-assessment** — Invoke when someone says "we use messaging, so we're loosely coupled," when evaluating whether to use REST vs. a message queue vs. Pub-Sub, when designing an integration with a system you do not control, when auditing a "decoupled" architecture that keeps causing cascading failures, or when reviewing an event-driven architecture proposal that claims decoupling benefits.
-- **multiwindow-multi-burn-rate-alerting** — Use this skill when configuring SLO-based alerting for any production service. Call it when a team has an SLO but is using naive threshold alerts (error rate > X%), duration-clause alerts (error_rate > X% for 5m), or single-window burn-rate alerts — all of which have documented precision or recall failures.
+- **multiwindow-multi-burn-rate-alerting** — Use this skill when configuring SLO-based alerting for any production service. Call it when a team has an SLO but is using naive threshold alerts (error rate above a fixed percentage), duration-clause alerts (the same, sustained for 5m), or single-window burn-rate alerts — all of which have documented precision or recall failures.
 
 Trigger scenarios: an alert fires hours after an incident resolved (false positive), a service bleeds 35% of error budget from intermittent spikes without paging anyone (false negative), or a team asks "how should we configure our SLO alerts in Prometheus/Datadog/Grafana?"
 
@@ -1261,8 +1261,8 @@ webapp's overriding rules, polish the write-up with `rumdl` and vale, and post t
 file-and-line findings as inline GitHub review comments.
 
 Trigger signals:
-- "review PR <n> in webapp"
-- "review the changes on <branch> from the merge base of <deploy branch>"
+- "review PR 1234 in webapp"
+- "review the changes on a branch from the merge base of its deploy branch"
 - "post that review as comments on the PR"
 - Any webapp code review that should end up on GitHub rather than in chat
 - **webapp-tasks** — Use when writing Go code in github.com/Khan/webapp that creates or handles
@@ -1624,13 +1624,23 @@ graph TD
   anti-dry-separate-read-write-models -->|contrasts-with| microservices-dont-fix-coupling
   anti-dry-separate-read-write-models -->|depends-on| strategic-before-tactical-ddd
   anti-dry-separate-read-write-models -->|informs| test-layer-architecture-mapping
+  architect-elevator -->|composes-with| principles-quality-checklist
+  batch-vs-stream-processing-selection -->|depends-on| system-of-record-vs-derived-data
   blameless-postmortem-process -->|depends-on| hypothetico-deductive-troubleshooting-loop
   bounded-context-swimlane-detection -->|composes-with| semantic-vocabulary-ladder
   bounded-context-swimlane-detection -->|depends-on| business-process-discovery
+  breakglass-design -->|composes-with| zero-touch-production
+  breakglass-design -->|contrasts-with| fail-safe-vs-fail-secure
+  breakglass-design -->|depends-on| least-privilege-tooling-enforced
   business-process-discovery -->|composes-with| bounded-context-swimlane-detection
   business-process-discovery -->|composes-with| process-to-model-translation
   business-process-discovery -->|composes-with| synthesis-checklist-cross-form
   business-process-discovery -->|composes-with| tacit-knowledge-extraction
+  canary-as-error-budget-arithmetic -->|composes-with| multiwindow-multi-burn-rate-alerting
+  canary-as-error-budget-arithmetic -->|contrasts-with| configuration-hermeticity-framework
+  canonical-data-model-decision -->|depends-on| eda-coupling-diagnosis
+  canonical-data-model-decision -->|depends-on| integration-style-selection
+  canonical-data-model-decision -->|depends-on| multidimensional-coupling-assessment
   change-as-primary-outage-cause -->|composes-with| blameless-postmortem-process
   change-as-primary-outage-cause -->|composes-with| hypothetico-deductive-troubleshooting-loop
   cli-configuration-hierarchy -->|composes-with| cli-interface-stability
@@ -1639,9 +1649,21 @@ graph TD
   cli-interface-stability -->|composes-with| cli-configuration-hierarchy
   cli-interface-stability -->|composes-with| cli-destructive-confirmation-tiers
   cli-secret-handling -->|composes-with| cli-configuration-hierarchy
+  climax-cli-scaffold -->|composes-with| go-http-service-di-composition
+  clock-skew-ordering-hazard -->|composes-with| fencing-tokens-distributed-locks
+  clock-skew-ordering-hazard -->|contrasts-with| consistency-model-selection
+  competing-consumers-vs-dispatcher -->|composes-with| messaging-observability-design
+  competing-consumers-vs-dispatcher -->|composes-with| queue-flow-control-decision
+  competing-consumers-vs-dispatcher -->|depends-on| multidimensional-coupling-assessment
+  competing-consumers-vs-dispatcher -->|depends-on| queue-control-flow-model
   composite-slo -->|composes-with| responsibility-control-slo
   composite-slo -->|contrasts-with| multi-tier-slo
   composite-slo -->|depends-on| sli-formula-measurement
+  configuration-hermeticity-framework -->|composes-with| nalsd-iterative-design-methodology
+  configuration-hermeticity-framework -->|contrasts-with| canary-as-error-budget-arithmetic
+  consistency-model-selection -->|composes-with| timeliness-vs-integrity-distinction
+  consistency-model-selection -->|contrasts-with| transaction-isolation-level-selection
+  consistency-model-selection -->|depends-on| replication-topology-selection
   consumer-journey-org -->|composes-with| service-level-topology
   consumer-journey-org -->|contrasts-with| ephemeral-taskforce
   consumer-journey-org -->|depends-on| ownership-trio
@@ -1649,7 +1671,12 @@ graph TD
   context-cancellation-cause -->|composes-with| structured-goroutine-lifetime
   context-intent-action-for-ai-models -->|depends-on| three-layer-metadata-stack
   context-key-collision-prevention -->|composes-with| context-cancellation-cause
+  continuous-fuzzing-strategy -->|composes-with| secure-by-construction-apis
+  continuous-fuzzing-strategy -->|depends-on| tcb-identification-minimization
   custom-framework-within-go-test -->|composes-with| testing-go-public-test-api
+  cynefin-pm-domain-identification -->|composes-with| four-forces-situational-assessment
+  cynefin-pm-domain-identification -->|composes-with| project-complexity-source-diagnosis
+  cynefin-pm-domain-identification -->|contrasts-with| requisite-variety-gap-assessment
   decompose-averages-sum-count -->|depends-on| six-aggregation-properties
   degradation-disruption -->|composes-with| multi-tier-slo
   degradation-disruption -->|contrasts-with| fallback-failover
@@ -1660,9 +1687,14 @@ graph TD
   domain-service-interface-composition -->|informs| go-value-object-immutability
   domain-service-interface-composition -->|informs| internal-package-bounded-context-enforcement
   domain-service-interface-composition -->|informs| strong-consistency-across-bounded-contexts
+  eda-coupling-diagnosis -->|composes-with| multidimensional-coupling-assessment
+  eda-coupling-diagnosis -->|depends-on| integration-style-selection
   embedding-sre-ops-overload-recovery -->|contrasts-with| fifty-percent-engineering-time-cap
   embedding-sre-ops-overload-recovery -->|depends-on| blameless-postmortem-process
   embedding-sre-ops-overload-recovery -->|depends-on| toil-six-property-identification-test
+  emergence-conditions-audit -->|composes-with| governance-model-adequacy-test
+  emergence-conditions-audit -->|composes-with| program-governance-ecological-design
+  emergence-conditions-audit -->|contrasts-with| sv-trend-diagnostic
   emergent-properties -->|composes-with| ioc-ai-systems
   emergent-properties -->|composes-with| multi-agent-reliability
   entity-vs-value-object-decision -->|depends-on| ddd-fitness-scorecard
@@ -1673,13 +1705,23 @@ graph TD
   error-translation-layer-boundaries -->|composes-with| repository-unit-of-work
   error-translation-layer-boundaries -->|composes-with| transport-agnostic-service-functions
   error-translation-layer-boundaries -->|depends-on| domain-driven-package-structure
+  fail-safe-vs-fail-secure -->|composes-with| security-as-emergent-property
+  fail-safe-vs-fail-secure -->|contrasts-with| breakglass-design
+  fail-safe-vs-fail-secure -->|depends-on| tcb-identification-minimization
   fallback-failover -->|composes-with| composite-slo
   fallback-failover -->|depends-on| degradation-disruption
+  fencing-tokens-distributed-locks -->|composes-with| clock-skew-ordering-hazard
+  fencing-tokens-distributed-locks -->|contrasts-with| consistency-model-selection
   fifty-percent-engineering-time-cap -->|composes-with| embedding-sre-ops-overload-recovery
   fifty-percent-engineering-time-cap -->|depends-on| toil-six-property-identification-test
+  first-derivative-economies-of-speed -->|composes-with| architect-elevator
+  first-derivative-economies-of-speed -->|composes-with| value-gap-migration-metrics
   fit-practice -->|composes-with| 3ts-premature-optimization
   fit-practice -->|composes-with| vsi-cargo-culting
   fit-practice -->|contrasts-with| vsi-cargo-culting
+  four-forces-situational-assessment -->|composes-with| cynefin-pm-domain-identification
+  four-forces-situational-assessment -->|composes-with| jagged-frontier-work-allocation
+  four-forces-situational-assessment -->|composes-with| project-complexity-source-diagnosis
   four-types-of-time -->|composes-with| synthesis-checklist-cross-form
   four-types-of-time -->|composes-with| temporal-depth-selection
   fowler-branch-by-abstraction -->|composes-with| fowler-database-parallel-change
@@ -1702,13 +1744,16 @@ graph TD
   go-beyond-three-consumer-error -->|depends-on| go-beyond-four-tenet-layout
   go-value-object-immutability -->|depends-on| entity-vs-value-object-decision
   go-value-object-immutability -->|informs| domain-service-interface-composition
+  governance-model-adequacy-test -->|composes-with| emergence-conditions-audit
+  governance-model-adequacy-test -->|contrasts-with| requisite-variety-gap-assessment
+  governance-variety-lever-selection -->|composes-with| cynefin-pm-domain-identification
+  governance-variety-lever-selection -->|depends-on| requisite-variety-gap-assessment
   grain-audit-checklist -->|composes-with| six-aggregation-properties
   grain-audit-checklist -->|depends-on| grain-decision-four-questions
   grain-decision-four-questions -->|composes-with| aggregation-workflow-four-steps
   grain-decision-four-questions -->|composes-with| grain-audit-checklist
   grain-decision-four-questions -->|composes-with| synthesis-checklist-cross-form
   grpc-communication-pattern-selection -->|depends-on| grpc-vs-rest-vs-graphql
-  grpc-communication-pattern-selection -->|informs| grpc-vs-rest-vs-graphql
   grpc-fieldmask-partial-updates -->|contrasts-with| grpc-flatten-streaming-requests
   grpc-fieldmask-partial-updates -->|depends-on| grpc-payload-optimization
   grpc-flatten-streaming-requests -->|contrasts-with| grpc-fieldmask-partial-updates
@@ -1720,7 +1765,6 @@ graph TD
   grpc-load-balancer-selection -->|informs| grpc-security-credential-composition
   grpc-load-balancer-selection -->|informs| grpc-vs-rest-vs-graphql
   grpc-not-for-external-apis -->|depends-on| grpc-vs-rest-vs-graphql
-  grpc-not-for-external-apis -->|informs| grpc-security-credential-composition
   grpc-payload-optimization -->|composes-with| grpc-fieldmask-partial-updates
   grpc-payload-optimization -->|composes-with| grpc-flatten-streaming-requests
   grpc-saga-compensation-ordering -->|depends-on| grpc-service-decomposition-by-capability
@@ -1734,6 +1778,10 @@ graph TD
   internal-package-bounded-context-enforcement -->|informs| domain-service-interface-composition
   ioc-ai-systems -->|composes-with| multi-agent-reliability
   ioc-ai-systems -->|depends-on| emergent-properties
+  jagged-frontier-work-allocation -->|composes-with| four-forces-situational-assessment
+  least-privilege-tooling-enforced -->|composes-with| breakglass-design
+  least-privilege-tooling-enforced -->|composes-with| multi-party-authorization
+  least-privilege-tooling-enforced -->|depends-on| tcb-identification-minimization
   letsgo-db-sentinel-error-translation -->|depends-on| go-http-service-di-composition
   letsgo-db-sentinel-error-translation -->|informs| letsgo-form-validator
   letsgo-db-sentinel-error-translation -->|informs| letsgo-session-token-renewal
@@ -1747,60 +1795,128 @@ graph TD
   letsgo-session-token-renewal -->|informs| letsgo-form-validator
   letsgo-template-safe-render -->|composes-with| letsgo-form-validator
   letsgo-template-safe-render -->|depends-on| go-http-service-di-composition
+  lock-in-cost-optimization -->|composes-with| multicloud-5-option-decision
+  lock-in-cost-optimization -->|composes-with| principles-quality-checklist
+  lock-in-cost-optimization -->|contrasts-with| enterprise-non-cloud-diagnostic
+  lock-in-cost-optimization -->|depends-on| architect-elevator
   manual-dependency-injection -->|composes-with| option-configuration-patterns
   manual-dependency-injection -->|depends-on| domain-driven-package-structure
   matryer-getenv-injection -->|depends-on| matryer-run-function
   matryer-waitfor-ready -->|depends-on| matryer-run-function
+  messaging-observability-design -->|composes-with| queue-control-flow-model
+  messaging-observability-design -->|depends-on| integration-style-selection
   microservices-dont-fix-coupling -->|contrasts-with| anti-dry-separate-read-write-models
   microservices-dont-fix-coupling -->|depends-on| strategic-before-tactical-ddd
   ml-data-pipeline-type-integrity -->|composes-with| ml-simplest-model-baseline-first
   ml-simplest-model-baseline-first -->|composes-with| ml-data-pipeline-type-integrity
   multi-agent-reliability -->|composes-with| ioc-ai-systems
   multi-agent-reliability -->|depends-on| emergent-properties
+  multi-party-authorization -->|composes-with| supply-chain-binary-provenance
+  multi-party-authorization -->|composes-with| zero-touch-production
+  multi-party-authorization -->|depends-on| least-privilege-tooling-enforced
   multi-tier-slo -->|composes-with| sli-formula-measurement
   multi-tier-slo -->|contrasts-with| composite-slo
+  multicloud-5-option-decision -->|depends-on| architect-elevator
+  multicloud-5-option-decision -->|depends-on| principles-quality-checklist
+  multidimensional-coupling-assessment -->|composes-with| eda-coupling-diagnosis
+  multidimensional-coupling-assessment -->|depends-on| integration-style-selection
+  multiwindow-multi-burn-rate-alerting -->|composes-with| slo-stakeholder-negotiation-gate
+  multiwindow-multi-burn-rate-alerting -->|contrasts-with| slo-decision-matrix
   mutex-closure-atomic-mutation -->|contrasts-with| structured-goroutine-lifetime
+  nalsd-iterative-design-methodology -->|contrasts-with| overload-recovery-sequencing
   never-mock-net-conn-use-loopback -->|composes-with| test-helper-contract
   never-mock-net-conn-use-loopback -->|contrasts-with| test-helper-process-subprocess-mock
   option-configuration-patterns -->|composes-with| manual-dependency-injection
+  overload-recovery-sequencing -->|composes-with| slo-decision-matrix
+  overload-recovery-sequencing -->|contrasts-with| nalsd-iterative-design-methodology
   ownership-trio -->|composes-with| ephemeral-taskforce
   ownership-trio -->|composes-with| responsibility-control-slo
   playbook-as-mttr-reduction -->|depends-on| blameless-postmortem-process
   playbook-as-mttr-reduction -->|depends-on| hypothetico-deductive-troubleshooting-loop
   power-interest-grid-stakeholders -->|composes-with| productland-vs-enterpriseland-selling
   power-interest-grid-stakeholders -->|composes-with| tacit-knowledge-extraction
+  principles-quality-checklist -->|depends-on| architect-elevator
   process-to-model-translation -->|composes-with| temporal-depth-selection
   process-to-model-translation -->|depends-on| business-process-discovery
   productland-vs-enterpriseland-selling -->|composes-with| power-interest-grid-stakeholders
+  program-governance-ecological-design -->|composes-with| emergence-conditions-audit
+  program-governance-ecological-design -->|informs| sv-trend-diagnostic
+  project-complexity-source-diagnosis -->|composes-with| cynefin-pm-domain-identification
+  project-complexity-source-diagnosis -->|composes-with| four-forces-situational-assessment
+  queue-control-flow-model -->|depends-on| integration-style-selection
+  queue-flow-control-decision -->|depends-on| integration-style-selection
+  queue-flow-control-decision -->|depends-on| messaging-observability-design
+  queue-flow-control-decision -->|depends-on| queue-control-flow-model
+  recovery-design-masvn -->|composes-with| breakglass-design
+  recovery-design-masvn -->|depends-on| supply-chain-binary-provenance
+  replication-lag-as-correctness -->|composes-with| timeliness-vs-integrity-distinction
+  replication-lag-as-correctness -->|contrasts-with| transaction-isolation-level-selection
+  replication-lag-as-correctness -->|depends-on| replication-topology-selection
+  replication-topology-selection -->|composes-with| consistency-model-selection
+  replication-topology-selection -->|composes-with| fencing-tokens-distributed-locks
+  replication-topology-selection -->|contrasts-with| replication-lag-as-correctness
+  replication-topology-selection -->|contrasts-with| sharding-strategy-selection
   repository-unit-of-work -->|composes-with| error-translation-layer-boundaries
+  requisite-variety-gap-assessment -->|contrasts-with| cynefin-pm-domain-identification
+  requisite-variety-gap-assessment -->|contrasts-with| governance-model-adequacy-test
   responsibility-control-slo -->|composes-with| composite-slo
   responsibility-control-slo -->|depends-on| ownership-trio
+  robustness-resilience-antifragility -->|composes-with| architect-elevator
+  robustness-resilience-antifragility -->|depends-on| enterprise-non-cloud-diagnostic
+  secure-by-construction-apis -->|composes-with| continuous-fuzzing-strategy
+  secure-by-construction-apis -->|depends-on| tcb-identification-minimization
+  security-as-emergent-property -->|composes-with| tcb-identification-minimization
+  security-as-emergent-property -->|contrasts-with| fail-safe-vs-fail-secure
   semantic-vocabulary-ladder -->|composes-with| bounded-context-swimlane-detection
   semantic-vocabulary-ladder -->|composes-with| synthesis-checklist-cross-form
   semantic-vocabulary-ladder -->|composes-with| three-layer-metadata-stack
   service-level-topology -->|composes-with| consumer-journey-org
   service-level-topology -->|composes-with| sli-compass
+  sharding-strategy-selection -->|composes-with| consistency-model-selection
+  sharding-strategy-selection -->|contrasts-with| replication-topology-selection
+  sharding-strategy-selection -->|depends-on| storage-engine-workload-selection
   six-aggregation-properties -->|composes-with| decompose-averages-sum-count
   six-aggregation-properties -->|depends-on| aggregation-workflow-four-steps
   sli-compass -->|composes-with| service-level-topology
   sli-formula-measurement -->|composes-with| composite-slo
   sli-formula-measurement -->|composes-with| degradation-disruption
   sli-formula-measurement -->|composes-with| multi-tier-slo
+  slo-consequences-governance-principle -->|composes-with| slo-decision-matrix
+  slo-consequences-governance-principle -->|depends-on| slo-stakeholder-negotiation-gate
+  slo-decision-matrix -->|composes-with| multiwindow-multi-burn-rate-alerting
+  slo-decision-matrix -->|depends-on| slo-stakeholder-negotiation-gate
+  slo-stakeholder-negotiation-gate -->|contrasts-with| slo-decision-matrix
+  slo-stakeholder-negotiation-gate -->|depends-on| slo-consequences-governance-principle
+  sre-team-lifecycle-tuckman -->|composes-with| overload-recovery-sequencing
+  sre-team-lifecycle-tuckman -->|composes-with| slo-consequences-governance-principle
+  sre-team-lifecycle-tuckman -->|contrasts-with| overload-recovery-sequencing
+  storage-engine-workload-selection -->|composes-with| sharding-strategy-selection
+  storage-engine-workload-selection -->|composes-with| system-of-record-vs-derived-data
   strategic-before-tactical-ddd -->|informs| anti-dry-separate-read-write-models
   strong-consistency-across-bounded-contexts -->|composes-with| internal-package-bounded-context-enforcement
   strong-consistency-across-bounded-contexts -->|depends-on| ddd-fitness-scorecard
   strong-consistency-across-bounded-contexts -->|informs| domain-service-interface-composition
   structured-goroutine-lifetime -->|composes-with| context-cancellation-cause
   structured-goroutine-lifetime -->|contrasts-with| mutex-closure-atomic-mutation
+  supply-chain-binary-provenance -->|composes-with| recovery-design-masvn
+  supply-chain-binary-provenance -->|composes-with| zero-touch-production
+  supply-chain-binary-provenance -->|depends-on| multi-party-authorization
+  sv-trend-diagnostic -->|contrasts-with| emergence-conditions-audit
+  sv-trend-diagnostic -->|informs| program-governance-ecological-design
   synthesis-checklist-cross-form -->|composes-with| bounded-context-swimlane-detection
   synthesis-checklist-cross-form -->|composes-with| semantic-vocabulary-ladder
   synthesis-checklist-cross-form -->|depends-on| business-process-discovery
   synthesis-checklist-cross-form -->|depends-on| four-types-of-time
   synthesis-checklist-cross-form -->|depends-on| grain-decision-four-questions
+  system-of-record-vs-derived-data -->|composes-with| batch-vs-stream-processing-selection
+  system-of-record-vs-derived-data -->|composes-with| consistency-model-selection
+  system-of-record-vs-derived-data -->|contrasts-with| replication-topology-selection
   t-pop -->|composes-with| ephemeral-taskforce
   t-pop -->|composes-with| fit-practice
   tacit-knowledge-extraction -->|composes-with| business-process-discovery
   tacit-knowledge-extraction -->|depends-on| power-interest-grid-stakeholders
+  tcb-identification-minimization -->|composes-with| least-privilege-tooling-enforced
+  tcb-identification-minimization -->|composes-with| secure-by-construction-apis
   temporal-depth-selection -->|depends-on| four-types-of-time
   terraform-backend-bootstrap-problem -->|depends-on| terraform-directory-layout-isolation
   terraform-directory-layout-isolation -->|composes-with| terraform-module-size-smell
@@ -1828,9 +1944,17 @@ graph TD
   testing-go-public-test-api -->|composes-with| test-helper-contract
   three-layer-metadata-stack -->|composes-with| context-intent-action-for-ai-models
   three-layer-metadata-stack -->|depends-on| semantic-vocabulary-ladder
+  timeliness-vs-integrity-distinction -->|composes-with| transaction-isolation-level-selection
+  timeliness-vs-integrity-distinction -->|contrasts-with| replication-lag-as-correctness
+  timeliness-vs-integrity-distinction -->|depends-on| consistency-model-selection
   toil-six-property-identification-test -->|composes-with| embedding-sre-ops-overload-recovery
   toil-six-property-identification-test -->|contrasts-with| fifty-percent-engineering-time-cap
+  transaction-isolation-level-selection -->|composes-with| timeliness-vs-integrity-distinction
+  transaction-isolation-level-selection -->|contrasts-with| consistency-model-selection
+  transaction-isolation-level-selection -->|contrasts-with| replication-lag-as-correctness
   transport-agnostic-service-functions -->|composes-with| error-translation-layer-boundaries
+  value-gap-migration-metrics -->|composes-with| enterprise-non-cloud-diagnostic
+  value-gap-migration-metrics -->|depends-on| architect-elevator
   vsi-cargo-culting -->|composes-with| fit-practice
   vsi-cargo-culting -->|contrasts-with| 3ts-premature-optimization
   vsi-cargo-culting -->|contrasts-with| fit-practice
@@ -1839,243 +1963,252 @@ graph TD
   welc-legacy-code-change-algorithm -->|composes-with| welc-sprout-wrap-decision
   welc-sprout-wrap-decision -->|composes-with| welc-legacy-code-change-algorithm
   welc-tended-untended-systems -->|depends-on| welc-three-goals-of-testing
+  zero-touch-production -->|composes-with| least-privilege-tooling-enforced
+  zero-touch-production -->|composes-with| multi-party-authorization
+  zero-touch-production -->|composes-with| supply-chain-binary-provenance
+  zero-touch-production -->|depends-on| breakglass-design
+  zero-trust-beyondcorp -->|composes-with| least-privilege-tooling-enforced
+  zero-trust-beyondcorp -->|composes-with| multi-party-authorization
+  zero-trust-beyondcorp -->|depends-on| breakglass-design
 ```
 
 ## Learning path
 
-> ℹ️ depends on a skill absent from this tree: change-as-primary-outage-cause, embedding-sre-ops-overload-recovery, fcis-shell-exploration-cadence, fifty-percent-engineering-time-cap, fowler-divergent-shotgun, fowler-yagni-refactoring, grpc-l4-lb-failure-mode, hypothetico-deductive-troubleshooting-loop, letsgo-session-token-renewal, ml-simplest-model-baseline-first, multi-tier-slo, sli-compass, toil-six-property-identification-test, wardley-pace-slo, welc-interception-point-selection, welc-property-based-design-pressure
+> ⚠️ depends-on cycle among: slo-consequences-governance-principle, slo-decision-matrix, slo-stakeholder-negotiation-gate
+
+> ℹ️ depends on a skill absent from this tree: canary-as-error-budget-arithmetic, change-as-primary-outage-cause, clock-skew-ordering-hazard, embedding-sre-ops-overload-recovery, fcis-shell-exploration-cadence, fencing-tokens-distributed-locks, fifty-percent-engineering-time-cap, fowler-divergent-shotgun, fowler-yagni-refactoring, grpc-l4-lb-failure-mode, hypothetico-deductive-troubleshooting-loop, letsgo-session-token-renewal, ml-simplest-model-baseline-first, multi-tier-slo, multiwindow-multi-burn-rate-alerting, sli-compass, toil-six-property-identification-test, wardley-pace-slo, welc-interception-point-selection, welc-property-based-design-pressure
 
 1. 10x9-cost-reliability
 2. 3ts-premature-optimization
 3. architect-elevator
-4. batch-vs-stream-processing-selection
-5. book2skill
-6. breakglass-design
-7. business-process-discovery
-8. bounded-context-swimlane-detection
-9. canary-as-error-budget-arithmetic
-10. canonical-data-model-decision
-11. change-as-primary-outage-cause
-12. cli-configuration-hierarchy
-13. cli-destructive-confirmation-tiers
-14. cli-interface-stability
-15. cli-secret-handling
-16. climax-cli-scaffold
-17. clock-skew-ordering-hazard
-18. competing-consumers-vs-dispatcher
-19. configuration-hermeticity-framework
-20. consistency-model-selection
-21. context-cancellation-cause
-22. context-key-collision-prevention
-23. continuous-fuzzing-strategy
-24. crit
-25. crit-cli
-26. crit-story
-27. custom-framework-within-go-test
-28. cynefin-pm-domain-identification
-29. ddd-fitness-scorecard
-30. define-errors-out-of-existence
-31. dep-comp-cross-package-contract-decision
-32. dep-comp-function-first-composition
-33. design-it-twice
-34. domain-driven-package-structure
-35. domain-repository-contract
-36. domain-service-interface-composition
-37. eda-coupling-diagnosis
-38. emergence-conditions-audit
-39. emergent-properties
-40. enterprise-non-cloud-diagnostic
-41. entity-vs-value-object-decision
-42. error-translation-layer-boundaries
-43. fail-safe-vs-fail-secure
-44. fcis-shell-exploration-cadence
-45. fencing-tokens-distributed-locks
-46. first-derivative-economies-of-speed
-47. fit-practice
-48. four-forces-situational-assessment
-49. four-types-of-time
-50. fowler-branch-by-abstraction
-51. fowler-database-parallel-change
-52. fowler-divergent-shotgun
-53. fowler-opportunistic-refactoring
-54. fowler-performance-sequencing
-55. fowler-two-hats
-56. fowler-yagni-refactoring
-57. genqlient
-58. gh-cli
-59. gh-stack
-60. git-commit
-61. go-beyond-packages-as-layers
-62. go-beyond-four-tenet-layout
-63. go-beyond-service-transaction-boundary
-64. go-beyond-three-consumer-error
-65. go-http-service-di-composition
-66. go-test-auto
-67. go-test-state-driven-table
-68. go-test-tools
-69. go-value-object-immutability
-70. governance-model-adequacy-test
-71. governance-variety-lever-selection
-72. gqlgen-app
-73. grain-decision-four-questions
-74. aggregation-workflow-four-steps
-75. grain-audit-checklist
-76. grpc-bufconn-unit-testing
-77. grpc-dual-server-observability
-78. grpc-l4-lb-failure-mode
-79. grpc-load-balancer-selection
-80. grpc-payload-optimization
-81. grpc-fieldmask-partial-updates
-82. grpc-flatten-streaming-requests
-83. grpc-security-credential-composition
-84. grpc-service-decomposition-by-capability
-85. grpc-kubernetes-deployment-topology
-86. grpc-saga-compensation-ordering
-87. grpc-test-pyramid-interceptors-and-infrastructure
-88. grpc-vs-rest-vs-graphql
-89. grpc-communication-pattern-selection
-90. grpc-not-for-external-apis
-91. hypothetico-deductive-troubleshooting-loop
-92. blameless-postmortem-process
-93. information-hiding-temporal-decomposition
-94. integration-style-selection
-95. interface-guards
-96. internal-package-bounded-context-enforcement
-97. ioc-ai-systems
-98. jagged-frontier-work-allocation
-99. leafwiki
-100. least-privilege-tooling-enforced
-101. lefthook
-102. letsgo-db-sentinel-error-translation
-103. letsgo-postform-not-postformvalue
-104. letsgo-form-validator
-105. letsgo-session-token-renewal
-106. letsgo-template-safe-render
-107. lintme
-108. lock-in-cost-optimization
-109. manual-dependency-injection
-110. matryer-decode-valid
-111. matryer-maker-func
-112. matryer-run-function
-113. matryer-getenv-injection
-114. matryer-waitfor-ready
-115. mdformat
-116. merge-skills
-117. messaging-observability-design
-118. ml-data-pipeline-type-integrity
-119. ml-simplest-model-baseline-first
-120. multi-agent-reliability
-121. multi-party-authorization
-122. multi-tier-slo
-123. multicloud-5-option-decision
-124. multidimensional-coupling-assessment
-125. multiwindow-multi-burn-rate-alerting
-126. mutex-closure-atomic-mutation
-127. nalsd-iterative-design-methodology
-128. never-mock-net-conn-use-loopback
-129. option-configuration-patterns
-130. overload-recovery-sequencing
-131. ownership-trio
-132. consumer-journey-org
-133. ephemeral-taskforce
-134. pass-through-method-wrong-layer-count
-135. pbt
-136. pgxpool
-137. playbook-as-mttr-reduction
-138. power-interest-grid-stakeholders
-139. principles-quality-checklist
-140. process-to-model-translation
-141. productland-vs-enterpriseland-selling
-142. program-governance-ecological-design
-143. project-complexity-source-diagnosis
-144. pull-complexity-downward
-145. queue-control-flow-model
-146. queue-flow-control-decision
-147. recovery-design-masvn
-148. replication-lag-as-correctness
-149. replication-topology-selection
-150. repository-unit-of-work
-151. requisite-variety-gap-assessment
-152. responsibility-control-slo
-153. robustness-resilience-antifragility
-154. rumdl
-155. secure-by-construction-apis
-156. security-as-emergent-property
-157. semantic-vocabulary-ladder
-158. service-level-topology
-159. sharding-strategy-selection
-160. six-aggregation-properties
-161. decompose-averages-sum-count
-162. skillsaw-skill
-163. sli-compass
-164. sli-formula-measurement
-165. composite-slo
-166. degradation-disruption
-167. fallback-failover
-168. slo-consequences-governance-principle
-169. slo-decision-matrix
-170. slo-stakeholder-negotiation-gate
-171. somewhat-general-purpose-interface
-172. sqlc
-173. sre-team-lifecycle-tuckman
-174. storage-engine-workload-selection
-175. strategic-before-tactical-ddd
-176. anti-dry-separate-read-write-models
-177. microservices-dont-fix-coupling
-178. strong-consistency-across-bounded-contexts
-179. structured-goroutine-lifetime
-180. supply-chain-binary-provenance
-181. sv-trend-diagnostic
-182. synthesis-checklist-cross-form
-183. system-of-record-vs-derived-data
-184. t-pop
-185. tacit-knowledge-extraction
-186. tcb-identification-minimization
-187. temporal-depth-selection
-188. terraform-directory-layout-isolation
-189. terraform-backend-bootstrap-problem
-190. terraform-moved-block-refactoring
-191. terraform-for-each-over-count
-192. terraform-module-size-smell
-193. terraform-no-cluster-app-same-module
-194. terraform-secrets-in-state
-195. test-helper-contract
-196. test-helper-process-subprocess-mock
-197. test-layer-architecture-mapping
-198. testing-go-public-test-api
-199. three-layer-metadata-stack
-200. context-intent-action-for-ai-models
-201. time-multiplier-over-fake-time
-202. timeliness-vs-integrity-distinction
-203. toil-six-property-identification-test
-204. embedding-sre-ops-overload-recovery
-205. fifty-percent-engineering-time-cap
-206. transaction-isolation-level-selection
-207. transport-agnostic-service-functions
-208. unconventional-commits
-209. vale
-210. vale-cli
-211. value-gap-migration-metrics
-212. vsi-cargo-culting
-213. wardley-pace-slo
-214. webapp
-215. webapp-analytics
-216. webapp-featureflags
-217. webapp-graphql
-218. webapp-kacontext
-219. webapp-make
-220. webapp-pubsub
-221. webapp-review
-222. webapp-tasks
-223. webapp-testing
-224. welc-interception-point-selection
-225. welc-legacy-code-change-algorithm
-226. welc-property-based-design-pressure
-227. welc-scratch-refactoring
-228. welc-sprout-wrap-decision
-229. welc-three-goals-of-testing
-230. welc-tended-untended-systems
-231. write-comments-first-as-design-tool
-232. zero-touch-production
-233. zero-trust-beyondcorp
+4. book2skill
+5. business-process-discovery
+6. bounded-context-swimlane-detection
+7. canary-as-error-budget-arithmetic
+8. change-as-primary-outage-cause
+9. cli-configuration-hierarchy
+10. cli-destructive-confirmation-tiers
+11. cli-interface-stability
+12. cli-secret-handling
+13. climax-cli-scaffold
+14. clock-skew-ordering-hazard
+15. configuration-hermeticity-framework
+16. context-cancellation-cause
+17. context-key-collision-prevention
+18. crit
+19. crit-cli
+20. crit-story
+21. custom-framework-within-go-test
+22. cynefin-pm-domain-identification
+23. ddd-fitness-scorecard
+24. define-errors-out-of-existence
+25. dep-comp-cross-package-contract-decision
+26. dep-comp-function-first-composition
+27. design-it-twice
+28. domain-driven-package-structure
+29. domain-repository-contract
+30. domain-service-interface-composition
+31. emergence-conditions-audit
+32. emergent-properties
+33. enterprise-non-cloud-diagnostic
+34. entity-vs-value-object-decision
+35. error-translation-layer-boundaries
+36. fcis-shell-exploration-cadence
+37. fencing-tokens-distributed-locks
+38. first-derivative-economies-of-speed
+39. fit-practice
+40. four-forces-situational-assessment
+41. four-types-of-time
+42. fowler-branch-by-abstraction
+43. fowler-database-parallel-change
+44. fowler-divergent-shotgun
+45. fowler-opportunistic-refactoring
+46. fowler-performance-sequencing
+47. fowler-two-hats
+48. fowler-yagni-refactoring
+49. genqlient
+50. gh-cli
+51. gh-stack
+52. git-commit
+53. go-beyond-packages-as-layers
+54. go-beyond-four-tenet-layout
+55. go-beyond-service-transaction-boundary
+56. go-beyond-three-consumer-error
+57. go-http-service-di-composition
+58. go-test-auto
+59. go-test-state-driven-table
+60. go-test-tools
+61. go-value-object-immutability
+62. governance-model-adequacy-test
+63. gqlgen-app
+64. grain-decision-four-questions
+65. aggregation-workflow-four-steps
+66. grain-audit-checklist
+67. grpc-bufconn-unit-testing
+68. grpc-dual-server-observability
+69. grpc-l4-lb-failure-mode
+70. grpc-load-balancer-selection
+71. grpc-payload-optimization
+72. grpc-fieldmask-partial-updates
+73. grpc-flatten-streaming-requests
+74. grpc-security-credential-composition
+75. grpc-service-decomposition-by-capability
+76. grpc-kubernetes-deployment-topology
+77. grpc-saga-compensation-ordering
+78. grpc-test-pyramid-interceptors-and-infrastructure
+79. grpc-vs-rest-vs-graphql
+80. grpc-communication-pattern-selection
+81. grpc-not-for-external-apis
+82. hypothetico-deductive-troubleshooting-loop
+83. blameless-postmortem-process
+84. information-hiding-temporal-decomposition
+85. integration-style-selection
+86. eda-coupling-diagnosis
+87. interface-guards
+88. internal-package-bounded-context-enforcement
+89. ioc-ai-systems
+90. jagged-frontier-work-allocation
+91. leafwiki
+92. lefthook
+93. letsgo-db-sentinel-error-translation
+94. letsgo-postform-not-postformvalue
+95. letsgo-form-validator
+96. letsgo-session-token-renewal
+97. letsgo-template-safe-render
+98. lintme
+99. lock-in-cost-optimization
+100. manual-dependency-injection
+101. matryer-decode-valid
+102. matryer-maker-func
+103. matryer-run-function
+104. matryer-getenv-injection
+105. matryer-waitfor-ready
+106. mdformat
+107. merge-skills
+108. messaging-observability-design
+109. ml-data-pipeline-type-integrity
+110. ml-simplest-model-baseline-first
+111. multi-agent-reliability
+112. multi-tier-slo
+113. multidimensional-coupling-assessment
+114. canonical-data-model-decision
+115. multiwindow-multi-burn-rate-alerting
+116. mutex-closure-atomic-mutation
+117. nalsd-iterative-design-methodology
+118. never-mock-net-conn-use-loopback
+119. option-configuration-patterns
+120. overload-recovery-sequencing
+121. ownership-trio
+122. consumer-journey-org
+123. ephemeral-taskforce
+124. pass-through-method-wrong-layer-count
+125. pbt
+126. pgxpool
+127. playbook-as-mttr-reduction
+128. power-interest-grid-stakeholders
+129. principles-quality-checklist
+130. multicloud-5-option-decision
+131. process-to-model-translation
+132. productland-vs-enterpriseland-selling
+133. program-governance-ecological-design
+134. project-complexity-source-diagnosis
+135. pull-complexity-downward
+136. queue-control-flow-model
+137. competing-consumers-vs-dispatcher
+138. queue-flow-control-decision
+139. replication-topology-selection
+140. consistency-model-selection
+141. replication-lag-as-correctness
+142. repository-unit-of-work
+143. requisite-variety-gap-assessment
+144. governance-variety-lever-selection
+145. responsibility-control-slo
+146. robustness-resilience-antifragility
+147. rumdl
+148. security-as-emergent-property
+149. semantic-vocabulary-ladder
+150. service-level-topology
+151. six-aggregation-properties
+152. decompose-averages-sum-count
+153. skillsaw-skill
+154. sli-compass
+155. sli-formula-measurement
+156. composite-slo
+157. degradation-disruption
+158. fallback-failover
+159. somewhat-general-purpose-interface
+160. sqlc
+161. sre-team-lifecycle-tuckman
+162. storage-engine-workload-selection
+163. sharding-strategy-selection
+164. strategic-before-tactical-ddd
+165. anti-dry-separate-read-write-models
+166. microservices-dont-fix-coupling
+167. strong-consistency-across-bounded-contexts
+168. structured-goroutine-lifetime
+169. sv-trend-diagnostic
+170. synthesis-checklist-cross-form
+171. system-of-record-vs-derived-data
+172. batch-vs-stream-processing-selection
+173. t-pop
+174. tacit-knowledge-extraction
+175. tcb-identification-minimization
+176. continuous-fuzzing-strategy
+177. fail-safe-vs-fail-secure
+178. least-privilege-tooling-enforced
+179. breakglass-design
+180. multi-party-authorization
+181. secure-by-construction-apis
+182. supply-chain-binary-provenance
+183. recovery-design-masvn
+184. temporal-depth-selection
+185. terraform-directory-layout-isolation
+186. terraform-backend-bootstrap-problem
+187. terraform-moved-block-refactoring
+188. terraform-for-each-over-count
+189. terraform-module-size-smell
+190. terraform-no-cluster-app-same-module
+191. terraform-secrets-in-state
+192. test-helper-contract
+193. test-helper-process-subprocess-mock
+194. test-layer-architecture-mapping
+195. testing-go-public-test-api
+196. three-layer-metadata-stack
+197. context-intent-action-for-ai-models
+198. time-multiplier-over-fake-time
+199. timeliness-vs-integrity-distinction
+200. toil-six-property-identification-test
+201. embedding-sre-ops-overload-recovery
+202. fifty-percent-engineering-time-cap
+203. transaction-isolation-level-selection
+204. transport-agnostic-service-functions
+205. unconventional-commits
+206. vale
+207. vale-cli
+208. value-gap-migration-metrics
+209. vsi-cargo-culting
+210. wardley-pace-slo
+211. webapp
+212. webapp-analytics
+213. webapp-featureflags
+214. webapp-graphql
+215. webapp-kacontext
+216. webapp-make
+217. webapp-pubsub
+218. webapp-review
+219. webapp-tasks
+220. webapp-testing
+221. welc-interception-point-selection
+222. welc-legacy-code-change-algorithm
+223. welc-property-based-design-pressure
+224. welc-scratch-refactoring
+225. welc-sprout-wrap-decision
+226. welc-three-goals-of-testing
+227. welc-tended-untended-systems
+228. write-comments-first-as-design-tool
+229. zero-touch-production
+230. zero-trust-beyondcorp
+231. slo-consequences-governance-principle
+232. slo-decision-matrix
+233. slo-stakeholder-negotiation-gate
 <!-- exegesis:index:end -->

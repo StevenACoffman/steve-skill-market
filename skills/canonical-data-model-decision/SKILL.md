@@ -96,10 +96,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Multidimensional Coupling Assessment** — *depends-on* → Coupling assessment identifies tight data-format coupling across N applications; the CDM decision follows as the structural remedy once that coupling is diagnosed.
-- **EDA Coupling Diagnosis** — *depends-on* → EDA coupling diagnosis reveals that data-format coupling persists regardless of channel type; CDM is the pattern that addresses this dimension specifically when N ≥ 3 systems are involved.
-- **Integration Style Selection** — *depends-on* → CDM is only relevant after Messaging (or Shared Database avoidance) is selected as the style; style selection is the prerequisite that creates the multi-translator problem CDM solves.
-- **Messaging Observability Design** — *precedes* → After a CDM is in place, each translator becomes an integration component that should be instrumented; observability patterns (Wire Tap, Message History) apply at the canonical channel boundary.
+- depends-on: `multidimensional-coupling-assessment` — Coupling assessment identifies tight data-format coupling across N applications; the CDM decision follows as the structural remedy once that coupling is diagnosed.
+- depends-on: `eda-coupling-diagnosis` — EDA coupling diagnosis reveals that data-format coupling persists regardless of channel type; CDM is the pattern that addresses this dimension specifically when N ≥ 3 systems are involved.
+- depends-on: `integration-style-selection` — CDM is only relevant after Messaging (or Shared Database avoidance) is selected as the style; style selection is the prerequisite that creates the multi-translator problem CDM solves.
+- **messaging-observability-design** — *precedes* → After a CDM is in place, each translator becomes an integration component that should be instrumented; observability patterns (Wire Tap, Message History) apply at the canonical channel boundary.
 
 ______________________________________________________________________
 

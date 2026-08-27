@@ -95,11 +95,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Multidimensional Coupling Assessment** — *enables* → Once you select an integration style, coupling assessment maps the precise coupling profile your choice introduces across all 8 dimensions.
-- **EDA Coupling Diagnosis** — *enables* → When you select Messaging as the style, EDA coupling diagnosis verifies which specific coupling dimensions that choice actually reduces (and which it leaves unchanged).
-- **Canonical Data Model Decision** — *enables* → Choosing Messaging at N ≥ 3 integration points creates the translator-proliferation problem that CDM solves; style selection precedes and motivates the CDM decision.
-- **Queue Control Flow Model** — *enables* → After selecting Messaging as the style, the control-flow model determines whether components should push or pull, which shapes the pipeline's ordering and latency properties.
-- **Queue Flow Control Decision** — *precedes* → After selecting Messaging, flow control design is required to define what happens when producers outpace consumers; this is the next design question after style selection.
+- **multidimensional-coupling-assessment** — *enables* → Once you select an integration style, coupling assessment maps the precise coupling profile your choice introduces across all 8 dimensions.
+- **eda-coupling-diagnosis** — *enables* → When you select Messaging as the style, EDA coupling diagnosis verifies which specific coupling dimensions that choice actually reduces (and which it leaves unchanged).
+- **canonical-data-model-decision** — *enables* → Choosing Messaging at N ≥ 3 integration points creates the translator-proliferation problem that CDM solves; style selection precedes and motivates the CDM decision.
+- **queue-control-flow-model** — *enables* → After selecting Messaging as the style, the control-flow model determines whether components should push or pull, which shapes the pipeline's ordering and latency properties.
+- **queue-flow-control-decision** — *precedes* → After selecting Messaging, flow control design is required to define what happens when producers outpace consumers; this is the next design question after style selection.
 
 ______________________________________________________________________
 

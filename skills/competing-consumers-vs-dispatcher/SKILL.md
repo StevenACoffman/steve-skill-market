@@ -102,10 +102,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Queue Control Flow Model** — *depends-on* → The order-preservation rule from the control-flow model — Queue + Competing Consumers destroys order; only a single Driver preserves it — is the prerequisite for choosing Competing Consumers safely.
-- **Queue Flow Control Decision** — *composes-with* → Adding more competing consumers changes the queue drain rate and flow control threshold; the two skills are applied together when both throughput and overload behavior must be designed.
-- **Messaging Observability Design** — *composes-with* → Competing Consumers creates non-deterministic processing order that Message History must account for; Wire Tap placement and Message Store design must reflect the parallel consumer topology.
-- **Multidimensional Coupling Assessment** — *depends-on* → Competing Consumers introduces conversation coupling (is each message independently processable?) and order coupling (does downstream logic break if messages arrive out of sequence?); coupling assessment should precede the parallelism decision.
+- depends-on: `queue-control-flow-model` — The order-preservation rule from the control-flow model — Queue + Competing Consumers destroys order; only a single Driver preserves it — is the prerequisite for choosing Competing Consumers safely.
+- composes-with: `queue-flow-control-decision` — Adding more competing consumers changes the queue drain rate and flow control threshold; the two skills are applied together when both throughput and overload behavior must be designed.
+- composes-with: `messaging-observability-design` — Competing Consumers creates non-deterministic processing order that Message History must account for; Wire Tap placement and Message Store design must reflect the parallel consumer topology.
+- depends-on: `multidimensional-coupling-assessment` — Competing Consumers introduces conversation coupling (is each message independently processable?) and order coupling (does downstream logic break if messages arrive out of sequence?); coupling assessment should precede the parallelism decision.
 
 ______________________________________________________________________
 
