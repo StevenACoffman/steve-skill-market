@@ -1,7 +1,7 @@
 ---
 name: multiwindow-multi-burn-rate-alerting
 description: |
-  Use this skill when configuring SLO-based alerting for any production service. Call it when a team has an SLO but is using naive threshold alerts (error rate > X%), duration-clause alerts (error_rate > X% for 5m), or single-window burn-rate alerts — all of which have documented precision or recall failures.
+  Use this skill when configuring SLO-based alerting for any production service. Call it when a team has an SLO but is using naive threshold alerts (error rate above a fixed percentage), duration-clause alerts (the same, sustained for 5m), or single-window burn-rate alerts — all of which have documented precision or recall failures.
 
   Trigger scenarios: an alert fires hours after an incident resolved (false positive), a service bleeds 35% of error budget from intermittent spikes without paging anyone (false negative), or a team asks "how should we configure our SLO alerts in Prometheus/Datadog/Grafana?"
 
