@@ -4,7 +4,7 @@
 
 Make the relationships between atomic skills explicit, forming a navigable network instead of a bunch of isolated files.
 
-## Three Types of Relationships
+## Four Types of Relationships
 
 1. **Dependency (depends-on):** The prerequisite for using A is understanding B.
 
@@ -13,14 +13,18 @@ Make the relationships between atomic skills explicit, forming a navigable netwo
 2. **Contrasts-with**: A and B are two options; choose one based on the context.
    Example: "Forward reasoning" versus "reverse thinking"
 
-3. **Composers-with:** A and B are often used together.
+3. **Composes-with:** A and B are often used together.
    Example: Combining "circle of competence assessment" with "margin of safety".
+
+4. **Informs:** A shapes how B is applied, without being needed before it. It is
+   directional but orders nothing, so two skills may inform each other without
+   creating a cycle in the learning path.
 
 ## Execution Steps
 
 1. List all skills produced in Phase 2.
 
-2. Perform pairwise scans to identify whether the above three types of relationships exist.
+2. Perform pairwise scans to identify whether the above four types of relationships exist.
 
 3. Record the relationships in each skill's body `## Related Skills` section (NOT in
    frontmatter — `related_skills` is not a spec-allowed key). Reference each related

@@ -41,14 +41,15 @@ It must be made clear:
 
 The output of A2 is directly written to the `description` field of the skill frontmatter—Claude uses this to decide whether to activate the skill.
 
-**`description` field rules (enforced by `exegesis lint`):**
+**`description` field rules.** `exegesis lint` enforces the length and plain-text
+rules; the others are this skill's conventions, which no gate checks:
 
 - **≤1024 characters** (roughly 120–150 words). This is a hard limit, not a target.
-- **Third person**, describing when the agent should act — "Invoke when a user…",
+- **Third person** (convention), describing when the agent should act — "Invoke when a user…",
   "Apply when the codebase…". Do not address the user in second person ("when you…")
   or first person ("I do…").
 - **Plain text only**: no angle-bracket placeholders (`<X>`) or XML tags — write `X`.
-- Use `description: >-` (folded-strip) in the YAML, not `|` or `>`.
+- Use `description: >-` (folded-strip) in the YAML, not `|` or `>` (convention).
 
 **Good A2 example** (from the "reverse thinking" skill):
 Invoke when a user is struggling with a decision, listing positive reasons but unable to make sense of them, or asks "how can X be done to succeed?". Not for purely information-retrieving questions.
@@ -89,7 +90,8 @@ tags: [decision, mental-model, cognitive-bias]
 ```
 
 Allowed frontmatter keys (`exegesis lint`): `name`, `description`, `tags`,
-`allowed-tools`, `author`, `version`. Do **not** emit `source_book`,
+`allowed-tools`, `license`, `compatibility`, `metadata`. `author` and `version` fail
+lint at the top level; put them under `metadata` if you need them. Do **not** emit `source_book`,
 `source_chapter`, `related_skills`, `id`, or `title` — these are unknown fields
 and (for `source_book: "…" by X`) cause YAML parse errors. Provenance goes to the
 body instead:
