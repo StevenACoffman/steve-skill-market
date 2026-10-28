@@ -77,7 +77,7 @@ The purpose of skill B is to **prevent misuse**. Without skill B, it might be us
 ## Frontmatter Design
 
 Frontmatter carries ONLY spec-allowed fields. Book provenance and related-skill
-links go in the body (`## Provenance`, `## Related skills`), never in frontmatter.
+links go in the body (`## Provenance`, `## Related Skills`), never in frontmatter.
 
 ```yaml
 ---

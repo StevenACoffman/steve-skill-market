@@ -10,13 +10,13 @@ is reachable from either origin, and source skills point to their successor.
 ### 1. Mark Superseded Source Skills
 
 Source skills are book2skill outputs; they must stay `exegesis lint`-clean. Record links
-in the source SKILL.md's **body `## Related skills` section only** — never add a
+in the source SKILL.md's **body `## Related Skills` section only** — never add a
 `related_skills` frontmatter key, and never write a `[...](../../…/SKILL.md)` file
 link (it escapes the skill directory and fails `exegesis lint`). Reference the merged
 skill by backticked slug text:
 
 ```markdown
-## Related skills
+## Related Skills
 
 - superseded-by: `<merged-skill-slug>` — consolidated with `<source-skill-b>` from
   *<Book B>*. Use the merged skill for new work; this file is retained for audit.

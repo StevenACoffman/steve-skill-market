@@ -162,7 +162,7 @@ The schema is `{"skills":[{slug, description, related?, test_prompts?}]}`, where
 `related` is `[{kind, target, rationale?}]` and `test_prompts` is
 `[{type, prompt, expected}]`. For each skill it writes the directory, a `SKILL.md`
 frame (frontmatter plus the six RIA-TV++ headings, each with a `<!-- TODO: fill … -->`
-marker), a `## Related skills` section built from `related`, and a `test-prompts.json`
+marker), a `## Related Skills` section built from `related`, and a `test-prompts.json`
 whose `checks` are derived from each prompt's `expected`.
 
 It **calls no model** — that is the difference from `distill`. It is the fast path from
@@ -190,7 +190,7 @@ Per `methodology/05-stage3-zettelkasten.md`:
 
 1. Identify the reference relationships between skills (A depends on B / A contrasts with B / A composes with B).
 
-2. Add a `## Related skills` section to the end of each SKILL.md, one bullet per
+2. Add a `## Related Skills` section to the end of each SKILL.md, one bullet per
    relationship in the exact form `` - <kind>: `<target-slug>` — <rationale> ``,
    where `<kind>` is `depends-on`, `contrasts-with`, `composes-with`, or `informs`.
    Bullets with any other kind are ignored on read. (`superseded-by` is the fifth
@@ -243,7 +243,7 @@ Per `methodology/05-stage3-zettelkasten.md`:
    exegesis index books/<slug>/
    ```
 
-   It reads every skill's `## Related skills` section and regenerates the skill
+   It reads every skill's `## Related Skills` section and regenerates the skill
    list, the Mermaid relationship graph, and a dependency-ordered learning path
    (topologically sorted on `depends-on` edges). Add `--check` in CI to verify
    `INDEX.md` is current without rewriting it (exit 1 if stale); `--title` /
@@ -406,7 +406,7 @@ Most of these are checked mechanically — don't verify them by eye. Run
 `exegesis verify books/<slug>/` to check the whole tree at once: it enforces the
 Stage-0 overview gate, per-skill lint (#2, #3, #5 and #4's presence via
 `--check redlines`), the per-skill test-prompts composition (#4), the
-relationship graph (every `## Related skills` edge must point at a skill that
+relationship graph (every `## Related Skills` edge must point at a skill that
 exists — `index` drops the others silently, so this is the only place a typo'd
 target surfaces), and INDEX.md staleness. Two are judgments the agent must make,
 with no command behind them: #1 (triple verification) and #7 (the four

@@ -385,7 +385,7 @@ Failure triggers Phase 2 rework — not A2 surface patching.
 
 **Lint gate.** Before finalizing, run `exegesis lint` on the merged skill AND on
 every source skill this run modified (Phase 0 `## Merge status`, Phase 3
-`## Related skills`). Fix every error:
+`## Related Skills`). Fix every error:
 
 - Frontmatter has only spec-allowed keys (`name`, `description`, `tags`,
   `allowed-tools`); `name` equals the folder name.

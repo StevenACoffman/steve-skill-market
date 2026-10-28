@@ -22,12 +22,12 @@ Make the relationships between atomic skills explicit, forming a navigable netwo
 
 2. Perform pairwise scans to identify whether the above three types of relationships exist.
 
-3. Record the relationships in each skill's body `## Related skills` section (NOT in
+3. Record the relationships in each skill's body `## Related Skills` section (NOT in
    frontmatter — `related_skills` is not a spec-allowed key). Reference each related
    skill by its backticked slug, in natural language explaining the relationship:
 
    ```markdown
-   ## Related skills
+   ## Related Skills
 
    - depends-on: `multi-mental-models` — the checklist items come from the models
    - contrasts-with: `forward-reasoning` — opposite direction of inference
