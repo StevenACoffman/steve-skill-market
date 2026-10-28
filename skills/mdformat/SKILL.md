@@ -203,10 +203,10 @@ Example frontmatter that is preserved as-is:
 
 ```markdown
 ---
-id: anti-dry-separate-read-write-models
-title: Anti-DRY for Data Structures — Separate Models Per Concern
+name: anti-dry-separate-read-write-models
+title: 'Anti-DRY for Data Structures — Separate Models Per Concern'
 description: Invoke when a single Go struct is being used across multiple layers.
-source: Go with the Domain, Three Dots Labs, 2026
+source: 'Go with the Domain, Three Dots Labs, 2026'
 ---
 ```
 
