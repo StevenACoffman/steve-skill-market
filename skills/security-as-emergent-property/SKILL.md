@@ -280,8 +280,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes_with**: tcb-identification-minimization — TCB identification is the positive design-time prescription for bounding security scope; this skill explains why that work must happen at design time and cannot be deferred
-- **contrasts_with**: fail-safe-vs-fail-secure — fail-safe/fail-secure is a specific design-time choice within a properly designed system; security-as-emergent-property explains structurally why that choice (and all security choices) cannot be made after the integration surface is established
+- composes-with: `tcb-identification-minimization` — TCB identification is the positive design-time prescription for bounding security scope; this skill explains why that work must happen at design time and cannot be deferred
+- contrasts-with: `fail-safe-vs-fail-secure` — fail-safe/fail-secure is a specific design-time choice within a properly designed system; security-as-emergent-property explains structurally why that choice (and all security choices) cannot be made after the integration surface is established
 
 ______________________________________________________________________
 

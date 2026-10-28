@@ -148,9 +148,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: replication-lag-as-correctness — both address read correctness, but isolation governs concurrent transactions on the primary while lag-as-correctness governs stale reads from follower replicas; different layers.
-- **contrasts_with**: consistency-model-selection — serializability (transaction ordering) and linearizability (replica recency) are orthogonal properties; neither implies the other.
-- **composes_with**: timeliness-vs-integrity-distinction — the TVI framework determines which anomalies are integrity-critical (requiring serializable isolation) vs. merely annoying (tolerable with weaker isolation).
+- contrasts-with: `replication-lag-as-correctness` — both address read correctness, but isolation governs concurrent transactions on the primary while lag-as-correctness governs stale reads from follower replicas; different layers.
+- contrasts-with: `consistency-model-selection` — serializability (transaction ordering) and linearizability (replica recency) are orthogonal properties; neither implies the other.
+- composes-with: `timeliness-vs-integrity-distinction` — the TVI framework determines which anomalies are integrity-critical (requiring serializable isolation) vs. merely annoying (tolerable with weaker isolation).
 
 ______________________________________________________________________
 

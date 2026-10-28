@@ -69,9 +69,9 @@ Ecological design requires someone with sufficient organizational standing and a
 
 ## Related Skills
 
-- **emergence-conditions-audit** — *combines*: audit first to identify which conditions are missing; ecological design framework then prescribes the governance architecture
+- composes-with: `emergence-conditions-audit` — audit first to identify which conditions are missing; ecological design framework then prescribes the governance architecture
 - **governance-model-adequacy-test** — *relates*: ecological design requires interaction layer ownership; Conant-Ashby specifies who must hold the model to make that ownership real
-- **sv-trend-diagnostic** — *informs*: SV measurement theater is a symptom of ecological design failure; redesigning governance structure addresses the cause
+- informs: `sv-trend-diagnostic` — SV measurement theater is a symptom of ecological design failure; redesigning governance structure addresses the cause
 
 ______________________________________________________________________
 

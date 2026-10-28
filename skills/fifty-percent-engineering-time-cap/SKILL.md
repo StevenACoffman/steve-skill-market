@@ -124,20 +124,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `toil-six-property-identification-test` — 
-- depends-on: `on-call-sustainability-model` — 
+- depends-on: `toil-six-property-identification-test` — work must be classified as toil before the cap can be measured; the six-property test defines what counts toward the 50%
+- depends-on: `on-call-sustainability-model` — the 25% on-call sub-cap is derived from the 50% parent cap; rotation size minimum must be met before the cap can be applied meaningfully
 - contrasts-with: (traditional ops team headcount-scaling model)
-- composes-with: `error-budget-conflict-resolution` — 
-- composes-with: `embedding-sre-ops-overload-recovery` — 
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: toil-six-property-identification-test — work must be classified as toil before the cap can be measured; the six-property test defines what counts toward the 50%
-- **depends_on**: on-call-sustainability-model — the 25% on-call sub-cap is derived from the 50% parent cap; rotation size minimum must be met before the cap can be applied meaningfully
-- **composes_with**: error-budget-conflict-resolution — both are governance feedback loops: the cap redirects excess ops load to dev, error budget halts releases when reliability suffers
-- **composes_with**: embedding-sre-ops-overload-recovery — embedding is the structured intervention deployed when the cap has been chronically violated and cannot self-correct
+- composes-with: `error-budget-conflict-resolution` — both are governance feedback loops: the cap redirects excess ops load to dev, error budget halts releases when reliability suffers
+- composes-with: `embedding-sre-ops-overload-recovery` — embedding is the structured intervention deployed when the cap has been chronically violated and cannot self-correct
 
 ______________________________________________________________________
 

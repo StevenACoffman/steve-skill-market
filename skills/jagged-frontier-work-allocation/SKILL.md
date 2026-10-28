@@ -63,7 +63,7 @@ Applying this framework well requires honest self-assessment about your own doma
 
 ## Related Skills
 
-- **four-forces-situational-assessment** — *combines*: when Velocity force is dominant, AI tool usage becomes a leverage point; Four Forces identifies whether Velocity is the primary driver
+- composes-with: `four-forces-situational-assessment` — when Velocity force is dominant, AI tool usage becomes a leverage point; Four Forces identifies whether Velocity is the primary driver
 
 ______________________________________________________________________
 

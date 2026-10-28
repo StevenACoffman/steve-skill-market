@@ -198,8 +198,8 @@ limitation — gRPC-Web was maturing at the time of publication.
 
 ## Related Skills
 
-- **grpc-vs-rest-vs-graphql** — depends on: this skill is the actionable consequence of the broader protocol-selection framework; run grpc-vs-rest-vs-graphql first for the full decision logic.
-- **grpc-security-credential-composition** — informs: introducing a gRPC gateway changes the TLS topology — the gateway terminates TLS from external clients while the backend may use mTLS internally.
+- depends-on: `grpc-vs-rest-vs-graphql` — this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.
+- informs: `grpc-security-credential-composition` — introducing a gRPC gateway changes the TLS topology — the gateway terminates TLS from external clients while the backend may use mTLS internally.
 - **grpc-load-balancer-selection** — relates: the gRPC gateway is itself an L7 proxy that sits at the external boundary; its placement interacts with the internal load-balancing topology.
 
 ______________________________________________________________________
@@ -207,7 +207,3 @@ ______________________________________________________________________
 ## Provenance
 
 - **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)
-
-## Related Skills
-
-- depends-on: `grpc-vs-rest-vs-graphql` — this skill establishes the framework; grpc-not-for-external-apis is the applied, actionable consequence focused on the external-boundary decision.

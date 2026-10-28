@@ -75,9 +75,9 @@ The framework does not directly address the political and organizational dynamic
 
 ## Related Skills
 
-- **project-complexity-source-diagnosis** — *combines*: complementary diagnostics for program difficulty; complexity source is structural, Four Forces is dynamic
-- **cynefin-pm-domain-identification** — *combines*: Four Forces identifies dominant forces; Cynefin classifies governance domain; together provide both situational and governance prescription
-- **jagged-frontier-work-allocation** — *combines*: when Velocity or Ambiguity forces are dominant, AI work allocation decisions need the Jagged Frontier framework to avoid compounding mistakes
+- composes-with: `project-complexity-source-diagnosis` — complementary diagnostics for program difficulty; complexity source is structural, Four Forces is dynamic
+- composes-with: `cynefin-pm-domain-identification` — Four Forces identifies dominant forces; Cynefin classifies governance domain; together provide both situational and governance prescription
+- composes-with: `jagged-frontier-work-allocation` — when Velocity or Ambiguity forces are dominant, AI work allocation decisions need the Jagged Frontier framework to avoid compounding mistakes
 
 ______________________________________________________________________
 

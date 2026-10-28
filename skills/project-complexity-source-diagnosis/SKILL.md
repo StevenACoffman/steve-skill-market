@@ -70,8 +70,8 @@ For projects that are clearly in one quadrant by easy consensus, running this di
 
 ## Related Skills
 
-- **cynefin-pm-domain-identification** — *combines*: complexity source diagnosis tells you what kind of hard the project is; Cynefin tells you what governance response that requires; run together
-- **four-forces-situational-assessment** — *combines*: both diagnose why a program is difficult; complexity source gives the structural category; Four Forces gives the force dynamics; together they produce a complete situational picture
+- composes-with: `cynefin-pm-domain-identification` — complexity source diagnosis tells you what kind of hard the project is; Cynefin tells you what governance response that requires; run together
+- composes-with: `four-forces-situational-assessment` — both diagnose why a program is difficult; complexity source gives the structural category; Four Forces gives the force dynamics; together they produce a complete situational picture
 
 ______________________________________________________________________
 

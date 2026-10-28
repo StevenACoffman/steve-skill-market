@@ -119,9 +119,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: error-budget-policy-framework — canary fraction arithmetic requires knowing the remaining error budget to compute the maximum safe canary size
-- **composes_with**: multiwindow-multi-burn-rate-alerting — burn-rate alerting monitors the canary population's live error rate; canary arithmetic pre-sets the threshold at which the canary must be halted
-- **contrasts_with**: configuration-hermeticity-framework — both address deployment safety, but canary targets code-defect detection via traffic splitting while hermeticity targets config reproducibility via evaluation isolation
+- depends-on: `error-budget-policy-framework` — canary fraction arithmetic requires knowing the remaining error budget to compute the maximum safe canary size
+- composes-with: `multiwindow-multi-burn-rate-alerting` — burn-rate alerting monitors the canary population's live error rate; canary arithmetic pre-sets the threshold at which the canary must be halted
+- contrasts-with: `configuration-hermeticity-framework` — both address deployment safety, but canary targets code-defect detection via traffic splitting while hermeticity targets config reproducibility via evaluation isolation
 
 ______________________________________________________________________
 

@@ -70,9 +70,9 @@ For single-team projects in stable, well-understood domains where domain classif
 
 ## Related Skills
 
-- **project-complexity-source-diagnosis** — *combines*: complexity source diagnosis classifies the structural/uncertainty profile; Cynefin translates that into governance response; use together
-- **four-forces-situational-assessment** — *combines*: Four Forces identifies dominant forces; Cynefin classifies the governance domain; together they produce both a situational and a governance prescription
-- **requisite-variety-gap-assessment** — *compares*: both assess governance fitness; different analytical lenses on the same question
+- composes-with: `project-complexity-source-diagnosis` — complexity source diagnosis classifies the structural/uncertainty profile; Cynefin translates that into governance response; use together
+- composes-with: `four-forces-situational-assessment` — Four Forces identifies dominant forces; Cynefin classifies the governance domain; together they produce both a situational and a governance prescription
+- contrasts-with: `requisite-variety-gap-assessment` — both assess governance fitness; different analytical lenses on the same question
 
 ______________________________________________________________________
 

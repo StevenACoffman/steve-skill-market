@@ -152,9 +152,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: error-budget-policy-framework — alerting is the detection mechanism that activates the error budget policy; the policy defines what must happen once the alert fires and the budget is confirmed exhausted
-- **contrasts_with**: slo-decision-matrix — alerting answers "when do we page?"; the decision matrix answers "what action do we take after the page fires and we examine SLO state?"
-- **composes_with**: slo-stakeholder-negotiation-gate — the significance thresholds chosen for each alert tier (2%, 5%, 10% budget consumption) are inputs that stakeholders must agree on during SLO negotiation
+- depends-on: `error-budget-policy-framework` — alerting is the detection mechanism that activates the error budget policy; the policy defines what must happen once the alert fires and the budget is confirmed exhausted
+- contrasts-with: `slo-decision-matrix` — alerting answers "when do we page?"; the decision matrix answers "what action do we take after the page fires and we examine SLO state?"
+- composes-with: `slo-stakeholder-negotiation-gate` — the significance thresholds chosen for each alert tier (2%, 5%, 10% budget consumption) are inputs that stakeholders must agree on during SLO negotiation
 
 ______________________________________________________________________
 

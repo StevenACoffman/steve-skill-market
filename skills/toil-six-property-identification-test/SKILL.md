@@ -118,17 +118,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `sli-slo-sla-tier-framework` — (SLO context needed to assess whether a task genuinely affects reliability)
-- contrasts-with: `fifty-percent-engineering-time-cap` — (cap enforces the consequences of toil; this test defines what counts)
-- composes-with: `embedding-sre-ops-overload-recovery` — (Phase 2 of embedding uses this test to sort fires)
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: sli-slo-sla-tier-framework — SLO context is needed to assess whether a task genuinely affects user-visible reliability and thus qualifies as toil vs. legitimate overhead
-- **contrasts_with**: fifty-percent-engineering-time-cap — the six-property test defines what counts as toil; the cap determines what to do when there is too much of it
-- **composes_with**: embedding-sre-ops-overload-recovery — Phase 2 of the embedding model uses this test to classify operational fires as toil vs. acceptable overhead
+- depends-on: `sli-slo-sla-tier-framework` — SLO context is needed to assess whether a task genuinely affects user-visible reliability and thus qualifies as toil vs. legitimate overhead
+- contrasts-with: `fifty-percent-engineering-time-cap` — the six-property test defines what counts as toil; the cap determines what to do when there is too much of it
+- composes-with: `embedding-sre-ops-overload-recovery` — Phase 2 of the embedding model uses this test to classify operational fires as toil vs. acceptable overhead
 
 ______________________________________________________________________
 

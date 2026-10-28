@@ -178,9 +178,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: least-privilege-tooling-enforced — least-privilege classification identifies which operations are sensitive enough to require MPA; MPA is the advanced control for the highest-sensitivity tier
-- **composes_with**: supply-chain-binary-provenance — code review is the MPA layer in the supply chain; binary provenance provides the machine-verifiable record that MPA was satisfied
-- **composes_with**: zero-touch-production — MPA is the human-approval enforcement mechanism at the safe proxy for sensitive commands; the two skills compose in the safe proxy design
+- depends-on: `least-privilege-tooling-enforced` — least-privilege classification identifies which operations are sensitive enough to require MPA; MPA is the advanced control for the highest-sensitivity tier
+- composes-with: `supply-chain-binary-provenance` — code review is the MPA layer in the supply chain; binary provenance provides the machine-verifiable record that MPA was satisfied
+- composes-with: `zero-touch-production` — MPA is the human-approval enforcement mechanism at the safe proxy for sensitive commands; the two skills compose in the safe proxy design
 
 ______________________________________________________________________
 

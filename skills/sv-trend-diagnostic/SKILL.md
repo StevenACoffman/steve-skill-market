@@ -71,8 +71,8 @@ The diagnostic power of this case is not the outcome — late programs are commo
 
 ## Related Skills
 
-- **program-governance-ecological-design** — *informs*: SV suppression is a symptom of the interaction layer being unowned; ecological design addresses the structural cause
-- **emergence-conditions-audit** — *compares*: both diagnose feedback loop dysfunction at the program level, different entry points
+- informs: `program-governance-ecological-design` — SV suppression is a symptom of the interaction layer being unowned; ecological design addresses the structural cause
+- contrasts-with: `emergence-conditions-audit` — both diagnose feedback loop dysfunction at the program level, different entry points
 
 ______________________________________________________________________
 

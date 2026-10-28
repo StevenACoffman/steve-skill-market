@@ -70,8 +70,8 @@ The forty-person wall case (c06) is particularly instructive because it looked l
 ## Related Skills
 
 - **governance-variety-lever-selection** — *prerequisite for*: this skill's deficit profile is the required input for lever selection
-- **governance-model-adequacy-test** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
-- **cynefin-pm-domain-identification** — *compares*: both assess governance fitness; Cynefin classifies by domain logic, Ashby by variety gap
+- contrasts-with: `governance-model-adequacy-test` — complementary Ashby-family diagnostics; run together for complete governance fitness picture
+- contrasts-with: `cynefin-pm-domain-identification` — both assess governance fitness; Cynefin classifies by domain logic, Ashby by variety gap
 
 ______________________________________________________________________
 

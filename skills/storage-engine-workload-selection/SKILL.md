@@ -144,8 +144,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes_with**: sharding-strategy-selection — once the engine archetype is chosen (LSM for writes, columnar for analytics), the sharding strategy is applied on top to distribute that engine's data across nodes.
-- **composes_with**: system-of-record-vs-derived-data — the storage engine decision often splits along the SoR/derived boundary: the operational write path (system of record) uses LSM or B-tree while derived analytical representations use columnar storage.
+- composes-with: `sharding-strategy-selection` — once the engine archetype is chosen (LSM for writes, columnar for analytics), the sharding strategy is applied on top to distribute that engine's data across nodes.
+- composes-with: `system-of-record-vs-derived-data` — the storage engine decision often splits along the SoR/derived boundary: the operational write path (system of record) uses LSM or B-tree while derived analytical representations use columnar storage.
 
 ______________________________________________________________________
 

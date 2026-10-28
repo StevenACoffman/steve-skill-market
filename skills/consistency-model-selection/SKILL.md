@@ -153,10 +153,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: replication-topology-selection — consistency model selection determines the required guarantee; the topology must already be chosen (or be under selection) to evaluate whether it can deliver that guarantee.
-- **contrasts_with**: transaction-isolation-level-selection — isolation levels (serializability) govern concurrent transaction ordering within one database; linearizability governs whether reads on any replica see the most recent write; neither implies the other.
-- **composes_with**: distributed-fault-taxonomy — understanding which fault classes are possible (process pause, network delay) informs which consistency guarantees are achievable and why leaderless systems cannot provide linearizability.
-- **composes_with**: timeliness-vs-integrity-distinction — TVI provides the decision rule for when linearizability is actually required (integrity-critical operations) vs. when eventual consistency is acceptable (display reads).
+- depends-on: `replication-topology-selection` — consistency model selection determines the required guarantee; the topology must already be chosen (or be under selection) to evaluate whether it can deliver that guarantee.
+- contrasts-with: `transaction-isolation-level-selection` — isolation levels (serializability) govern concurrent transaction ordering within one database; linearizability governs whether reads on any replica see the most recent write; neither implies the other.
+- composes-with: `distributed-fault-taxonomy` — understanding which fault classes are possible (process pause, network delay) informs which consistency guarantees are achievable and why leaderless systems cannot provide linearizability.
+- composes-with: `timeliness-vs-integrity-distinction` — TVI provides the decision rule for when linearizability is actually required (integrity-critical operations) vs. when eventual consistency is acceptable (display reads).
 
 ______________________________________________________________________
 

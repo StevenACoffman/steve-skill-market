@@ -70,9 +70,9 @@ Williams' framework relies heavily on Hoel (2026) for the causal emergence found
 
 ## Related Skills
 
-- **program-governance-ecological-design** — *combines*: audit identifies which conditions are absent; ecological design framework provides the design response; run emergence audit first
-- **sv-trend-diagnostic** — *compares*: both diagnose feedback dysfunction; SV is the quantitative signal; emergence audit is the structural cause
-- **governance-model-adequacy-test** — *combines*: interaction layer ownership requires someone who holds the model; Conant-Ashby and emergence audit diagnose the same gap from different angles
+- composes-with: `program-governance-ecological-design` — audit identifies which conditions are absent; ecological design framework provides the design response; run emergence audit first
+- contrasts-with: `sv-trend-diagnostic` — both diagnose feedback dysfunction; SV is the quantitative signal; emergence audit is the structural cause
+- composes-with: `governance-model-adequacy-test` — interaction layer ownership requires someone who holds the model; Conant-Ashby and emergence audit diagnose the same gap from different angles
 
 ______________________________________________________________________
 

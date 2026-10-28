@@ -133,21 +133,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `hypothetico-deductive-troubleshooting-loop` — (playbooks are the encoded output of prior troubleshooting loops; novel incidents require the loop because no playbook exists yet)
-- depends-on: `blameless-postmortem-process` — (postmortem action items are the primary input for creating and updating playbooks)
-- contrasts-with: `four-golden-signals-monitoring` — (monitoring focuses on MTTF reduction through better alerting; playbooks focus on MTTR reduction through better response)
-- composes-with: `on-call-sustainability-model` — (reducing MTTR via playbooks reduces per-incident time cost, preserving on-call capacity within the 2-incident-per-shift sustainability bound)
-- composes-with: `incident-management-role-separation` — (the Ops Lead uses the playbook during incident response; the IC ensures the playbook exists and is linked to the alert)
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: hypothetico-deductive-troubleshooting-loop — playbooks are the encoded output of prior troubleshooting loops; novel incidents require the loop because no playbook exists yet
-- **depends_on**: blameless-postmortem-process — postmortem action items are the primary mechanism for creating and updating playbook entries after each incident
-- **contrasts_with**: four-golden-signals-monitoring — monitoring reduces MTTF (fewer failures reach users); playbooks reduce MTTR (faster recovery when failures do occur)
-- **composes_with**: on-call-sustainability-model — reducing MTTR via playbooks reduces per-incident time cost, directly increasing rotation capacity within the 2-incidents-per-shift bound
-- **composes_with**: incident-management-role-separation — the Ops Lead consults the playbook during the troubleshooting loop; the IC ensures the playbook is linked to the alert before the incident occurs
+- depends-on: `hypothetico-deductive-troubleshooting-loop` — playbooks are the encoded output of prior troubleshooting loops; novel incidents require the loop because no playbook exists yet
+- depends-on: `blameless-postmortem-process` — postmortem action items are the primary mechanism for creating and updating playbook entries after each incident
+- contrasts-with: `four-golden-signals-monitoring` — monitoring reduces MTTF (fewer failures reach users); playbooks reduce MTTR (faster recovery when failures do occur)
+- composes-with: `on-call-sustainability-model` — reducing MTTR via playbooks reduces per-incident time cost, directly increasing rotation capacity within the 2-incidents-per-shift bound
+- composes-with: `incident-management-role-separation` — the Ops Lead consults the playbook during the troubleshooting loop; the IC ensures the playbook is linked to the alert before the incident occurs
 
 ______________________________________________________________________
 

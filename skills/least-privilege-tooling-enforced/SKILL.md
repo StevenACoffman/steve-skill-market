@@ -230,9 +230,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: tcb-identification-minimization — decomposing access into narrow functional APIs requires first identifying which components are in the TCB; small APIs reduce TCB scope
-- **composes_with**: breakglass-design — breakglass removes the lockout objection that blocks strict least-privilege controls from being deployed; both are required for politically viable strict access
-- **composes_with**: multi-party-authorization — MPA is the advanced control layered on top of least-privilege classification for the highest-sensitivity tier; least privilege narrows scope, MPA requires two actors for what remains sensitive
+- depends-on: `tcb-identification-minimization` — decomposing access into narrow functional APIs requires first identifying which components are in the TCB; small APIs reduce TCB scope
+- composes-with: `breakglass-design` — breakglass removes the lockout objection that blocks strict least-privilege controls from being deployed; both are required for politically viable strict access
+- composes-with: `multi-party-authorization` — MPA is the advanced control layered on top of least-privilege classification for the highest-sensitivity tier; least privilege narrows scope, MPA requires two actors for what remains sensitive
 
 ______________________________________________________________________
 

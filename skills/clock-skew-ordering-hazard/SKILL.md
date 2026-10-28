@@ -168,9 +168,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: distributed-fault-taxonomy — clock skew is one of the four fault classes in the distributed fault taxonomy; this skill provides the specific mitigation (logical clocks) for that class.
-- **contrasts_with**: consistency-model-selection — logical clocks solve the ordering problem for conflict resolution within a topology; linearizability solves the read-recency problem across replicas; they are different solutions to different problems, though both are motivated by distributed correctness.
-- **composes_with**: fencing-tokens-distributed-locks — fencing tokens implement the correct alternative to clock-based lock ordering (monotonically increasing counter vs. wall-clock timestamp), making the two skills complementary mitigations for clock-related distributed hazards.
+- depends-on: `distributed-fault-taxonomy` — clock skew is one of the four fault classes in the distributed fault taxonomy; this skill provides the specific mitigation (logical clocks) for that class.
+- contrasts-with: `consistency-model-selection` — logical clocks solve the ordering problem for conflict resolution within a topology; linearizability solves the read-recency problem across replicas; they are different solutions to different problems, though both are motivated by distributed correctness.
+- composes-with: `fencing-tokens-distributed-locks` — fencing tokens implement the correct alternative to clock-based lock ordering (monotonically increasing counter vs. wall-clock timestamp), making the two skills complementary mitigations for clock-related distributed hazards.
 
 ______________________________________________________________________
 

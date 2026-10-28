@@ -139,19 +139,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `toil-six-property-identification-test` — (Phase 2 fire classification uses the six-property test)
-- depends-on: `sli-slo-sla-tier-framework` — (Phase 3 requires SLO establishment as first action)
-- depends-on: `blameless-postmortem-process` — (Phase 2 includes writing a blameless postmortem to demonstrate the model)
-- contrasts-with: `fifty-percent-engineering-time-cap` — (the cap is the steady-state enforcement mechanism; this is the recovery intervention when the cap has already been violated chronically)
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: toil-six-property-identification-test — Phase 2 fire classification uses the six-property test to distinguish toil from acceptable overhead
-- **depends_on**: sli-slo-sla-tier-framework — Phase 3 prescribes SLO establishment as the first and mandatory action before any other improvement
-- **depends_on**: blameless-postmortem-process — Phase 2 includes co-writing a blameless postmortem to model correct practice for the host team
-- **contrasts_with**: fifty-percent-engineering-time-cap — the cap is the steady-state enforcement mechanism; this skill is the structured recovery intervention for teams already past the point where the cap can self-correct
+- depends-on: `toil-six-property-identification-test` — Phase 2 fire classification uses the six-property test to distinguish toil from acceptable overhead
+- depends-on: `sli-slo-sla-tier-framework` — Phase 3 prescribes SLO establishment as the first and mandatory action before any other improvement
+- depends-on: `blameless-postmortem-process` — Phase 2 includes co-writing a blameless postmortem to model correct practice for the host team
+- contrasts-with: `fifty-percent-engineering-time-cap` — the cap is the steady-state enforcement mechanism; this skill is the structured recovery intervention for teams already past the point where the cap can self-correct
 
 ______________________________________________________________________
 

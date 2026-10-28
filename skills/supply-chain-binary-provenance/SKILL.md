@@ -202,9 +202,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: multi-party-authorization — code review is the MPA layer in the supply chain; binary provenance provides the machine-verifiable record that MPA was satisfied before the artifact was built
-- **composes_with**: zero-touch-production — ZTP requires all production changes via automation; binary provenance is the cryptographic proof that the automation pipeline (not an ad-hoc workstation) produced the deployed artifact
-- **composes_with**: recovery-design-masvn — binary provenance records which security patches were applied and via which pipeline; MASVN enforces the version floor that prevents rollback past those verified patches
+- depends-on: `multi-party-authorization` — code review is the MPA layer in the supply chain; binary provenance provides the machine-verifiable record that MPA was satisfied before the artifact was built
+- composes-with: `zero-touch-production` — ZTP requires all production changes via automation; binary provenance is the cryptographic proof that the automation pipeline (not an ad-hoc workstation) produced the deployed artifact
+- composes-with: `recovery-design-masvn` — binary provenance records which security patches were applied and via which pipeline; MASVN enforces the version floor that prevents rollback past those verified patches
 
 ______________________________________________________________________
 

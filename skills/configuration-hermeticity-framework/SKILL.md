@@ -124,8 +124,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: canary-as-error-budget-arithmetic — both are deployment-safety disciplines but canary addresses code-defect detection while hermeticity addresses config reproducibility and rollback reliability
-- **composes_with**: nalsd-iterative-design-methodology — hermetic config is a design-time property that NALSD's feasibility and resilience phases should validate before a system goes to production
+- contrasts-with: `canary-as-error-budget-arithmetic` — both are deployment-safety disciplines but canary addresses code-defect detection while hermeticity addresses config reproducibility and rollback reliability
+- composes-with: `nalsd-iterative-design-methodology` — hermetic config is a design-time property that NALSD's feasibility and resilience phases should validate before a system goes to production
 
 ______________________________________________________________________
 

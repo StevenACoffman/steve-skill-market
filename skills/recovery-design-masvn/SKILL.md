@@ -225,9 +225,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: supply-chain-binary-provenance — binary provenance records which security patches were applied and via which verified pipeline; MASVN enforces the version floor that prevents rolling back past those proven-safe patches
-- **composes_with**: breakglass-design — MASVN enforcement needs a breakglass override for catastrophic bugs in a security patch; breakglass is what allows MASVN to remain strict under normal conditions
-- **composes_with**: unified-incident-management-imag — IMAG orchestrates the human recovery decisions (when to advance MASVN, when to invoke deny lists) that MASVN enforces mechanically
+- depends-on: `supply-chain-binary-provenance` — binary provenance records which security patches were applied and via which verified pipeline; MASVN enforces the version floor that prevents rolling back past those proven-safe patches
+- composes-with: `breakglass-design` — MASVN enforcement needs a breakglass override for catastrophic bugs in a security patch; breakglass is what allows MASVN to remain strict under normal conditions
+- composes-with: `unified-incident-management-imag` — IMAG orchestrates the human recovery decisions (when to advance MASVN, when to invoke deny lists) that MASVN enforces mechanically
 
 ______________________________________________________________________
 

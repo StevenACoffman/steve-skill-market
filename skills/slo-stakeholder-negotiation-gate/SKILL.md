@@ -113,9 +113,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: slo-consequences-governance-principle — the negotiation gate is only meaningful if the organization has committed to the principle that SLOs must have real consequences; without that commitment, tripartite approval is a formality
-- **composes_with**: error-budget-policy-framework — drafting the error budget policy and presenting it to all parties IS the mechanism of the negotiation gate; they are executed together
-- **contrasts_with**: slo-decision-matrix — the negotiation gate sets and validates the SLO before any incident; the decision matrix calibrates an existing SLO during ongoing operation
+- depends-on: `slo-consequences-governance-principle` — the negotiation gate is only meaningful if the organization has committed to the principle that SLOs must have real consequences; without that commitment, tripartite approval is a formality
+- composes-with: `error-budget-policy-framework` — drafting the error budget policy and presenting it to all parties IS the mechanism of the negotiation gate; they are executed together
+- contrasts-with: `slo-decision-matrix` — the negotiation gate sets and validates the SLO before any incident; the decision matrix calibrates an existing SLO during ongoing operation
 
 ______________________________________________________________________
 

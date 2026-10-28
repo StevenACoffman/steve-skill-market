@@ -114,9 +114,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: error-budget-policy-framework — this principle is the WHY (SLOs require organizational consequences to function); the policy framework is the HOW (the specific four-component document structure that implements those consequences)
-- **depends_on**: slo-stakeholder-negotiation-gate — the principle requires tripartite approval plus leadership endorsement; the negotiation gate is the process that produces that commitment
-- **composes_with**: slo-decision-matrix — the principle motivates why matrix outputs must trigger real engineering action, not just be observed on a dashboard
+- contrasts-with: `error-budget-policy-framework` — this principle is the WHY (SLOs require organizational consequences to function); the policy framework is the HOW (the specific four-component document structure that implements those consequences)
+- depends-on: `slo-stakeholder-negotiation-gate` — the principle requires tripartite approval plus leadership endorsement; the negotiation gate is the process that produces that commitment
+- composes-with: `slo-decision-matrix` — the principle motivates why matrix outputs must trigger real engineering action, not just be observed on a dashboard
 
 ______________________________________________________________________
 

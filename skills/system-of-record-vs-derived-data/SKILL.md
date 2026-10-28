@@ -153,10 +153,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: replication-topology-selection — replication copies the same data to multiple nodes within one logical system for fault tolerance; the system-of-record pattern distinguishes different representations of data across different systems serving different purposes; read replicas are a special case of derived data.
-- **composes_with**: batch-vs-stream-processing-selection — SoR/derived-data architecture determines what is authoritative and what is regenerable; batch vs. stream selection determines how derived representations are computed from the authoritative source.
-- **composes_with**: consistency-model-selection — the system of record requires strong consistency for writes; derived systems may use eventual consistency because they are regenerable from the authoritative source.
-- **composes_with**: schema-evolution-compatibility-planning — CDC-based propagation from the system of record to derived systems must maintain schema backward compatibility so derived consumers do not break when the source schema evolves.
+- contrasts-with: `replication-topology-selection` — replication copies the same data to multiple nodes within one logical system for fault tolerance; the system-of-record pattern distinguishes different representations of data across different systems serving different purposes; read replicas are a special case of derived data.
+- composes-with: `batch-vs-stream-processing-selection` — SoR/derived-data architecture determines what is authoritative and what is regenerable; batch vs. stream selection determines how derived representations are computed from the authoritative source.
+- composes-with: `consistency-model-selection` — the system of record requires strong consistency for writes; derived systems may use eventual consistency because they are regenerable from the authoritative source.
+- composes-with: `schema-evolution-compatibility-planning` — CDC-based propagation from the system of record to derived systems must maintain schema backward compatibility so derived consumers do not break when the source schema evolves.
 
 ______________________________________________________________________
 

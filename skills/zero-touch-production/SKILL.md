@@ -244,10 +244,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: breakglass-design — ZTP requires a properly designed breakglass as its safety valve; without it the strict no-direct-access control cannot be deployed due to operator lockout fear
-- **composes_with**: least-privilege-tooling-enforced — the safe proxy implements tooling-enforced least privilege for operational access; both skills apply simultaneously at the enforcement layer
-- **composes_with**: multi-party-authorization — MPA is the human-approval enforcement mechanism at the safe proxy for sensitive commands; ZTP provides the architectural constraint, MPA provides the dual-approval gate within it
-- **composes_with**: supply-chain-binary-provenance — ZTP requires all production changes via automation; binary provenance is the cryptographic proof that the ZTP pipeline (not an ad-hoc path) produced and deployed the artifact
+- depends-on: `breakglass-design` — ZTP requires a properly designed breakglass as its safety valve; without it the strict no-direct-access control cannot be deployed due to operator lockout fear
+- composes-with: `least-privilege-tooling-enforced` — the safe proxy implements tooling-enforced least privilege for operational access; both skills apply simultaneously at the enforcement layer
+- composes-with: `multi-party-authorization` — MPA is the human-approval enforcement mechanism at the safe proxy for sensitive commands; ZTP provides the architectural constraint, MPA provides the dual-approval gate within it
+- composes-with: `supply-chain-binary-provenance` — ZTP requires all production changes via automation; binary provenance is the cryptographic proof that the ZTP pipeline (not an ad-hoc path) produced and deployed the artifact
 
 ______________________________________________________________________
 

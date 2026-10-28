@@ -170,8 +170,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: nalsd-iterative-design-methodology — NALSD prevents overload by validating capacity at design time; this skill recovers a team from overload that has already developed in production
-- **composes_with**: slo-decision-matrix — the matrix may diagnose that an over-tight SLO is the structural cause of toil overload; that diagnosis feeds directly into the structural-fix phase (Step 4) of this skill
+- contrasts-with: `nalsd-iterative-design-methodology` — NALSD prevents overload by validating capacity at design time; this skill recovers a team from overload that has already developed in production
+- composes-with: `slo-decision-matrix` — the matrix may diagnose that an over-tight SLO is the structural cause of toil overload; that diagnosis feeds directly into the structural-fix phase (Step 4) of this skill
 
 ______________________________________________________________________
 

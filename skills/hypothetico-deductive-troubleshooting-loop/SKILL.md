@@ -114,19 +114,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `four-golden-signals-monitoring` — (Examine step requires golden signal telemetry)
-- contrasts-with: `playbook-as-mttr-reduction` — (playbook replaces the loop for known failure modes)
-- composes-with: `incident-management-role-separation` — (the loop is the Ops Lead's inner method within the IC framework)
-- composes-with: `blameless-postmortem-process` — (the loop's documented output becomes the postmortem timeline)
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: four-golden-signals-monitoring — the Examine phase requires golden signal telemetry (latency, traffic, errors, saturation) to generate valid hypotheses
-- **contrasts_with**: playbook-as-mttr-reduction — a playbook replaces the loop for known, previously-solved failure modes; the loop applies when no playbook exists or when the playbook's prescribed steps do not match observed symptoms
-- **composes_with**: incident-management-role-separation — the loop is the Ops Lead's inner diagnostic method within the IC's coordination structure
-- **composes_with**: blameless-postmortem-process — the loop's documented test-and-disconfirm record becomes the incident timeline in the postmortem
+- depends-on: `four-golden-signals-monitoring` — the Examine phase requires golden signal telemetry (latency, traffic, errors, saturation) to generate valid hypotheses
+- contrasts-with: `playbook-as-mttr-reduction` — a playbook replaces the loop for known, previously-solved failure modes; the loop applies when no playbook exists or when the playbook's prescribed steps do not match observed symptoms
+- composes-with: `incident-management-role-separation` — the loop is the Ops Lead's inner diagnostic method within the IC's coordination structure
+- composes-with: `blameless-postmortem-process` — the loop's documented test-and-disconfirm record becomes the incident timeline in the postmortem
 
 ______________________________________________________________________
 

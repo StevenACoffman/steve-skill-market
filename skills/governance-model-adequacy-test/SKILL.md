@@ -63,8 +63,8 @@ Finally: holding an adequate model is a necessary condition for effective govern
 
 ## Related Skills
 
-- **requisite-variety-gap-assessment** — *compares*: complementary Ashby-family diagnostics; run together for complete governance fitness picture
-- **emergence-conditions-audit** — *combines*: model adequacy is a precondition for owning the interaction layer; run both when governance of complex programs is being assessed
+- contrasts-with: `requisite-variety-gap-assessment` — complementary Ashby-family diagnostics; run together for complete governance fitness picture
+- composes-with: `emergence-conditions-audit` — model adequacy is a precondition for owning the interaction layer; run both when governance of complex programs is being assessed
 - **program-governance-ecological-design** — *relates*: ecological design requires that someone holds the model; Conant-Ashby names who that must be
 
 ______________________________________________________________________

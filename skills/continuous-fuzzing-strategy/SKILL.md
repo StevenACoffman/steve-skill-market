@@ -253,8 +253,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: tcb-identification-minimization — TCB membership determines which components receive highest fuzzing priority; TCB must be identified before fuzzing investment can be rationally prioritized
-- **composes_with**: secure-by-construction-apis — secure-by-construction eliminates injection vulnerability classes at compile time; fuzzing finds the residual memory-safety and parsing-robustness bugs that type systems cannot address
+- depends-on: `tcb-identification-minimization` — TCB membership determines which components receive highest fuzzing priority; TCB must be identified before fuzzing investment can be rationally prioritized
+- composes-with: `secure-by-construction-apis` — secure-by-construction eliminates injection vulnerability classes at compile time; fuzzing finds the residual memory-safety and parsing-robustness bugs that type systems cannot address
 
 ______________________________________________________________________
 

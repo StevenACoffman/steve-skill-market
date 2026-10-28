@@ -128,9 +128,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: overload-recovery-sequencing — both address team dysfunction, but this skill diagnoses formation-stage Storming (root cause: organizational formation type) while overload recovery addresses teams crushed by accumulated operational load
-- **composes_with**: overload-recovery-sequencing — a converted ops team in Storming is often simultaneously in operational overload; both interventions may be required in sequence (safety first, then formation-type Storming mitigation)
-- **composes_with**: slo-consequences-governance-principle — the Norming milestone criterion "SLOs with error budget policies in place and exercised" is precisely what the consequences principle defines; reaching Norming requires this principle to be implemented
+- contrasts-with: `overload-recovery-sequencing` — both address team dysfunction, but this skill diagnoses formation-stage Storming (root cause: organizational formation type) while overload recovery addresses teams crushed by accumulated operational load
+- composes-with: `overload-recovery-sequencing` — a converted ops team in Storming is often simultaneously in operational overload; both interventions may be required in sequence (safety first, then formation-type Storming mitigation)
+- composes-with: `slo-consequences-governance-principle` — the Norming milestone criterion "SLOs with error budget policies in place and exercised" is precisely what the consequences principle defines; reaching Norming requires this principle to be implemented
 
 ______________________________________________________________________
 

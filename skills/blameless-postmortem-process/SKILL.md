@@ -116,18 +116,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `hypothetico-deductive-troubleshooting-loop` — 
+- depends-on: `hypothetico-deductive-troubleshooting-loop` — the postmortem documents the troubleshooting timeline and root causes discovered during the incident loop
 - contrasts-with: (blame-based accountability models)
-- composes-with: `incident-management-role-separation` — 
-- composes-with: `on-call-sustainability-model` — 
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: hypothetico-deductive-troubleshooting-loop — the postmortem documents the troubleshooting timeline and root causes discovered during the incident loop
-- **composes_with**: incident-management-role-separation — the living incident document produced during role-separated response is the primary input to the postmortem
-- **composes_with**: on-call-sustainability-model — postmortems require the ~6-hour per-incident budget; skipping postmortems is the leading indicator that the 2-incident-per-shift bound has been exceeded
+- composes-with: `incident-management-role-separation` — the living incident document produced during role-separated response is the primary input to the postmortem
+- composes-with: `on-call-sustainability-model` — postmortems require the ~6-hour per-incident budget; skipping postmortems is the leading indicator that the 2-incident-per-shift bound has been exceeded
 
 ______________________________________________________________________
 

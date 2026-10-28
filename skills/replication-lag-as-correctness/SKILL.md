@@ -143,9 +143,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: replication-topology-selection — this skill operates within an already-chosen topology; the replication topology must be established before addressing lag-specific routing logic.
-- **contrasts_with**: transaction-isolation-level-selection — isolation levels address concurrent transaction interference on the primary; replication lag addresses what followers return relative to the primary; they are distinct correctness layers.
-- **composes_with**: timeliness-vs-integrity-distinction — lag violations are timeliness violations by default, but the TVI framework determines whether a specific lag-induced stale read can cascade into a permanent integrity violation requiring different treatment.
+- depends-on: `replication-topology-selection` — this skill operates within an already-chosen topology; the replication topology must be established before addressing lag-specific routing logic.
+- contrasts-with: `transaction-isolation-level-selection` — isolation levels address concurrent transaction interference on the primary; replication lag addresses what followers return relative to the primary; they are distinct correctness layers.
+- composes-with: `timeliness-vs-integrity-distinction` — lag violations are timeliness violations by default, but the TVI framework determines whether a specific lag-induced stale read can cascade into a permanent integrity violation requiring different treatment.
 
 ______________________________________________________________________
 

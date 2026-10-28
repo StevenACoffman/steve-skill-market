@@ -139,8 +139,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: overload-recovery-sequencing — NALSD prevents production overload by validating capacity feasibility before build; overload recovery addresses a team and system already in distress
-- **composes_with**: error-budget-policy-framework — the SLO targets established as NALSD feasibility criteria become the targets that the error budget policy enforces in production
+- contrasts-with: `overload-recovery-sequencing` — NALSD prevents production overload by validating capacity feasibility before build; overload recovery addresses a team and system already in distress
+- composes-with: `error-budget-policy-framework` — the SLO targets established as NALSD feasibility criteria become the targets that the error budget policy enforces in production
 
 ______________________________________________________________________
 

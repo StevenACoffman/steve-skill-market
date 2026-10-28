@@ -69,8 +69,8 @@ In political environments, the organizationally feasible lever may not match the
 
 ## Related Skills
 
-- **requisite-variety-gap-assessment** — *depends on*: REQUIRED prerequisite; do not invoke without a completed variety deficit profile
-- **cynefin-pm-domain-identification** — *combines*: domain classification informs which amplify/attenuate lever is viable given the nature of the environment
+- depends-on: `requisite-variety-gap-assessment` — REQUIRED prerequisite; do not invoke without a completed variety deficit profile
+- composes-with: `cynefin-pm-domain-identification` — domain classification informs which amplify/attenuate lever is viable given the nature of the environment
 
 ______________________________________________________________________
 

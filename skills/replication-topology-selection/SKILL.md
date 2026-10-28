@@ -150,10 +150,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts_with**: replication-lag-as-correctness — topology selection decides how many leaders exist; lag-as-correctness addresses read-routing within an already-chosen single-leader topology.
-- **contrasts_with**: sharding-strategy-selection — replication copies the same data to multiple nodes for fault tolerance; sharding splits different data across nodes for write scalability; both are often combined but address orthogonal problems.
-- **composes_with**: consistency-model-selection — topology is the implementation mechanism; consistency model selection is the requirements analysis that determines whether the chosen topology is sufficient.
-- **composes_with**: fencing-tokens-distributed-locks — single-leader topologies require fencing tokens (epoch tokens, STONITH) to prevent a demoted leader from continuing to accept writes after failover.
+- contrasts-with: `replication-lag-as-correctness` — topology selection decides how many leaders exist; lag-as-correctness addresses read-routing within an already-chosen single-leader topology.
+- contrasts-with: `sharding-strategy-selection` — replication copies the same data to multiple nodes for fault tolerance; sharding splits different data across nodes for write scalability; both are often combined but address orthogonal problems.
+- composes-with: `consistency-model-selection` — topology is the implementation mechanism; consistency model selection is the requirements analysis that determines whether the chosen topology is sufficient.
+- composes-with: `fencing-tokens-distributed-locks` — single-leader topologies require fencing tokens (epoch tokens, STONITH) to prevent a demoted leader from continuing to accept writes after failover.
 
 ______________________________________________________________________
 

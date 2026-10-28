@@ -162,10 +162,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: distributed-fault-taxonomy — fencing tokens are the prescribed mitigation for the process-pause fault class; the taxonomy must be understood to know why TTL-based locks alone are insufficient.
-- **contrasts_with**: consistency-model-selection — consistency model selection determines the read-visibility guarantee for a system's replicated data; fencing tokens make a distributed lock safe against TTL expiry and have no bearing on read recency.
-- **composes_with**: clock-skew-ordering-hazard — fencing tokens use a monotonically increasing integer (not wall-clock time) as the ordering mechanism, which is exactly the correct alternative to clock-based ordering that clock-skew-ordering-hazard prescribes.
-- **composes_with**: end-to-end-idempotence-request-ids — fencing tokens prevent concurrent zombie writes (multiple processes competing for the same lock); idempotency keys prevent duplicate retries from the same client; together they cover both concurrent-access and retry correctness.
+- depends-on: `distributed-fault-taxonomy` — fencing tokens are the prescribed mitigation for the process-pause fault class; the taxonomy must be understood to know why TTL-based locks alone are insufficient.
+- contrasts-with: `consistency-model-selection` — consistency model selection determines the read-visibility guarantee for a system's replicated data; fencing tokens make a distributed lock safe against TTL expiry and have no bearing on read recency.
+- composes-with: `clock-skew-ordering-hazard` — fencing tokens use a monotonically increasing integer (not wall-clock time) as the ordering mechanism, which is exactly the correct alternative to clock-based ordering that clock-skew-ordering-hazard prescribes.
+- composes-with: `end-to-end-idempotence-request-ids` — fencing tokens prevent concurrent zombie writes (multiple processes competing for the same lock); idempotency keys prevent duplicate retries from the same client; together they cover both concurrent-access and retry correctness.
 
 ______________________________________________________________________
 

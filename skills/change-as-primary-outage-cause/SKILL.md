@@ -130,19 +130,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- depends-on: `four-golden-signals-monitoring` — (progressive rollout requires monitoring at each stage to detect problems before proceeding)
-- contrasts-with: `error-budget-conflict-resolution` — (error budget governs release policy decisions; change management governs per-release engineering safety)
-- composes-with: `blameless-postmortem-process` — (postmortems on change-originated outages produce the specific changes to rollout process and blast-radius design that close future gaps)
-- composes-with: `hypothetico-deductive-troubleshooting-loop` — (when a change causes an outage, the troubleshooting loop is the diagnostic method; the 70% prior means change is the first hypothesis to test)
-
-______________________________________________________________________
-
-## Related Skills
-
-- **depends_on**: four-golden-signals-monitoring — progressive rollout requires signal-based detection at each stage to determine whether to proceed or roll back
-- **contrasts_with**: error-budget-conflict-resolution — error budget governs the policy decision of when to release; change management governs the engineering mechanics of how to make each individual release safer
-- **composes_with**: blameless-postmortem-process — postmortems on change-originated outages produce the specific rollout-process improvements that reduce future blast radius
-- **composes_with**: hypothetico-deductive-troubleshooting-loop — when a change correlates with an outage, the loop is the diagnostic method and the 70% prior makes change the first hypothesis to test
+- depends-on: `four-golden-signals-monitoring` — progressive rollout requires signal-based detection at each stage to determine whether to proceed or roll back
+- contrasts-with: `error-budget-conflict-resolution` — error budget governs the policy decision of when to release; change management governs the engineering mechanics of how to make each individual release safer
+- composes-with: `blameless-postmortem-process` — postmortems on change-originated outages produce the specific rollout-process improvements that reduce future blast radius
+- composes-with: `hypothetico-deductive-troubleshooting-loop` — when a change correlates with an outage, the loop is the diagnostic method and the 70% prior makes change the first hypothesis to test
 
 ______________________________________________________________________
 

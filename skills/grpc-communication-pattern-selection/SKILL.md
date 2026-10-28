@@ -161,7 +161,7 @@ is slow. This is a production concern not addressed by pattern selection alone.
 
 ## Related Skills
 
-- **grpc-vs-rest-vs-graphql** — informs: confirms gRPC is the right protocol before selecting which of its four patterns to use.
+- depends-on: `grpc-vs-rest-vs-graphql` — only relevant once gRPC has been confirmed as the correct choice for a given boundary.
 - **grpc-observability-three-pillar** — relates: streaming interceptors must be registered separately from unary interceptors; pattern selection determines which interceptor variants are needed.
 
 ______________________________________________________________________
@@ -169,7 +169,3 @@ ______________________________________________________________________
 ## Provenance
 
 - **Source:** gRPC: Up and Running, Kasun Indrasiri and Danesh Kuruppu, 2020 (O'Reilly)
-
-## Related Skills
-
-- depends-on: `grpc-vs-rest-vs-graphql` — only relevant once gRPC has been confirmed as the correct choice for a given boundary.

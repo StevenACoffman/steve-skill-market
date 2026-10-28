@@ -152,9 +152,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: system-of-record-vs-derived-data — batch and stream processing produce derived data; which system is authoritative must be established before selecting how to compute derivations from it.
-- **composes_with**: end-to-end-idempotence-request-ids — stream processing with at-least-once delivery requires idempotent consumers; the idempotency key mechanism is the standard implementation of that requirement.
-- **composes_with**: schema-evolution-compatibility-planning — event log replay (the human-fault-tolerance recovery mechanism) requires that historical events remain decodable by current code; backward schema compatibility is a prerequisite for replay-based recovery.
+- depends-on: `system-of-record-vs-derived-data` — batch and stream processing produce derived data; which system is authoritative must be established before selecting how to compute derivations from it.
+- composes-with: `end-to-end-idempotence-request-ids` — stream processing with at-least-once delivery requires idempotent consumers; the idempotency key mechanism is the standard implementation of that requirement.
+- composes-with: `schema-evolution-compatibility-planning` — event log replay (the human-fault-tolerance recovery mechanism) requires that historical events remain decodable by current code; backward schema compatibility is a prerequisite for replay-based recovery.
 
 ______________________________________________________________________
 

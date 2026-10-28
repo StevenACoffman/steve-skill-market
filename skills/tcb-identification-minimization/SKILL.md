@@ -203,8 +203,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes_with**: secure-by-construction-apis — secure-by-construction APIs shrink the TCB to a single constructor and its sanitizer, making the audit scope tractably small for injection-prevention policies
-- **composes_with**: least-privilege-tooling-enforced — tooling-enforced narrow functional APIs limit the blast radius of any component, which directly reduces which components must be included in the TCB for a given policy
+- composes-with: `secure-by-construction-apis` — secure-by-construction APIs shrink the TCB to a single constructor and its sanitizer, making the audit scope tractably small for injection-prevention policies
+- composes-with: `least-privilege-tooling-enforced` — tooling-enforced narrow functional APIs limit the blast radius of any component, which directly reduces which components must be included in the TCB for a given policy
 
 ______________________________________________________________________
 

@@ -417,8 +417,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes_with**: `go-constructor-option-pattern-selection` — the `New()` factory pattern climax generates is an instance of the constructor pattern; functional options can extend it for complex flag sets.
-- **composes_with**: `go-http-service-di-composition` — a climax `serve` command's `exec()` is the natural place to wire up an HTTP server using the `run()`/application-struct DI pattern.
+- composes-with: `go-constructor-option-pattern-selection` — the `New()` factory pattern climax generates is an instance of the constructor pattern; functional options can extend it for complex flag sets.
+- composes-with: `go-http-service-di-composition` — a climax `serve` command's `exec()` is the natural place to wire up an HTTP server using the `run()`/application-struct DI pattern.
 
 ______________________________________________________________________
 

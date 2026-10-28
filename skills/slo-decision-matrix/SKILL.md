@@ -138,9 +138,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: slo-stakeholder-negotiation-gate — when the matrix prescribes tightening or loosening the SLO, that change must pass through the tripartite negotiation gate to be valid
-- **contrasts_with**: error-budget-policy-framework — the policy mandates a fixed response when the budget is exhausted; the matrix provides calibration guidance based on ongoing SLO × toil × satisfaction state
-- **composes_with**: multiwindow-multi-burn-rate-alerting — alerting determines how quickly the team learns the SLO is at risk; the matrix determines what engineering action to take in response to that information
+- depends-on: `slo-stakeholder-negotiation-gate` — when the matrix prescribes tightening or loosening the SLO, that change must pass through the tripartite negotiation gate to be valid
+- contrasts-with: `error-budget-policy-framework` — the policy mandates a fixed response when the budget is exhausted; the matrix provides calibration guidance based on ongoing SLO × toil × satisfaction state
+- composes-with: `multiwindow-multi-burn-rate-alerting` — alerting determines how quickly the team learns the SLO is at risk; the matrix determines what engineering action to take in response to that information
 
 ______________________________________________________________________
 

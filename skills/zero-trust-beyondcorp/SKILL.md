@@ -229,10 +229,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: breakglass-design — panic rooms are the Zero Trust breakglass; the irony is explicit (ZTN's fallback restores location-based trust), and proper breakglass design is required before Zero Trust controls can be deployed strictly
-- **composes_with**: least-privilege-tooling-enforced — Zero Trust removes implicit location-based trust; least privilege scopes what the now-verified identity can do; both are required for comprehensive access control
-- **composes_with**: multi-party-authorization — Zero Trust verifies identity at every boundary; MPA adds a two-actor requirement for sensitive operations that identity verification alone does not prevent
-- **composes_with**: unified-incident-management-imag — BeyondCorp's device/user credential revocation is an IMAG remediation action for active intrusions; designing it as such makes incident isolation faster and more reliable
+- depends-on: `breakglass-design` — panic rooms are the Zero Trust breakglass; the irony is explicit (ZTN's fallback restores location-based trust), and proper breakglass design is required before Zero Trust controls can be deployed strictly
+- composes-with: `least-privilege-tooling-enforced` — Zero Trust removes implicit location-based trust; least privilege scopes what the now-verified identity can do; both are required for comprehensive access control
+- composes-with: `multi-party-authorization` — Zero Trust verifies identity at every boundary; MPA adds a two-actor requirement for sensitive operations that identity verification alone does not prevent
+- composes-with: `unified-incident-management-imag` — BeyondCorp's device/user credential revocation is an IMAG remediation action for active intrusions; designing it as such makes incident isolation faster and more reliable
 
 ______________________________________________________________________
 

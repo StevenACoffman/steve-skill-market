@@ -231,9 +231,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: least-privilege-tooling-enforced — breakglass exists because strict least-privilege creates the lockout risk that operators fear
-- **contrasts_with**: fail-safe-vs-fail-secure — breakglass is deliberate human override of a functioning control; fail-safe/fail-secure is automatic system behavior when dependencies fail
-- **composes_with**: zero-touch-production — ZTP requires breakglass as its mandatory safety valve; the breakglass design is what makes ZTP politically deployable
+- depends-on: `least-privilege-tooling-enforced` — breakglass exists because strict least-privilege creates the lockout risk that operators fear
+- contrasts-with: `fail-safe-vs-fail-secure` — breakglass is deliberate human override of a functioning control; fail-safe/fail-secure is automatic system behavior when dependencies fail
+- composes-with: `zero-touch-production` — ZTP requires breakglass as its mandatory safety valve; the breakglass design is what makes ZTP politically deployable
 
 ______________________________________________________________________
 

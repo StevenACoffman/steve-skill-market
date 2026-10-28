@@ -177,10 +177,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: consistency-model-selection — TVI uses linearizability and eventual consistency as vocabulary; understanding what each model provides is prerequisite to classifying which operations require which guarantee.
-- **contrasts_with**: replication-lag-as-correctness — lag-as-correctness addresses the mechanism (routing and LSN gating) for specific lag-induced violations; TVI provides the upstream classification that determines whether a lag violation is merely annoying (timeliness) or catastrophic (integrity).
-- **composes_with**: end-to-end-idempotence-request-ids — TVI identifies that duplicate operation application is an integrity violation; idempotency keys are the mechanism that prevents that integrity violation from occurring.
-- **composes_with**: transaction-isolation-level-selection — TVI determines which concurrency anomalies are integrity-critical (write skew in a quota system = permanent violation) vs. tolerable; this classification drives the minimum isolation level required.
+- depends-on: `consistency-model-selection` — TVI uses linearizability and eventual consistency as vocabulary; understanding what each model provides is prerequisite to classifying which operations require which guarantee.
+- contrasts-with: `replication-lag-as-correctness` — lag-as-correctness addresses the mechanism (routing and LSN gating) for specific lag-induced violations; TVI provides the upstream classification that determines whether a lag violation is merely annoying (timeliness) or catastrophic (integrity).
+- composes-with: `end-to-end-idempotence-request-ids` — TVI identifies that duplicate operation application is an integrity violation; idempotency keys are the mechanism that prevents that integrity violation from occurring.
+- composes-with: `transaction-isolation-level-selection` — TVI determines which concurrency anomalies are integrity-critical (write skew in a quota system = permanent violation) vs. tolerable; this classification drives the minimum isolation level required.
 
 ______________________________________________________________________
 

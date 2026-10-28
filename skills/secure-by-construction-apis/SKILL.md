@@ -211,8 +211,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: tcb-identification-minimization — the safe type constructor and its sanitizer are the TCB for the injection-prevention policy; TCB identification scopes exactly what must be audited
-- **composes_with**: continuous-fuzzing-strategy — secure-by-construction eliminates injection vulnerability classes via the type system; fuzzing finds the residual memory-safety and parsing-robustness bugs that type contracts cannot represent
+- depends-on: `tcb-identification-minimization` — the safe type constructor and its sanitizer are the TCB for the injection-prevention policy; TCB identification scopes exactly what must be audited
+- composes-with: `continuous-fuzzing-strategy` — secure-by-construction eliminates injection vulnerability classes via the type system; fuzzing finds the residual memory-safety and parsing-robustness bugs that type contracts cannot represent
 
 ______________________________________________________________________
 

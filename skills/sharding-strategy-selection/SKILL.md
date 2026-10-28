@@ -159,9 +159,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: storage-engine-workload-selection — the on-disk engine archetype (LSM, B-tree, columnar) must be chosen before designing the sharding strategy, since the engine's write/read characteristics determine which partition key properties (range vs. hash) produce acceptable performance per shard.
-- **contrasts_with**: replication-topology-selection — sharding splits different data across nodes to scale write throughput and volume; replication copies the same data to multiple nodes for fault tolerance and read scaling; they are orthogonal decisions often applied together.
-- **composes_with**: consistency-model-selection — a sharded system distributes the consistency problem across shards; which operations require cross-shard linearizability (uniqueness checks, global quotas) must be determined using the consistency model selection framework.
+- depends-on: `storage-engine-workload-selection` — the on-disk engine archetype (LSM, B-tree, columnar) must be chosen before designing the sharding strategy, since the engine's write/read characteristics determine which partition key properties (range vs. hash) produce acceptable performance per shard.
+- contrasts-with: `replication-topology-selection` — sharding splits different data across nodes to scale write throughput and volume; replication copies the same data to multiple nodes for fault tolerance and read scaling; they are orthogonal decisions often applied together.
+- composes-with: `consistency-model-selection` — a sharded system distributes the consistency problem across shards; which operations require cross-shard linearizability (uniqueness checks, global quotas) must be determined using the consistency model selection framework.
 
 ______________________________________________________________________
 

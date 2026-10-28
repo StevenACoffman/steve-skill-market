@@ -193,9 +193,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends_on**: tcb-identification-minimization — TCB components are typically those whose failure triggers the fail-safe/fail-secure decision; identifying the TCB is prerequisite to deciding the failure mode
-- **contrasts_with**: breakglass-design — fail-safe/fail-secure handles unintentional system failure automatically; breakglass handles deliberate human override of a functioning control
-- **composes_with**: security-as-emergent-property — the failure mode choice is a canonical example of a design-time decision that cannot be deferred without embedding an uncontrolled default
+- depends-on: `tcb-identification-minimization` — TCB components are typically those whose failure triggers the fail-safe/fail-secure decision; identifying the TCB is prerequisite to deciding the failure mode
+- contrasts-with: `breakglass-design` — fail-safe/fail-secure handles unintentional system failure automatically; breakglass handles deliberate human override of a functioning control
+- composes-with: `security-as-emergent-property` — the failure mode choice is a canonical example of a design-time decision that cannot be deferred without embedding an uncontrolled default
 
 ______________________________________________________________________
 
