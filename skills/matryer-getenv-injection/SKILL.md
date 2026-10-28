@@ -276,7 +276,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **matryer-run-function** — depends-on: `getenv func(string) string` is a parameter of `run()`; adopting this pattern requires the `run()` entry-point refactor first.
+- depends-on: `matryer-run-function` — `getenv func(string) string` is a parameter of `run()`; adopting this pattern requires the `run()` entry-point refactor first.
 - **matryer-run-e2e-testing** — enables: replacing `t.Setenv` with an injected closure removes the parallelism restriction, allowing e2e tests to call `t.Parallel()` freely.
 
 ______________________________________________________________________

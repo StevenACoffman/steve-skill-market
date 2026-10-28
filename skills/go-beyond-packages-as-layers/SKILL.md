@@ -162,9 +162,9 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- composes-with: go-beyond-four-tenet-layout — the four tenets are the actionable recipe built on this mental model
+- composes-with: `go-beyond-four-tenet-layout` — the four tenets are the actionable recipe built on this mental model
 
 ______________________________________________________________________
 

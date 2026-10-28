@@ -51,7 +51,7 @@ The `backend-protocol: GRPC` annotation is NGINX-specific; Traefik and HAProxy I
 
 ## Related Skills
 
-- **grpc-service-decomposition-by-capability** — depends on: each decomposed service needs its own Deployment and ClusterIP Service; the decomposition count determines the number of Kubernetes manifests and Ingress path rules
+- depends-on: `grpc-service-decomposition-by-capability` — each decomposed service needs its own Deployment and ClusterIP Service; the decomposition count determines the number of Kubernetes manifests and Ingress path rules
 
 ______________________________________________________________________
 

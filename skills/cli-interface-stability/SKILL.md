@@ -258,8 +258,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `cli-configuration-hierarchy`: Configuration hierarchy governs how config keys, env vars, and flags interact at runtime; interface stability governs whether their names and semantics may change across versions.
-- **composes-with** → `cli-destructive-confirmation-tiers`: Confirmation tier design depends on stable flag names (e.g., `--force`, `--yes`) — changing those flags is itself a stability problem governed by this skill.
+- composes-with: `cli-configuration-hierarchy` — Configuration hierarchy governs how config keys, env vars, and flags interact at runtime; interface stability governs whether their names and semantics may change across versions.
+- composes-with: `cli-destructive-confirmation-tiers` — Confirmation tier design depends on stable flag names (e.g., `--force`, `--yes`) — changing those flags is itself a stability problem governed by this skill.
 
 ______________________________________________________________________
 

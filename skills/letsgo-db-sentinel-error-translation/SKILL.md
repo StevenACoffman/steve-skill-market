@@ -112,10 +112,10 @@ This pattern applies at any persistence boundary — Redis, S3, external HTTP AP
 
 ## Related Skills
 
-- **go-http-service-di-composition** — depends on: model fields on `application` use interface types; the sentinel errors are what handlers test after calling those interfaces
-- **letsgo-session-token-renewal** — informs: `ErrInvalidCredentials` is what the login handler checks before calling `AddNonFieldError`; the sentinel translation pattern defines what session-renewal code branches on
-- **go-http-service-test-strategy** — informs: mock models return sentinel errors by value so integration tests can assert on `models.ErrNoRecord` and `models.ErrInvalidCredentials` without a live database
-- **letsgo-form-validator** — informs: when `Authenticate()` returns `ErrInvalidCredentials`, the login handler calls `form.AddNonFieldError(...)` — the sentinel error is the bridge between model and form validation layers
+- depends-on: `go-http-service-di-composition` — model fields on `application` use interface types; the sentinel errors are what handlers test after calling those interfaces
+- informs: `letsgo-session-token-renewal` — `ErrInvalidCredentials` is what the login handler checks before calling `AddNonFieldError`; the sentinel translation pattern defines what session-renewal code branches on
+- informs: `go-http-service-test-strategy` — mock models return sentinel errors by value so integration tests can assert on `models.ErrNoRecord` and `models.ErrInvalidCredentials` without a live database
+- informs: `letsgo-form-validator` — when `Authenticate()` returns `ErrInvalidCredentials`, the login handler calls `form.AddNonFieldError(...)` — the sentinel error is the bridge between model and form validation layers
 - **letsgo-postform-not-postformvalue** — relates: both skills are about handling errors correctly at a layer boundary — one at the persistence boundary, the other at the HTTP input boundary
 
 ______________________________________________________________________

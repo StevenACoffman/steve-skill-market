@@ -295,9 +295,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `ownership-trio`: Consumer journey org only produces reliability if each journey team holds all three ownership elements; a team cannot own a journey it doesn't fully control.
-- **contrasts-with** → `ephemeral-taskforce`: ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries to align with consumer journeys.
-- **composes-with** → `service-level-topology`: The consumer journey identifies the topology starting point (who uses what, for what task); service-level-topology provides the SLI derivation methodology for each journey the org redesign produces.
+- depends-on: `ownership-trio` — Consumer journey org only produces reliability if each journey team holds all three ownership elements; a team cannot own a journey it doesn't fully control.
+- contrasts-with: `ephemeral-taskforce` — ETF is a temporary execution instrument that operates within the existing org structure; consumer-journey-org permanently restructures team boundaries to align with consumer journeys.
+- composes-with: `service-level-topology` — The consumer journey identifies the topology starting point (who uses what, for what task); service-level-topology provides the SLI derivation methodology for each journey the org redesign produces.
 
 ______________________________________________________________________
 

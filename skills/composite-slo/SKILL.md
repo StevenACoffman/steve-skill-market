@@ -152,9 +152,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `sli-formula-measurement`: Each component SLI formula must be defined before composing them into a system-level SLO; the good/valid design is the input to the serial/parallel composition math.
-- **composes-with** → `responsibility-control-slo`: Responsibility-Control SLO decomposes a target top-level SLO into per-team budgets; composite-slo provides the inverse direction — calculating what system SLO is achievable from those per-team numbers.
-- **contrasts-with** → `multi-tier-slo`: Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They are orthogonal and often applied together.
+- depends-on: `sli-formula-measurement` — Each component SLI formula must be defined before composing them into a system-level SLO; the good/valid design is the input to the serial/parallel composition math.
+- composes-with: `responsibility-control-slo` — Responsibility-Control SLO decomposes a target top-level SLO into per-team budgets; composite-slo provides the inverse direction — calculating what system SLO is achievable from those per-team numbers.
+- contrasts-with: `multi-tier-slo` — Composite-slo combines SLOs from different services in a dependency graph; multi-tier-slo applies multiple targets to the same service. They are orthogonal and often applied together.
 
 ______________________________________________________________________
 

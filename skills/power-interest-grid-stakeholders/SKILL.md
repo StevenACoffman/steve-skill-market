@@ -218,8 +218,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `tacit-knowledge-extraction`: The grid identifies which key players have the authority to grant access to organizationally sealed departments — a prerequisite that must be resolved before the Gemba Walk and Artifact Archaeology techniques can proceed.
-- **composes-with** `productland-vs-enterpriseland-selling`: The grid determines who the audience is and which quadrant they occupy; the selling framework then prescribes what pitch frame and metrics to use with that specific audience.
+- composes-with: `tacit-knowledge-extraction` — The grid identifies which key players have the authority to grant access to organizationally sealed departments — a prerequisite that must be resolved before the Gemba Walk and Artifact Archaeology techniques can proceed.
+- composes-with: `productland-vs-enterpriseland-selling` — The grid determines who the audience is and which quadrant they occupy; the selling framework then prescribes what pitch frame and metrics to use with that specific audience.
 
 ______________________________________________________________________
 

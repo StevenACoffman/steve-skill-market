@@ -241,9 +241,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `cli-interface-stability`: Confirmation
-  tier flags (`--force`, `--yes`, `--confirm`) are stable CLI surfaces; renaming or removing them
-  requires the same deprecation discipline as any other stable flag.
+- composes-with: `cli-interface-stability` — Confirmation tier flags (`--force`, `--yes`, `--confirm`) are stable CLI surfaces; renaming or removing them requires the same deprecation discipline as any other stable flag.
 
 ______________________________________________________________________
 

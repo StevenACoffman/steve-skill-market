@@ -50,8 +50,8 @@ Chapters 3 and 4 of the book trace three successive regression models on the adv
 
 ## Related Skills
 
-- **ml-pipeline-integrity-pre-training** — depends on: the pre-defined metric and acceptance threshold from this skill are the only valid gate for accepting or rejecting a complexity step-up.
-- **ml-data-pipeline-type-integrity** — combines: baseline model metrics are only trustworthy if the data feeding them is type-enforced and versioned; run both together at project start.
+- depends-on: `ml-pipeline-integrity-pre-training` — the pre-defined metric and acceptance threshold from this skill are the only valid gate for accepting or rejecting a complexity step-up.
+- composes-with: `ml-data-pipeline-type-integrity` — baseline model metrics are only trustworthy if the data feeding them is type-enforced and versioned; run both together at project start.
 
 ______________________________________________________________________
 

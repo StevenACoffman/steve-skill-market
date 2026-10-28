@@ -82,10 +82,10 @@ Templates are loaded once at startup and not reloaded on change — a server res
 
 ## Related Skills
 
-- **go-http-service-di-composition** — depends on: `templateCache` is a field on `application`; `render()` is a method on `*application` that reads from it
-- **letsgo-form-validator** — combines: `render()` is the function called on validation failure; the form struct carrying its validation state is the `data.Form` value passed to `render()` — these two patterns are always used together on the re-render path
-- **go-http-service-test-strategy** — informs: `newTestApplication(t)` must supply a test template cache so end-to-end tests can exercise the two-stage render path without a filesystem
-- **go-http-middleware-construction-and-organization** — informs: the `dynamic` chain's session and CSRF middleware run before handlers that call `render()`; CSRF token injection into template data is part of the render data pipeline
+- depends-on: `go-http-service-di-composition` — `templateCache` is a field on `application`; `render()` is a method on `*application` that reads from it
+- composes-with: `letsgo-form-validator` — `render()` is the function called on validation failure; the form struct carrying its validation state is the `data.Form` value passed to `render()` — these two patterns are always used together on the re-render path
+- informs: `go-http-service-test-strategy` — `newTestApplication(t)` must supply a test template cache so end-to-end tests can exercise the two-stage render path without a filesystem
+- informs: `go-http-middleware-construction-and-organization` — the `dynamic` chain's session and CSRF middleware run before handlers that call `render()`; CSRF token injection into template data is part of the render data pipeline
 
 ______________________________________________________________________
 

@@ -10,7 +10,7 @@ description: |
   wiki", "update the wiki", "wiki lint pass", or any request to accumulate/curate
   knowledge as interlinked markdown that a wiki serves and an OKF consumer can
   read. Covers the LeafWiki on-disk layout (sections = folder + index.md, leaf
-  pages = <slug>.md, assets/<pageID>/), reserved vs. preservable frontmatter, the
+  pages = slug.md, assets/pageID/), reserved vs. preservable frontmatter, the
   edit-then-resync loop (SIGUSR1/SIGHUP), and the exact frontmatter to add so
   pages carry OKF provenance/trust/lifecycle without breaking LeafWiki.
 ---
@@ -199,7 +199,7 @@ rest are recommended and make the corpus trustable.
 ```markdown
 ---
 type: Reference                      # OKF required: kind of concept (free string)
-title: Vannevar Bush                 # display name (also LeafWiki title fallback)
+title: 'Vannevar Bush'               # display name (also LeafWiki title fallback)
 description: Engineer who proposed the Memex, a precursor to hypertext.
 tags: [people, hypertext]            # LeafWiki tags AND OKF tags — one list
 status: stable                       # draft | stable | deprecated

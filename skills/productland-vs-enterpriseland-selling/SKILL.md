@@ -212,7 +212,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `power-interest-grid-stakeholders`: The grid identifies which organizational quadrant the audience occupies and what engagement format they require; this skill then prescribes the specific pitch frame (growth vs. defense) and the concrete metrics to lead with for that audience.
+- composes-with: `power-interest-grid-stakeholders` — The grid identifies which organizational quadrant the audience occupies and what engagement format they require; this skill then prescribes the specific pitch frame (growth vs. defense) and the concrete metrics to lead with for that audience.
 
 ______________________________________________________________________
 

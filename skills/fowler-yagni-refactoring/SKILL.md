@@ -133,11 +133,11 @@ YAGNI is only defensible when the codebase has adequate test coverage and the te
 
 **The "estimate how hard it would be to refactor later" step requires experience.** Junior engineers may systematically underestimate refactoring costs, leading to deferred complexity that becomes genuine debt. Teams should calibrate this estimate against their actual refactoring track record, not theory.
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- **depends-on** `fowler-design-stamina`: YAGNI is only a legitimate engineering answer — "we'll add it when we need it" — if the team can actually refactor safely and cheaply when that need arrives. Design Stamina provides the economic and philosophical foundation: its two-curve model argues that internal quality enables fast iteration. Without that foundation, deferring complexity is just debt accumulation dressed in a principle. YAGNI is the architectural implication of Design Stamina's claim.
+- depends-on: `fowler-design-stamina` — YAGNI is only a legitimate engineering answer — "we'll add it when we need it" — if the team can actually refactor safely and cheaply when that need arrives. Design Stamina provides the economic and philosophical foundation: its two-curve model argues that internal quality enables fast iteration. Without that foundation, deferring complexity is just debt accumulation dressed in a principle. YAGNI is the architectural implication of Design Stamina's claim.
 
-- **contrasts-with** `fowler-branch-by-abstraction`: Both skills involve abstraction layers, but in opposite situations. YAGNI says: do not introduce an abstraction for a hypothetical future requirement that does not yet exist. Branch By Abstraction says: introduce an abstraction layer to enable a concrete, real migration of an existing component across many call sites. The distinction is whether a genuine requirement is present. When a real need arrives that YAGNI deferred, Branch By Abstraction is often the technique used to fulfill it incrementally.
+- contrasts-with: `fowler-branch-by-abstraction` — Both skills involve abstraction layers, but in opposite situations. YAGNI says: do not introduce an abstraction for a hypothetical future requirement that does not yet exist. Branch By Abstraction says: introduce an abstraction layer to enable a concrete, real migration of an existing component across many call sites. The distinction is whether a genuine requirement is present. When a real need arrives that YAGNI deferred, Branch By Abstraction is often the technique used to fulfill it incrementally.
 
 ## Audit Information
 

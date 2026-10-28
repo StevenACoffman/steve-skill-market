@@ -321,8 +321,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `business-process-discovery`: The swimlane map used for crossing analysis is produced by business process discovery — the sequence of steps and actor hand-offs from discovery is the direct input to this skill's candidate identification phase.
-- **composes-with** `semantic-vocabulary-ladder`: Each confirmed boundary identifies terms that carry different definitions on each side; the vocabulary ladder then determines what level of formal shared vocabulary (controlled vocabulary through ontology) the translation layer requires.
+- depends-on: `business-process-discovery` — The swimlane map used for crossing analysis is produced by business process discovery — the sequence of steps and actor hand-offs from discovery is the direct input to this skill's candidate identification phase.
+- composes-with: `semantic-vocabulary-ladder` — Each confirmed boundary identifies terms that carry different definitions on each side; the vocabulary ladder then determines what level of formal shared vocabulary (controlled vocabulary through ontology) the translation layer requires.
 
 ______________________________________________________________________
 

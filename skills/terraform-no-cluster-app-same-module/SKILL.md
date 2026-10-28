@@ -103,9 +103,9 @@ resource "kubernetes_deployment" "app" { ... }
 
 ## Related Skills
 
-- **terraform-module-size-smell** — compares: the provider-initialization constraint is a hard technical reason to split a module; the size-smell skill covers the organizational and operational reasons — together they give the full case for module separation.
-- **terraform-directory-layout-isolation** — informs: the two-apply ordering required for EKS cluster then apps maps naturally onto two separate environment-aware directories in the file layout, each with its own backend and CI pipeline step.
-- **terraform-moved-block-refactoring** — informs: if resources are being extracted from a mixed cluster+app module into separate modules, moved blocks prevent destroy/create during the split.
+- contrasts-with: `terraform-module-size-smell` — the provider-initialization constraint is a hard technical reason to split a module; the size-smell skill covers the organizational and operational reasons — together they give the full case for module separation.
+- informs: `terraform-directory-layout-isolation` — the two-apply ordering required for EKS cluster then apps maps naturally onto two separate environment-aware directories in the file layout, each with its own backend and CI pipeline step.
+- informs: `terraform-moved-block-refactoring` — if resources are being extracted from a mixed cluster+app module into separate modules, moved blocks prevent destroy/create during the split.
 
 ______________________________________________________________________
 

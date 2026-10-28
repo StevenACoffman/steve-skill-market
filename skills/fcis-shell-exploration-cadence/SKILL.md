@@ -156,10 +156,10 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: seam-to-zone-refactoring-trajectory — the cadence is the workflow for building toward the two-zone structure
-- composes-with: test-double-diagnostic-sensing-to-core — mock accumulation in the shell signals extraction is overdue
+- depends-on: `seam-to-zone-refactoring-trajectory` — the cadence is the workflow for building toward the two-zone structure
+- composes-with: `test-double-diagnostic-sensing-to-core` — mock accumulation in the shell signals extraction is overdue
 
 ______________________________________________________________________
 

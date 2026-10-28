@@ -51,7 +51,7 @@ This methodology is language-agnostic; the book uses Go vs. Python to illustrate
 ## Related Skills
 
 - **ml-pipeline-integrity-pre-training** — prerequisite for: type-enforced, versioned data splits are what make a pre-defined evaluation strategy reproducible and auditable.
-- **ml-simplest-model-baseline-first** — combines: clean, schema-validated data must be in place before baseline model metrics are meaningful; run both together at project start.
+- composes-with: `ml-simplest-model-baseline-first` — clean, schema-validated data must be in place before baseline model metrics are meaningful; run both together at project start.
 
 ______________________________________________________________________
 

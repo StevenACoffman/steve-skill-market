@@ -148,8 +148,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `slo-definition-calibration-framework`: Wardley/Pace provides the strategic tier range as the starting point; slo-definition-calibration-framework calibrates precisely within that range based on actual consumer tolerance and cost.
-- **composes-with** → `10x9-cost-reliability`: The 10x/9 rule explains why different evolutionary tiers require different SLO levels; Wardley/Pace provides the classification system that applies the cost argument across a portfolio of systems.
+- depends-on: `slo-definition-calibration-framework` — Wardley/Pace provides the strategic tier range as the starting point; slo-definition-calibration-framework calibrates precisely within that range based on actual consumer tolerance and cost.
+- composes-with: `10x9-cost-reliability` — The 10x/9 rule explains why different evolutionary tiers require different SLO levels; Wardley/Pace provides the classification system that applies the cost argument across a portfolio of systems.
 
 ______________________________________________________________________
 

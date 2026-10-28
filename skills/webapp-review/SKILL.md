@@ -7,8 +7,8 @@ description: |
   file-and-line findings as inline GitHub review comments.
 
   Trigger signals:
-  - "review PR <n> in webapp"
-  - "review the changes on <branch> from the merge base of <deploy branch>"
+  - "review PR 1234 in webapp"
+  - "review the changes on a branch from the merge base of its deploy branch"
   - "post that review as comments on the PR"
   - Any webapp code review that should end up on GitHub rather than in chat
 allowed-tools: Bash, Read, Edit, Write

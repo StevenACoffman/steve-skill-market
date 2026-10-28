@@ -158,11 +158,11 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: go-beyond-packages-as-layers — layers model is the conceptual foundation for the four-tenet structure
-- composes-with: go-beyond-three-consumer-error — error type lives in the root package per tenet 1
-- composes-with: go-beyond-service-transaction-boundary — tenet 2 (subpackages as adapters) is where transaction boundaries live
+- depends-on: `go-beyond-packages-as-layers` — layers model is the conceptual foundation for the four-tenet structure
+- composes-with: `go-beyond-three-consumer-error` — error type lives in the root package per tenet 1
+- composes-with: `go-beyond-service-transaction-boundary` — tenet 2 (subpackages as adapters) is where transaction boundaries live
 
 ______________________________________________________________________
 

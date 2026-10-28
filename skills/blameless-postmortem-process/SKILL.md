@@ -114,11 +114,12 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: `hypothetico-deductive-troubleshooting-loop`
+- depends-on: `hypothetico-deductive-troubleshooting-loop` — 
 - contrasts-with: (blame-based accountability models)
-- composes-with: `incident-management-role-separation`, `on-call-sustainability-model`
+- composes-with: `incident-management-role-separation` — 
+- composes-with: `on-call-sustainability-model` — 
 
 ______________________________________________________________________
 

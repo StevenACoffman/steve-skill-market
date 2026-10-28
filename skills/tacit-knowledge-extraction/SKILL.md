@@ -383,8 +383,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `power-interest-grid-stakeholders`: Organizational access to the workers and their artifacts is the prerequisite for all three field-research techniques — the grid identifies which key players can grant access and what engagement strategy is needed when a department is politically sealed.
-- **composes-with** `business-process-discovery`: The three techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) produce the raw evidence that completes the five-component process description when documentation is missing, stale, or contradicted by reality.
+- depends-on: `power-interest-grid-stakeholders` — Organizational access to the workers and their artifacts is the prerequisite for all three field-research techniques — the grid identifies which key players can grant access and what engagement strategy is needed when a department is politically sealed.
+- composes-with: `business-process-discovery` — The three techniques (Gemba Walk, Artifact Archaeology, Unhappy Path Interviews) produce the raw evidence that completes the five-component process description when documentation is missing, stale, or contradicted by reality.
 
 ______________________________________________________________________
 

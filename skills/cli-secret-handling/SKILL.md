@@ -228,11 +228,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `cli-configuration-hierarchy`:
-  Secrets are a special category of configuration value. Use cli-configuration-hierarchy to
-  determine placement in the precedence hierarchy, then apply this skill for the additional
-  security constraints that apply when the value is a secret (file-based input, no flags or
-  plain env vars).
+- composes-with: `cli-configuration-hierarchy` — Secrets are a special category of configuration value. Use cli-configuration-hierarchy to determine placement in the precedence hierarchy, then apply this skill for the additional security constraints that apply when the value is a secret (file-based input, no flags or plain env vars).
 
 ______________________________________________________________________
 

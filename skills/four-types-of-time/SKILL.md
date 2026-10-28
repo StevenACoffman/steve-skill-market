@@ -323,8 +323,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `temporal-depth-selection`: This skill identifies which time types exist in a dataset; temporal-depth-selection then decides how many of those axes to store — the two skills run in sequence whenever a new temporal schema is designed.
-- **composes-with** `synthesis-checklist-cross-form`: Question 5 of the synthesis checklist (time alignment) is answered by applying this skill's classification across all data forms being integrated to designate a common event-time reference.
+- composes-with: `temporal-depth-selection` — This skill identifies which time types exist in a dataset; temporal-depth-selection then decides how many of those axes to store — the two skills run in sequence whenever a new temporal schema is designed.
+- composes-with: `synthesis-checklist-cross-form` — Question 5 of the synthesis checklist (time alignment) is answered by applying this skill's classification across all data forms being integrated to designate a common event-time reference.
 
 ______________________________________________________________________
 

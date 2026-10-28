@@ -304,14 +304,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `cli-secret-handling`: After
-  using this skill to determine that a configuration value should live in an env var
-  or config file, apply cli-secret-handling if the value is a secret (token, password,
-  key). The placement decision is made here; the security handling is made there.
-- **composes-with** `cli-interface-stability`: Once
-  flags, env var names, and config file keys are chosen using this skill, cli-interface-stability
-  covers how to version them and communicate breaking changes to users over time. Config file
-  keys are stable interfaces and are subject to the same deprecation discipline as flags.
+- composes-with: `cli-secret-handling` — After using this skill to determine that a configuration value should live in an env var or config file, apply cli-secret-handling if the value is a secret (token, password, key). The placement decision is made here; the security handling is made there.
+- composes-with: `cli-interface-stability` — Once flags, env var names, and config file keys are chosen using this skill, cli-interface-stability covers how to version them and communicate breaking changes to users over time. Config file keys are stable interfaces and are subject to the same deprecation discipline as flags.
 
 ______________________________________________________________________
 

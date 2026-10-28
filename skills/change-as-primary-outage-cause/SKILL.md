@@ -128,12 +128,12 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: four-golden-signals-monitoring (progressive rollout requires monitoring at each stage to detect problems before proceeding)
-- contrasts-with: error-budget-conflict-resolution (error budget governs release policy decisions; change management governs per-release engineering safety)
-- composes-with: blameless-postmortem-process (postmortems on change-originated outages produce the specific changes to rollout process and blast-radius design that close future gaps)
-- composes-with: hypothetico-deductive-troubleshooting-loop (when a change causes an outage, the troubleshooting loop is the diagnostic method; the 70% prior means change is the first hypothesis to test)
+- depends-on: `four-golden-signals-monitoring` — (progressive rollout requires monitoring at each stage to detect problems before proceeding)
+- contrasts-with: `error-budget-conflict-resolution` — (error budget governs release policy decisions; change management governs per-release engineering safety)
+- composes-with: `blameless-postmortem-process` — (postmortems on change-originated outages produce the specific changes to rollout process and blast-radius design that close future gaps)
+- composes-with: `hypothetico-deductive-troubleshooting-loop` — (when a change causes an outage, the troubleshooting loop is the diagnostic method; the 70% prior means change is the first hypothesis to test)
 
 ______________________________________________________________________
 

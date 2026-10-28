@@ -52,9 +52,9 @@ Boyle does not discuss event schema versioning, consumer group management, or wh
 
 ## Related Skills
 
-- **ddd-fitness-scorecard** — depends on: the consistency asymmetry model is only applicable once the scorecard confirms DDD adoption with multiple bounded contexts.
-- **internal-package-bounded-context-enforcement** — combines: internal/ package boundaries define where context lines are drawn; this skill defines the consistency guarantees that apply at those same lines — use together when designing the full bounded-context architecture.
-- **domain-service-interface-composition** — informs: the decision to publish a domain event (eventual consistency) vs. call a domain service directly (strong consistency) determines how domain services are composed and what interface contracts are needed.
+- depends-on: `ddd-fitness-scorecard` — the consistency asymmetry model is only applicable once the scorecard confirms DDD adoption with multiple bounded contexts.
+- composes-with: `internal-package-bounded-context-enforcement` — internal/ package boundaries define where context lines are drawn; this skill defines the consistency guarantees that apply at those same lines — use together when designing the full bounded-context architecture.
+- informs: `domain-service-interface-composition` — the decision to publish a domain event (eventual consistency) vs. call a domain service directly (strong consistency) determines how domain services are composed and what interface contracts are needed.
 
 ______________________________________________________________________
 

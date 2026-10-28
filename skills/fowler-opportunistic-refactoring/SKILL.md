@@ -300,13 +300,13 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- **composes-with** `fowler-two-hats`: Opportunistic refactoring governs *when* to enter refactoring mode; Two Hats governs *how* to work while in that mode. Both apply simultaneously in any refactoring session — opportunistic refactoring decides the trigger, Two Hats enforces the separation from feature work during execution.
+- composes-with: `fowler-two-hats` — Opportunistic refactoring governs *when* to enter refactoring mode; Two Hats governs *how* to work while in that mode. Both apply simultaneously in any refactoring session — opportunistic refactoring decides the trigger, Two Hats enforces the separation from feature work during execution.
 
-- **composes-with** `fowler-code-smells`: The code-smells vocabulary provides the diagnostic language for what triggers litter-pickup and comprehension refactoring. When you sense that code is wrong during comprehension or litter-pickup mode, the smells catalog lets you name it precisely — turning vague friction into an actionable diagnosis before you begin the refactoring.
+- composes-with: `fowler-code-smells` — The code-smells vocabulary provides the diagnostic language for what triggers litter-pickup and comprehension refactoring. When you sense that code is wrong during comprehension or litter-pickup mode, the smells catalog lets you name it precisely — turning vague friction into an actionable diagnosis before you begin the refactoring.
 
-- **composes-with** `fowler-branch-by-abstraction`: The long-term mode of opportunistic refactoring explicitly names Branch By Abstraction as its enabling technique. Large structural problems that cannot be addressed in one session are migrated incrementally by directing everyone passing through the zone to take one small step toward the target — Branch By Abstraction provides the seam that makes that incremental migration possible without breaking the system.
+- composes-with: `fowler-branch-by-abstraction` — The long-term mode of opportunistic refactoring explicitly names Branch By Abstraction as its enabling technique. Large structural problems that cannot be addressed in one session are migrated incrementally by directing everyone passing through the zone to take one small step toward the target — Branch By Abstraction provides the seam that makes that incremental migration possible without breaking the system.
 
 ______________________________________________________________________
 

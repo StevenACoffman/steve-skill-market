@@ -326,10 +326,10 @@ in all new code.
 
 ## Related Skills
 
-- **never-mock-net-conn-use-loopback** (composes-with): The `testConn` helper is a direct application of this contract — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and never returns an error. Both skills are in effect whenever a connection helper is written.
-- **testing-go-public-test-api** (composes-with): Every factory function exported in `testing.go` (e.g., `TestServer(t)`, `TestConfig(t)`) must follow this contract — no error return, `t.Fatalf` internally, cleanup via `t.Cleanup` or returned `func()`. The `testing.go` skill governs location; this skill governs signature.
-- **golden-files-update-flag** (composes-with): Fixture helpers that set up complex input structures for golden file tests should follow this contract. The helper creates the struct, calls `t.Fatalf` if construction fails, and returns the ready-to-use value.
-- **table-driven-named-cases** (composes-with): Helpers are called inside the table case loop to set up per-case resources. The no-error-return contract ensures the loop body stays focused on the case logic, not setup error handling.
+- composes-with: `never-mock-net-conn-use-loopback` — The `testConn` helper is a direct application of this contract — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and never returns an error. Both skills are in effect whenever a connection helper is written.
+- composes-with: `testing-go-public-test-api` — Every factory function exported in `testing.go` (e.g., `TestServer(t)`, `TestConfig(t)`) must follow this contract — no error return, `t.Fatalf` internally, cleanup via `t.Cleanup` or returned `func()`. The `testing.go` skill governs location; this skill governs signature.
+- composes-with: `golden-files-update-flag` — Fixture helpers that set up complex input structures for golden file tests should follow this contract. The helper creates the struct, calls `t.Fatalf` if construction fails, and returns the ready-to-use value.
+- composes-with: `table-driven-named-cases` — Helpers are called inside the table case loop to set up per-case resources. The no-error-return contract ensures the loop body stays focused on the case logic, not setup error handling.
 
 ______________________________________________________________________
 

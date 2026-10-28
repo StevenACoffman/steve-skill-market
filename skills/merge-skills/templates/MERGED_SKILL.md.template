@@ -12,7 +12,7 @@ tags: [{{unified-tag-1}}, {{unified-tag-2}}]
 Frontmatter carries ONLY spec-allowed keys (name, description, tags, and
 allowed-tools if the skill runs tools). `name` MUST equal the folder name.
 Merge provenance (type, the two source skills with their books/authors) and
-related-skill links live in the body (## Provenance / ## Related skills) so
+related-skill links live in the body (## Provenance / ## Related Skills) so
 `exegesis lint` passes. Do NOT emit id / title / type / source_skills / related_skills
 as frontmatter keys.
 -->
@@ -139,7 +139,7 @@ Do not resolve contradictions by picking a winner.}}
 
 ---
 
-## Related Skills (Phase 3 fill)
+## Related Skills
 
 <!-- Reference skills by backticked slug text only — NEVER as
      [slug](../../path/SKILL.md) file links (those escape the skill directory and

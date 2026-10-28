@@ -159,7 +159,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **welc-characterization-test** — depends-on: hard-to-write characterization tests on existing legacy code are a downstream signal of design problems; property-based design pressure is the analytical framework for diagnosing and correcting those problems through decomposition.
+- depends-on: `welc-characterization-test` — hard-to-write characterization tests on existing legacy code are a downstream signal of design problems; property-based design pressure is the analytical framework for diagnosing and correcting those problems through decomposition.
 - **welc-seam-model** — combines-with: hard-to-find seams and hard-to-state properties are correlated signals of tight coupling; both point to the same structural problems; seam analysis exposes the coupling, property difficulty quantifies the contract complexity.
 - **welc-sensing-vs-separation** — combines-with: persistent sensing problems (effects that cannot be cleanly observed) signal hidden effects in design; property-based design pressure converts that signal into a decomposition directive — extract until each piece has observable, universal invariants.
 - **welc-tended-untended-systems** — combines-with: design pressure applies most forcefully when the system is tended and long-lived; for untended systems, property-based tests also serve as durable pre-deployment specifications that survive implementation rewrites.

@@ -254,8 +254,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `emergent-properties`: Classify the failure mode (resultant/weak/strong emergent) before selecting a multi-agent pattern; the classification determines which pattern is appropriate.
-- **composes-with** → `ioc-ai-systems`: IOC is the outer architectural frame (deterministic code owns the workflow state machine); multi-agent reliability patterns are inner structures applied within workflow steps that require parallelism or adversarial review.
+- depends-on: `emergent-properties` — Classify the failure mode (resultant/weak/strong emergent) before selecting a multi-agent pattern; the classification determines which pattern is appropriate.
+- composes-with: `ioc-ai-systems` — IOC is the outer architectural frame (deterministic code owns the workflow state machine); multi-agent reliability patterns are inner structures applied within workflow steps that require parallelism or adversarial review.
 
 ______________________________________________________________________
 

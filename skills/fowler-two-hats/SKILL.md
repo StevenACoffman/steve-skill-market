@@ -135,11 +135,11 @@ The Chapter 2 Two Hats section implicitly warns: if you are not aware of which h
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- **composes-with** `fowler-opportunistic-refactoring`: Opportunistic refactoring answers *when* to enter refactoring mode (preparatory, comprehension, litter-pickup, long-term). Two Hats answers *how* to execute once you are in that mode — keep the structural work strictly separated from feature work. You apply both simultaneously: opportunistic refactoring triggers the switch; Two Hats governs the session.
+- composes-with: `fowler-opportunistic-refactoring` — Opportunistic refactoring answers *when* to enter refactoring mode (preparatory, comprehension, litter-pickup, long-term). Two Hats answers *how* to execute once you are in that mode — keep the structural work strictly separated from feature work. You apply both simultaneously: opportunistic refactoring triggers the switch; Two Hats governs the session.
 
-- **composes-with** `fowler-performance-sequencing`: Performance sequencing establishes a macro-level order: write well-factored code first (Two Hats discipline), then add features, then profile, then tune. Two Hats operates at the micro level within each of those phases. The performance sequencing skill explicitly names Two Hats as part of its recommended sequence: "refactor first (Two Hats discipline), then feature, then profile, then tune."
+- composes-with: `fowler-performance-sequencing` — Performance sequencing establishes a macro-level order: write well-factored code first (Two Hats discipline), then add features, then profile, then tune. Two Hats operates at the micro level within each of those phases. The performance sequencing skill explicitly names Two Hats as part of its recommended sequence: "refactor first (Two Hats discipline), then feature, then profile, then tune."
 
 ______________________________________________________________________
 

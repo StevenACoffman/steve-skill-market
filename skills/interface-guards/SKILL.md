@@ -205,7 +205,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `consumer-side-interface-segregation`: After defining a narrow consumer-side interface in the business package and implementing it in a gateway package, an interface guard (`var _ paymentGateway = (*StripeGateway)(nil)`) placed in the gateway package verifies at compile time that the implementation still satisfies the interface. This is most valuable when the implementing type lives in a different package with no direct assignment in normal code paths — exactly the gateway pattern scenario.
+- composes-with: `consumer-side-interface-segregation` — After defining a narrow consumer-side interface in the business package and implementing it in a gateway package, an interface guard (`var _ paymentGateway = (*StripeGateway)(nil)`) placed in the gateway package verifies at compile time that the implementation still satisfies the interface. This is most valuable when the implementing type lives in a different package with no direct assignment in normal code paths — exactly the gateway pattern scenario.
 
 ______________________________________________________________________
 

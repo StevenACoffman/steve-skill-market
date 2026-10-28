@@ -9,7 +9,7 @@ description: |-
   feeding to darwin-skill.
 
   Trigger signals: "merge these skills", "consolidate overlapping skills",
-  "these two skills cover the same thing", "combine books/<slug-a>/ and books/<slug-b>/".
+  "these two skills cover the same thing", "combine two books/ output directories".
 
   NOT for: merging skills that are merely related or adjacent (use Zettelkasten
   links instead), merging skills without their source book2skill output directories

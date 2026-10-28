@@ -358,9 +358,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `three-layer-metadata-stack`: The vocabulary artifact produced by this skill (controlled vocabulary through ontology) populates the semantic metadata layer of the three-layer stack — the ladder determines what level of vocabulary to build; the stack determines where it lives.
-- **composes-with** `bounded-context-swimlane-detection`: Confirmed bounded context boundaries identify which terms require explicit vocabulary formalization; this skill then provides the framework for deciding what rung of structure the translation layer requires.
-- **composes-with** `synthesis-checklist-cross-form`: Question 6 of the synthesis checklist (the semantic bridge) is answered by applying this ladder to select the appropriate rung of shared vocabulary before any cross-form join is executed.
+- composes-with: `three-layer-metadata-stack` — The vocabulary artifact produced by this skill (controlled vocabulary through ontology) populates the semantic metadata layer of the three-layer stack — the ladder determines what level of vocabulary to build; the stack determines where it lives.
+- composes-with: `bounded-context-swimlane-detection` — Confirmed bounded context boundaries identify which terms require explicit vocabulary formalization; this skill then provides the framework for deciding what rung of structure the translation layer requires.
+- composes-with: `synthesis-checklist-cross-form` — Question 6 of the synthesis checklist (the semantic bridge) is answered by applying this ladder to select the appropriate rung of shared vocabulary before any cross-form join is executed.
 
 ______________________________________________________________________
 

@@ -144,7 +144,7 @@ ______________________________________________________________________
 ## Related Skills
 
 - **welc-legacy-code-change-algorithm** — prerequisite-for: scratch refactoring builds the understanding needed for steps 1–2 of the algorithm (identify change points, find test points); it is the technique to use when the algorithm's assumptions about code comprehension do not yet hold.
-- **welc-characterization-test** — contrasts-with: scratch refactoring is throwaway exploration that builds structural understanding; characterization tests are the permanent keeper that verifies and locks down the resulting mental model before actual changes begin.
+- contrasts-with: `welc-characterization-test` — scratch refactoring is throwaway exploration that builds structural understanding; characterization tests are the permanent keeper that verifies and locks down the resulting mental model before actual changes begin.
 - **welc-interception-point-selection** — combines-with: scratch refactoring reveals the structural layout needed to identify viable interception points; the two are sequenced — scratch first to see the structure, then interception point selection to decide where to test.
 
 ______________________________________________________________________

@@ -131,11 +131,11 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- **composes-with** `fowler-two-hats`: Performance sequencing establishes a macro-level order: write well-factored code first (using Two Hats discipline to keep refactoring and feature work separated), then add features, then profile, then tune. Two Hats operates at the session level within each phase; performance sequencing positions those phases in the correct sequence. Together they form a complete picture of disciplined development: separate modes at the micro scale, correct ordering at the macro scale.
+- composes-with: `fowler-two-hats` — Performance sequencing establishes a macro-level order: write well-factored code first (using Two Hats discipline to keep refactoring and feature work separated), then add features, then profile, then tune. Two Hats operates at the session level within each phase; performance sequencing positions those phases in the correct sequence. Together they form a complete picture of disciplined development: separate modes at the micro scale, correct ordering at the macro scale.
 
-- **composes-with** `fowler-design-stamina`: Design Stamina is the economic argument for *why* internal quality matters — it enables sustained velocity. Performance sequencing is the practical mechanism that connects quality to speed: well-factored code gives developers more time to spend on tuning, and gives the profiler finer-grained functions to analyze. Design Stamina argues the case; performance sequencing explains how the investment in quality pays back in the performance dimension specifically.
+- composes-with: `fowler-design-stamina` — Design Stamina is the economic argument for *why* internal quality matters — it enables sustained velocity. Performance sequencing is the practical mechanism that connects quality to speed: well-factored code gives developers more time to spend on tuning, and gives the profiler finer-grained functions to analyze. Design Stamina argues the case; performance sequencing explains how the investment in quality pays back in the performance dimension specifically.
 
 ______________________________________________________________________
 

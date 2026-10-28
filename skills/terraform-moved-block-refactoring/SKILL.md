@@ -91,7 +91,7 @@ moved {
 
 ## Related Skills
 
-- **terraform-no-cluster-app-same-module** — informs: separating a combined cluster+app module into two modules relocates resource addresses; moved blocks handle the state migration during that split.
+- informs: `terraform-no-cluster-app-same-module` — separating a combined cluster+app module into two modules relocates resource addresses; moved blocks handle the state migration during that split.
 
 ______________________________________________________________________
 

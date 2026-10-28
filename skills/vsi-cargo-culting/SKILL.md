@@ -143,9 +143,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **contrasts-with** → `fit-practice`: VSI diagnoses whether an adoption is cargo-culted (the mechanism); fit-practice provides the evaluation method to determine what would constitute a fitting alternative.
-- **contrasts-with** → `3ts-premature-optimization`: 3Ts diagnoses premature optimization (wrong thing/time/trade-offs); VSI diagnoses prestige-driven adoption. They can co-occur but address different root causes.
-- **composes-with** → `fit-practice`: VSI identifies the adoption is cargo-culted; fit-practice is the remedy — use both together to diagnose and correct the adoption decision.
+- contrasts-with: `fit-practice` — VSI diagnoses whether an adoption is cargo-culted (the mechanism); fit-practice provides the evaluation method to determine what would constitute a fitting alternative.
+- contrasts-with: `3ts-premature-optimization` — 3Ts diagnoses premature optimization (wrong thing/time/trade-offs); VSI diagnoses prestige-driven adoption. They can co-occur but address different root causes.
+- composes-with: `fit-practice` — VSI identifies the adoption is cargo-culted; fit-practice is the remedy — use both together to diagnose and correct the adoption decision.
 
 ______________________________________________________________________
 

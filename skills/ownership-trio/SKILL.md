@@ -219,9 +219,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `oncall-ownership-sustainability`: The archetypes are the diagnostic application of the Ownership Trio — they name the specific failure mode when one or more elements are missing.
-- **composes-with** → `responsibility-control-slo`: Responsibility-Control SLO is the technical instrument that operationalizes the Ownership Trio's mandate principle at the metric scope level.
-- **composes-with** → `ephemeral-taskforce`: ETF composition requirements follow directly from the Ownership Trio — each ETF member must hold all three elements for their slice.
+- composes-with: `oncall-ownership-sustainability` — The archetypes are the diagnostic application of the Ownership Trio — they name the specific failure mode when one or more elements are missing.
+- composes-with: `responsibility-control-slo` — Responsibility-Control SLO is the technical instrument that operationalizes the Ownership Trio's mandate principle at the metric scope level.
+- composes-with: `ephemeral-taskforce` — ETF composition requirements follow directly from the Ownership Trio — each ETF member must hold all three elements for their slice.
 
 ______________________________________________________________________
 

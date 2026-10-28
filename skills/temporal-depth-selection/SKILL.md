@@ -346,8 +346,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `four-types-of-time`: The four time types must be identified and named before this skill can decide which axes to track — running four-types-of-time first ensures the temporal vocabulary is unambiguous before the depth decision is made.
-- **composes-with** `ml-pipeline-integrity-pre-training`: This skill determines whether the feature store is unitemporal or bitemporal (and therefore whether AS OF joins are architecturally possible); that skill then mandates that AS OF joins must always be used in ML training pipelines.
+- depends-on: `four-types-of-time` — The four time types must be identified and named before this skill can decide which axes to track — running four-types-of-time first ensures the temporal vocabulary is unambiguous before the depth decision is made.
+- composes-with: `ml-pipeline-integrity-pre-training` — This skill determines whether the feature store is unitemporal or bitemporal (and therefore whether AS OF joins are architecturally possible); that skill then mandates that AS OF joins must always be used in ML training pipelines.
 
 ______________________________________________________________________
 

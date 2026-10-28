@@ -262,8 +262,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `emergent-properties`: Emergent-properties provides the theoretical foundation for why LLM workflow control fails (strong emergence); IOC is the architectural prescription that responds to that insight.
-- **composes-with** → `multi-agent-reliability`: IOC governs who controls the outer state machine; multi-agent reliability patterns structure how multiple LLM agents collaborate within individual workflow steps that require reliability improvement.
+- depends-on: `emergent-properties` — Emergent-properties provides the theoretical foundation for why LLM workflow control fails (strong emergence); IOC is the architectural prescription that responds to that insight.
+- composes-with: `multi-agent-reliability` — IOC governs who controls the outer state machine; multi-agent reliability patterns structure how multiple LLM agents collaborate within individual workflow steps that require reliability improvement.
 
 ______________________________________________________________________
 

@@ -227,11 +227,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `grain-decision-four-questions`: Question 4 of this checklist (target grain) is answered by applying grain-decision-four-questions to the integration anchor entity — grain must be correctly declared before cross-form integration can proceed.
-- **depends-on** `four-types-of-time`: Question 5 of this checklist (time alignment) requires classifying each data source by time type using the four-types framework before a common event-time reference can be designated.
-- **depends-on** `business-process-discovery`: Questions 1 and 2 of this checklist (business question and data forms inventory) are answered by the output of business process discovery — the process map identifies which entities and forms are integration-critical.
-- **composes-with** `semantic-vocabulary-ladder`: Question 6 of this checklist (semantic bridge) is answered by applying the vocabulary ladder to select the appropriate rung of shared vocabulary formalization for each contested term across forms.
-- **composes-with** `bounded-context-swimlane-detection`: Question 3 of this checklist (entity convergence) uses swimlane crossing analysis to identify where entity definitions diverge across forms before designating the integration anchor.
+- depends-on: `grain-decision-four-questions` — Question 4 of this checklist (target grain) is answered by applying grain-decision-four-questions to the integration anchor entity — grain must be correctly declared before cross-form integration can proceed.
+- depends-on: `four-types-of-time` — Question 5 of this checklist (time alignment) requires classifying each data source by time type using the four-types framework before a common event-time reference can be designated.
+- depends-on: `business-process-discovery` — Questions 1 and 2 of this checklist (business question and data forms inventory) are answered by the output of business process discovery — the process map identifies which entities and forms are integration-critical.
+- composes-with: `semantic-vocabulary-ladder` — Question 6 of this checklist (semantic bridge) is answered by applying the vocabulary ladder to select the appropriate rung of shared vocabulary formalization for each contested term across forms.
+- composes-with: `bounded-context-swimlane-detection` — Question 3 of this checklist (entity convergence) uses swimlane crossing analysis to identify where entity definitions diverge across forms before designating the integration anchor.
 
 ______________________________________________________________________
 

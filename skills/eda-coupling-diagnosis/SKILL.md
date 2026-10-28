@@ -94,9 +94,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Multidimensional Coupling Assessment** — *composes-with* → EDA coupling diagnosis is a specialization of the full 8-dimension coupling assessment, applied to the specific question of whether event-driven architectures deliver on their decoupling claims.
-- **Integration Style Selection** — *depends-on* → Integration style selection provides the foundational vocabulary (Messaging vs. RPC vs. File Transfer); EDA coupling diagnosis refines the analysis when Messaging/Pub-Sub is the chosen style.
-- **Canonical Data Model Decision** — *enables* → Diagnosing tight data-format coupling across many Pub-Sub subscribers is the precise problem that a Canonical Data Model solves; the diagnosis should precede the CDM investment decision.
+- composes-with: `multidimensional-coupling-assessment` — EDA coupling diagnosis is a specialization of the full 8-dimension coupling assessment, applied to the specific question of whether event-driven architectures deliver on their decoupling claims.
+- depends-on: `integration-style-selection` — Integration style selection provides the foundational vocabulary (Messaging vs. RPC vs. File Transfer); EDA coupling diagnosis refines the analysis when Messaging/Pub-Sub is the chosen style.
+- **canonical-data-model-decision** — *enables* → Diagnosing tight data-format coupling across many Pub-Sub subscribers is the precise problem that a Canonical Data Model solves; the diagnosis should precede the CDM investment decision.
 - **Competing Consumers vs. Dispatcher** — *contrasts-with* → EDA coupling diagnosis addresses whether to use Pub-Sub at all and what coupling it introduces; competing consumers addresses how to parallelize within a messaging topology that has already been chosen.
 
 ______________________________________________________________________

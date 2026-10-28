@@ -130,10 +130,10 @@ The counter-example is cumulative avoidance: code where every new feature for fi
 
 ## Related Skills
 
-- **welc-sensing-vs-separation** — contrasts-with: When fixing either the sensing or separation axis is too invasive for the current change episode, sprout/wrap provides a way to add new tested behavior without requiring those fixes; it is the escape hatch when the normal dependency-breaking path is blocked.
-- **welc-legacy-code-change-algorithm** — composes-with: Sprout/wrap is the change strategy for Step 5 when Steps 3–4 are judged too risky or expensive; it is an acceleration for specific episodes, not a replacement for the full algorithm.
+- contrasts-with: `welc-sensing-vs-separation` — When fixing either the sensing or separation axis is too invasive for the current change episode, sprout/wrap provides a way to add new tested behavior without requiring those fixes; it is the escape hatch when the normal dependency-breaking path is blocked.
+- composes-with: `welc-legacy-code-change-algorithm` — Sprout/wrap is the change strategy for Step 5 when Steps 3–4 are judged too risky or expensive; it is an acceleration for specific episodes, not a replacement for the full algorithm.
 - **welc-seam-model** — pairs-with: When no usable seam exists in the existing code, wrapping the original class creates a new seam at the wrapper boundary; sprouting introduces a seam at the delegation call site.
-- **welc-characterization-test** — contrasts-with: Characterization tests pin the existing code before modifying it; sprout/wrap deliberately avoids touching the existing code — the two techniques represent different safety strategies for the same constraint of untestable legacy code.
+- contrasts-with: `welc-characterization-test` — Characterization tests pin the existing code before modifying it; sprout/wrap deliberately avoids touching the existing code — the two techniques represent different safety strategies for the same constraint of untestable legacy code.
 
 ______________________________________________________________________
 

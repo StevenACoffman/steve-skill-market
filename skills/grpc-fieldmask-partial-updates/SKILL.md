@@ -46,8 +46,8 @@ FieldMask path strings use the proto field name (snake_case), not the Go struct 
 
 ## Related Skills
 
-- **grpc-payload-optimization** — depends on: FieldMask is step 4 in the payload optimization sequence; consult payload-optimization for the full 5-step ordering and the decision on when gzip complements or undercuts FieldMask savings.
-- **grpc-flatten-streaming-requests** — compares: both reduce per-message bandwidth on streaming endpoints by different means — FieldMask eliminates unwanted response fields at read time; flattening eliminates sub-message framing overhead at write time.
+- depends-on: `grpc-payload-optimization` — FieldMask is step 4 in the payload optimization sequence; consult payload-optimization for the full 5-step ordering and the decision on when gzip complements or undercuts FieldMask savings.
+- contrasts-with: `grpc-flatten-streaming-requests` — both reduce per-message bandwidth on streaming endpoints by different means — FieldMask eliminates unwanted response fields at read time; flattening eliminates sub-message framing overhead at write time.
 
 ______________________________________________________________________
 

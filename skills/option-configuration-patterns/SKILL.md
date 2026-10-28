@@ -201,7 +201,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `manual-dependency-injection`: Option patterns operate at the individual constructor level — they expose how a single type accepts its configuration knobs (timeouts, pool sizes, retry counts). Manual DI operates at the composition root level — it connects constructed types to each other in `cmd/main.go`. In practice: use dysfunctional options or functional options inside each `NewX(required).WithTimeout(5*time.Second)` call; use manual DI to pass the returned value into the next constructor.
+- composes-with: `manual-dependency-injection` — Option patterns operate at the individual constructor level — they expose how a single type accepts its configuration knobs (timeouts, pool sizes, retry counts). Manual DI operates at the composition root level — it connects constructed types to each other in `cmd/main.go`. In practice: use dysfunctional options or functional options inside each `NewX(required).WithTimeout(5*time.Second)` call; use manual DI to pass the returned value into the next constructor.
 
 ______________________________________________________________________
 

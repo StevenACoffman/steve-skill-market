@@ -446,8 +446,8 @@ main package is required.
 
 ## Related Skills
 
-- **test-helper-contract** (composes-with): Every factory function and compliance suite exported in `testing.go` must follow the helper contract — accept `*testing.T`, never return errors, call `t.Fatalf` internally, register cleanup via `t.Cleanup` or a returned `func()`. The `testing.go` skill governs *where* helpers live (so they are importable); the helper contract skill governs *how* they are signed.
-- **custom-framework-within-go-test** (composes-with): The custom test harness (e.g., `logicaltest.Test(t, TestCase{...})`) is typically published in a `testing.go` file so plugin authors in other packages can import and call it. The custom framework skill defines the *structure* of the harness (steps, PreCheck, cleanup); this skill provides the *mechanism* that makes it importable.
+- composes-with: `test-helper-contract` — Every factory function and compliance suite exported in `testing.go` must follow the helper contract — accept `*testing.T`, never return errors, call `t.Fatalf` internally, register cleanup via `t.Cleanup` or a returned `func()`. The `testing.go` skill governs *where* helpers live (so they are importable); the helper contract skill governs *how* they are signed.
+- composes-with: `custom-framework-within-go-test` — The custom test harness (e.g., `logicaltest.Test(t, TestCase{...})`) is typically published in a `testing.go` file so plugin authors in other packages can import and call it. The custom framework skill defines the *structure* of the harness (steps, PreCheck, cleanup); this skill provides the *mechanism* that makes it importable.
 
 ______________________________________________________________________
 

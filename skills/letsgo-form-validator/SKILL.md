@@ -92,11 +92,11 @@ The `Validator` does not perform automatic struct-tag-based validation. Every ru
 
 ## Related Skills
 
-- **letsgo-postform-not-postformvalue** — depends on: explicit `r.ParseForm()` must be called and checked before `app.formDecoder.Decode(&form, r.PostForm)` can populate the form struct
-- **letsgo-template-safe-render** — combines: on validation failure, the form struct (carrying errors and original values) is passed to `render()` as `data.Form`; the two patterns are always active together on the re-render path
-- **letsgo-db-sentinel-error-translation** — informs: model sentinels (e.g., `ErrInvalidCredentials`, `ErrDuplicateEmail`) are translated into `form.AddNonFieldError(...)` calls, bridging model errors into the form validation display
-- **go-http-service-di-composition** — depends on: `formDecoder` is a struct field on `application`; the embedded Validator pattern is made available to handlers through the `*application` receiver
-- **go-http-service-test-strategy** — informs: end-to-end form tests must extract the CSRF token and re-submit it; the `Valid()`/`FieldErrors` contract is what test assertions verify in the response HTML
+- depends-on: `letsgo-postform-not-postformvalue` — explicit `r.ParseForm()` must be called and checked before `app.formDecoder.Decode(&form, r.PostForm)` can populate the form struct
+- composes-with: `letsgo-template-safe-render` — on validation failure, the form struct (carrying errors and original values) is passed to `render()` as `data.Form`; the two patterns are always active together on the re-render path
+- informs: `letsgo-db-sentinel-error-translation` — model sentinels (e.g., `ErrInvalidCredentials`, `ErrDuplicateEmail`) are translated into `form.AddNonFieldError(...)` calls, bridging model errors into the form validation display
+- depends-on: `go-http-service-di-composition` — `formDecoder` is a struct field on `application`; the embedded Validator pattern is made available to handlers through the `*application` receiver
+- informs: `go-http-service-test-strategy` — end-to-end form tests must extract the CSRF token and re-submit it; the `Valid()`/`FieldErrors` contract is what test assertions verify in the response HTML
 
 ______________________________________________________________________
 

@@ -280,7 +280,7 @@ of whether the async wait succeeded or timed out — `t.Fatal` still runs
 
 ## Related Skills
 
-- **avoid-t-parallel-use-multiple-processes** (contrasts-with): Both address slow or flaky tests in CI, but for different root causes. `timeMultiplier` fixes timeout failures on slow machines (the async event *does* happen, just slowly). The parallel skill fixes ambiguous failures from concurrent execution. They are orthogonal — a test can suffer from both problems simultaneously, and each requires its own solution.
+- contrasts-with: `avoid-t-parallel-use-multiple-processes` — Both address slow or flaky tests in CI, but for different root causes. `timeMultiplier` fixes timeout failures on slow machines (the async event *does* happen, just slowly). The parallel skill fixes ambiguous failures from concurrent execution. They are orthogonal — a test can suffer from both problems simultaneously, and each requires its own solution.
 
 ______________________________________________________________________
 

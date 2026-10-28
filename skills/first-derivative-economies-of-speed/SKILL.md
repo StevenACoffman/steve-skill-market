@@ -82,7 +82,7 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Value Gap and Migration Metrics** — *composes-with* → Both skills challenge the use of absolute counts (servers migrated, percent complete) as progress proxies; first-derivative thinking names the conceptual error and value-gap provides the migration-specific remedy.
-- **Enterprise Non-Cloud Diagnostic** — *enables* → An organization that shifts to first-derivative thinking (consumption billing, rate-based planning) is better positioned to preserve the NIST cloud characteristics the diagnostic checks for.
-- **Principles Quality Checklist** — *precedes* → The first-derivative audit (step 1: classify each metric as absolute or rate) should inform which cloud principles are durable before the checklist is run; principles built on absolute targets will fail the time-horizon test.
-- **Architect Elevator** — *composes-with* → The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes; this skill supplies the conceptual vocabulary for that translation.
+- composes-with: `value-gap-migration-metrics` — Both skills challenge the use of absolute counts (servers migrated, percent complete) as progress proxies; first-derivative thinking names the conceptual error and value-gap provides the migration-specific remedy.
+- **enterprise-non-cloud-diagnostic** — *enables* → An organization that shifts to first-derivative thinking (consumption billing, rate-based planning) is better positioned to preserve the NIST cloud characteristics the diagnostic checks for.
+- **principles-quality-checklist** — *precedes* → The first-derivative audit (step 1: classify each metric as absolute or rate) should inform which cloud principles are durable before the checklist is run; principles built on absolute targets will fail the time-horizon test.
+- composes-with: `architect-elevator` — The elevator architect must translate first-derivative metrics (burn rate, deployment velocity) upward to executives who think in absolutes; this skill supplies the conceptual vocabulary for that translation.

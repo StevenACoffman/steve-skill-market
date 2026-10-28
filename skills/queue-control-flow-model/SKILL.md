@@ -107,10 +107,10 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **Integration Style Selection** — *depends-on* → Control-flow modeling only applies after Messaging is selected as the integration style; this skill makes precise the operational properties that style creates.
-- **Queue Flow Control Decision** — *enables* → Identifying that a component is a Driver (controls fetch rate) vs. a Sender (cannot self-throttle) is the prerequisite for choosing the correct flow control mechanism — a Driver can implement backpressure; a Sender cannot.
+- depends-on: `integration-style-selection` — Control-flow modeling only applies after Messaging is selected as the integration style; this skill makes precise the operational properties that style creates.
+- **queue-flow-control-decision** — *enables* → Identifying that a component is a Driver (controls fetch rate) vs. a Sender (cannot self-throttle) is the prerequisite for choosing the correct flow control mechanism — a Driver can implement backpressure; a Sender cannot.
 - **Competing Consumers vs. Dispatcher** — *enables* → The control-flow model's order-preservation rule — a Queue with Competing Consumers destroys order; only a single-threaded Driver preserves it — directly determines which parallelism pattern is safe to use.
-- **Messaging Observability Design** — *precedes* → Annotating control-flow roles on a pipeline diagram (Sender, Driver, Fetcher, Sink) clarifies where to place Wire Taps and Message Store capture points for maximum diagnostic value.
+- **messaging-observability-design** — *precedes* → Annotating control-flow roles on a pipeline diagram (Sender, Driver, Fetcher, Sink) clarifies where to place Wire Taps and Message Store capture points for maximum diagnostic value.
 
 ______________________________________________________________________
 

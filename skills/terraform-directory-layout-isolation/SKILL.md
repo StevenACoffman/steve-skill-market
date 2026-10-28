@@ -66,10 +66,10 @@ CI enforces separate IAM roles per directory: the staging pipeline assumes `arn:
 
 ## Related Skills
 
-- **terraform-backend-bootstrap-problem** — informs: file-layout isolation requires a backend block per environment directory; the bootstrap skill explains how to provision those backends and keep them DRY.
-- **terraform-secrets-in-state** — combines: per-environment state buckets with separate IAM roles (this skill) pair with state bucket encryption and access controls (secrets skill) to fully protect secrets at rest.
-- **terraform-module-size-smell** — combines: environment directory layout and small focused modules are complementary — the directory tree isolates environments while module decomposition isolates concerns within each environment.
-- **terraform-no-cluster-app-same-module** — informs: the two-apply separation required for EKS cluster + app follows the same isolation principle that drives per-environment directory layout.
+- informs: `terraform-backend-bootstrap-problem` — file-layout isolation requires a backend block per environment directory; the bootstrap skill explains how to provision those backends and keep them DRY.
+- composes-with: `terraform-secrets-in-state` — per-environment state buckets with separate IAM roles (this skill) pair with state bucket encryption and access controls (secrets skill) to fully protect secrets at rest.
+- composes-with: `terraform-module-size-smell` — environment directory layout and small focused modules are complementary — the directory tree isolates environments while module decomposition isolates concerns within each environment.
+- informs: `terraform-no-cluster-app-same-module` — the two-apply separation required for EKS cluster + app follows the same isolation principle that drives per-environment directory layout.
 
 ______________________________________________________________________
 

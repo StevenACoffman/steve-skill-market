@@ -112,12 +112,12 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: four-golden-signals-monitoring (Examine step requires golden signal telemetry)
-- contrasts-with: playbook-as-mttr-reduction (playbook replaces the loop for known failure modes)
-- composes-with: incident-management-role-separation (the loop is the Ops Lead's inner method within the IC framework)
-- composes-with: blameless-postmortem-process (the loop's documented output becomes the postmortem timeline)
+- depends-on: `four-golden-signals-monitoring` — (Examine step requires golden signal telemetry)
+- contrasts-with: `playbook-as-mttr-reduction` — (playbook replaces the loop for known failure modes)
+- composes-with: `incident-management-role-separation` — (the loop is the Ops Lead's inner method within the IC framework)
+- composes-with: `blameless-postmortem-process` — (the loop's documented output becomes the postmortem timeline)
 
 ______________________________________________________________________
 

@@ -116,11 +116,11 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## Related Skills (Stage 3 Filling)
+## Related Skills
 
-- depends-on: sli-slo-sla-tier-framework (SLO context needed to assess whether a task genuinely affects reliability)
-- contrasts-with: fifty-percent-engineering-time-cap (cap enforces the consequences of toil; this test defines what counts)
-- composes-with: embedding-sre-ops-overload-recovery (Phase 2 of embedding uses this test to sort fires)
+- depends-on: `sli-slo-sla-tier-framework` — (SLO context needed to assess whether a task genuinely affects reliability)
+- contrasts-with: `fifty-percent-engineering-time-cap` — (cap enforces the consequences of toil; this test defines what counts)
+- composes-with: `embedding-sre-ops-overload-recovery` — (Phase 2 of embedding uses this test to sort fires)
 
 ______________________________________________________________________
 

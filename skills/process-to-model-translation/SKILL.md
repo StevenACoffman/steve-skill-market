@@ -345,8 +345,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `business-process-discovery`: The four mapping rules require the five-component process description as their input — without a completed discovery, there is no valid artifact for this skill to translate into model components.
-- **composes-with** `temporal-depth-selection`: Rule 3 of this skill produces a state history table that is unitemporal by default; temporal-depth-selection determines whether an upgrade to bitemporal is needed based on whether corrections must be auditable or ML training requires historical feature values.
+- depends-on: `business-process-discovery` — The four mapping rules require the five-component process description as their input — without a completed discovery, there is no valid artifact for this skill to translate into model components.
+- composes-with: `temporal-depth-selection` — Rule 3 of this skill produces a state history table that is unitemporal by default; temporal-depth-selection determines whether an upgrade to bitemporal is needed based on whether corrections must be auditable or ML training requires historical feature values.
 
 ______________________________________________________________________
 

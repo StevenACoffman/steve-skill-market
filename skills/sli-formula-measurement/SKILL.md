@@ -319,11 +319,11 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `sli-monitoring-design-maturity`: The formula design (good/valid) is the technical implementation of the task-awareness Stage 3 requires; both are needed for a complete SLI design.
-- **composes-with** → `slo-definition-calibration-framework`: The SLI formula must be defined before setting the SLO target; slo-definition-calibration-framework calibrates the target against consumer tolerance once the formula is correct.
-- **composes-with** → `composite-slo`: Each component SLI formula feeds into the composite SLO calculation across dependency graphs.
-- **composes-with** → `degradation-disruption`: The SLI formula's good/valid design is what allows it to detect quality failures (degradation) vs. total failures (disruption).
-- **composes-with** → `multi-tier-slo`: Multi-tier SLO applies multiple threshold targets to a well-designed SLI formula; the formula design comes first.
+- composes-with: `sli-monitoring-design-maturity` — The formula design (good/valid) is the technical implementation of the task-awareness Stage 3 requires; both are needed for a complete SLI design.
+- composes-with: `slo-definition-calibration-framework` — The SLI formula must be defined before setting the SLO target; slo-definition-calibration-framework calibrates the target against consumer tolerance once the formula is correct.
+- composes-with: `composite-slo` — Each component SLI formula feeds into the composite SLO calculation across dependency graphs.
+- composes-with: `degradation-disruption` — The SLI formula's good/valid design is what allows it to detect quality failures (degradation) vs. total failures (disruption).
+- composes-with: `multi-tier-slo` — Multi-tier SLO applies multiple threshold targets to a well-designed SLI formula; the formula design comes first.
 
 ______________________________________________________________________
 

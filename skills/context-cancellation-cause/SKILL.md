@@ -188,8 +188,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** `structured-goroutine-lifetime`: Structured goroutine lifetime management uses context cancellation as the stop signal — goroutines check `ctx.Done()` in loops and return when the context is cancelled. `context.WithCancelCause` adds observability to that signal: when errgroup cancels the shared context on first error, `context.Cause(ctx)` in middleware or logging shows exactly which goroutine failed and why. Use errgroup for lifetime; use `WithCancelCause` to label the reason.
-- **composes-with** `context-key-collision-prevention`: Both are about using `context` correctly in the same request lifecycle. A request context often carries both typed value keys (request ID, user ID) via `WithValue` and a cancellation cause via `WithCancelCause`. Correct key types prevent value shadowing; correct cancel cause tracking preserves the cancellation reason. Apply both when instrumenting middleware.
+- composes-with: `structured-goroutine-lifetime` — Structured goroutine lifetime management uses context cancellation as the stop signal — goroutines check `ctx.Done()` in loops and return when the context is cancelled. `context.WithCancelCause` adds observability to that signal: when errgroup cancels the shared context on first error, `context.Cause(ctx)` in middleware or logging shows exactly which goroutine failed and why. Use errgroup for lifetime; use `WithCancelCause` to label the reason.
+- composes-with: `context-key-collision-prevention` — Both are about using `context` correctly in the same request lifecycle. A request context often carries both typed value keys (request ID, user ID) via `WithValue` and a cancellation cause via `WithCancelCause`. Correct key types prevent value shadowing; correct cancel cause tracking preserves the cancellation reason. Apply both when instrumenting middleware.
 
 ______________________________________________________________________
 

@@ -91,11 +91,11 @@ This pattern covers session fixation prevention for standard login/logout flows.
 
 ## Related Skills
 
-- **go-http-middleware-construction-and-organization** — depends on: `sessionManager.LoadAndSave` must be placed on the `dynamic` chain in `routes()` for session state to be available to login and logout handlers at all
-- **go-http-service-di-composition** — depends on: `sessionManager` is a struct field on `application`; login and logout handlers call it through the `*application` receiver
-- **letsgo-form-validator** — informs: the login handler uses both patterns simultaneously — `form.AddNonFieldError(...)` on `ErrInvalidCredentials` and `RenewToken()` before setting `authenticatedUserID`; understanding both is required to implement login correctly
-- **letsgo-db-sentinel-error-translation** — informs: `ErrInvalidCredentials` is what the login handler checks to decide whether to call `AddNonFieldError` or `RenewToken`; sentinel translation is upstream of token renewal
-- **go-http-service-test-strategy** — informs: session state across redirects requires the test client's cookie jar; the login/logout token renewal flow is what makes end-to-end multi-request test sequences meaningful
+- depends-on: `go-http-middleware-construction-and-organization` — `sessionManager.LoadAndSave` must be placed on the `dynamic` chain in `routes()` for session state to be available to login and logout handlers at all
+- depends-on: `go-http-service-di-composition` — `sessionManager` is a struct field on `application`; login and logout handlers call it through the `*application` receiver
+- informs: `letsgo-form-validator` — the login handler uses both patterns simultaneously — `form.AddNonFieldError(...)` on `ErrInvalidCredentials` and `RenewToken()` before setting `authenticatedUserID`; understanding both is required to implement login correctly
+- informs: `letsgo-db-sentinel-error-translation` — `ErrInvalidCredentials` is what the login handler checks to decide whether to call `AddNonFieldError` or `RenewToken`; sentinel translation is upstream of token renewal
+- informs: `go-http-service-test-strategy` — session state across redirects requires the test client's cookie jar; the login/logout token renewal flow is what makes end-to-end multi-request test sequences meaningful
 
 ______________________________________________________________________
 

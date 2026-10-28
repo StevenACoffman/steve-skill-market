@@ -55,8 +55,8 @@ For teams with a simple, single-domain product and a small team, a well-structur
 
 ## Related Skills
 
-- **strategic-before-tactical-ddd** — depends on: the solution to a distributed monolith is Bounded Context analysis via Event Storming; this skill diagnoses the problem, strategic-before-tactical provides the remedy.
-- **anti-dry-separate-read-write-models** — compares: both skills address coupling at different granularities — this skill at service-boundary level, anti-dry at struct/model level within a service; recognizing both prevents coupling at every scale.
+- depends-on: `strategic-before-tactical-ddd` — the solution to a distributed monolith is Bounded Context analysis via Event Storming; this skill diagnoses the problem, strategic-before-tactical provides the remedy.
+- contrasts-with: `anti-dry-separate-read-write-models` — both skills address coupling at different granularities — this skill at service-boundary level, anti-dry at struct/model level within a service; recognizing both prevents coupling at every scale.
 
 ______________________________________________________________________
 

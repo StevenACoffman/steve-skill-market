@@ -241,8 +241,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `ownership-trio`: The Ownership Trio provides the organizational principle (mandate = control boundary); this skill operationalizes that principle as the SLI valid-denominator scoping rule.
-- **composes-with** → `composite-slo`: Responsibility-Control SLO decomposes a top-level target into per-team budgets; composite-slo provides the math for how those per-team SLOs recombine into a system-level number.
+- depends-on: `ownership-trio` — The Ownership Trio provides the organizational principle (mandate = control boundary); this skill operationalizes that principle as the SLI valid-denominator scoping rule.
+- composes-with: `composite-slo` — Responsibility-Control SLO decomposes a top-level target into per-team budgets; composite-slo provides the math for how those per-team SLOs recombine into a system-level number.
 
 ______________________________________________________________________
 

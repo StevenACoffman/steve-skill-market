@@ -232,8 +232,8 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **composes-with** → `multi-agent-reliability`: Emergent-properties provides the classification framework (resultant/weak/strong); multi-agent-reliability provides the engineering patterns to address the specific failure modes of multi-agent AI systems.
-- **composes-with** → `ioc-ai-systems`: Emergent-properties explains why giving LLMs full workflow control is dangerous (strong emergence); ioc-ai-systems is the architectural prescription that prevents these failures through deterministic control flow.
+- composes-with: `multi-agent-reliability` — Emergent-properties provides the classification framework (resultant/weak/strong); multi-agent-reliability provides the engineering patterns to address the specific failure modes of multi-agent AI systems.
+- composes-with: `ioc-ai-systems` — Emergent-properties explains why giving LLMs full workflow control is dangerous (strong emergence); ioc-ai-systems is the architectural prescription that prevents these failures through deterministic control flow.
 
 ______________________________________________________________________
 

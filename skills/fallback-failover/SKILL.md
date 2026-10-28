@@ -281,9 +281,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** → `degradation-disruption`: Use degradation-disruption to decide whether a degraded fallback state is acceptable before designing the fallback mechanism itself.
-- **composes-with** → `composite-slo`: Fallback/failover introduces parallel paths; composite-slo provides the math for quantifying how much reliability improvement the parallel topology actually delivers.
-- **composes-with** → `slo-definition-calibration-framework`: Lagom-slo determines the target SLO level; fallback-failover designs the resilience architecture required to achieve that level given the current dependency SLOs.
+- depends-on: `degradation-disruption` — Use degradation-disruption to decide whether a degraded fallback state is acceptable before designing the fallback mechanism itself.
+- composes-with: `composite-slo` — Fallback/failover introduces parallel paths; composite-slo provides the math for quantifying how much reliability improvement the parallel topology actually delivers.
+- composes-with: `slo-definition-calibration-framework` — Lagom-slo determines the target SLO level; fallback-failover designs the resilience architecture required to achieve that level given the current dependency SLOs.
 
 ______________________________________________________________________
 

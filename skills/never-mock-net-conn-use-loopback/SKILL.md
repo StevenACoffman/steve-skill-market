@@ -222,8 +222,8 @@ This pattern is specifically for **`net.Conn`** (TCP, Unix socket, or any connec
 
 ## Related Skills
 
-- **test-helper-contract** (composes-with): The `testConn` helper is the canonical application of the test helper contract in the networking domain — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and returns both connection ends with no error. Writing `testConn` requires applying both skills simultaneously.
-- **test-helper-process-subprocess-mock** (contrasts-with): Both patterns reject shallow mocks in favor of real implementations. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real TCP loopback pair. `TestHelperProcess` rejects OS-level subprocess mocking by providing a real subprocess (the test binary re-executing itself). Same philosophy, different problem domain — networking vs. subprocesses.
+- composes-with: `test-helper-contract` — The `testConn` helper is the canonical application of the test helper contract in the networking domain — it accepts `*testing.T`, calls `t.Fatalf` on all three failure points (Listen, Accept, Dial), and returns both connection ends with no error. Writing `testConn` requires applying both skills simultaneously.
+- contrasts-with: `test-helper-process-subprocess-mock` — Both patterns reject shallow mocks in favor of real implementations. `testConn` rejects `bytes.Buffer` mocks of `net.Conn` by providing a real TCP loopback pair. `TestHelperProcess` rejects OS-level subprocess mocking by providing a real subprocess (the test binary re-executing itself). Same philosophy, different problem domain — networking vs. subprocesses.
 
 ______________________________________________________________________
 

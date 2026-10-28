@@ -72,10 +72,10 @@ Each module is applied independently. Cross-module dependencies flow through `te
 
 ## Related Skills
 
-- **terraform-moved-block-refactoring** — depends on: extracting resources from a large module into smaller modules changes resource addresses; moved blocks are required to prevent destroy/create on all extracted resources.
-- **terraform-no-cluster-app-same-module** — compares: the EKS/Kubernetes skill is a concrete, provider-constraint-driven forcing function for the same module-boundary principle; use both to cover structural and behavioral reasons to split modules.
-- **terraform-directory-layout-isolation** — combines: small focused modules (this skill) populate the `modules/` tree; environment directory layout (that skill) organizes how those modules are called per environment.
-- **terraform-for-each-over-count** — informs: loop constructs inside large modules amplify blast radius; refactoring to for_each and splitting the module are often done together.
+- depends-on: `terraform-moved-block-refactoring` — extracting resources from a large module into smaller modules changes resource addresses; moved blocks are required to prevent destroy/create on all extracted resources.
+- contrasts-with: `terraform-no-cluster-app-same-module` — the EKS/Kubernetes skill is a concrete, provider-constraint-driven forcing function for the same module-boundary principle; use both to cover structural and behavioral reasons to split modules.
+- composes-with: `terraform-directory-layout-isolation` — small focused modules (this skill) populate the `modules/` tree; environment directory layout (that skill) organizes how those modules are called per environment.
+- informs: `terraform-for-each-over-count` — loop constructs inside large modules amplify blast radius; refactoring to for_each and splitting the module are often done together.
 
 ______________________________________________________________________
 

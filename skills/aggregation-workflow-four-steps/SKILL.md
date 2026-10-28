@@ -401,9 +401,9 @@ ______________________________________________________________________
 
 ## Related Skills
 
-- **depends-on** `grain-decision-four-questions`: Step 1 of this workflow requires grain to be declared; if the grain is not yet settled, grain-decision-four-questions must be applied before this workflow can begin.
-- **composes-with** `six-aggregation-properties`: This workflow designs the aggregation; the six-property checklist then validates the result before production deployment — the two skills run in sequence on every aggregation.
-- **composes-with** `decompose-averages-sum-count`: When Step 3 of this workflow identifies a non-additive (ratio or average) measure, the decompose rule prescribes exactly how to store it as SUM and COUNT rather than a pre-divided float.
+- depends-on: `grain-decision-four-questions` — Step 1 of this workflow requires grain to be declared; if the grain is not yet settled, grain-decision-four-questions must be applied before this workflow can begin.
+- composes-with: `six-aggregation-properties` — This workflow designs the aggregation; the six-property checklist then validates the result before production deployment — the two skills run in sequence on every aggregation.
+- composes-with: `decompose-averages-sum-count` — When Step 3 of this workflow identifies a non-additive (ratio or average) measure, the decompose rule prescribes exactly how to store it as SUM and COUNT rather than a pre-divided float.
 
 ______________________________________________________________________
 

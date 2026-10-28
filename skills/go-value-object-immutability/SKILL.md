@@ -54,8 +54,8 @@ The immutability pattern complicates some standard Go idioms: JSON unmarshaling 
 
 ## Related Skills
 
-- **entity-vs-value-object-decision** — depends on: this skill implements what the decision framework classifies; always run entity-vs-value-object-decision first to confirm a type is a value object before applying these Go immutability mechanics.
-- **domain-service-interface-composition** — informs: value objects are the primary domain types passed through domain service interfaces; the immutability and value-equality properties established here affect how interface method parameters and return types are designed.
+- depends-on: `entity-vs-value-object-decision` — this skill implements what the decision framework classifies; always run entity-vs-value-object-decision first to confirm a type is a value object before applying these Go immutability mechanics.
+- informs: `domain-service-interface-composition` — value objects are the primary domain types passed through domain service interfaces; the immutability and value-equality properties established here affect how interface method parameters and return types are designed.
 
 ______________________________________________________________________
 

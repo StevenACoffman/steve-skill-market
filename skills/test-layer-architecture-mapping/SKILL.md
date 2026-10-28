@@ -60,7 +60,7 @@ End-to-end tests are necessary but must be kept narrow. Adding E2E coverage for 
 
 ## Related Skills
 
-- **anti-dry-separate-read-write-models** — informs: separate read and write models map cleanly to distinct test targets — command handlers (component tests) and query handlers (integration tests against optimized projections).
+- informs: `anti-dry-separate-read-write-models` — separate read and write models map cleanly to distinct test targets — command handlers (component tests) and query handlers (integration tests against optimized projections).
 
 ______________________________________________________________________
 
