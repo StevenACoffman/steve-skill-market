@@ -83,7 +83,7 @@ with it). That is the gap.
       That implies one small piece of tooling — a report of which cases still lack checks,
       scoped to a directory — filed in `../../../skillsaw/TODO.md`. Without it, "how much
       is left" is answered by re-running the ad-hoc measurement that produced the 1275
-      figure, which is not something to repeat by hand.
+      figure, which is not something to repeat by hand. **Shipped as `skillsaw checks --tree DIR`** (skillsaw v0.2.0); SKILL.md's corpus section uses it.
       Related: `../../../skillsaw/TODO.md` records why the "serialize derived checks"
       command must not be built — it would write `"checks": []` 1275 times.
 
@@ -124,9 +124,10 @@ exists and ships, and the loop simply does not call it yet.
 
 ## Steps this skill performs that the CLI could own (survey 2026-08-08)
 
-Recorded in `../../../skillsaw/TODO.md`, not here, because each is a CLI change; this is
-the pointer for whoever edits the loop. When one lands, the corresponding step here
-collapses to a single command:
+**All six landed by skillsaw v0.2.0, and SKILL.md uses each one** — kept as the record of
+what the loop no longer does by hand. Recorded in `../../../skillsaw/TODO.md`, not here,
+because each is a CLI change; this is the pointer for whoever edits the loop. When one
+lands, the corresponding step here collapses to a single command:
 
 - `skillsaw log` — replaces the two hand-built nine-field `printf` rows (Phase 1 step 6,
   STEP 6). `skillet/auditlog.Append` already exists and is unused.
@@ -215,7 +216,7 @@ and each ships with a stated test and an explicit anti-example.
       principle already adopted below.
 - Related, in another repo: `../../../skillsaw/TODO.md` tracks moving the dim 3/5/9
       detectors into `skillet/skilllens` so skillsaw and adh stop scoring them from two
-      private implementations. That is a CLI change and does not alter this loop — but the
+      private implementations. **Done in skillsaw v0.2.0**; dim 3 also stopped crediting a failure heading, which SKILL.md's dim-3 notes now describe. That is a CLI change and does not alter this loop — but the
       dimension *names* the agent scores are the seam, so the two should land aware of each
       other.
 - Caution carried over from the same survey: **do not import SkillOpt's reflect prompt**
