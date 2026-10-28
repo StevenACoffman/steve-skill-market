@@ -47,7 +47,7 @@ and pausing for human approval. Everything measurable is `skillsaw`.
 | Render the results.tsv log | **skillsaw** | `skillsaw history` |
 | Calibration of stated confidences | **skillsaw** | `skillsaw calibrate` |
 | Append a row to the optimization log | **skillsaw** | `skillsaw log` |
-| Refuse a structurally uncertified tree | **skillsaw** | `skillsaw verified` |
+| Refuse an uncertified or unexamined tree | **skillsaw** | `skillsaw verified` |
 | Which skills changed since the last campaign | **skillsaw** | `skillsaw changed` |
 | No-op and 150%-growth edit guards | **skillsaw** | `skillsaw preflight --against` |
 | Design test prompts + their rule checks | **agent** | judgment |
@@ -174,7 +174,11 @@ correctly; do not over-trust a clean floor.
 #    Structure is cheap to check and expensive to work around: a tree that fails its
 #    structural gates has to be fixed and re-judged anyway, and Phase 1 is where the
 #    expensive judging starts. Skip this only for a hand-written skill with no manifest.
-skillsaw verified path/to/skills-manifest.json || { echo "tree unverified — fix structure first"; }
+#    On failure, stop and act on what its stderr says, because the two refusals want
+#    opposite fixes: a tree that failed its gates needs its structure fixed, while a
+#    manifest covering no skills means the tree was never examined -- check the path
+#    exegesis was pointed at (a skill is an immediate subdirectory holding a SKILL.md).
+skillsaw verified path/to/skills-manifest.json || exit 1
 
 # 2. Resolve scope. Explicit dirs, or discover all skills under the roots:
 skillsaw eval --all --json | jq -r '.[].skill'   # preview what --all would score

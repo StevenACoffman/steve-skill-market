@@ -98,6 +98,11 @@ exists and ships, and the loop simply does not call it yet.
       dims per skill and Phase 2 runs the skill — and a tree that fails its structural
       gates has to be fixed and re-judged anyway. It belongs at the top of Phase 1, before
       any scoring, as a gate on the exit code.
+      **Corrected 2026-10-28:** the step echoed "tree unverified — fix structure first" and
+      carried on. That was the wrong advice once `verified` started refusing a manifest
+      covering no skills (skillsaw#22): that tree has no structure to fix, it was never
+      examined. The step now stops on failure and tells the agent to read which refusal
+      it got.
 - [x] **`skillsaw changed --manifest base.json --tree DIR` is not in the skill.** DONE (2026-08-08) — Phase 0 step 2. Lists the
       skills added or edited since a previous run's manifest, so a campaign re-judges only
       those. This is the actual saving the manifest work was for: one judge pass per
