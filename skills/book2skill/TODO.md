@@ -38,6 +38,10 @@ RIA-TV++ already has two of the three:
 `BlacklistTitles()`, so a `## B — Boundaries and Blind Spots` heading earns the section
 credit for both dimensions whatever is written under it. Measured over the 233-skill
 corpus with `skillsaw eval --json --all --roots .` on 2026-08-09.
+**Superseded 2026-10-28 by skillsaw v0.2.0:** dim 3 no longer credits a heading. It
+docks a skill that has a code block and no inline failure branch, whatever its headings
+say, and flags one that runs nothing as "judge the base". Dim 9's section credit still
+reads the heading.
 
 - [x] **Widen B's definition to cover scope *and* the action blacklist.** DONE 2026-08-15. DECIDED
       2026-08-09: widen, do not add a seventh segment — the corpus already voted. Of 185
@@ -110,7 +114,9 @@ corpus with `skillsaw eval --json --all --roots .` on 2026-08-09.
       opens by saying most items are checked mechanically by `exegesis verify` and that
       "only #1 (triple verification) is a judgment the agent must make." These are
       judgments too, until `exegesis` grows the `--check skilllens` tier now proposed in
-      its TODO. Listing them without that caveat would imply a gate that does not exist —
+      its TODO. **That tier now exists** (`exegesis lint --check skilllens`, or `all`) and
+      warns, advisory only, on missing failure-mode encoding and a missing boundary
+      section; SKILL.md's Phase 4 and Red Line text now point at it. Listing them without that caveat would imply a gate that does not exist —
       the failure mode already recorded in this family as "instructing agents to call
       commands that do not exist."
 
@@ -151,8 +157,9 @@ Each of these lands at its own owner; recorded here as the pointer:
   Quality Red Line additions above mechanical instead of advisory.
 - `../skillsaw-skill/TODO.md` — the judging side: dims 3 and 5 are hand-scored with no
   stated definition, which is the same gap seen from the consumer end.
-- `../../../skillsaw/TODO.md` — dim 3's section credit is title-based, so 154 skills pass
-  on a heading alone. Surfacing that belongs in skillsaw. A bare `units > N` penalty would
+- `../../../skillsaw/TODO.md` — **done in skillsaw v0.2.0** (the `HasCodeBlock`
+  predicate below is what shipped). Original note: dim 3's section credit is title-based,
+  so 154 skills pass on a heading alone. Surfacing that belongs in skillsaw. A bare `units > N` penalty would
   more than triple the docked set from 10 to 36, but **gating it on
   `markdown.Doc.HasCodeBlock`** (shipped in skillet 2026-08-14) cuts that to 26 and
   suppresses exactly the right ones: the 10 skills that execute nothing

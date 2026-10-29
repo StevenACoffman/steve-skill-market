@@ -43,6 +43,15 @@ Users said something similar:
 1. **The text source of the book:** PDF / EPUB / TXT file path, or accessible plain text. **Do not** dissect the book "from memory" without the text—it's better to stop and ask the user.
 2. **Title + Author + Publication Year**: Used for catalog naming and auditing.
 3. **Is this the first time piloting?**: If this is the first time the user is using book2skill, it is recommended to split the verification process into one book first and then proceed with the batch.
+4. **The tools, at current versions.** Every gate below is an `exegesis` or `skillsaw` call. Install or upgrade both before Stage 0 — `go install` does nothing when the binary is already current, while a check that installs only when the binary is missing never replaces a stale one:
+
+   ```text
+   go install github.com/StevenACoffman/exegesis@latest   # needs v0.3.0 or later
+   go install github.com/StevenACoffman/skillsaw@latest   # needs v0.2.0 or later
+   exegesis version && skillsaw version                   # confirm each GitVersion
+   ```
+
+   If `go install` is unavailable or a version is older, tell the user and STOP — never fake the deterministic steps by hand.
 
 ## Output Structure
 
@@ -77,6 +86,8 @@ books/<book-slug>/
 
    It enforces the Stage-0 gate (one-sentence summary; 3–7 skeleton items; ≥5 key
    terms; ≥3 critique items) and exits non-zero until the structure is complete.
+   It counts bullets, not content, so an unfilled template passes: replace every
+   `{{…}}` placeholder before you run it.
 
 5. Show the output to the user for confirmation: "Did I understand the framework correctly? Are there any key areas you want to emphasize?" Only proceed to stage 1 after receiving confirmation.
 
@@ -193,8 +204,8 @@ Per `methodology/05-stage3-zettelkasten.md`:
 2. Add a `## Related Skills` section to the end of each SKILL.md, one bullet per
    relationship in the exact form `` - <kind>: `<target-slug>` — <rationale> ``,
    where `<kind>` is `depends-on`, `contrasts-with`, `composes-with`, or `informs`.
-   Bullets with any other kind are ignored on read. (`superseded-by` is the fifth
-   valid kind, but merge-skills writes it — not this stage.)
+   A bullet whose kind the reader cannot map is ignored on read. (`superseded-by` is
+   the fifth valid kind, but merge-skills writes it — not this stage.)
 
    **`depends-on` is the only kind that orders anything**: `index` topologically
    sorts the learning path on those edges alone. Use `informs` when a skill shapes
@@ -217,15 +228,19 @@ Per `methodology/05-stage3-zettelkasten.md`:
    Use `link` for a single afterthought edge (idempotent, same write path):
 
    ```text
-   exegesis link --kind depends-on --to <target-slug> --rationale "<why>" books/<slug>/<skill>/
+   exegesis link --kind depends-on --to <target-slug> --rationale "<why>" books/<slug>/<skill>
    ```
+
+   Leave off the trailing slash: with one, `link` takes the skill directory itself as
+   the tree and warns that every target is missing.
 
    `link` only receives one skill directory, so it infers the tree as the parent
    and **warns** rather than fails when the target is not there.
 
    Reading is tolerant of older bullet dialects (a bolded kind, a markdown-linked
-   target, several targets on one bullet), so a section written before this format
-   settled still yields its edges. Writing is not — bring a tree to the one format
+   target, several targets on one bullet, a reversed `**slug** (kind): why`, and the
+   kind spellings `composes_with`, `combines`, `compares` and `depends on`), so a
+   section written before this format settled still yields its edges. Writing is not — bring a tree to the one format
    with:
 
    ```text
@@ -234,7 +249,9 @@ Per `methodology/05-stage3-zettelkasten.md`:
 
    It rewrites only the bullets it understands and copies every other line through
    byte-identical, so a bullet whose "target" is prose is preserved rather than
-   deleted.
+   deleted. A bullet that names a skill by its H1 title rather than its slug is
+   reported by `exegesis normalize --resolve-titles books/<slug>/`; add `--write` to
+   rewrite the ones that resolve exactly and unambiguously.
 
 3. Generate `INDEX.md` deterministically with the CLI — **do not hand-write it or
    click a template**:
@@ -250,10 +267,13 @@ Per `methodology/05-stage3-zettelkasten.md`:
    `--author` override the header derived from `BOOK_OVERVIEW.md`. Any section you
    hand-add below the generated ones (e.g. `## Notes`) is preserved on regeneration.
 
-   **`index` renders only edges whose target exists**, and it does so silently — a
-   typo'd target simply does not appear in the graph. Do not eyeball the Mermaid
-   block to check your links: `exegesis verify` reports every such edge, and that
-   is the check to trust. A `depends-on` cycle is reported as a warning in the
+   **`index` renders only edges whose target exists** — a typo'd target does not
+   appear in the graph (the learning path flags a `depends-on` target that is
+   absent). Do not eyeball the Mermaid block to check your links: `exegesis verify`
+   prints a `graph:` line for every edge whose target is not in the tree. It reports
+   those lines but **does not fail on them**, so read them; the exit code will not
+   catch a typo. `relate` refuses an unknown endpoint before writing, which is why it
+   is the safer way to add edges. A `depends-on` cycle is reported as a warning in the
    learning path rather than failing, since the path is still usable.
 
 ### Phase 4 — Stress Testing and Optimizer Hand-Off
@@ -279,23 +299,34 @@ For each skill, per `methodology/06-stage4-pressure-test.md`:
 
    It enforces the gate (≥3 `should_trigger`, ≥2 `should_not_trigger`, ≥1
    `edge_case`), reports the counts, and exits non-zero until the set passes.
-   (`--fix` rewrites the file in canonical form; `--migrate` adopts a foreign
-   `test-prompts.json` — an object wrapper, a `prompts`/`test_prompts` key, or
-   category-grouped arrays — into that form, adopting the expected value from
-   `expected` or any `expected_*` variant, mapping type synonyms, renumbering
-   ids, and preserving every other field in `notes`, reporting any case still
-   needing an `expected`; `--format json` emits a machine-readable report.)
+   (`--migrate` rewrites a legacy file into canonical form: a bare top-level array
+   or a `test_cases` key becomes `tests`, `expected_behavior` becomes `expected`,
+   and non-numeric ids are renumbered. It refuses a file carrying both `tests` and
+   `test_cases`. Any other shape — an object wrapper, a `prompts` key,
+   category-grouped arrays — it does not read, so convert those by hand; "already
+   canonical" on such a file means it was not read, not that it is right.)
 
 3. Run the full mechanical gate over the whole tree — every skill must pass:
 
    ```text
-   exegesis verify books/<slug>/
+   exegesis verify --check redlines books/<slug>/
+   exegesis index --check books/<slug>/
    ```
 
-   This runs all gates at once (overview, per-skill lint, per-skill test-prompts,
-   and INDEX.md staleness) and exits non-zero if anything fails. Fix and re-run
-   until it passes. This is the last step book2skill / `exegesis` owns; it
-   certifies *structure*, not *quality* or *behaviour*.
+   `verify` runs the overview gate, per-skill lint, the Quality Red Lines (only with
+   `--check redlines` — plain `verify` skips them), and the test-prompts composition,
+   and exits non-zero if any fails. It does **not** check `INDEX.md`; that is what
+   `index --check` is for (exit 1 if stale — rerun `exegesis index`). Fix and re-run
+   until both pass. A good run prints `verify: examined N skill(s)`, where N is the
+   number of skills you wrote. Point it at the book directory, not at `books/` or a
+   single skill: a tree with no immediate skill subdirectories exits non-zero ("no
+   skills found"), and a run pointed at one skill still drops a stray
+   `skills-manifest.json` there. Its `graph:` lines (edges to absent targets) are
+   reported, not failed — read them (see Phase 3). `exegesis lint --check all` adds
+   advisory warnings for a skill with no failure-mode encoding (dim 3) or no
+   boundary section (dim 9) before `skillsaw` scores them. This is the last step
+   book2skill / `exegesis` owns; it certifies *structure*, not *quality* or
+   *behaviour*.
 
    Two cheap, deterministic pre-hand-off gates also run here, so a mis-triggering
    or over-long skill is caught at the forge instead of late (and expensively) in
@@ -309,9 +340,12 @@ For each skill, per `methodology/06-stage4-pressure-test.md`:
    `skillsaw activation` reads the type-tagged test-prompts and reports, as a
    deterministic proxy, whether the `description` fires on `should_trigger` and
    stays silent on `should_not_trigger` (net_utility in [-1, 1], with TPR/FPR and
-   Wilson intervals). A negative or low net_utility means the description / A2 is
-   over-broad or under-specific. On failure, **rework Stage 2 A2/E** — do not
-   surface-patch the description. The budget gate is opt-in: a book2skill RIA skill
+   Wilson intervals). It exits non-zero in two different cases that want opposite
+   responses. **`UNRESOLVED`** means the interval still spans the threshold: the
+   sample is too small to decide, so add test prompts — do not edit the skill (at
+   the 3/2/1 minimum, a single miss is enough to leave it unresolved). A bound that
+   resolves **below** the threshold means the description / A2 is over-broad or
+   under-specific: **rework Stage 2 A2/E** — do not surface-patch the description. The budget gate is opt-in: a book2skill RIA skill
    is legitimately longer than a lean directive skill, so set `<N>` (or a
    `--registry`) only if your catalog enforces a token budget — the description is
    paid on every invocation and the body on every trigger, so a catalog with a
@@ -322,12 +356,17 @@ For each skill, per `methodology/06-stage4-pressure-test.md`:
    deterministic reimplementation of darwin-skill's evaluate → diagnose → improve →
    gate loop that then hill-climbs each skill's quality. Invoke the `skillsaw-skill`
    skill — it owns the loop, the human checkpoints, and the git discipline, and
-   shells out to `skillsaw` for every deterministic step. Prerequisite (else STOP
-   and tell the user — never fake the deterministic steps by hand):
+   shells out to `skillsaw` for every deterministic step. First confirm the
+   manifest `verify` wrote actually covers the tree you mean to hand off:
 
    ```text
-   skillsaw version >/dev/null 2>&1 || go install github.com/StevenACoffman/skillsaw@latest
+   skillsaw verified books/<slug>/skills-manifest.json
    ```
+
+   It exits non-zero if the structure did not pass, or if the manifest covers no
+   skills (then the tree was never examined — check the path). Its line should read
+   `examined=N` for the N skills you wrote. (`skillsaw` itself was installed under
+   Input Requirements; never fake its steps by hand.)
 
    **`skillsaw` does not add scrutiny on top of `exegesis` — for three of its nine
    dimensions it measures what Stage 2 was supposed to produce.** Dim 3 (failure-mode
@@ -350,14 +389,18 @@ For each skill, per `methodology/06-stage4-pressure-test.md`:
      not score.
    - `skillsaw diagnose` → one edit → `skillsaw gate` — the keep-or-revert ratchet.
 
-   **test-prompts.json bridge — do not assume drop-in.** The `type`-tagged set
-   book2skill emits (`should_trigger` / `should_not_trigger` / `edge_case`) is an
-   *activation* spec that `exegesis` gates; `skillsaw` does not read those tags. Its
-   dim-8 `judge` scores *output quality* and needs, per prompt, a `checks-<id>.json`
-   rule file (operators: `section_present`, `regex`, `contains`, `tool_called`,
-   `max_chars`, `min_chars`). Reuse each prompt and turn its `expected` text into
-   those deterministic checks — this is `skillsaw-skill`'s Phase 0.5 and is where the
-   two formats meet. **Rework the skill (redo Stage 2 A2/E/B) if `skillsaw gate`
+   **test-prompts.json bridge — one file, two readers.** `skillsaw` reads the
+   `test-prompts.json` book2skill emits directly. `activation` uses its `type` tags
+   (`should_trigger` / `should_not_trigger` / `edge_case`); dim-8 `judge
+   --from-test-prompts` scores *output quality* for each behavioural case from that
+   case's embedded `checks`, or from checks derived from its `expected` text when it
+   has none. `exegesis tests --scaffold` already writes a `checks` array per case, so
+   what is left is making each one deterministic and true to the case (operators:
+   `section_present`, `regex`, `contains`, `tool_called`, `max_chars`, `min_chars`,
+   `boolean`, `multiple_choice`, `numeric_order_of_magnitude`). List the cases that
+   still have none with `skillsaw checks --tree books/<slug>` — the book directory,
+   since pointed at a single skill it finds nothing and passes. This is
+   `skillsaw-skill`'s Phase 0.5. **Rework the skill (redo Stage 2 A2/E/B) if `skillsaw gate`
    rejects the improvement** — no "surface repairs" are allowed.
 
 5. After all steps are completed, notify the user: "Completed and structurally
@@ -372,7 +415,8 @@ provides the `lint`, `tests`, `verify`, `link`, `relate`, `index`, `normalize`
 and `scaffold` subcommands used above. Its
 `exegesis distill` command runs the entire pipeline as ordinary
 code and can operate in two ways. With `--driver http` it calls an
-OpenAI-compatible endpoint itself (default: the GoModel gateway). With
+OpenAI-compatible endpoint itself (defaults: OpenAI's chat-completions URL and
+`gpt-4o-mini`; set `--endpoint` and `--model`). With
 `--driver agent` it performs **no model calls**: it does all deterministic work
 (parsing, validation, dedup, rendering, gating, file writes) and, whenever it
 needs a model, prints the pending prompts as JSON and stops. The invoking agent
@@ -403,15 +447,18 @@ specific model or provider.
 ## Quality Red Line (Output Will Be Stopped If Violated)
 
 Most of these are checked mechanically — don't verify them by eye. Run
-`exegesis verify books/<slug>/` to check the whole tree at once: it enforces the
-Stage-0 overview gate, per-skill lint (#2, #3, #5 and #4's presence via
-`--check redlines`), the per-skill test-prompts composition (#4), the
-relationship graph (every `## Related Skills` edge must point at a skill that
-exists — `index` drops the others silently, so this is the only place a typo'd
-target surfaces), and INDEX.md staleness. Two are judgments the agent must make,
-with no command behind them: #1 (triple verification) and #7 (the four
-anti-patterns). Treat an all-green `verify` as silence about those two, not
-approval of them.
+`exegesis verify --check redlines books/<slug>/` to check the whole tree at once:
+it enforces the Stage-0 overview gate, per-skill lint (#2, #3, #5 and #4's
+presence — plain `verify` without `--check redlines` skips these), and the
+per-skill test-prompts composition (#4). It also prints a `graph:` line for every
+`## Related Skills` edge whose target is not in the tree, but does not fail on
+those, so read them — `index` drops such an edge from the graph. It does not check
+`INDEX.md`; run `exegesis index --check books/<slug>/` for that. Two are judgments
+the agent must make: #1 (triple verification) and #7 (the four anti-patterns).
+The first has one countable half: `exegesis quotecheck --source-text <book.txt>
+--min-support 2 <skill-dir>` confirms each R quotation appears in the extracted
+text, which is evidence for V1 but not the judgement itself. Treat an all-green
+`verify` as silence about #1 and #7, not approval of them.
 
 A note on reading its output: if a skill's frontmatter is not valid YAML,
 `verify` reports **that** and nothing else about the frontmatter. It will not
@@ -434,8 +481,13 @@ consequences of the same syntax error. Fix the reported line and re-run.
    validates the agentskills.io spec plus quality checks:
 
    - Frontmatter has only spec-allowed keys (`name`, `description`, `tags`,
-     `allowed-tools`); `name` equals the folder name.
-   - `description` is ≤1024 chars, third person, plain text (no `<...>`/XML).
+     `allowed-tools`, `license`, `compatibility`, `metadata`); `name` equals the
+     folder name. Put `author` or `version` under `metadata` — at the top level they
+     fail lint.
+   - `description` is ≤1024 chars and plain text (no `<...>`/XML). Writing it in the
+     third person is this skill's convention; no gate checks it.
+   - No zero-width, bidi-override or tag characters anywhere in the file, code fences
+     included.
    - No `[...](../other/SKILL.md)` links and no absolute or `candidates/` paths in
      the body — provenance goes in `## Provenance`, related skills as slug text.
 
@@ -464,7 +516,7 @@ consequences of the same syntax error. Fix the reported line and re-run.
 - **skillsaw-skill** + the **skillsaw** CLI: the downstream *optimizer* — evaluate → diagnose → improve → gate — that hill-climbs each generated skill's quality; a deterministic Go reimplementation of darwin-skill's loop.
 - **darwin-skill**: the original evolve-any-skill optimizer, still a compatible alternative to skillsaw.
 
-How they fit together: book2skill / `exegesis` certify a skill's **structure**; then `skillsaw-skill` scores and improves its **quality**. The `test-prompts.json` this skill emits *seeds* skillsaw's dim-8 judging, but skillsaw additionally needs per-prompt `checks-<id>.json` rule files (its Phase 0.5) — it is a seed, not a drop-in format.
+How they fit together: book2skill / `exegesis` certify a skill's **structure**; then `skillsaw-skill` scores and improves its **quality**. `skillsaw` reads the `test-prompts.json` this skill emits directly; what dim-8 judging adds is a deterministic `checks` array on every behavioural case (its Phase 0.5).
 
 ## Calling Conventions
 

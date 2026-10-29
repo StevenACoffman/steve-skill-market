@@ -30,8 +30,12 @@ loses to no skill is a net loss and must dissolve (a loaded skill can actively
 hurt). Runtime scoring across the arms stays with darwin — there is no
 `skillsaw pairwise`. As a cheap deterministic pre-check that the merged A2 actually
 sharpened rather than unioning the two source triggers, run
-`skillsaw activation books/merged/<merge-slug>/<merged-skill>/`; a low or negative
-net_utility sends you back to Phase 1.5.5 to re-check V4.
+`skillsaw activation books/merged/<merge-slug>/<merged-skill>/`. It scores only the
+merged skill's own targets and decoys, so it cannot show the trigger firing like the
+union of the two sources; write decoys that one source alone would catch if you want
+that tested. An `UNRESOLVED` exit means too few prompts to decide: add targets or
+decoys, do not edit the skill. Only a bound that resolves low or negative sends you
+back to Phase 1.5.5 to re-check V4.
 
 **Auto-dissolve check before writing tests**: Before writing any `prefer_merged_over_source`
 tests, verify that you can identify ≥2 concrete scenarios where the merged skill
@@ -91,60 +95,74 @@ blurred. Revisit the "Use this instead of..." section in A2.
 
 When a merge is dissolved in Phase 4 (all `prefer_merged_over_source` fail):
 
-1. **Move** `<merged-skill-slug>/SKILL.md` to `rejected/<pair-id>-skill.md`
+1. **Move** `<merged-skill-slug>/SKILL.md` to `rejected/artifacts/<pair-id>-skill.md`
    — do not delete; it is a useful audit record of what was attempted
-2. **Move** `<merged-skill-slug>/merge-audit.md` to `rejected/<pair-id>-audit.md`
-3. **Move** `<merged-skill-slug>/test-prompts.json` to `rejected/<pair-id>-tests.json`
-   — the failed tests document why the merge was dissolved
+2. **Move** `<merged-skill-slug>/merge-audit.md` to `rejected/artifacts/<pair-id>-audit.md`
+3. **Move** `<merged-skill-slug>/test-prompts.json` to
+   `rejected/artifacts/<pair-id>-tests.json` — the failed tests document why the merge
+   was dissolved
 4. **Remove** the now-empty `<merged-skill-slug>/` directory
 5. **Update** `rejected/<pair-id>.md` reason from any earlier value to
    `phase4-dissolved-not-additive`
 6. **Add** `composes-with` Zettelkasten links to both source SKILL.md files
    (follow the non-merged pair procedure in Phase 3)
-7. **Update** INDEX.md dissolved pairs table with the final disposition
+7. **Regenerate** INDEX.md with `exegesis merge-index books/merged/<merge-slug>/`
+
+The artifacts go under `rejected/artifacts/` because `merge-index` treats every
+`rejected/pair-*.md` as a rejected pair: a moved `SKILL.md` named
+`rejected/pair-001-skill.md` would be listed as a second one.
 
 ## Test-Prompts.json Format
+
+The canonical form `exegesis tests --scaffold` writes and `exegesis tests --merge`
+gates, trimmed to one case per type (the merged gate needs at least 3
+`should_trigger`, 2 `should_not_trigger`, 2 `edge_case` and 2
+`prefer_merged_over_source`). Every case except a decoy carries `checks`, which
+`skillsaw judge --from-test-prompts` scores; `sources` and `notes` are kept as written.
 
 ```json
 {
   "skill": "<merged-skill-slug>",
-  "version": "0.1.0",
   "sources": [
     "<book-slug-a>/<skill-slug-a>",
     "<book-slug-b>/<skill-slug-b>"
   ],
-  "test_cases": [
+  "tests": [
     {
-      "id": "should-trigger-01",
+      "id": 1,
       "type": "should_trigger",
       "prompt": "...",
-      "expected_behavior": "...",
-      "notes": "..."
+      "expected": "...",
+      "checks": [{"op": "section_present", "arg": "..."}]
     },
     {
-      "id": "should-not-trigger-01",
+      "id": 2,
       "type": "should_not_trigger",
       "prompt": "...",
-      "expected_behavior": "...",
-      "notes": "..."
+      "expected": "..."
     },
     {
-      "id": "edge-01",
+      "id": 3,
       "type": "edge_case",
       "prompt": "...",
-      "expected_behavior": "...",
-      "notes": "Boundary with source skill A: ..."
+      "expected": "...",
+      "notes": "Boundary with source skill A: ...",
+      "checks": [{"op": "contains", "arg": "..."}]
     },
     {
-      "id": "prefer-merged-01",
+      "id": 4,
       "type": "prefer_merged_over_source",
       "prompt": "...",
-      "expected_behavior": "...",
-      "notes": "Source skill A would do X; source skill B would do Y; merged skill does Z which is better because ..."
+      "expected": "...",
+      "notes": "Source skill A would do X; source skill B would do Y; merged skill does Z which is better because ...",
+      "checks": [{"op": "contains", "arg": "..."}]
     }
   ]
 }
 ```
+
+A file in the older shape (`test_cases`, `expected_behavior`, string ids) is rewritten
+into this one by `exegesis tests --migrate <skill-dir>`.
 
 ## Test-Results.md
 

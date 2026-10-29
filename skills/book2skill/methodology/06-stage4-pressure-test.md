@@ -12,35 +12,41 @@ The A2 (trigger) stage is the most difficult part of the book review. No matter 
 
 ## Test-Prompts.json Format (Trigger Composition)
 
+This is the canonical form `exegesis tests --scaffold` writes and `exegesis tests`
+gates. Each behavioural case (`should_trigger`, `edge_case`) carries a `checks` array
+that `skillsaw judge --from-test-prompts` scores; a decoy needs none. The example is
+trimmed to one case per type; the gate needs at least 3 / 2 / 1.
+
 ```json
 {
   "skill": "inversion-thinking",
-  "version": "0.1.0",
-  "test_cases": [
+  "tests": [
     {
-      "id": "should-trigger-01",
+      "id": 1,
       "type": "should_trigger",
-      "prompt": "I need to decide whether or not to take on this new project. I've listed a bunch of benefits, but I'm still unsure."
-      "expected_behavior": "Invokes inversion-thinking, asking 'What is the least desirable thing to happen?'",
-      Notes: Positive scenario: Decision-making dilemma
+      "prompt": "I need to decide whether or not to take on this new project. I've listed a bunch of benefits, but I'm still unsure.",
+      "expected": "Invokes inversion-thinking, asking 'What is the least desirable thing to happen?'",
+      "checks": [{"op": "contains", "arg": "least desirable"}]
     },
     {
-      "id": "should-not-trigger-01",
+      "id": 2,
       "type": "should_not_trigger",
       "prompt": "Please help me check the parameters of this API",
-      "expected_behavior": "Pure information query, should not invoke any decision-making skills",
-      Notes: Decoy: Non-decision-making scenario
+      "expected": "Pure information query; should not invoke any decision-making skill"
     },
     {
-      "id": "edge-01",
+      "id": 3,
       "type": "edge_case",
-      "prompt": "I'm thinking about what to have for dinner".
-      "expected_behavior": "Daily routine tasks, should not be invoked (although the literal meaning is 'decision')".
-      Notes: Boundary: Distinguishing between serious decisions and everyday choices
+      "prompt": "I'm thinking about what to have for dinner",
+      "expected": "An everyday choice: answer briefly without the inversion framework, although the literal meaning is 'decision'",
+      "checks": [{"op": "max_chars", "arg": "400"}]
     }
   ]
 }
 ```
+
+A file in the older shape (a `test_cases` key, `expected_behavior`, string ids) is
+rewritten into this one by `exegesis tests --migrate <skill-dir>`.
 
 ## All Three Types of Tests Are Indispensable
 
@@ -79,9 +85,10 @@ Before handing off, run two cheap deterministic checks so a mis-triggering or
 over-long skill is caught here, not late in the optimizer:
 
 - `skillsaw activation <skill-dir>` — trigger accuracy from the type-tagged
-  test-prompts (net_utility, TPR/FPR with Wilson intervals). Low/negative
-  net_utility ⇒ the description / A2 is over-broad or under-specific ⇒ rework
-  Stage 2 A2/E, don't surface-patch.
+  test-prompts (net_utility, TPR/FPR with Wilson intervals). `UNRESOLVED` (exit 1)
+  means the sample is too small to decide ⇒ add test prompts, don't edit the skill.
+  A bound that resolves low or negative ⇒ the description / A2 is over-broad or
+  under-specific ⇒ rework Stage 2 A2/E, don't surface-patch.
 - `exegesis lint --max-body-words <N> <skill-dir>` — **opt-in** token budget. RIA
   skills are legitimately longer than lean directive skills, so set a budget only
   if the catalog enforces one (the description is paid every invocation, the body
@@ -93,18 +100,18 @@ over-long skill is caught here, not late in the optimizer:
 optimizes **quality**. skillsaw is the deterministic Go reimplementation of
 darwin-skill's evaluate → diagnose → improve → gate loop.
 
-After all skills pass `exegesis verify` and the pre-hand-off gates, inform the user
-and hand off:
+After all skills pass `exegesis verify --check redlines` and the pre-hand-off gates,
+and `skillsaw verified <book>/skills-manifest.json` confirms the manifest covers them
+(`examined=N`), inform the user and hand off:
 
 > Completed and structurally verified. Invoke `skillsaw-skill` to score and
 > hill-climb each skill (`skillsaw eval` / `scan` / `diagnose` / `gate`).
-> Prerequisite: `skillsaw version || go install github.com/StevenACoffman/skillsaw@latest`.
+> Prerequisite: skillsaw v0.2.0 or later (`go install github.com/StevenACoffman/skillsaw@latest`).
 
-**Format bridge (not drop-in).** skillsaw does not read the
-`should_trigger`/`should_not_trigger`/`edge_case` tags — those are the
-activation spec that `exegesis` gates. skillsaw's dim-8 `judge` scores output
-quality and needs a per-prompt `checks-<id>.json` rule file (operators:
-`section_present`, `regex`, `contains`, `tool_called`, `max_chars`, `min_chars`).
-Reuse each prompt and convert its `expected` into those checks — that conversion
-is `skillsaw-skill`'s Phase 0.5. darwin-skill remains a compatible alternative
-that can consume the `type`-tagged set directly.
+**One file, two readers.** skillsaw reads this `test-prompts.json` directly:
+`activation` uses the `type` tags, and dim-8 `judge --from-test-prompts` scores
+each behavioural case from its `checks` (or from checks derived from `expected`
+when it has none). Making those checks deterministic and true to each case is
+`skillsaw-skill`'s Phase 0.5; `skillsaw checks --tree <book>` lists the cases that
+still have none. darwin-skill remains a compatible alternative that can consume the
+`type`-tagged set directly.

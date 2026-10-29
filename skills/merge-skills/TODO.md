@@ -4,22 +4,14 @@ Spec-level findings about `merge-skills` itself: what the methodology decides, n
 what the CLI implements. The exegesis subcommands this skill invokes are tracked
 separately in `~/Documents/agent-orange/exegesis/TODO.md` — those are code to build.
 
-**Status as of 2026-08-08** (this list was previously "none of them exist"):
-
-| command                                     | state                                                           |
-| ------------------------------------------- | --------------------------------------------------------------- |
-| `exegesis quotecheck`                       | **exists**                                                      |
-| `exegesis tests --merge` / `--migrate`      | **exists**                                                      |
-| `exegesis merge-status` (`append`, `check`) | **exists**, except `--link`                                     |
-| `exegesis merge-index`                      | not built — blocked on a provenance decision (exegesis/TODO.md) |
-| `exegesis a2check`                          | not built                                                       |
-| `exegesis verify --merge`                   | not built                                                       |
-| `superseded-by` edge kind                   | undecided; `merge-status --link` refuses until it lands         |
-
-`SKILL.md` still presents all of them as working with no caveat. That was already
-wrong when none existed; it is now wrong in both directions, so an agent following it
-fails at a different step than before. Worth a pass over the file once the remaining
-three are settled.
+**Status as of 2026-10-28 (exegesis v0.3.0): every command this skill invokes exists.**
+`quotecheck`, `tests --merge`/`--migrate`, `merge-status append`/`check` with `--link`,
+`merge-index`, `a2check`, `verify --merge` with `--source-book`/`--strict`, and the
+`superseded-by` edge kind are all built. SKILL.md and the methodology were brought in
+line with their actual behaviour the same day: `--link` is how the qualified
+`superseded-by` edge gets written, `merge-index` overwrites the whole file and reads only
+`rejected/pair-*.md`, and `--migrate` reads fewer shapes than the skill had claimed. The
+2026-08-08 table that stood here listed four of them as unbuilt.
 
 What follows is a decision to make first, because the code that would serve it depends
 on the answer.
@@ -141,5 +133,7 @@ misfired — which skillsaw's `activation` matrix can measure rather than assume
 ## Caution
 
 Do not implement a retirement mechanism before deciding which of the two roles a book
-tree plays. Today "the book tree" and "the market corpus" are the same directory in
-practice, and every option above depends on separating them.
+tree plays. **Resolved 2026-08-23:** the archive became a separate repository from the
+market corpus (SKILL.md's retirement policy), which is the separation every option above
+depended on. Original note: "the book tree" and "the market corpus" were the same
+directory in practice.
