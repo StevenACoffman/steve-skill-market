@@ -21,14 +21,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Distributed lock or mutex usage:
-!`grep -rn 'sync\.Mutex\|sync\.RWMutex\|lock\|Lock\|distributed' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Optimistic concurrency / version checks:
-!`grep -rn 'compare.*swap\|CAS\|version\|etag\|ETag\|revision' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Leader election or singleton job guards:
-!`grep -rn 'leader\|election\|singleton\|once\|Once' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Distributed lock or mutex usage
+- Optimistic concurrency / version checks
+- Leader election or singleton job guards
 
 ## R — Original Text (Reading)
 

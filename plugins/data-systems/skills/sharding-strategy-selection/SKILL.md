@@ -12,14 +12,10 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Partition key or shard key patterns:
-!`grep -rn 'shard\|Shard\|partition\|Partition\|bucket\|Bucket' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-District/school ID used as routing key:
-!`grep -rn 'DistrictID\|districtID\|district_id\|SchoolID\|schoolID' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Hot-key or load distribution concerns:
-!`grep -rn 'hotkey\|hot_key\|loadbalance\|hash.*key\|consistent.*hash' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Partition key or shard key patterns
+- Hot-key or load distribution concerns
 
 ## R — Original Text (Reading)
 

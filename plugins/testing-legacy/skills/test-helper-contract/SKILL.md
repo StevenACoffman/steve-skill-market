@@ -10,14 +10,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Test helpers that return errors instead of calling t.Fatal (anti-pattern):
-!`grep -rn 'func.*testing\.T.*error' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Helpers using the correct contract (t.Fatal + cleanup func):
-!`grep -rn 'func.*\*testing\.T.*func()' --include='*.go' . 2>/dev/null | grep -v vendor | head -5`
-
-defer cleanup() pattern in use:
-!`grep -rn 'defer.*()$\|, cleanup :=' --include='*_test.go' . 2>/dev/null | grep -v vendor | head -5`
+- Test helpers that return errors instead of calling t.Fatal (anti-pattern)
+- Helpers using the correct contract (t.Fatal + cleanup func)
+- defer cleanup() pattern in use
 
 From "Advanced Testing with Go" (Mitchell Hashimoto, GopherCon):
 

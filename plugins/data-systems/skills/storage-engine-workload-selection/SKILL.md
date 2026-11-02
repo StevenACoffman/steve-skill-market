@@ -10,14 +10,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Storage backends in use:
-!`grep -rln 'cloud\.google\.com/go/datastore\|github\.com/jackc/pgx\|go\.mongodb\.org\|redis' --include='*.go' . 2>/dev/null | head -10`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-OLAP / analytics query patterns:
-!`grep -rn 'GROUP BY\|SUM(\|COUNT(\|AVG(\|analytics\|report\|aggregate' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Write-heavy vs read-heavy indicators:
-!`grep -rn '\.Put(\|\.Upsert(\|\.Insert(\|\.Update(' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | wc -l`
+- Storage backends in use
+- OLAP / analytics query patterns
+- Write-heavy vs read-heavy indicators
 
 ## R — Original Text (Reading)
 

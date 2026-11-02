@@ -20,20 +20,13 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-climax installed:
-!`which climax 2>/dev/null || echo "not found — install: go install github.com/StevenACoffman/climax@latest"`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Is this a climax app (climax markers in cmd/cmd.go):
-!`grep -l 'climax:name\|climax:root-pkg\|register new commands here' cmd/cmd.go 2>/dev/null && echo "yes" || echo "no (or cmd/cmd.go not present)"`
-
-Commands registered:
-!`grep 'New(' cmd/cmd.go 2>/dev/null | grep -v '//' | head -10`
-
-go.mod module path:
-!`grep '^module' go.mod 2>/dev/null || echo "no go.mod found"`
-
-Lint status:
-!`climax lint . 2>/dev/null || echo "(climax not installed or not a climax app)"`
+- climax installed
+- Is this a climax app (climax markers in cmd/cmd.go)
+- Commands registered
+- go.mod module path
+- Lint status
 
 ## R — What Climax Does
 

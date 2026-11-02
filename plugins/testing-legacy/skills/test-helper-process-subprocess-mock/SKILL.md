@@ -18,14 +18,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-exec.Command usage in production code (subprocess calls to mock):
-!`grep -rn 'exec\.Command\|exec\.CommandContext' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Existing subprocess mock patterns:
-!`grep -rn 'GO_WANT_HELPER_PROCESS\|TestHelperProcess\|helperProcess' --include='*.go' . 2>/dev/null | grep -v vendor | head -5`
-
-os.Exec or os/exec imports:
-!`grep -rln '"os/exec"' --include='*.go' . 2>/dev/null | grep -v vendor | head -5`
+- exec.Command usage in production code (subprocess calls to mock)
+- Existing subprocess mock patterns
+- os.Exec or os/exec imports
 
 When code calls `exec.Command` to run an external binary, the subprocess is a
 testability boundary. Two options exist.

@@ -12,14 +12,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Cache reads (potential stale-read sources):
-!`grep -rn 'cache\|Cache\|memcache\|redis\|Redis' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Strong-consistency read paths (Datastore, SQL):
-!`grep -rn 'datastore\|Datastore\|pgx\|sqlc\|sql\.DB' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Replica or read-replica references:
-!`grep -rn 'replica\|readOnly\|read_only\|secondary' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Cache reads (potential stale-read sources)
+- Strong-consistency read paths (Datastore, SQL)
+- Replica or read-replica references
 
 ## R — Original Text (Reading)
 

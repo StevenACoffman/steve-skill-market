@@ -10,8 +10,9 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Tool and version check:
-!`for t in uv mdformat shfmt gofmt; do builtin type -P "$t" &>/dev/null && echo "$t ✓ ($(${t} --version 2>/dev/null || echo version unknown))" || echo "$t MISSING"; done`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
+
+- Tool and version check
 
 ## Step 0 — Install Tools
 

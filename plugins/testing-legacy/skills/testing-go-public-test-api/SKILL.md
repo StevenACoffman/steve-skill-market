@@ -10,14 +10,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-testing.go files (public test API exported for other packages):
-!`find . -name 'testing.go' -not -path '*/vendor/*' 2>/dev/null`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Test helpers defined only in \_test.go (not importable by other packages):
-!`find . -name '*_test.go' -not -path '*/vendor/*' 2>/dev/null | xargs grep -l 'func Test\|func New.*testing\.T\|func Setup' 2>/dev/null | head -8`
-
-Packages that import test helpers from sibling packages:
-!`grep -rn '".*test\|testutil\|testhelper\|testing"' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- testing.go files (public test API exported for other packages)
+- Test helpers defined only in \_test.go (not importable by other packages)
+- Packages that import test helpers from sibling packages
 
 ## R — Raw Source
 

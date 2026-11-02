@@ -17,14 +17,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Database connection configuration:
-!`grep -rn 'dsn\|DSN\|DATABASE_URL\|postgres\|Postgres\|datastore\|Datastore' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Multi-region or replica endpoint references:
-!`grep -rn 'region\|replica\|primary\|secondary\|failover\|ReadReplica' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Cloud Datastore usage (managed replication):
-!`grep -rln 'cloud\.google\.com/go/datastore' --include='*.go' . 2>/dev/null | head -5`
+- Database connection configuration
+- Multi-region or replica endpoint references
+- Cloud Datastore usage (managed replication)
 
 ## R — Original Text (Reading)
 

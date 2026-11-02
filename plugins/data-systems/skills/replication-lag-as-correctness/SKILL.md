@@ -10,14 +10,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Read-after-write patterns (user reads own data immediately after write):
-!`grep -rn 'Get.*After\|read.*write\|ReadYour\|afterCreate\|afterUpdate' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Database read paths (potential replica reads):
-!`grep -rn '\.Query\|\.QueryRow\|\.Get\|\.Select' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
-
-Replication lag handling or stale-read guards:
-!`grep -rn 'lag\|stale\|consistency\|ReadConsistency\|StrongRead' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Read-after-write patterns (user reads own data immediately after write)
+- Database read paths (potential replica reads)
+- Replication lag handling or stale-read guards
 
 ## R — Original Text (Reading)
 

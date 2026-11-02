@@ -12,14 +12,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Dual-write patterns (writing to two systems in the same function):
-!`grep -rn -A2 '\.Put(\|\.Upsert(\|\.Insert(' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | grep -c '\.Put(\|\.Upsert(\|\.Insert(' || true`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Cache invalidation on write:
-!`grep -rn 'cache\|Cache' --include='*.go' . 2>/dev/null | grep -i 'delete\|invalidat\|flush\|evict\|clear' | grep -v '_test.go\|vendor' | head -5`
-
-Derived/secondary storage that mirrors primary:
-!`grep -rn 'sync\|Sync\|replicate\|Replicate\|propagate\|Propagate' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Dual-write patterns (writing to two systems in the same function)
+- Cache invalidation on write
+- Derived/secondary storage that mirrors primary
 
 ## R — Original Text (Reading)
 

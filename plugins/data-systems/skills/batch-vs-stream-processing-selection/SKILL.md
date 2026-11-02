@@ -12,14 +12,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Pub/Sub topics and subscriptions (streaming entry points):
-!`grep -rn 'pubsub\|PubSub\|topic\|subscription' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Batch/cron job patterns:
-!`grep -rn 'cron\|batch\|job\|scheduler' --include='*.go' . 2>/dev/null | grep -iv 'rosterjob\|RosterJob' | grep -v '_test.go\|vendor' | head -5`
-
-Event log / Kafka / stream processing references:
-!`grep -rn 'kafka\|stream\|eventlog\|event_log' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Pub/Sub topics and subscriptions (streaming entry points)
+- Batch/cron job patterns
+- Event log / Kafka / stream processing references
 
 ## R — Original Text (Reading)
 

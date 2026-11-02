@@ -17,14 +17,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-SQL transaction usage:
-!`grep -rn 'BeginTx\|\.Begin(\|pgx\.Tx\|sql\.Tx\|WithTransaction\|RunInTransaction' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Isolation level settings:
-!`grep -rn 'IsolationLevel\|isolation\|SERIALIZABLE\|REPEATABLE READ\|READ COMMITTED' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
-
-Check-then-act patterns (read-modify-write):
-!`grep -rn -A3 'SELECT.*FOR UPDATE\|\.Get(\|\.QueryRow' --include='*.go' . 2>/dev/null | grep -B1 '\.Update(\|\.Put(\|\.Exec(' | grep -v '_test.go\|vendor' | head -8`
+- SQL transaction usage
+- Isolation level settings
+- Check-then-act patterns (read-modify-write)
 
 ## R — Original Text (Reading)
 

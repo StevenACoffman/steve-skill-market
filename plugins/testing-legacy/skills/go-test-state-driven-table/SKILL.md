@@ -10,17 +10,12 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Current branch:
-!`git branch --show-current 2>/dev/null`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Mock library usage in tests:
-!`grep -rln 'gomock\|testify/mock\|mock\.' --include='*_test.go' . 2>/dev/null | head -5`
-
-Slice-indexed test tables (anti-pattern):
-!`grep -rn 'cases := \[\]struct' --include='*_test.go' . 2>/dev/null | head -5`
-
-Map-keyed test tables (desired pattern):
-!`grep -rn 'cases := map\[string\]struct' --include='*_test.go' . 2>/dev/null | head -5`
+- Current branch
+- Mock library usage in tests
+- Slice-indexed test tables (anti-pattern)
+- Map-keyed test tables (desired pattern)
 
 ### R — Original Text (Reading)
 

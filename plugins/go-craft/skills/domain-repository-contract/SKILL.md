@@ -10,14 +10,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Current branch:
-!`git branch --show-current 2>/dev/null`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Repository interface declarations:
-!`grep -rn 'type.*Repository interface\|type.*Repo interface\|type.*Store interface' --include='*.go' . 2>/dev/null | head -10`
-
-Domain files importing infra packages:
-!`grep -rn '".*postgres\|".*mongo\|".*mysql\|".*datastore' --include='*.go' . 2>/dev/null | grep -v '_test.go\|infrastructure\|store\|cmd/' | head -10`
+- Current branch
+- Repository interface declarations
+- Domain files importing infra packages
 
 ### R — Reading
 

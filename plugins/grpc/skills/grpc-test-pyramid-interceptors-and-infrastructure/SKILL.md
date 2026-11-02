@@ -17,17 +17,12 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Current branch:
-!`git branch --show-current 2>/dev/null`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-bufconn usage (interceptor integration tests):
-!`grep -rn 'bufconn\|google.golang.org/grpc/test/bufconn' --include='*.go' . 2>/dev/null | head -5`
-
-testcontainers usage (infrastructure tests):
-!`grep -rn 'testcontainers\|testcontainers-go' --include='*.go' . 2>/dev/null | head -5`
-
-grpc.NewServer in tests (unit tier):
-!`grep -rn 'grpc\.NewServer()' --include='*_test.go' . 2>/dev/null | head -5`
+- Current branch
+- bufconn usage (interceptor integration tests)
+- testcontainers usage (infrastructure tests)
+- grpc.NewServer in tests (unit tier)
 
 ### R — Reading
 

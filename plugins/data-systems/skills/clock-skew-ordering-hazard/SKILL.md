@@ -17,14 +17,11 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Wall-clock time usage (time.Now):
-!`grep -rn 'time\.Now()' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Timestamp comparisons used for ordering or conflict detection:
-!`grep -rn '\.Before(\|\.After(\|\.Unix()\|CreatedAt\|UpdatedAt\|LastModified' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -8`
-
-Logical clocks or vector clocks:
-!`grep -rn 'version\|Version\|etag\|ETag\|revision\|Revision' --include='*.go' . 2>/dev/null | grep -v '_test.go\|vendor' | head -5`
+- Wall-clock time usage (time.Now)
+- Timestamp comparisons used for ordering or conflict detection
+- Logical clocks or vector clocks
 
 ## R — Original Text (Reading)
 

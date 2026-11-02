@@ -10,17 +10,12 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Current branch:
-!`git branch --show-current 2>/dev/null`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-run() functions:
-!`grep -rn '^func run(' --include='*.go' . 2>/dev/null | head -5`
-
-Application/server struct definitions:
-!`grep -rn '^type application struct\|^type app struct\|^type server struct\|^type Server struct' --include='*.go' . 2>/dev/null | grep -v '_test.go' | head -5`
-
-Package-level vars (global state risk):
-!`grep -rn '^var ' --include='*.go' . 2>/dev/null | grep -v '_test.go\|_gen.go' | head -10`
+- Current branch
+- run() functions
+- Application/server struct definitions
+- Package-level vars (global state risk)
 
 ### R — Reading
 

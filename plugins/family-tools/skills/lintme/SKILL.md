@@ -10,11 +10,10 @@ allowed-tools: Bash, Read, Edit
 
 ## Current State
 
-Tool availability:
-!`export PATH="$HOME/go/bin:$PATH"; for t in lintme golangci-lint; do builtin type -P "$t" &>/dev/null && echo "$t ✓" || echo "$t MISSING"; done`
+Before applying this skill, run `scripts/current-state.sh` from the root of the repository you are working in. It only reads files, and reports:
 
-Current branch:
-!`git branch --show-current 2>/dev/null`
+- Tool availability
+- Current branch
 
 ______________________________________________________________________
 
