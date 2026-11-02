@@ -32,7 +32,7 @@ contexts, AND is the cross-book convergence confirmed by Phase 1.5 source verifi
 **Convergence strength → V1 threshold** (from R-Convergence agent rating):
 
 - `strong`: V1 passes without further review
-- `moderate`: V1 passes, but note in merge-audit.md that the synthesis requires
+- `moderate`: V1 passes, but note in `<output>/dev/<slug>/merge-audit.md` that the synthesis requires
   one interpretive step — Phase 2 must not overstate the convergence
 - `weak`: V1 is a **warning flag**. Do not automatically fail, but require that
   Phase 2 I section explicitly names the interpretive gap. If the R-Convergence

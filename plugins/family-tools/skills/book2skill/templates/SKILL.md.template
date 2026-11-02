@@ -16,6 +16,8 @@ allowed-tools when the skill runs tools). Book provenance and related-skill
 links live in the body (## Provenance / ## Related Skills) so `exegesis lint` passes.
 Never add source_book / source_chapter / related_skills / id / title as
 frontmatter keys.
+Keep this SKILL.md under 500 lines (agentskills.io's recommendation; `exegesis
+verify` gates it); move longer material into reference files and say when to read them.
 -->
 
 

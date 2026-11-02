@@ -23,6 +23,11 @@ Agent tool call (one message, five agents):
 
 Do not spawn them one at a time — the pipeline cost multiplies with each sequential call.
 
+If your agent cannot start sub-agents, run the same prompts one after another in this
+session, writing the same files. Start each from its own `agents/` prompt and the two
+source SKILL.md files, not from the previous agent's output, so the five readings stay
+independent.
+
 | Agent            | Prompt file                        | Writes to                    |
 | ---------------- | ---------------------------------- | ---------------------------- |
 | R-Convergence    | `agents/r-convergence-agent.md`    | `candidates/<pair-id>-r.md`  |

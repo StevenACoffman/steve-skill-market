@@ -15,6 +15,8 @@ Merge provenance (type, the two source skills with their books/authors) and
 related-skill links live in the body (## Provenance / ## Related Skills) so
 `exegesis lint` passes. Do NOT emit id / title / type / source_skills / related_skills
 as frontmatter keys.
+Keep this SKILL.md under 500 lines (agentskills.io's recommendation; `exegesis
+verify` gates it); move longer material into reference files and say when to read them.
 -->
 
 # {{Merged Skill Title}}

@@ -13,8 +13,13 @@ convergence mapping and Phase 1.5 verified quotes as raw material.
 
 ## Output
 
-- `<merged-skill-slug>/SKILL.md` — the merged skill
-- `<merged-skill-slug>/merge-audit.md` — convergence/divergence map
+- `<merged-skill-slug>/SKILL.md` — the merged skill, under 500 lines
+  (agentskills.io's recommendation; `exegesis verify` gates it). Move longer material
+  into reference files in the skill directory, and have the body say when to read each.
+- `<output>/dev/<slug>/merge-audit.md` — convergence/divergence map. `<output>` is the
+  root the merged skill is written under (`books/merged/<merge-slug>/`); the audit file
+  sits beside the skill tree, not inside the skill directory, so the skill directory
+  holds only what ships.
 
 ______________________________________________________________________
 
@@ -216,7 +221,7 @@ If the E-Reconciliation agent draft exceeds the ceiling, compress using this pri
 - **Do not** collapse a conditional step (disagree verdict) into an agreed step — that
   discards the most valuable part of the reconciliation
 
-If compression is needed, document in merge-audit.md which steps were merged and why.
+If compression is needed, document in `<output>/dev/<slug>/merge-audit.md` which steps were merged and why.
 
 ______________________________________________________________________
 
@@ -248,7 +253,8 @@ ______________________________________________________________________
 
 ## Merge-Audit.md
 
-Write this alongside SKILL.md. It is an audit document, not user-facing.
+Write this to `<output>/dev/<slug>/merge-audit.md`, beside the skill tree rather than
+inside the skill directory. It is an audit document, not user-facing, and does not ship.
 
 ```markdown
 # Merge Audit — <merged-skill-slug>
@@ -295,15 +301,16 @@ ______________________________________________________________________
 
 ## Source Skill Annotation on Completion
 
-After SKILL.md and merge-audit.md are written, annotate both source skills.
+After SKILL.md and `<output>/dev/<slug>/merge-audit.md` are written, annotate both
+source skills.
 
-Read `merge-audit.md` to determine coverage for each source:
+Read `<output>/dev/<slug>/merge-audit.md` to determine coverage for each source:
 
 - **`merged`** — all key content from this source (R quote, A1 case, B failure modes,
   E steps) is represented in the merged skill, possibly in synthesised form.
 - **`partial`** — some content from this source was explicitly excluded. Use the
   `excluded` field to record what was left out (refer to the E-step compression
-  notes and B-section omissions in merge-audit.md).
+  notes and B-section omissions in `<output>/dev/<slug>/merge-audit.md`).
 
 ```yaml
 # Both skills represented fully
@@ -324,7 +331,8 @@ merge_status:
 ```
 
 The `excluded` value should be a plain-English summary drawn directly from the
-"What was dissolved" and "E step reconciliation" sections of merge-audit.md.
+"What was dissolved" and "E step reconciliation" sections of
+`<output>/dev/<slug>/merge-audit.md`.
 One or two sentences is sufficient.
 
 ______________________________________________________________________
@@ -335,13 +343,13 @@ Phase 2 is complete only when all of the following exist and are non-empty:
 
 | File                                 | Required content                                                 |
 | ------------------------------------ | ---------------------------------------------------------------- |
-| `<merged-skill-slug>/SKILL.md`       | All 6 segments (R, I, A1, A2, E, B) present                      |
-| `<merged-skill-slug>/merge-audit.md` | All sections filled; no `<placeholder>` text                     |
+| `<merged-skill-slug>/SKILL.md`       | All 6 segments (R, I, A1, A2, E, B) present; under 500 lines     |
+| `<output>/dev/<slug>/merge-audit.md` | All sections filled; no `<placeholder>` text                     |
 | A2 sharpness                         | ≥2 language signals that do not appear in either source A2       |
 | B section                            | ≥1 synthesis-specific failure mode in Part 3                     |
 | E section                            | Step count ≤ `max(len_A, len_B) + 2`; any compression documented |
 | Source annotations                   | Both source skills have `merge_status` entry for this run        |
 
 Do not proceed to Phase 3 until all six rows are satisfied. An incomplete
-merge-audit.md means the divergence map has not been recorded — Phase 4 failures
+`<output>/dev/<slug>/merge-audit.md` means the divergence map has not been recorded — Phase 4 failures
 will be harder to diagnose.

@@ -97,11 +97,12 @@ When a merge is dissolved in Phase 4 (all `prefer_merged_over_source` fail):
 
 1. **Move** `<merged-skill-slug>/SKILL.md` to `rejected/artifacts/<pair-id>-skill.md`
    — do not delete; it is a useful audit record of what was attempted
-2. **Move** `<merged-skill-slug>/merge-audit.md` to `rejected/artifacts/<pair-id>-audit.md`
+2. **Move** `<output>/dev/<slug>/merge-audit.md` to `rejected/artifacts/<pair-id>-audit.md`,
+   and `<output>/dev/<slug>/test-results.md` to `rejected/artifacts/<pair-id>-test-results.md`
 3. **Move** `<merged-skill-slug>/test-prompts.json` to
    `rejected/artifacts/<pair-id>-tests.json` — the failed tests document why the merge
    was dissolved
-4. **Remove** the now-empty `<merged-skill-slug>/` directory
+4. **Remove** the now-empty `<merged-skill-slug>/` and `dev/<merged-skill-slug>/` directories
 5. **Update** `rejected/<pair-id>.md` reason from any earlier value to
    `phase4-dissolved-not-additive`
 6. **Add** `composes-with` Zettelkasten links to both source SKILL.md files
@@ -166,7 +167,9 @@ into this one by `exegesis tests --migrate <skill-dir>`.
 
 ## Test-Results.md
 
-Record pass/fail per test case with reasoning. For any failure, document:
+Write this to `<output>/dev/<slug>/test-results.md`, beside the skill tree rather than
+inside the skill directory (`<output>` is `books/merged/<merge-slug>/`). Record pass/fail
+per test case with reasoning. For any failure, document:
 
 1. What the skill actually produced
 2. What was expected

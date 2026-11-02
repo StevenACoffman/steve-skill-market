@@ -14,6 +14,7 @@ description: |-
   NOT for: merging skills that are merely related or adjacent (use Zettelkasten
   links instead), merging skills without their source book2skill output directories
   present, or creating new skills from scratch (use book2skill).
+compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the exegesis and skillsaw CLIs and the plain text of every source book.
 ---
 
 # Merge-Skills — Consolidates Overlapping Skills Across Book2skill Outputs
@@ -72,11 +73,23 @@ books/merged/<merge-slug>/
 ├── source-verification/
 │   ├── <pair-id>-r.md         # Quote accuracy check results
 │   └── <pair-id>-a1.md        # Case attribution check results
-└── <merged-skill-slug>/
-    ├── SKILL.md                # Merged skill (dual provenance)
-    ├── test-prompts.json       # Includes prefer_merged_over_source tests
-    └── merge-audit.md          # Convergence/divergence map, diff of sources
+├── <merged-skill-slug>/
+│   ├── SKILL.md                # Merged skill (dual provenance); under 500 lines
+│   └── test-prompts.json       # Includes prefer_merged_over_source tests
+└── dev/
+    └── <merged-skill-slug>/    # Development artifacts; never shipped
+        ├── merge-audit.md      # Convergence/divergence map, diff of sources (Phase 2)
+        └── test-results.md     # Per-case pass/fail with reasoning (Phase 4)
 ```
+
+**Development artifacts live beside the skill, not inside it.** `<output>` is the root
+the merged skill is written under, here `books/merged/<merge-slug>/`. Each merged
+skill's audit files go to `<output>/dev/<slug>/merge-audit.md` (Phase 2) and
+`<output>/dev/<slug>/test-results.md` (Phase 4), where `<slug>` is the merged skill's
+slug. This keeps a skill directory holding only what ships: promoting a skill copies
+the skill directory into a plugin and `dev/<slug>/` into the repository's `dev/`.
+`test-prompts.json` stays in the skill directory, because it is the test contract
+`exegesis` and `skillsaw` read.
 
 Pair ids take the form `pair-NNN` (`pair-001`, `pair-002`, …). `exegesis merge-index`
 lists a rejected pair only from a file matching `rejected/pair-*.md`, labelled by its
@@ -121,6 +134,11 @@ For each genuine convergence candidate, spawn 5 agents in parallel:
 
 Each agent writes to `candidates/<pair-id>-<agent>.md`.
 
+If your agent cannot start sub-agents, run the same prompts one after another in this
+session, writing the same files. Give each prompt a fresh read of its `agents/` file and
+both source sections rather than the previous agent's output, so the five readings stay
+independent.
+
 ### Phase 1.5 — Source Verification
 
 See `methodology/03-phase1.5-source-verification.md`.
@@ -155,30 +173,11 @@ For each genuine convergence candidate, perform three targeted checks:
 Only candidates that pass all three checks proceed to Phase 1.5.5.
 Downgraded candidates move to `rejected/` with reason `source-verification-failed`.
 
-**Structured header.** Begin each `source-verification/<pair-id>-{r,a1}.md` with a
-YAML frontmatter header recording the verdict per source, then the free-form
-narrative. `exegesis merge-index` reads these headers to generate the INDEX
-"Source Verification Summary" table (a V1–V4 column from the ledgers is not
-generated yet), so you write each verdict once instead of hand-maintaining the table:
-
-```yaml
----
-pair: <pair-id>
-check: r-quote-accuracy   # or a1-attribution
-sources:
-  - book: <slug-a>
-    skill: <skill-a>
-    status: accurate       # R: accurate|drifted-minor|drifted-major|not-found
-    corrected: false       #    A1: verified|mismatch|not-found
-  - book: <slug-b>
-    skill: <skill-b>
-    status: drifted-minor
-    corrected: true
----
-```
-
-Use the **same `<pair-id>`** in these headers and in the `## Merge Status` ledger
-so the summary's V1–V4 column joins correctly.
+Begin each `source-verification/<pair-id>-{r,a1}.md` with a YAML frontmatter header
+recording the verdict per source, then the free-form narrative; `exegesis merge-index`
+reads these headers. Read `references/source-verification-header.md` for the header
+schema before writing the first one, and use the **same `<pair-id>`** in these headers
+and in the `## Merge Status` ledger.
 
 ### Phase 1.5.5 — Enhanced Triple Validation
 
@@ -186,31 +185,15 @@ See `methodology/04-phase1.5.5-enhanced-triple-validation.md`.
 
 Apply all four validation checks. A candidate must pass all four to proceed.
 
-**V1 — Convergence is genuine (upgraded from book2skill's cross-domain check)**
+- **V1 — Convergence is genuine**, confirmed by Phase 1.5, not just similar-sounding.
+- **V2 — Merged predictive power exceeds either source** on a novel scenario.
+- **V3 — The synthesis is non-obvious**, not common wisdom both authors felt obliged to state.
+- **V4 — The merge justifies the consolidation**: the merged A2 is not just the union of
+  both source A2s.
 
-- Does each book provide evidence in at least two independent contexts?
-- AND: Is the convergence across books real, confirmed by Phase 1.5?
-- Fail: Two books use the same example (one copied from the other) → surface convergence only
-
-**V2 — Merged predictive power exceeds either source**
-
-- Design a novel scenario not addressed in either book
-- Can the *merged* skill answer it in a way neither source skill alone could?
-- Fail: The merged skill only answers questions already handled by one of the sources → merge added nothing
-
-**V3 — The synthesis is non-obvious**
-
-- Is the *unified framing* — not just each book's individual claim — genuinely non-obvious?
-- Warning: Convergence of two books can make a principle seem authoritative when it is
-  actually common wisdom both authors felt obliged to state. Test the synthesis, not the sources.
-- Fail: Remove both authors' names; would any intelligent person arrive at this synthesis?
-
-**V4 — The merge justifies the consolidation (new, merge-specific)**
-
-- Would a user be better served by the merged skill than by invoking either source skill?
-- Specifically: does the merged A2 trigger cover cases that neither source A2 alone covers,
-  without becoming broader than both combined?
-- Fail: The merged skill's A2 is just the union of both source A2s → it's two skills wearing a coat
+Read `references/v1-v4-validation.md` for each check's questions and fail conditions
+before recording a verdict, and `methodology/04-phase1.5.5-enhanced-triple-validation.md`
+for the full procedure.
 
 Record all four verdicts and reasoning in `candidates/overlap-candidates.md`.
 
@@ -218,55 +201,18 @@ Record all four verdicts and reasoning in `candidates/overlap-candidates.md`.
 
 See `methodology/05-phase2-ria-merge-construction.md`.
 
-For each candidate that passed Phase 1.5.5, construct the merged SKILL.md.
-Each segment has specific guidance for the merge case:
+For each candidate that passed Phase 1.5.5, construct the merged SKILL.md and write
+its convergence/divergence map to `<output>/dev/<slug>/merge-audit.md`, outside the
+skill directory (see Output Structure). Each generated `SKILL.md` stays under 500
+lines (agentskills.io's recommendation; `exegesis verify` gates it): move longer
+material into reference files in the skill directory, and have the body say when to
+read each one. Each segment has specific guidance for the merge case:
 
-**R (Reading) — Dual citation**
-
-- Quote from each source, clearly attributed
-- Add a one-sentence "Convergence note" stating what both quotes share and what
-  each adds that the other lacks. This note is the only place where you explicitly
-  assert the convergence — it must be earned by Phase 1.5.
-
-**I (Interpretation) — Unified synthesis**
-
-- Do not describe each book's version side by side ("Author A says X; Author B says Y")
-- Write a single unified framework that subsumes both
-- Where the books diverge in mechanism, encode the divergence as a conditional in I
-- The test: could someone who has read neither book understand and apply this framework?
-
-**A1 (Past Application) — One case per book, different domains**
-
-- Select the single strongest case from each source book
-- Choose cases that demonstrate the principle in different domains — this is the
-  empirical proof that the synthesis is real, not just relabeling
-- If both books use the same domain, the merge is weaker; note this in merge-audit.md
-
-**A2 (Future Trigger) — Sharper, not broader**
-
-- The merged A2 must be more specific than either source A2
-- The failure mode: A2 = union of both source A2s → over-broad trigger, skill activates everywhere
-- The correct move: identify the scenario where the *merged framing* adds something
-  neither source alone provides, and make that the primary trigger
-- Include an explicit "instead of [source-skill-a] or [source-skill-b], use this when..."
-
-**E (Execution) — Reconciled steps with explicit conditionals**
-
-- Where both books agree on a step: keep it as-is
-- Where they disagree on sequence: the disagreement encodes a conditional
-  → write: "If [context-A], follow steps 1→2→3; if [context-B], follow steps 1→3→2"
-- Where one book has a step the other lacks: include it with a note on when it matters
-- The merged E should not be longer than the longer of the two source E sections
-
-**B (Boundary) — Union of failure maps plus synthesis-specific failure modes**
-
-- Include all failure patterns from both books' B sections
-- Add at least one synthesis-specific failure mode: how can the merged framing itself
-  mislead? (e.g., "Convergence of two authors can create false confidence; check that
-  your situation matches both authors' contexts, not just one.")
-- Where the two books' B sections *contradict* each other (Author A says don't use
-  in context X; Author B uses it in context X), that contradiction is the most
-  important thing in B — surface it explicitly.
+Read `references/merge-segment-guidance.md` before writing each segment: R takes a dual
+citation with a convergence note, I a single unified synthesis, A1 one case per book in
+different domains, A2 a trigger sharper (not broader) than either source, E reconciled
+steps with explicit conditionals, and B the union of both failure maps plus at least one
+synthesis-specific failure mode.
 
 ### Phase 3 — Cross-Book Zettelkasten
 
@@ -289,56 +235,11 @@ See `methodology/06-phase3-zettelkasten-cross-book.md`.
    add a second, bare-slug bullet. The bullet's rationale defaults to "superseded by the
    <run> merge run"; edit the text after the em dash if you want a better one.
 
-   **Retirement policy for a `merged`-state parent: it stays in the book tree and leaves
-   the market corpus.** The two trees already have different jobs and this is the rule that
-   says so. The book tree is the archive — it carries provenance, source verification, and
-   duty as an input to a later merge run. The market corpus is what an agent actually loads.
-   A parent the ledger marks `merged` has all its key content represented in the child, so
-   leaving it loadable is the dilution the Mission exists to reduce; leaving it *readable*
-   is what the Source Skill Reuse Policy requires. Publishing to the corpus is the only step
-   it drops.
-
-   **Generalised 2026-08-23: the market is a curated end product, and the archive is a
-   separate private repository.** The rule above was written for two trees in one place;
-   the same reasoning now separates two repositories. Book distillation and merging happen
-   in the archive, which carries provenance, source verification and reuse-input duty. The
-   market receives only what is meant to be loaded — which is why **23 of 27 merged children
-   are not in it**, and why a merged parent's absence is the policy working rather than an
-   omission.
-   **A curated tree is deliberately incomplete, and its dangling references are not
-   defects.** A market skill naming a target that lives only in the archive is recording
-   provenance, and erasing the reference would destroy the record of where the skill came
-   from. Measured across the market corpus: 7 distinct dangling targets across 13
-   references. They stay; what they must not do is stay *silent*, which is exegesis's side
-   of this — and it is built: `exegesis verify` prints each as a `graph:` line ("not in
-   this tree … verify does not fail on it"), reporting the tree incomplete rather than
-   broken.
-
-   This keys on the ledger state, so state it accurately: a `partial` parent stays in both
-   trees, because `excluded` names content the child does not carry. If `excluded` is
-   trivial — a sentence, a duplicate example — the honest ledger entry is `merged`, not
-   `partial` with a token remainder. Do not use `partial` to avoid retiring a parent.
-
-   Two consequences to handle rather than discover:
-
-   - **Catalog.** `exegesis verify --registry` checks discovered skills against
-     `expected_skills`. A retired parent must leave the *market corpus* catalog and stay in
-     the book tree's, or `verify` reports it as unexpected on one side or missing on the
-     other.
-   - **`superseded-by` alone does not retire anything.** It is a bullet in a Markdown
-     section no agent runtime parses, so it informs a human reader. The retirement is the
-     publishing decision above, not the link.
-   - **Check the result with `exegesis duplicates`.** Name both source books in the
-     archive and the market corpus:
-
-     ```text
-     exegesis duplicates <archive>/books/<slug-a> <archive>/books/<slug-b> <market>/skills
-     ```
-
-     A `merged` parent reported in two trees is a market copy that was not retired. A
-     copy reported as diverged differs from its archive original. Read this as a report,
-     not a gate: curated market copies legitimately diverge, and divergence alone makes
-     the command exit 1.
+   **Retirement: a `merged`-state parent stays in the book tree and leaves the market
+   corpus; a `partial` parent stays in both.** Read `references/retirement-policy.md`
+   before publishing, retiring or cataloguing any parent, and before using `partial`
+   for a token remainder. It covers the catalog consequence, why `superseded-by` alone
+   retires nothing, and the `exegesis duplicates` check.
 
 2. Link the merged skill back into both source books with `exegesis link` (e.g.
    `--kind composes-with` / `--kind contrasts-with` to a related skill in each book).
@@ -382,13 +283,8 @@ exegesis tests --merge books/merged/<merge-slug>/<merged-skill>/
 
 `--merge` enforces the four-category gate (≥3 `should_trigger`, ≥2
 `should_not_trigger`, ≥2 `edge_case`, ≥2 `prefer_merged_over_source`) and exits
-non-zero until it passes. Runtime pass-rate scoring stays with darwin. A file in
-the older shape is rewritten into canonical form by `exegesis tests --migrate
-<merged-skill>/`: a bare top-level array or a `test_cases` key becomes `tests`,
-`expected_behavior` becomes `expected`, and non-numeric ids are renumbered. It reads
-no other shape — an object wrapper, a `prompts`/`test_prompts` key, category-grouped
-arrays — so convert those by hand; "already canonical" on such a file means it was
-not read, and the gate then counts zero cases.
+non-zero until it passes. Runtime pass-rate scoring stays with darwin. Read
+`references/phase4-cli.md` before migrating a test file in an older shape.
 
 The `prefer_merged_over_source` tests are the unique quality gate for merged skills.
 The comparison must include a **no-skill baseline arm**, not just the two sources: a
@@ -406,15 +302,14 @@ supposed to be *sharper* than either source, so make that claim legible:
 skillsaw activation books/merged/<merge-slug>/<merged-skill>/
 ```
 
-It scores only the merged skill's own targets and decoys (net_utility, TPR/FPR with
-Wilson intervals). An `UNRESOLVED` exit means too few prompts to decide: add targets
-or decoys, do not edit the skill. A bound that resolves low or negative means the
-merged A2 did not sharpen, so return to Phase 1.5.5 and re-check V4. It cannot by
-itself show the trigger firing like the union of the two sources; write decoys that
-only one source would catch if you want that tested.
+An `UNRESOLVED` exit means add targets or decoys, not edit the skill; a bound that
+resolves low or negative means return to Phase 1.5.5 and re-check V4. Read
+`references/phase4-cli.md` for what the check can and cannot show.
 
 Pass criteria: 100% on `should_trigger` and `should_not_trigger`; ≥80% overall.
-Failure triggers Phase 2 rework — not A2 surface patching.
+Failure triggers Phase 2 rework — not A2 surface patching. Record each case's
+pass/fail and reasoning in `<output>/dev/<slug>/test-results.md`, not in the skill
+directory.
 
 **Lint gate.** Before finalizing, run `exegesis lint` on the merged skill AND on
 every source skill this run modified (Phase 0 `## Merge status`, Phase 3
@@ -423,13 +318,12 @@ every source skill this run modified (Phase 0 `## Merge status`, Phase 3
 - Frontmatter has only spec-allowed keys (`name`, `description`, `tags`,
   `allowed-tools`, `license`, `compatibility`, `metadata`); `name` equals the folder
   name.
+- The merged `SKILL.md` is under 500 lines (agentskills.io's recommendation;
+  `exegesis verify` gates it). Move longer material into reference files the body says
+  when to read.
 - `description` ≤1024 chars, third person, plain text (no `<...>`/XML).
 - No `[...](../../…/SKILL.md)` links and no absolute or `candidates/` paths in the
   body — merge provenance goes in `## Provenance`, related skills as slug text.
-
-`exegesis lint` strips code fences before checking links, so Go generics like
-`New[T](x)` inside a code block are not misread as broken links (a false positive
-the retired `uvx skillcheck` produced).
 
 ## Source Skill Annotation
 
@@ -457,47 +351,9 @@ edge.
 Validate every ledger under a tree with `exegesis merge-status check <dir>`. The
 schema (states, reason codes, required fields) is exactly the vocabulary below.
 
-````markdown
-## Merge status
-
-```yaml
-# one entry per merge run that evaluated this skill
-- run: <merge-run-slug>          # which run (matches books/merged/<merge-run-slug>/)
-  state: <state>                 # see vocabulary below
-  pair: <pair-id>                # present for surface-resemblance, complementary, rejected
-  into: <merged-skill-slug>      # present for merged and partial
-  reason: <code>                 # present for rejected only
-  excluded: <description>        # present for partial — what content was not included
-```
-````
-
-**State vocabulary:**
-
-| State                 | Written by         | Meaning                                                                          |
-| --------------------- | ------------------ | -------------------------------------------------------------------------------- |
-| `no-candidate`        | Phase 0            | No overlap candidate found for this skill in this run                            |
-| `surface-resemblance` | Phase 0            | Pair evaluated; rejected as labels-only overlap                                  |
-| `complementary`       | Phase 0            | Pair evaluated; different domains, Zettelkasten link added instead               |
-| `rejected`            | Phase 1.5 or 1.5.5 | Pair passed Phase 0 but failed source verification or V1–V4                      |
-| `partial`             | Phase 2            | Merged skill created; some content from this skill was excluded (see `excluded`) |
-| `merged`              | Phase 2            | Merged skill created; all key content from this skill is represented             |
-
-**Reason vocabulary** (used with `state: rejected` only):
-
-| Reason code                    | Origin                                                      |
-| ------------------------------ | ----------------------------------------------------------- |
-| `source-text-unavailable`      | Phase 1.5: source EPUB/PDF not available                    |
-| `source-verification-failed`   | Phase 1.5: quote not-found or material drift                |
-| `v1-failed`                    | Phase 1.5.5: convergence not genuine                        |
-| `v2-failed`                    | Phase 1.5.5: merged skill adds no predictive power          |
-| `v3-failed`                    | Phase 1.5.5: synthesis is common wisdom                     |
-| `v4-failed-merge-not-additive` | Phase 1.5.5: merge adds no capability over invoking sources |
-
-**Relationship to `related_skills`:** `merge_status` is an audit trail — it records
-why a fate was assigned and by which run. `related_skills` (written by Phase 3) is a
-navigation pointer — it tells users where to find the merged skill. They coexist and
-serve different purposes; `merge_status: merged` does not replace a
-`related_skills: superseded-by` entry.
+Read `references/merge-status-ledger.md` for the block's format, the state and reason
+vocabularies, and how `merge_status` relates to `related_skills`, before appending an
+entry by hand or reading one.
 
 **Rules:**
 
@@ -554,8 +410,8 @@ remain the agent's.
 5. **Synthesis-specific B** — at least one failure mode in B Part 3 that applies to
    the merged skill but not either source alone. Generic "convergence authority trap"
    boilerplate counts only if it is also instantiated for this specific merge.
-6. **merge-audit.md complete** — all sections filled, no placeholder text, divergences
-   documented. Phase 4 diagnostic quality depends on this.
+6. **`<output>/dev/<slug>/merge-audit.md` complete** — all sections filled, no
+   placeholder text, divergences documented. Phase 4 diagnostic quality depends on this.
 
 ## Source Skill Reuse Policy
 

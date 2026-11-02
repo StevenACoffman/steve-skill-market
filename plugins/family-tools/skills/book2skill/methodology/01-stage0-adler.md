@@ -14,7 +14,7 @@ Identify the "skeleton" of the book. Answer:
 
 - **What genre does this book belong to?** (Methodology/Biography/Philosophy/Practical Manual/...)
   What is its main point in one sentence? — It really must be able to be condensed into one sentence.
-- **How ​​are its main parts combined into a cohesive whole?** — List 3–7 primary arguments and indicate their relationships (parallel/progressive/contrast/refutation)
+- **How are its main parts combined into a cohesive whole?** — List 3–7 primary arguments and indicate their relationships (parallel/progressive/contrast/refutation)
   What is the core problem the author is trying to solve?
 
 ### Step 2 — Interpretation

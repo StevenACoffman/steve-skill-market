@@ -14,10 +14,10 @@ This article is the design specification of the SOP used by book2skill, explaini
 
 | Source                                      | Referenced Content                                                                  |
 | ------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Mortimer Adler, *How to Read a Book*        | ​​Stage 0: The Three Stages of Analytical Reading (Structure/Interpretation/Critique) |
+| Mortimer Adler, *How to Read a Book*        | Stage 0: The Three Stages of Analytical Reading (Structure/Interpretation/Critique) |
 | Zhao Zhou RIA Deconstruction of Calligraphy | Phase 2: RI-A1-A2 Basic Framework, especially A2 → Trigger                          |
 | Niklas Luhmann Zettelkasten                 | Atomization + Linking + Rewritten in your own words                                 |
-| Tiago Forte Progressive Summarization       | The idea of ​​"verifiable compressed chains" in Phase 4                               |
+| Tiago Forte Progressive Summarization       | The idea of "verifiable compressed chains" in Phase 4                               |
 | nuwa-skill                                  | Phase 1 Parallel extractor + Phase 1.5 Triple verification                          |
 | darwin-skill                                | Stage 4 test-prompts.json format + evolvability (its loop is now driven deterministically by the skillsaw CLI via skillsaw-skill) |
 
@@ -68,6 +68,20 @@ Therefore, all the "extensions" of RIA-TV++ (TV / E / B / test-prompts) are desi
                     ▼
           Then hand off to skillsaw-skill (skillsaw CLI) to optimize each skill's quality.
 ```
+
+If your agent cannot start sub-agents, run the same Phase 1 prompts one after another in
+this session, writing the same files, or drive the pipeline with `exegesis distill
+--driver agent` (see Agent-Driven CLI Mode in `SKILL.md`).
+
+## Output Layout
+
+Skills are written under an output root, `<output>` (`books/<book-slug>/`), one directory
+per skill holding its `SKILL.md` (under 500 lines) and `test-prompts.json`. Development
+artifacts live at `<output>/dev/<slug>/test-results.md`, beside the generated skill tree
+rather than inside the skill directory. This keeps a skill directory holding only what
+ships: promoting a skill copies the skill directory into a plugin and `dev/<slug>/` into
+the repository's `dev/`. `test-prompts.json` stays in the skill directory, because it is
+the test contract `exegesis` and `skillsaw` read.
 
 ## Invariants (Must Be Violated in Any Iteration)
 

@@ -20,6 +20,12 @@ Each sub-agent receives:
 
 And in a single call, the Agent tool spawns 5 instances simultaneously, not sequentially.
 
+If your agent cannot start sub-agents, run the same prompts one after another in this
+session, writing the same files. Start each extractor from its own prompt, the book text
+and `BOOK_OVERVIEW.md`, not from another extractor's output, so the independence V1 relies
+on survives. `exegesis distill --driver agent` (Agent-Driven CLI Mode in `SKILL.md`) is the
+documented CLI-driven alternative.
+
 | #   | extractor                 | find objects                                                   | output files                     |
 | --- | ------------------------- | -------------------------------------------------------------- | -------------------------------- |
 | 1   | framework-extractor       | Mental Models / Decision-Making Frameworks / Reasoning Methods | `candidates/frameworks.md`       |

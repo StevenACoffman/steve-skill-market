@@ -6,6 +6,10 @@ Each methodological unit passed in Phase 1.5 is constructed into a SKILL.md file
 
 Use the template: `templates/SKILL.md.template`
 
+Each generated `SKILL.md` stays under 500 lines (agentskills.io's recommendation;
+`exegesis verify` gates it). Move longer material into reference files in the skill
+directory, and have the body say when to read each one.
+
 ## RIA++ Six-Segment
 
 ### R — Reading (Original Text)

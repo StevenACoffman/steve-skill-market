@@ -35,7 +35,8 @@ Phase 0     Overlap Detection
             → candidates/overlap-candidates.md
             → User confirms before continuing
 
-Phase 1     Convergence Mapping  [5 parallel agents per candidate pair]
+Phase 1     Convergence Mapping  [5 parallel agents per candidate pair;
+                                  without sub-agents, run them in sequence]
             R-Convergence, I-Divergence, A1-Cross-Case, B-Union, E-Reconciliation
             → candidates/<pair-id>-<agent>.md
 
@@ -57,8 +58,8 @@ Phase 1.5.5 Enhanced Triple Validation
 Phase 2     RIA++ Merge Construction
             Dual-citation R, unified I, cross-domain A1, sharpened A2,
             conditional E, union+synthesis B
-            → <merged-skill-slug>/SKILL.md
-            → <merged-skill-slug>/merge-audit.md
+            → <merged-skill-slug>/SKILL.md (under 500 lines)
+            → dev/<merged-skill-slug>/merge-audit.md
 
 Phase 3     Cross-Book Zettelkasten
             Link merged skill into both source skill graphs
@@ -69,8 +70,19 @@ Phase 3     Cross-Book Zettelkasten
 Phase 4     Stress Testing
             4 test types including prefer_merged_over_source
             → <merged-skill-slug>/test-prompts.json
-            → <merged-skill-slug>/test-results.md
+            → dev/<merged-skill-slug>/test-results.md
 ```
+
+Paths above are relative to `<output>`, the root the merged skill is written under
+(`books/merged/<merge-slug>/`). The two audit files live at
+`<output>/dev/<slug>/merge-audit.md` and `<output>/dev/<slug>/test-results.md`,
+beside the generated skill tree rather than inside a skill directory, so a skill
+directory holds only what ships: promoting a skill copies the skill directory into a
+plugin and `dev/<slug>/` into the repository's `dev/`. `test-prompts.json` stays in
+the skill directory; it is the test contract `exegesis` and `skillsaw` read.
+
+If your agent cannot start sub-agents, run the same Phase 1 prompts one after another
+in this session, writing the same files.
 
 ## Dissolution Protocol
 

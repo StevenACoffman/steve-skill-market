@@ -15,6 +15,7 @@ description: |
   - The user asks whether a skill is bound to a single agent runtime.
   - Trigger words: "optimize skill", "score skill", "skill quality", "skill
     review", "auto-optimize", "darwin", "skillsaw", "rubric".
+compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the skillsaw CLI (v0.2.0 or later, installed with Go), git and jq; reads skills-manifest.json written by the exegesis CLI.
 tags: [skill-optimization, rubric, skillsaw, darwin, evaluation, hill-climbing, cli]
 ---
 
@@ -28,8 +29,6 @@ through the **skillsaw** CLI. The core cycle is unchanged:
 The only things the agent does by hand are the judgments a program cannot make:
 designing test prompts, scoring the judge-only rubric dimensions, writing the edit,
 and pausing for human approval. Everything measurable is `skillsaw`.
-
----
 
 ## Division of labor (memorize this)
 
@@ -61,8 +60,6 @@ and pausing for human approval. Everything measurable is `skillsaw`.
 **Never** let the agent re-implement a skillsaw command by eyeballing the SKILL.md.
 If a step is in the left column, shell out to `skillsaw`.
 
----
-
 ## Prerequisite: skillsaw must be installed
 
 Run this once before Phase 0. `go install` does nothing when the binary is already
@@ -83,8 +80,6 @@ STOP — do not fake the deterministic steps by hand.
 and `eval --scores` then refuses every `scores.json` judged under the old one, while
 `results.tsv` rows on either side of the change are not comparable. Upgrade between
 campaigns.
-
----
 
 ## Rubric (the source of truth is `skillsaw eval`)
 
@@ -111,104 +106,33 @@ which dimensions still need a model (`NEEDS-JUDGE`).
 - Always compare candidates on the **same metric** across a run — FULL if you are
   judging, DET.SCORE if you are not. Do not mix them.
 
----
-
 ## Interpretation caveats (read before trusting a number)
 
-The deterministic checks are pattern-based and locale-scoped. Read the output
-correctly; do not over-trust a clean floor.
-
-- **A high DET.SCORE is a floor, not a verdict.** Well-structured knowledge and
-  decision skills routinely score 90+ deterministically. That means "no detectable
-  structural defect" — NOT "good." The real quality lives in the judge-only dims.
-- **`skillsaw diagnose` may say "no deterministic weakness — score the judge
-  dimensions."** That is the honest answer for a structurally sound skill, not a
-  pass. When you see it, do the judgment work (dims 2/3/5/7/8); do not go hunting
-  for a deterministic thing to "fix."
-- **dims 5 (softening) and 7 (AI-slop) penalties are signals, not verdicts — in
-  both directions.** A penalty of 0 is not proof of quality (the checks match a
-  fixed Chinese + English vocabulary; wording it does not cover slips through). A
-  *nonzero* penalty is not automatically a defect either — a phrase like "feel free
-  to go longer if needed" is flagged as softening but may be appropriate latitude.
-  Read the flagged phrases and judge; don't mechanically strip them. (Slop/softening
-  quoted inside `` `code spans` `` — e.g. a style skill teaching "remove hollow
-  transitions" — is correctly ignored.)
-- **`skillsaw` classifies skills by type implicitly.** dim 4 (checkpoints) only
-  scores deterministically with **substantial** explicit-marker use (🔴/🛑/STOP/
-  CHECKPOINT, ≥3); one or two markers (and none) defer to judgment, because
-  knowledge/decision skills legitimately have no interactive checkpoints and a lone
-  ⚠️ warning is not checkpoint discipline. Do **not** add checkpoints to a non-procedural
-  skill just to move dim 4.
-- **dim 9 recognizes a "Boundary"/"Anti-pattern"/"Do Not Use When"/"Quality Red
-  Line"/"Common Failures" section by its heading.** If a skill documents its limits
-  under an unusual heading, `eval` may under-credit it — verify by reading before
-  concluding a boundary section is missing.
-- **dim 3 (failure-mode encoding) docks a skill that runs commands but encodes no
-  failure branch** — it has a code block and no inline `if/when X fails` branch. A
-  failure/boundary/`Common Failures` *heading* earns nothing on its own: the section is
-  a container, and an empty one is still the gap. A skill with no code block executes
-  nothing to fail and is not docked; `eval -v` flags it "judge the base". Often a real
-  gap, but judge it against the skill's *scope*: a narrowly
-  scoped skill (e.g. one that only writes plans, deferring execution failures to a
-  separate skill) may legitimately have none. Decide whether failure handling
-  belongs in *this* skill before acting on the flag.
-- **A high `DET.SCORE` does not mean the frontmatter parses.** When a skill's YAML
-  frontmatter is malformed, nothing can be read out of it, and dim 1 reports
-  `frontmatter did not parse` — but dim 1 carries only weight 7, so the total stays
-  high. A real book skill with a broken `source_book:` line scores **95.2/100** while
-  being unloadable as written. `eval` grades quality; **`skillsaw preflight` is the
-  authority on structure**, and it names the offending line and column. Run it before
-  trusting a score, and never read a good total as "this skill loads".
-- **skillsaw scores only the top-level `SKILL.md`, not its referenced sub-files.**
-  For multi-file skills (`methodology/`, `extractors/`, `agents/`, …), any
-  boundary, failure-mode, or specificity content that lives *only* in a sub-doc is
-  invisible to `eval` and under-scores dims 3/9. Keep the load-bearing "when NOT to
-  use" / red-line / failure guidance in `SKILL.md` itself; use sub-files for depth.
-  (dim 6 *does* check that intra-skill file links — into any subdirectory — resolve,
-  so a broken `` `methodology/99-missing.md` `` reference is caught.)
+Read `references/interpretation-caveats.md` before you trust any `eval` or `diagnose`
+number, act on a dim 3/4/5/7/9 flag, or conclude a boundary section is missing. A high
+DET.SCORE is a floor, not a verdict, and `skillsaw preflight`, not `eval`, is the
+authority on whether a skill's structure loads.
 
 ## CLI gotchas
 
-- **Flags must come before positional arguments.** `skillsaw eval <dir> --json` is
-  rejected with a clear error (the parser stops flags at the first positional).
-  Write `skillsaw eval --json <dir>`. Same for `-v`, `--scores`, `--roots`.
-- **`eval --json` and `diagnose --json` return a JSON array** (one element per
-  directory), even for a single skill. Parse with `jq '.[0]'` / `jq '.[]'`.
-- **Pass many skills via `xargs`, not shell word-splitting**, to avoid mangled
-  arguments: `ls -d */ | sed 's#/##' | xargs skillsaw eval --json`.
-
----
+Flags come before positional arguments (`skillsaw eval --json <dir>`), and `eval --json`
+returns an array even for one skill. Read `references/cli-reference.md` when a
+`skillsaw` command rejects its arguments or its JSON does not parse as expected.
 
 ## Phase 0 — Initialize
 
 ```bash
 # 1. If the tree came from exegesis, refuse to optimize one it did not certify.
-#    Structure is cheap to check and expensive to work around: a tree that fails its
-#    structural gates has to be fixed and re-judged anyway, and Phase 1 is where the
-#    expensive judging starts. Skip this only for a hand-written skill with no manifest.
-#    It prints one line on stdout: `... skills=N examined=N structure_verified=true`.
-#    On failure, stop and read both streams, because the refusals want different fixes:
-#    - stdout says `structure_verified=false` (nothing on stderr): the tree failed its
-#      gates. Fix the structure and re-run `exegesis verify`.
-#    - stderr says the manifest "covers no skills ... was not examined": exegesis found
-#      no skills, so check the path it was pointed at (a skill is an immediate
-#      subdirectory holding a SKILL.md). There are no defects to fix.
-#    - an `error:` line: the path is wrong or the file is not a skills manifest.
-#    A pass with `examined=unknown` means the manifest predates exegesis v0.3.0 and
-#    cannot say how many skills it covers; re-run `exegesis verify` to get a count.
+#    Skip this only for a hand-written skill with no manifest. On failure, STOP and read
+#    references/workflow-notes.md: each kind of refusal wants a different fix.
 skillsaw verified path/to/skills-manifest.json || exit 1
 
 # 2. Resolve scope. Explicit dirs, or discover all skills under the roots:
 skillsaw eval --all --json | jq -r '.[].skill'   # preview what --all would score
 
-#    On a repeat campaign, narrow to what actually moved since the last one. The saving
-#    is not here — skillsaw never calls a model — it is in Phase 1, which hand-scores the
-#    judge-only dims per skill and runs the skill for dim 8. This says which skills that
-#    has to happen for.
+#    On a repeat campaign, narrow to what actually moved since the last one:
 skillsaw changed --manifest previous-manifest.json --tree path/to/tree
-#    Prints tree-relative locations, one per line, and exits 0 whether or not anything is
-#    stale — it is a query, not a gate. A skill absent from the list is unchanged since it
-#    was last judged; one that is listed needs re-judging from scratch.
+#    A query, not a gate: a listed skill needs re-judging from scratch; an absent one does not.
 
 # 3. Create the optimization branch (skillsaw does NOT touch git — you do):
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "not a git repo"; }  # see failure table F1
@@ -220,8 +144,6 @@ LOG=results.tsv
 # 5. Read prior history to avoid repeating failed edits:
 skillsaw history --file "$LOG"
 ```
-
----
 
 ## Phase 0.5 — Design test prompts AND their rule checks
 
@@ -258,38 +180,9 @@ give a dim-8 base that `judge --all` can resolve (see Phase 1). The checks are w
 **🔴 CHECKPOINT · 🛑 STOP:** show every prompt and its checks; get explicit user
 approval before scoring. Prompt/check quality decides optimization direction.
 
-### Authoring Checks Across a Corpus, Not One Skill
-
-A tree written by book2skill arrives with prompts and **no checks at all** — measured over
-the real corpus: **1284 behavioral cases in 183 files, zero carrying checks.** Dim 8 is
-weight 23, so until checks exist it cannot be scored for any skill in the tree, and every
-piece of dim-8 machinery here is inert.
-
-**Measure what is left with `skillsaw checks --tree path/to/tree`** — the directory
-*holding* the skills. It prints, per skill, how many behavioural cases still lack checks,
-and exits 1 while any do. Pointed at a single skill directory it finds no skills, prints
-`0 of 0 … across 0 skill(s)` and exits 0, which reads as done; give it the parent.
-
-**Scope the work by skill, never by case.** Finish every behavioral case in one skill before
-starting the next. A base is the mean over a skill's scored cases, and it is compared across
-rounds to decide keep-or-revert — so a skill with half its cases checked yields a base
-computed over half its evidence, which is worse than no base because nothing marks it as
-partial. Checking 3 cases in 60 skills produces 60 unusable bases; checking all 10 in 18
-skills produces 18 usable ones.
-
-**Roughly a fifth of the cases can never carry a check, and that is correct.** 198 cases have
-an `expected` of literally "invoke", and 267 are under 25 characters ("invoke", "trigger",
-"skip"). These assert *activation* — whether the skill fires — which `skillsaw activation`
-scores separately and which is deliberately not in the rubric. Do not invent an output check
-for them. The honest remainder is about **1017**.
-
-**Do not try to derive them.** `DeriveChecks` yields nothing on this corpus and widening it
-has been measured and rejected: none of the 1284 strings carry a cue it looks for, 1% hold a
-backticked span, and the only widening with real yield — a `contains` over identifier-shaped
-tokens — would fail correct answers, lowering the base of the heaviest dimension. A missing
-check leaves dim 8 unscored and visible; a wrong one scores it wrongly and invisibly.
-
----
+Read `references/corpus-checks.md` before authoring checks for a tree written by
+book2skill, or whenever `skillsaw checks --tree <tree>` exits 1: scope that work by
+skill, never by case, and do not invent output checks for activation-only cases.
 
 ## Phase 1 — Baseline
 
@@ -314,27 +207,10 @@ skillsaw eval --json "$DIR" > eval.json     # machine-readable
    reports no FULL total at all — not a partial one. Do this in an **independent context**
    — never in the same reasoning thread that will later edit the skill (that is the
    #1 self-evaluation bias; see blacklist B1).
-   - **Your base replaces skillsaw's penalty for that dimension in FULL; it is not
-     added to it.** Before scoring a dimension, read every flag `eval -v` prints for it
-     — "frontmatter did not parse", a docked failure branch — and price it into the
-     base. A defect you leave out of the base is counted nowhere.
-   - For dims 1,2,7: read the skill and rate its quality, including what those flags
-     report.
-   - For dims 3 and 5, do **not** score from the dimension's name — both carry published
-     criteria, and these two are scored in an independent context whose scale nobody else
-     can see. Dim 5 is weight 17, the heaviest non-behavioral dimension, and FULL totals
-     are compared across rounds to decide keep-or-revert, so an unstated rubric makes the
-     heaviest judged number the least reproducible one. Score these:
-     - **dim 3 — failure-mode encoding.** Does the skill name a *concrete failure
-       condition and the causal chain to task failure* — "the API caps pages at 100; an
-       agent that assumes one response holds everything silently drops rows beyond page
-       1" — or does it warn generically ("handle errors carefully")? A heading named for
-       failure with nothing under it is not encoding. `eval` does not credit the heading,
-       and your base replaces its penalty, so price an empty failure section in the base.
-     - **dim 5 — actionable specificity.** Is the procedure executable *without further
-       interpretation*, naming domain objects, tools or APIs — "re-query the object for
-       the server-assigned ID before referencing it" — or is it abstract ("decompose into
-       smaller steps")? Numbered is not the same as executable.
+   - Read `references/judging.md` before assigning any base. It explains how a base
+     prices the flags `eval -v` prints (your base replaces skillsaw's penalty in FULL;
+     it is not added to it) and gives the published criteria for dims 3 and 5. Never
+     score those two from the dimension's name.
    - For dim 8 (behavioral): first read dim 8's line in `eval -v`. Unless it says
      `all N behavioral case(s) specify checks`, no dim-8 base and therefore no FULL score
      can be computed — go back to Phase 0.5 rather than running the skill. Then run the
@@ -345,47 +221,22 @@ skillsaw eval --json "$DIR" > eval.json     # machine-readable
      # agent executes the skill for each behavioral case id, writing outs/out-<id>.txt
      skillsaw judge --from-test-prompts "$DIR/test-prompts.json" --all --outputs outs/
      ```
-     It prints each case's `hard`/`soft` and the base their mean implies. Do **not**
-     compute `round(10 × mean(soft))` by hand: that number reaches the keep/revert gate,
-     and it is the one piece of arithmetic in this loop nothing else checks.
-     If it also prints `unresolved: N case(s) support base L-H`, the sample cannot tell
-     that base from its neighbours. Record the base, say at the checkpoint that it is
-     unresolved, do not read a later dim-8 change inside that range as signal, and add
-     behavioural cases when you can.
-     Decoys are not scored — a `should_not_trigger` case has no good output to score, so
-     counting it would lower the base for a skill correctly declining to fire. A case with
-     no output file is an error rather than a skip, because the base is a mean and a
-     missing case silently changes the denominator.
-     `--all` reports rather than gates: it exits 0 even when cases fail their checks,
-     which is normal and is exactly why the base is below 10. It exits non-zero only when
-     nothing could be scored — a missing `out-<id>.txt`, or a behavioural case with no
-     checks — and then there is no base; never invent one.
+     Read `references/judging.md` to interpret its output: an `unresolved` base range,
+     skipped decoys, and the exit codes. Never compute the base by hand, and when it
+     exits non-zero there is no base; never invent one.
 4. Write `scores.json`, binding those bases to the **version you just read**:
    ```bash
    skillsaw scores --skill "$DIR" --bases 1=8,2=7,3=6,4=9,5=9,7=8,8=7 > scores.json
    ```
-   `scores` reads the skill to capture its content hash, so the bases are bound to the
-   version you just judged without you handling the hash at all.
-   Write one key per dimension `eval.json` marked `needs_judge` — copy that set from
-   `eval.json` rather than from this example. It varies: dim 4 is in it whenever the skill
-   has fewer than 3 explicit checkpoint markers, which is most skills. Miss one and there
-   is no FULL total at all, not a partial one.
-   A base is a number you assigned after reading a *particular* version, and nothing about
-   it survives an edit. The hash is what lets `eval` refuse to reuse it later.
-   (The bare `{"1":b1,…}` form still works, but records no version and so cannot be
-   checked against one.)
+   Write one key per dimension `eval.json` marked `needs_judge`, copied from `eval.json`
+   rather than from this example. Read `references/judging.md` for why the bases are
+   bound to the version you read.
 5. Full total:
    ```bash
    skillsaw eval --scores scores.json "$DIR"   # FULL column = comparable total
    ```
-   `eval` exits non-zero if the bases were judged against a different version of the
-   skill or under a different rubric edition, naming both ("judged at X under rubric R1,
-   but is now Y under rubric R2; re-judge it"). At this point that should not happen —
-   nothing has edited the skill yet — so treat it as a sign the file was carried over from
-   an earlier run, or that `skillsaw` was upgraded since it was written.
-   A stderr line saying the skill is "judged but unmeasured" is advisory: no
-   no-guidance control is recorded for it, and it changes neither the exit code nor
-   FULL.
+   If `eval` exits non-zero here, read `references/judging.md`: the bases were judged
+   against another version of the skill or under another rubric edition.
 
    Take the number from JSON, not from the table — the table is for a person:
    ```bash
@@ -406,8 +257,6 @@ skillsaw eval --json "$DIR" > eval.json     # machine-readable
 
 **🔴 CHECKPOINT · 🛑 STOP:** present the scorecard (score, weakest dims, runtime
 warnings) for every skill. Get approval before editing anything.
-
----
 
 ## Phase 2 — Optimization loop (one skill at a time, weakest first)
 
@@ -448,12 +297,8 @@ finding, stated here because this is where the edit gets written:
 > executable fix is MORE valuable than an elegant, well-structured skill full of generic
 > best practices.
 
-Asked to improve a document, the natural thing to write is a more polished one — and
-"polished, comprehensive-sounding guidance that lacks concrete failure knowledge" is the
-second anti-pattern on SkillLens's list. Adding one concrete failure mechanism with its fix
-beats tightening three paragraphs, even when the tightening reads better. This is the same
-"rework, not surface-patch" principle the loop already applies elsewhere, at the moment it
-is easiest to violate.
+Adding one concrete failure mechanism with its fix beats tightening three paragraphs, even
+when the tightening reads better (`references/workflow-notes.md` explains why).
 
 Before running STEP 5, record how strongly you expect this edit to pass the gate, as
 an integer 1-10, in `CONF`. Write it **now**: a confidence recorded after seeing the
@@ -470,16 +315,9 @@ skillsaw preflight --against /tmp/skill.orig "$DIR" \
 git add "$DIR/SKILL.md" && git commit -q -m "optimize $(basename "$DIR"): <one-line summary>"
 ```
 
-**Why `preflight` runs here and not at STEP 6.** `gate` decides on *score*; `preflight`
-decides on *structure*, and the two are separate axes. `eval` only **penalises** a blown
-description cap or a malformed frontmatter block — a gain elsewhere can outweigh it — so a
-structurally broken edit can still post a higher total and be kept. `preflight` **rejects**
-it outright, before the commit, which is the whole point of running it here.
-
-Use `--redlines` only when the skill came from a book2skill tree. It enforces book2skill's
-house structure (the six RIA-TV++ segments, the quotation ceiling, a description that states
-a trigger), which a hand-written skill has no reason to carry — turning it on by default
-rejects most skills for a structure they were never meant to have.
+Run `preflight` before the commit because `eval` only penalises a structural defect, so a
+higher total can still carry one. Use `--redlines` only when the skill came from a
+book2skill tree; `references/workflow-notes.md` explains both rules.
 
 **STEP 5 — Re-evaluate INDEPENDENTLY.** Re-run the same scoring as Phase 1, but the
 judge-dim scoring MUST happen in a fresh context (not the one that wrote the edit):
@@ -527,55 +365,17 @@ printf '{"skill":"%s","dim":%s,"base":%s,"passed":%s}\n' \
 change, and the dim-8 `judge` results. If the user says no, revert to the skill's
 pre-optimization commit.
 
----
-
 ## Phase 2.5 — Exploratory rewrite (opt-in only)
 
 When two consecutive skills break at round 1 (no traction), offer a full rewrite to
 escape a local optimum. **🔴 CHECKPOINT · 🛑 STOP: requires explicit user opt-in.**
-
-```bash
-git stash push -- "$DIR/SKILL.md"          # save current best
-# agent rewrites SKILL.md from scratch (reorganize, don't tweak)
-if [ "$(skillsaw hash "$DIR")" = "$STASHED_HASH" ]; then echo "no change; abort"; fi
-skillsaw eval --scores rewrite.json "$DIR" # score the rewrite
-skillsaw gate --candidate "$REWRITE" --current "$STASHED" --best "$BEST"  # keep only if it wins
-# accept -> drop the stash; reject -> git checkout stash to restore
-```
-
----
+Once the user opts in, read `references/rewrite-and-ablation.md` for the procedure.
 
 ## Phase 2.6 — Outcome ablation (optional; earns its cost only when in doubt)
 
-The rubric and `judge` grade the skill *artifact*; they do not test its *effect*. A
-skill can score well yet hurt the worker (cc-thinking-skills' `AGENTS.md` documents a
-97%→77% case). When a kept edit's value is genuinely in doubt — or before calling a
-skill a durable win — run one ablation:
-
-1. Pick a representative task the skill claims to help with (reuse a Phase 0.5
-   `should_trigger` prompt).
-2. Produce two outputs in independent contexts: one **with** the skill loaded, one
-   **without** (the no-skill baseline). Do not reuse the editing context (blacklist
-   B1).
-3. Score each arm with the existing judge against the same case's checks:
-
-   ```bash
-   skillsaw judge --from-test-prompts "$DIR/test-prompts.json" --id 1 --output with-skill.txt
-   skillsaw judge --from-test-prompts "$DIR/test-prompts.json" --id 1 --output no-skill.txt
-   ```
-
-4. The skill earns its place only if the with-skill arm wins. If no-skill matches or
-   beats it, the skill is a no-op or a net harm — retire it, keeping the eval as the
-   guard that says when to reintroduce it.
-
-**A single with/without run is indicative, not proof** — one trajectory cannot
-establish a worker limitation, so treat it as a signal that informs the edit and
-require repeated (ideally blind, order-swapped) runs before recording a durable
-"promote". Running the skill is the agent's job; `skillsaw` only scores. This phase is
-opt-in: it adds model runs, so spend it on skills whose value the rubric leaves in
-doubt, not on every round.
-
----
+The rubric and `judge` grade the skill *artifact*; they do not test its *effect*. When a
+kept edit's value is genuinely in doubt, or before calling a skill a durable win, read
+`references/rewrite-and-ablation.md` and run one with/without ablation.
 
 ## Phase 3 — Report
 
@@ -587,44 +387,26 @@ skillsaw history --file results.tsv --skill NAME  # one skill's trail
 skillsaw calibrate judgments.jsonl
 ```
 
-`calibrate` compares each confidence you stated **before** the gate ran against what
-the gate decided. Accuracy consistently below confidence means you expect your edits
-to land more often than they do — the correction is to propose smaller edits, or to
-take `diagnose`'s target more literally. It reports; it never gates.
-
-Ignore the numbers when the run was short: the command says so itself below ~20
-judgments, because ten bins over a handful of rounds is mostly sampling noise.
+`calibrate` reports and never gates; read `references/workflow-notes.md` before acting on
+its numbers, and ignore them below ~20 judgments.
 
 Then summarize for the user: skills optimized, kept vs reverted, before→after per
 skill, remaining runtime warnings (re-run `skillsaw scan --all`), and the
 `full_test` vs `dry_run` mix (flag if `dry_run` exceeds ~30% — the dim-8 signal is
 weak and the scores are not trustworthy).
 
----
-
-## results.tsv format (10 columns, tab-separated)
+## results.tsv format
 
 `skillsaw log` appends each row and writes the header when the file is new;
-`skillsaw history` reads it. Never write a row or the header by hand. Header:
-
-```text
-timestamp  commit  skill  old_score  new_score  status  dimension  note  eval_mode  rubric
-```
-
-- `old_score` = `-` on baseline rows.
-- `status` ∈ `baseline` | `keep` | `revert` | `error`.
-- `eval_mode` ∈ `full_test` (ran the skill for dim 8) | `dry_run` (estimated).
-- `rubric` = the rubric edition the row was scored under, filled in by `skillsaw log`.
-  A 9-column log from before this column still reads.
-
----
+`skillsaw history` reads it. Never write a row or the header by hand. Read
+`references/cli-reference.md` when you need a column's meaning or allowed values.
 
 ## Failure modes (if X → do Y)
 
 | # | Trigger | First fix | Last resort |
 |---|---|---|---|
 | F1 | Not a git repo (`git rev-parse` fails) | Ask the user to `git init`, or fall back to `cp SKILL.md SKILL.md.bak.<ts>` before each edit | Abort; do not edit without a rollback path |
-| F2 | `skillsaw` not on PATH, or `skillsaw version` older than v0.2.0 | `go install github.com/StevenACoffman/skillsaw@latest` | Tell the user; STOP — never fake deterministic steps |
+| F2 | `skillsaw` not on PATH, or `skillsaw version` older than v0.2.0 | `go install github.com/StevenACoffman/skillsaw@latest`. Not `uvx skillsaw` or `pip install skillsaw`: those install stbenjam/skillsaw, an unrelated Python linter with the same name | Tell the user; STOP — never fake deterministic steps |
 | F3 | `skillsaw eval` errors on a dir | Confirm `<dir>/SKILL.md` exists; log `status=error`; skip that skill | Continue with the others |
 | F4 | `results.tsv` corrupt (`skillsaw history` complains of column count) | `mv results.tsv results.tsv.bak.<ts>`; the next `skillsaw log` writes a fresh header | Tell the user before moving it |
 | F5 | Edit produced the same hash (no-op) | Rewrite the edit to actually change content | Skip the round; do not commit a no-op |
@@ -634,8 +416,6 @@ timestamp  commit  skill  old_score  new_score  status  dimension  note  eval_mo
 | F8 | `git revert` conflicts | `git stash` then retry the revert | Restore SKILL.md from the previous commit and continue |
 
 **Rule:** announce every anomaly to the user, then apply the fix. Never skip silently.
-
----
 
 ## Blacklist — do NOT do these
 
@@ -653,8 +433,6 @@ timestamp  commit  skill  old_score  new_score  status  dimension  note  eval_mo
 
 Check the round's plan against this table before committing. Any hit → rewrite the plan.
 
----
-
 ## Constraints
 
 1. Preserve the skill's purpose — optimize *how it is written and executed*, never *what it does*.
@@ -666,20 +444,7 @@ Check the round's plan against this table before committing. Any hit → rewrite
 7. Every deterministic step is a `skillsaw` invocation; the agent only judges, edits, and drives git.
 8. Token cost is a first-class objective (cc `AGENTS.md` goal #2: reduce tokens at equal or better performance). The description is paid on every invocation, the body on every trigger; an edit that cuts body/description tokens at an equal rubric + behavioral score is a win, and a `--fix`/rewrite must not bloat cost to buy a marginal rubric point. Check the budget with `exegesis lint --max-body-words N` when the catalog sets one.
 
----
-
 ## Command quick reference
 
-| Need | Command | Signal |
-|---|---|---|
-| Score a skill (floor) | `skillsaw eval [-v] [--json] <dir>` | `DET.SCORE`, `needs_judge` dims |
-| Full total from judge bases | `skillsaw eval --scores scores.json <dir>` | `FULL` column / `full_score` |
-| Runtime-neutrality gate | `skillsaw scan <dir>` | exit 1 = red lights found |
-| Next dimension to fix | `skillsaw diagnose --json [--against kept-eval.json] <dir>` | `target`, `priority`, `cluster_note`, `transition`, `action` (`guided`: dims 1/4/6; `human`: the rest) |
-| Keep or revert | `skillsaw gate --candidate N --current N --best N` | exit 0 = keep, 1 = revert |
-| Structural gate | `skillsaw preflight [--redlines] <dir>` | exit 1 = structure broken; `--redlines` for book2skill trees |
-| Content identity / no-op | `skillsaw hash <dir>` | 16-hex; equal = unchanged |
-| Behavioral dim-8 check (one case) | `skillsaw judge --from-test-prompts tp.json --id N --output out.txt` | `hard`/`soft`; exit 1 = hard 0 |
-| Behavioral dim-8 base (all cases) | `skillsaw judge --from-test-prompts tp.json --all --outputs DIR/` | per-case scores + the base |
-| Show the log | `skillsaw history --file results.tsv [--skill N]` | rendered table + tally |
-| Confidence calibration | `skillsaw calibrate [--json] judgments.json` | ECE/MCE/Brier + per-bin table |
+Read `references/cli-reference.md` when you need a command's flags or the signal it
+reports.

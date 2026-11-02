@@ -77,7 +77,10 @@ rewritten into this one by `exegesis tests --migrate <skill-dir>`.
 ## Output
 
 - `<skill-dir>/test-prompts.json` — trigger-composition format (exegesis-gated; seeds skillsaw)
-- `<skill-dir>/test-results.md` — Pass rate and failure analysis for this test (for auditing purposes)
+- `<output>/dev/<slug>/test-results.md` — Pass rate and failure analysis for this test (for auditing purposes).
+  `<output>` is the root the skills are written under (`books/<book-slug>/`); the file sits
+  beside the skill tree, not inside the skill directory, so the skill directory holds only
+  what ships.
 
 ## Pre-Hand-off Gates (Deterministic, at the Forge)
 
