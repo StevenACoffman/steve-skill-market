@@ -70,7 +70,7 @@ the same skill would load twice.
 | `data-systems`        |     11 | Replication, consistency, sharding, transactions, stream processing                          |
 | `security`            |     10 | Least privilege, multi-party authorization, zero trust, supply chain, breakglass             |
 | `integration`         |      9 | Messaging, queues, coupling, event-driven architecture                                       |
-| `data-modeling`       |      3 | Stakeholder mapping and machine-learning data practice                                       |
+| `data-modeling`       |      6 | Stakeholder mapping, machine-learning data practice, and warehouse SQL guards                |
 
 `./skill-list` prints every skill with its description, grouped by plugin.
 

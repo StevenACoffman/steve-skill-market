@@ -56,7 +56,7 @@
     {
       "name": "data-modeling",
       "source": "./plugins/data-modeling",
-      "description": "Stakeholder mapping and machine-learning data practice.",
+      "description": "Stakeholder mapping, machine-learning data practice, and warehouse SQL guards: metric populations, warehouse keys and loads, and semi-structured data.",
       "version": "0.1.0"
     },
     {

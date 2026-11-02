@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "data-modeling",
   "version": "0.1.0",
-  "description": "Stakeholder mapping and machine-learning data practice.",
+  "description": "Stakeholder mapping, machine-learning data practice, and warehouse SQL guards: metric populations, warehouse keys and loads, and semi-structured data.",
   "license": "MIT",
   "repository": "https://github.com/StevenACoffman/steve-skill-market"
 }
