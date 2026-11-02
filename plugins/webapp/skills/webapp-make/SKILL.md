@@ -28,7 +28,7 @@ test/lint). Every service under `services/{name}/` has its own thin `Makefile`
 that includes `services/Makefile.inc` and aliases the `default_*` rules defined
 there.
 
-All paths below are relative to the repo root at `/Users/steve/khan/webapp/`.
+All paths below are relative to the root of your webapp checkout.
 
 ______________________________________________________________________
 
@@ -288,7 +288,7 @@ ______________________________________________________________________
 ### First-Time Setup
 
 ```bash
-cd /Users/steve/khan/webapp
+cd "$WEBAPP"  # the root of your webapp checkout
 make deps      # install Go, npm, Python dependencies
 make hooks     # install git hooks
 make pg_create # create local databases (if working on a SQL service)
@@ -359,7 +359,7 @@ make deploy DEPLOY_VERSION=2026-05-23-my-fix
 ### Fix a Broken Linter
 
 ```bash
-cd /Users/steve/khan/webapp
+cd "$WEBAPP"  # the root of your webapp checkout
 make -B go_lint_deps # rebuild golangci-lint binary + all 30 plugins
 ```
 

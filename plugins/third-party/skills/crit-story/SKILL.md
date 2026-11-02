@@ -8,7 +8,7 @@ metadata:
 
 # Author a crit story with `crit story`
 
-This is a sibling skill to `/crit` — it does not run inside the normal review
+This is a sibling skill to the crit skill — it does not run inside the normal review
 loop. Invoke it deliberately only when the user explicitly asks for story
 generation; do not infer it from generic review, PR, or diff-review requests.
 
@@ -65,4 +65,4 @@ printed to stdout as JSON on every attempt, success or failure. If rejected:
 - It does not call `crit comment`, `crit push`, or `crit share` — those are
   separate flows.
 - It does not produce review-level human comments.
-- It does not run as part of the generic `/crit` review loop.
+- It does not run as part of the generic crit review loop.

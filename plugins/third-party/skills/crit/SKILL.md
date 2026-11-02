@@ -13,10 +13,10 @@ Review and revise code changes, plans, live pages (running dev servers, staging 
 
 ## Step 1: Pass arguments to `crit`
 
-The CLI auto-detects the review mode from its arguments. **Do not ask the user which mode to use.** Pass `$ARGUMENTS` through:
+The CLI auto-detects the review mode from its arguments. **Do not ask the user which mode to use.** Pass the arguments the user gave through unchanged, whether your agent substituted them into this text or sent them as a separate message:
 
 ```
-crit $ARGUMENTS               # file, dir, URL, .html — CLI auto-detects mode
+crit <the user's arguments>   # file, dir, URL, .html — CLI auto-detects mode
 crit --pr <num|url>            # GitHub PR (range mode)
 crit --range <base>..<head>    # commit range (range mode)
 crit                           # no args → branch diff

@@ -6,7 +6,7 @@ user-invocable: false
 
 # Crit CLI Reference
 
-> If a plan was just written and the user said `/crit` or `crit`, invoke the `/crit` command — do not use this reference skill. This skill covers CLI operations like `crit comment`, `crit pull/push`, and `crit share`.
+> If a plan was just written and the user asked for crit, use the crit skill — not this reference skill. This skill covers CLI operations like `crit comment`, `crit pull/push`, and `crit share`.
 
 Comments have three scopes:
 

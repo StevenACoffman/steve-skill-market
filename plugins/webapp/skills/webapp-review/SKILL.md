@@ -31,7 +31,7 @@ the comments useful to a reader who has never seen the rule documents.
 | `$HEAD_BRANCH`       | Branch under review                         | `local-roster-db-script`                              |
 | `$BASE_BRANCH`       | Deploy branch the PR targets                | `deploy/timmcca-be`                                   |
 | `$GO_ADVICE`         | General Go advice document                  | `~/Documents/agent-orange/go-advice/summary_rules.md` |
-| `$WEBAPP_EXCEPTIONS` | Rules that override the above               | `~/Documents/agent-orange/.../skills/webapp/RULES.md` |
+| `$WEBAPP_EXCEPTIONS` | Rules that override the above               | `RULES.md` in the installed webapp skill              |
 | `$LINT_REPO`         | Repo whose `rumdl` and vale config to reuse | `~/Documents/git/canonizer`                           |
 | `$SCRATCH`           | Temporary directory for the write-up        | session scratchpad                                    |
 
