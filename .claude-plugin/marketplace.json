@@ -1,0 +1,93 @@
+{
+  "name": "steve-skill-market",
+  "owner": {
+    "name": "Steve Coffman"
+  },
+  "description": "Agent Skills for Go services, reliability, data systems, design and the skill family's own tools, in 14 plugins by subject.",
+  "plugins": [
+    {
+      "name": "family-tools",
+      "source": "./plugins/family-tools",
+      "description": "The skill family's own tools: book2skill, merge-skills, skillsaw-skill and canonizer, and the linters and formatters they run.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "third-party",
+      "source": "./plugins/third-party",
+      "description": "Skills for crit, a third-party review tool: the review loop, its CLI, and review stories.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "webapp",
+      "source": "./plugins/webapp",
+      "description": "Skills specific to Khan Academy's webapp codebase.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "sre",
+      "source": "./plugins/sre",
+      "description": "Site reliability engineering: SLOs and error budgets, alerting, incident response, toil, and capacity.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "security",
+      "source": "./plugins/security",
+      "description": "Security design: least privilege, multi-party authorization, zero trust, supply chain, and breakglass.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "go-craft",
+      "source": "./plugins/go-craft",
+      "description": "Go application design: packages, dependency injection, errors, HTTP services, and CLIs.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "strategy-leadership",
+      "source": "./plugins/strategy-leadership",
+      "description": "Architecture strategy, program governance, complexity diagnosis, and organization design.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "software-design",
+      "source": "./plugins/software-design",
+      "description": "Software design and refactoring: deep modules, information hiding, and incremental change.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "data-modeling",
+      "source": "./plugins/data-modeling",
+      "description": "Stakeholder mapping and machine-learning data practice.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "testing-legacy",
+      "source": "./plugins/testing-legacy",
+      "description": "Go testing practice and legacy code: table tests, helpers, fuzzing, and safe change.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "data-systems",
+      "source": "./plugins/data-systems",
+      "description": "Data-intensive systems: replication, consistency, sharding, transactions, and stream processing.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "tool-reference",
+      "source": "./plugins/tool-reference",
+      "description": "Reference skills for tools: Terraform, gh, gqlgen, genqlient, sqlc, pgxpool, leafwiki, and Go test tooling.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "grpc",
+      "source": "./plugins/grpc",
+      "description": "gRPC service design, testing, deployment, and load balancing.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "integration",
+      "source": "./plugins/integration",
+      "description": "Enterprise integration: messaging, queues, coupling, and event-driven architecture.",
+      "version": "0.1.0"
+    }
+  ]
+}
