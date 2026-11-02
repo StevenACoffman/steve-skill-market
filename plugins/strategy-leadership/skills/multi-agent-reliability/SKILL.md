@@ -1,16 +1,6 @@
 ---
 name: multi-agent-reliability
-description: |
-  Use this skill when designing or reviewing a multi-agent AI system and you need to
-  choose an architecture pattern that improves reliability beyond what a single LLM
-  call can provide. The core problem the skill addresses is that LLMs are stochastic,
-  prone to hallucination, and sycophantic — their errors propagate and amplify in a
-  naive multi-agent topology rather than canceling out.
-
-  Call this skill when: you have a multi-step AI workflow where single-agent errors
-  are unacceptably costly; you need to decide whether to use voting, adversarial
-  critique, hierarchical planning, or elimination; you are debugging an existing
-  multi-agent system that produces inconsistent or confidently-wrong outputs.
+description: "Use when designing, reviewing, or debugging a multi-agent LLM system whose errors, hallucinations, or sycophancy compound. Helps choose a reliability pattern (voting, adversarial critique, hierarchical planning, or elimination) beyond what a single LLM call gives."
 tags: [ai-reliability, multi-agent, architecture, llm, patterns]
 ---
 

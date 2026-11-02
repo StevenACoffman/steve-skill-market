@@ -1,18 +1,6 @@
 ---
 name: ownership-trio
-description: |
-  Use this skill when diagnosing why a team, individual, or org structure is failing to deliver
-  reliable software — or when designing a team structure, role, or accountability model from scratch.
-
-  WHEN TO CALL: A user describes a situation where (a) a team is responsible for a system but cannot
-  fix it; (b) a manager is making architectural calls but not bearing the consequences; (c) a
-  knowledgeable engineer has no authority to act; (d) you need to argue for or against a DevOps,
-  SRE, or "you build it you own it" model; (e) an on-call rotation is widely described as
-  punishment rather than ownership.
-
-  WHEN NOT TO CALL: Do not call when the question is purely about SLO targets, SLI formula design,
-  or cost-of-reliability reasoning — those have dedicated skills. Do not call when the question is
-  about individual career development rather than team/org structure.
+description: "Use when diagnosing why a team cannot deliver reliable software or designing roles and accountability: a team owns a system it cannot fix, a manager decides without bearing consequences, an expert lacks authority, or on-call feels like punishment. Covers DevOps and you-build-it-you-own-it."
 tags: [ownership, accountability, organizational-design, devops, reliability]
 ---
 

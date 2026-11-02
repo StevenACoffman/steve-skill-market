@@ -1,7 +1,6 @@
 ---
 name: program-governance-ecological-design
-description: |
-  Invoke when a PM or program leader is diagnosing why a program is producing strong project-level reporting but weak benefits realization, or when designing governance for a new program and needs to move beyond oversight-and-accountability structures to govern the interaction layer between projects where program-level outcomes actually live.
+description: "Invoke when a program shows strong project-level reporting but weak benefits realization, or when designing governance for a new program that must go beyond oversight and accountability to govern the interaction layer between projects where outcomes live."
 ---
 # Program Governance as Ecological Design
 

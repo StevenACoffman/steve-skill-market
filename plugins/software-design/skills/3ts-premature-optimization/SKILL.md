@@ -1,9 +1,6 @@
 ---
 name: 3ts-premature-optimization
-description: |
-  Use this skill to assess whether a proposed optimization is premature before the work begins, or to diagnose why a completed optimization failed to produce the expected outcome. The 3T framework tests three independent conditions: Thing (is the target the real bottleneck?), Time (is this the right moment in the lifecycle?), and Trade-offs (are all costs accounted for?). Failing any one test means the optimization is premature.
-
-  Call this skill when: (1) A team is proposing a rewrite, refactor, migration, or performance initiative and the justification is intuition or anecdote rather than measured data. (2) An optimization has been completed but user-perceived outcomes didn't improve. (3) Leadership is proposing a structural change (reorg, platform migration, process overhaul) and there is no explicit analysis of timing or trade-offs. (4) A team is planning to adopt a new technology on the basis that it is "better" without confirming it addresses the actual constraint.
+description: "Use when judging whether a proposed optimization, rewrite, refactor, migration, or reorg is premature, or why a finished one didn't improve outcomes. Applies the 3T test: Thing (real bottleneck?), Time (right moment?), Trade-offs (all costs counted?)."
 tags: [optimization, premature-optimization, 3ts, decision-making, engineering-judgment, trade-offs]
 ---
 

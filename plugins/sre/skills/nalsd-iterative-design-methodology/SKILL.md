@@ -1,11 +1,6 @@
 ---
 name: nalsd-iterative-design-methodology
-description: |
-  Use this skill when designing any large distributed system that will run on real hardware with real cost constraints. Call it when a design discussion has remained at the whiteboard level — components and arrows, no machine counts, no RAM estimates, no cost basis. Whiteboard architecture without resource estimates is not design.
-
-  Trigger scenarios: system design interviews or reviews where proposals say "we'll scale horizontally," pre-production capacity planning, architecture reviews for new services, or any design where the team doesn't know what the bottleneck is at each scale tier.
-
-  Do not use for single-machine applications or scripts where scale is not a design concern. Do not use as a replacement for post-production profiling — NALSD is a pre-production design discipline. Do not use the AdWords CTR worked example numbers as templates; derive your own from your actual traffic and data volumes.
+description: "Use when designing a large distributed system and the design is still boxes and arrows with no machine counts, RAM estimates, or cost, or someone says \"we'll scale horizontally\". Non-abstract large system design (NALSD): iterate with real resource estimates per scale tier."
 tags: [system-design, capacity-planning, resilience, iterative, distributed-systems, feasibility]
 ---
 

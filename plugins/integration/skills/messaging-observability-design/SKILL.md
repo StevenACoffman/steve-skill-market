@@ -1,7 +1,6 @@
 ---
 name: messaging-observability-design
-description: |
-  Invoke when you don't know where a message went, when the system looks healthy but messages aren't being processed, when designing a new async integration from scratch, when a packaged application is in the integration path and cannot be modified, or when debugging an incident in a live async system.
+description: Invoke when you don't know where a message went, the system looks healthy but messages aren't processed, a packaged app in the async path can't be modified, or when designing or debugging an async messaging integration and its observability.
 ---
 # Messaging Observability Design
 

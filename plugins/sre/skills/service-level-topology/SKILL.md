@@ -1,9 +1,6 @@
 ---
 name: service-level-topology
-description: |
-  Use this skill when a team needs to derive meaningful SLIs and SLOs for a service from first principles — starting from system architecture and working through to metrics worth alerting on. The core trigger is a service that has no SLIs yet, has only Stage 1 (vanity/infrastructure) SLIs, or whose SLIs are consistently ignored because they don't map to real consumer failures.
-
-  Call this skill when: (1) You are running or preparing a service level workshop. (2) A team asks "what should our SLI actually measure?" (3) Existing alerts are noisy and generate no meaningful action. (4) There is disagreement about which team owns which metric. (5) An SLO is being set and no one has identified the consumers or their tasks.
+description: "Use when deriving SLIs and SLOs from first principles: a service has no SLIs or only infrastructure vanity metrics, alerts are noisy and ignored, metric ownership is disputed, or you are running a service level workshop. Starts from architecture, consumers, and their tasks."
 tags: [sli, slo, service-topology, consumer-journey, assessment, ownership]
 ---
 

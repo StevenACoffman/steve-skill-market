@@ -1,21 +1,6 @@
 ---
 name: multi-tier-slo
-description: |
-  Use this skill when a single SLO target for a service is insufficient — either because
-  different consumer groups have different requirements, different request types have
-  different tolerance, or a monthly SLO allows an incident concentration that consumers
-  would find unacceptable.
-
-  **When to call:**
-  - A service needs to express different reliability commitments for different request types
-    (e.g. query vs. mutation vs. subscription in a GraphQL API)
-  - A single monthly SLO would permit a 3-day outage that technically "meets" the budget
-    while infuriating consumers
-  - You want to cap the maximum allowable incident duration without lowering the monthly
-    SLO target
-  - There is an aspirational performance target AND a guarantee threshold that must coexist
-    (e.g. "we aim for 200ms but we guarantee 850ms")
-  - An SLO needs to constrain both frequency and duration of incidents simultaneously
+description: "Use when one SLO target is not enough: request types (query, mutation, subscription) need different targets, a monthly SLO would allow a multi-day outage, or an aspirational target and a guaranteed threshold must coexist (aim for 200ms, guarantee 850ms)."
 tags: [slo, multi-tiered, window-slo, threshold-tiers, incident-duration, sli, error-budget]
 ---
 

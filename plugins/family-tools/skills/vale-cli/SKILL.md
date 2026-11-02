@@ -1,7 +1,6 @@
 ---
 name: vale-cli
-description: |
-  Use when asked to run vale, lint prose or Markdown, check writing quality, fix false positives, or manage vocabulary files. Covers installation, .vale.ini configuration, style packages, CLI usage, inline suppression, and custom rule authoring. Also covers installing the third-party `vale-ai-tells` package (discovering its latest release, pinning the version, and the `ai-tells` / `ai-tells-commits` styles) for cleaning up AI-assisted docs and commit messages.
+description: "Use when installing or configuring vale (.vale.ini, style packages, vocabulary files, custom rules), running it on prose or Markdown, or fixing false positives. Also covers installing and pinning the vale-ai-tells package and its ai-tells and ai-tells-commits styles."
 ---
 
 # Vale CLI — Prose Linting for Markdown

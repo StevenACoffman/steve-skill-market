@@ -1,11 +1,6 @@
 ---
 name: overload-recovery-sequencing
-description: |
-  Use this skill when an SRE team is in operational overload — work is accumulating faster than it can be resolved, on-call shifts are exceeding two incidents, team members are working outside contractual hours, or sprint velocity has dropped for more than four weeks. Call it before any structural intervention (triage, automation planning, headcount requests).
-
-  Trigger scenarios: a manager scheduling an emergency prioritization session for an overloaded team (wrong first action), a team whose collaboration has broken down under stress, an SRE team where morale surveys show sustained decline, or any situation where the first instinct is to "fix the process" before addressing the people.
-
-  Do not use as a substitute for real workload reduction. Psychological safety is the prerequisite for structural fixes, not a replacement for them. Do not use for a team that is merely stressed by a single incident — this skill addresses sustained overload, not acute incident stress.
+description: Use when an SRE team is in sustained operational overload (work piling up, after-hours work, falling velocity, broken collaboration), before any triage, automation, or headcount fix. Restore psychological safety first, then fix structure. Not for one acute incident.
 tags: [overload, team-health, psychological-safety, toil, triage, recovery, management]
 ---
 

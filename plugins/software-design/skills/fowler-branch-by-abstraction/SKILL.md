@@ -1,13 +1,6 @@
 ---
 name: fowler-branch-by-abstraction
-description: |
-  Invoke this skill when a team needs to replace a library, framework, or large structural component that is used in many places across a production codebase — and cannot freeze the codebase or do the replacement in a single commit.
-
-  Key trigger signal: "We need to replace X across N call sites while the service keeps running" or "We can't take a feature freeze to migrate away from this library."
-
-  This skill is specifically about the code-level strategy of introducing an abstraction layer to enable incremental, never-broken migration. It is NOT about git branching strategy (despite the confusable name), and it is NOT primarily about database schema migration (use fowler-database-parallel-change for that, though the same principle applies).
-
-  Do NOT invoke this skill for small refactorings that fit in a single commit or a single session — use fowler-opportunistic-refactoring for those. Do NOT invoke for keeping refactoring and feature work separated in a session — use fowler-two-hats for that.
+description: "Use when replacing a library, framework, or large component used across many call sites in a live codebase without a feature freeze. Introduce an abstraction layer and migrate incrementally. Not git branching, not database schema migration, not small one-commit refactors."
 tags: [refactoring, architecture, migration, abstraction]
 ---
 

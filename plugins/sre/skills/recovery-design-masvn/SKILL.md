@@ -1,21 +1,6 @@
 ---
 name: recovery-design-masvn
-description: |
-  Use this skill when designing update/rollback mechanisms for self-updating components,
-  firmware, or any system where the ability to roll back conflicts with the need to
-  permanently enforce a security patch. The canonical trigger: a reliability team wants
-  to roll back to a previous version, but security has patched a vulnerability in the
-  current version that must not be reintroduced.
-
-  Apply when designing: firmware update pipelines, application binary self-update systems,
-  OS kernel rollout mechanisms, or any component that maintains local version state and
-  must resist attacker-forced rollback.
-
-  Do NOT apply to stateless deployment systems where every deployment is a clean install
-  with no local version state — MASVN assumes the component stores ComponentState locally
-  and enforces it on initialization. Also do not apply when availability requirements make
-  any form of rollback prevention unacceptable — the design tension is real and MASVN is
-  a middle path, not a universal solution.
+description: Use when designing update and rollback for firmware, self-updating binaries, or kernels where rollback conflicts with permanently enforcing a security patch. A minimum acceptable security version number (MASVN) blocks attacker-forced rollback. Not for stateless deploys.
 tags: [recovery-design, MASVN, rollback, security-versioning, deny-lists, key-rotation, firmware]
 ---
 

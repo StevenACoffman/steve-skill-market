@@ -1,18 +1,6 @@
 ---
 name: go-beyond-three-consumer-error
-description: |
-  Invoke this skill when a user is designing how errors should flow through their Go
-  application: what information to include, what struct fields to define, how to display
-  errors to users vs. logging them for operators, or how to programmatically branch on
-  error types. Also invoke when the user is asking about custom error types in Go, or
-  when they're dealing with the problem of leaking database/implementation error messages
-  to end users.
-
-  Trigger signals: "how should I design my error type?", "how do I differentiate between
-  a not-found error and a validation error?", "my users are seeing database error messages",
-  "how should I wrap errors in Go?", "what error codes should I use?", "how do I build a
-  stack trace without using runtime stack dumps?", "my HTTP handler doesn't know what
-  status code to return from a service error".
+description: "Invoke when designing Go error types and how errors flow: what fields to include, showing errors to users vs logging for operators, branching on not-found vs validation errors, error codes, wrapping, mapping service errors to HTTP status, or stopping database messages leaking to users."
 tags: [error-handling, domain-design, go, three-consumer-roles, error-codes]
 ---
 

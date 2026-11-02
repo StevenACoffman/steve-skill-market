@@ -1,11 +1,6 @@
 ---
 name: fowler-performance-sequencing
-description: |
-  Use when deciding how to handle performance concerns during software development — especially when someone wants to optimize code while writing it, wants to speed up a slow system, or is debating whether to "write it fast" or "write it right."
-
-  Trigger signals: "should we optimize this as we go?", "this feels slow", "we need to make this faster", "should I use a more efficient algorithm here?", "my team wants to optimize every endpoint", "the system is running slowly in production."
-
-  The skill provides Fowler's three-approach taxonomy for performance work — time-budget (hard real-time), constant-attention (rejected), and profile-then-tune (endorsed) — and explains why the constant-attention approach is both ineffective and harmful. The core insight: 90% of execution time is in 10% of code, so optimizing everywhere wastes effort; even experts with deep system knowledge guess the hot spot wrong.
+description: "Use when deciding how to handle performance: optimizing while writing code, a slow system, or write it fast vs write it right. Endorses profile-then-tune over constant attention, since most time is spent in a small fraction of code and hot-spot guesses are usually wrong."
 tags: [performance, optimization, profiling, workflow]
 ---
 

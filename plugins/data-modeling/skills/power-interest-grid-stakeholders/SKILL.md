@@ -1,16 +1,6 @@
 ---
 name: power-interest-grid-stakeholders
-description: |
-  Use this skill when a user is starting a data modeling initiative and needs to
-  understand who to engage, how, and in what sequence — or when a stakeholder is
-  blocking, stalling, or undermining a project.
-
-  Trigger signals:
-  - "I'm starting a new data modeling project and need stakeholder buy-in"
-  - "How do I get [executive / department / team] to support this?"
-  - "A stakeholder is blocking my project"
-  - "I don't know who I need to involve in this decision"
-  - Any new initiative requiring organizational alignment
+description: "Use when starting a data modeling or other initiative that needs stakeholder buy-in and you must decide who to engage, how, and in what order, or when a stakeholder is blocking or stalling a project. Maps stakeholders on a power-interest grid."
 tags: [stakeholders, politics, power-interest, engagement, organizational, planning]
 ---
 

@@ -1,21 +1,6 @@
 ---
 name: genqlient
-description: |
-  Use when writing Go code that calls a GraphQL API using genqlient
-  (github.com/Khan/genqlient). Covers configuration, writing operations,
-  @genqlient directives, generated code, client setup, authentication,
-  error handling, type bindings, nullable fields, fragments, subscriptions,
-  and testing.
-
-  Trigger signals:
-  - Writing or modifying .graphql operation files for genqlient
-  - Configuring genqlient.yaml
-  - Calling genqlient-generated functions
-  - Handling GraphQL errors or partial data
-  - Binding custom scalars or Go types
-  - Setting up an authenticated HTTP client for genqlient
-  - Writing tests for code that calls genqlient-generated functions
-  - Any "how do I do X with genqlient" question
+description: "Use when writing Go code that calls a GraphQL API with genqlient (github.com/Khan/genqlient): genqlient.yaml config, .graphql operations, @genqlient directives, generated code, authenticated clients, errors and partial data, scalar and type bindings, nullable fields, fragments, and tests."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

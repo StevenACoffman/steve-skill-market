@@ -1,14 +1,6 @@
 ---
 name: timeliness-vs-integrity-distinction
-description: |
-  Use this skill when a system design decision involves relaxing consistency, accepting stale reads, or choosing between strong consistency and availability — and you need to determine whether the proposed relaxation is safe.
-
-  Invoke when:
-  - A product manager or engineer proposes "relaxing consistency to improve performance" and you need to evaluate whether that is safe for a specific operation
-  - A team is deciding whether eventual consistency is acceptable for a given read or write path
-  - A system uses async replication or a log-based data pipeline and you need to classify which operations can tolerate propagation delay and which cannot
-  - Post-mortem investigation reveals data loss or permanent corruption (integrity violation) that was initially diagnosed as a stale-read problem (timeliness violation)
-  - Designing a stream-processing or event-sourcing system where operations are applied asynchronously
+description: Use when someone proposes relaxing consistency, accepting stale reads, or using eventual consistency or async pipelines, to decide which operations tolerate delay (timeliness) and which risk permanent corruption (integrity), or when data loss was misdiagnosed as stale reads.
 tags: [distributed-systems, consistency, correctness, eventual-consistency, integrity, timeliness, stream-processing]
 allowed-tools: Bash, Read, Edit
 ---

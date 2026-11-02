@@ -1,17 +1,6 @@
 ---
 name: climax-cli-scaffold
-description: |
-  Invoke when initializing a new Go CLI application using the climax scaffold generator,
-  when adding new subcommands to an existing climax app, or when a climax app has drifted
-  from the canonical ff/v4 pattern and needs to be corrected.
-
-  Specific triggers: "scaffold a new CLI", "add a subcommand to this CLI",
-  "climax init", "climax add", "climax lint shows drift", "set up flags-first CLI",
-  "structure this as an ff command tree", "add a version command", "add a man page",
-  "install climax".
-
-  Do NOT invoke for: CLIs built with cobra, kong, urfave/cli, or other frameworks;
-  flag-only programs with no subcommand dispatch; non-Go CLIs.
+description: "Invoke when scaffolding a Go CLI with the climax generator (climax init, climax add), adding a subcommand, version command, or man page to a climax app, or fixing drift that climax lint reports from the ff/v4 pattern. Not for cobra, kong, urfave/cli, or non-Go CLIs."
 tags: [go, cli, scaffold, ff, flags-first]
 allowed-tools: Bash, Read, Edit
 ---

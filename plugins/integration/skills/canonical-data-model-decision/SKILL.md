@@ -1,7 +1,6 @@
 ---
 name: canonical-data-model-decision
-description: |
-  Invoke when N ≥ 3 applications must exchange data with each other, when a team is building translators for every pair of systems, when a legacy system is expected to be replaced and its replacement should not force rewrites in all connected systems, or when application field names disagree across systems and semantic disputes are slowing integration work.
+description: Invoke when three or more applications exchange data, a team is writing translators for every pair of systems, a legacy system must be replaceable without forcing rewrites, or field names and semantics disagree across systems. Decides whether a canonical data model pays off.
 ---
 # Canonical Data Model Decision
 

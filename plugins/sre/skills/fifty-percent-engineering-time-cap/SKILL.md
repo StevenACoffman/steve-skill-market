@@ -1,11 +1,6 @@
 ---
 name: fifty-percent-engineering-time-cap
-description: |
-  Use this skill when an SRE team's operational work is crowding out engineering project work, when management is considering hiring more SREs to handle growing on-call load, or when a team needs to distinguish whether they are an SRE team or a renamed ops team.
-
-  The 50% cap is an enforced ceiling on operational work (toil, on-call, interrupt-driven tasks) as a fraction of each SRE's time. It is not a guideline — it is the structural mechanism that prevents SRE from devolving into a conventional ops team. The cap has a specific safety valve: when operational work exceeds 50%, the correct response is to redirect the excess back to the development team, not to hire more SREs. This feedback loop is what creates the incentive for the dev team to fix the reliability problems that generate the operational load.
-
-  Key trigger signal: SREs report spending over 50% of their time on toil across more than one quarter, or management proposes solving on-call overload by adding headcount.
+description: Use when SRE ops work (toil, on-call, interrupts) crowds out engineering projects, or management proposes hiring more SREs for on-call load. Enforce a 50% ops cap and send excess ops work back to the dev team instead of adding headcount.
 tags: [toil, engineering-time, sre-identity, ops-team, sustainability, safety-valve]
 ---
 

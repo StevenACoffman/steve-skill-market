@@ -1,7 +1,6 @@
 ---
 name: governance-variety-lever-selection
-description: |
-  Invoke after a variety deficit has been located (via requisite-variety-gap-assessment) and the question is what type of intervention to apply. The skill maps deficit location to lever type — amplify governance response capacity, attenuate environmental variety, or both — and guards against the most common misuse: using attenuation to reduce governance capacity rather than environmental variety.
+description: "Invoke after a requisite-variety deficit has been located, to choose the intervention: amplify governance response capacity, attenuate environmental variety, or both. Guards against misusing attenuation to cut governance capacity instead of environmental variety."
 ---
 # Governance Variety Lever Selection
 

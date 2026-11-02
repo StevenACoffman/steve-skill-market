@@ -1,20 +1,6 @@
 ---
 name: dep-comp-function-first-composition
-description: |
-  Invoke this skill when a Go developer asks how to inject dependencies, wants
-  to avoid writing interfaces for every external call, or finds their test setup
-  heavy with mock generation. The core technique: define a `Dependencies` struct
-  with one function-typed field per external dependency, write a factory function
-  `New(deps Dependencies)` that closes over the struct and returns the operational
-  function, then wire real implementations in `main.go` and inline function
-  literals in tests.
-
-  Do NOT invoke for "should I define an interface between packages?" — that is
-  the dep-comp-cross-package-contract-decision skill. Do NOT invoke when a
-  dependency has many methods (8+) and the caller uses most of them; in that
-  case a local minimal interface (option 1) is the better fit. This skill
-  addresses the mechanics of wiring and testing single-responsibility modules,
-  not the question of when a cross-package contract is warranted.
+description: "Invoke when injecting dependencies in Go without an interface per external call, or when tests are heavy with generated mocks: a Dependencies struct of function-typed fields, a New(deps) factory, real wiring in main.go, function literals in tests. Not for many-method dependencies."
 tags: [go, dependency-injection, testing, closure, composition]
 ---
 

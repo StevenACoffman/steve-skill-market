@@ -1,15 +1,6 @@
 ---
 name: cli-destructive-confirmation-tiers
-description: |
-  Use this skill when designing or reviewing the confirmation UX for a CLI command that
-  modifies or deletes data, state, or remote resources.
-
-  WHEN TO CALL: A developer is (a) adding a delete, destroy, reset, or purge command to a CLI;
-  (b) asking whether a given destructive operation needs a confirmation prompt; (c) designing
-  a --force or --yes flag and wants to know whether that is sufficient; (d) asking how to
-  prevent users from accidentally triggering an irreversible action while keeping the command
-  scriptable; (e) reviewing a CLI command that implicitly destroys resources as a side effect
-  of an innocuous-looking change.
+description: "Use when designing or reviewing confirmation UX for a CLI command that deletes, destroys, resets, or purges data or remote resources: whether it needs a prompt, whether --force or --yes is enough, staying scriptable, and catching destruction as a side effect of innocuous changes."
 tags: [cli, ux, confirmation, destructive-operations, safety]
 ---
 

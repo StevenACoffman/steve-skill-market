@@ -1,9 +1,6 @@
 ---
 name: batch-vs-stream-processing-selection
-description: |
-  Invoke this skill when an engineering team must choose between batch processing (periodic jobs over bounded, immutable input) and stream processing (continuous processing of unbounded, incrementally arriving input) for a data pipeline. Specific triggers: a data pipeline needs to produce derived outputs (search indexes, recommendations, ML features, analytics); a bug in a production pipeline corrupted derived data and you are evaluating whether you can recover; the team is debating "how often should we run this job?"; a pipeline produces stale results and the question is whether to move to real-time processing.
-
-  Do NOT invoke when: the question is about online request-response latency (OLTP performance); the issue is with a single-node computation's correctness; you are deciding the primary storage architecture (see `system-of-record-vs-derived-data`).
+description: Use when choosing between batch and stream processing for a data pipeline that builds derived outputs (search indexes, ML features, analytics), deciding how often a job runs, fixing stale results, or recovering derived data after a pipeline bug. Not for OLTP request latency.
 tags: [batch-processing, stream-processing, immutable-inputs, derived-data, human-fault-tolerance, kafka]
 allowed-tools: Bash, Read, Edit
 ---

@@ -1,21 +1,6 @@
 ---
 name: webapp-graphql
-description: |
-  Use when writing Go code in github.com/Khan/webapp that makes GraphQL
-  requests, tests GraphQL resolvers, or needs to understand the webapp
-  GraphQL client and testing layer. Covers gqlclient.Client/ClientAdapter,
-  auth adapters (AsUser/AsServiceAdmin), BuildTestClientForSchema,
-  gqltest.Query/Mutate/QueryType, js.Obj, and the query safelist. ONLY
-  applies to github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I call a GraphQL query from one service to another?"
-  - "how do I test a GraphQL resolver in webapp?"
-  - "what is gqlclient.Client vs ClientAdapter?"
-  - "how do I use AsUser or AsServiceAdmin?"
-  - "what is the GraphQL safelist?"
-  - "how do I use gqltest.QueryType for a federated type?"
-  - Any question about webapp's GraphQL client or resolver testing layer
+description: "Use when writing Go code in github.com/Khan/webapp that makes service-to-service GraphQL requests or tests resolvers. Covers gqlclient.Client vs ClientAdapter, AsUser and AsServiceAdmin, BuildTestClientForSchema, gqltest.Query/Mutate/QueryType, js.Obj, and the query safelist."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

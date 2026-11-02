@@ -1,7 +1,6 @@
 ---
 name: queue-flow-control-decision
-description: |
-  Invoke when a queue is growing during peak load with no explicit capacity plan, when a service shows high tail latency during traffic spikes despite healthy throughput, when a team says "the queue will handle traffic spikes" with no mention of what happens at capacity, when message value clearly decays over time, or when implementing a rate limit on calls to a third-party API downstream of a queue.
+description: Invoke when a queue grows at peak with no capacity plan, tail latency spikes despite healthy throughput, someone says "the queue will absorb spikes", message value decays over time, or rate-limiting a third-party API behind a queue. Chooses TTL, tail drop, or backpressure.
 ---
 # Queue Flow Control Decision
 

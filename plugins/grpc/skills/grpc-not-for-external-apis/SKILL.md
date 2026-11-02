@@ -1,11 +1,6 @@
 ---
 name: grpc-not-for-external-apis
-description: |
-  Invoke when a team proposes exposing a gRPC service directly to external
-  third-party consumers, public API users, or browser clients. Key trigger:
-  "should we expose our gRPC service publicly?" or "can external clients use
-  our gRPC API?" The answer is no for direct exposure; the correct pattern is
-  gRPC internally + HTTP/JSON transcoding (gRPC gateway or Envoy) at the boundary.
+description: "Invoke when a team proposes exposing a gRPC service directly to third-party consumers, public API users, or browser clients. Recommends gRPC internally with HTTP/JSON transcoding (grpc-gateway or Envoy) at the boundary instead of direct exposure."
 tags: [grpc, external-api, grpc-gateway, rest, graphql, public-api, architecture]
 ---
 # gRPC Is Not Suitable for External-Facing APIs

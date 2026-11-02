@@ -1,20 +1,6 @@
 ---
 name: fail-safe-vs-fail-secure
-description: |
-  Use this skill when designing any component whose authorization, access-control, or
-  configuration system can fail — and you need to decide what the component does when it
-  cannot verify its own state.
-
-  WHEN TO CALL: A component loads ACLs, certificates, or policies from an external source
-  at runtime. You are asked "what should the system do if that load fails?" You are
-  designing a door lock, a payment gate, a network appliance, or any system where failure
-  has both availability and confidentiality consequences. The decision surfaces in design
-  docs, architecture reviews, or incident post-mortems where failure mode was not
-  pre-decided.
-
-  WHEN NOT TO CALL: The component has no authorization layer (it serves only public data).
-  The failure mode has already been decided and encoded in the system. You are debugging
-  an existing failure rather than designing future behavior.
+description: "Use when designing a component that loads ACLs, certificates, or policies at runtime and must decide what happens when that load fails: fail open (fail-safe, availability) or fail closed (fail-secure, confidentiality). Not for debugging an existing failure."
 tags: [fail-safe, fail-secure, failure-mode-design, security-reliability-tradeoff, resilience]
 ---
 

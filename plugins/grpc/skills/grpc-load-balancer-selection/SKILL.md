@@ -1,11 +1,6 @@
 ---
 name: grpc-load-balancer-selection
-description: |
-  Invoke when choosing a load balancing strategy for gRPC services, or when
-  diagnosing uneven traffic distribution across gRPC backends. Key trigger:
-  "deploy gRPC behind a load balancer" or "one backend is getting all traffic."
-  Core rule: generic L4 TCP load balancers do not distribute gRPC traffic —
-  only L7 proxies with explicit gRPC support or client-side load balancing work.
+description: "Invoke when choosing a load balancing strategy for gRPC services, or when one backend gets all the traffic. Generic L4 TCP load balancers do not spread gRPC traffic; use an L7 proxy with explicit gRPC support or client-side load balancing."
 tags: [grpc, load-balancing, kubernetes, envoy, l4, l7, http2, production]
 ---
 # gRPC Load Balancer Selection

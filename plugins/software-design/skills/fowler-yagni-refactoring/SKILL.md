@@ -1,7 +1,6 @@
 ---
 name: fowler-yagni-refactoring
-description: |
-  Apply when a team is considering adding speculative flexibility, future-proofing mechanisms, plugin architectures, abstract interfaces "for extensibility", or other design features not required by any current, concrete use case. Covers Fowler's YAGNI + refactoring mutual reinforcement: build only what's needed now, refactor safely when new needs arise.
+description: "Apply when a team wants speculative flexibility: future-proofing, plugin architectures, or abstract interfaces for extensibility with no current use case. Pairs YAGNI with refactoring: build only what's needed now and refactor safely when new needs arrive."
 tags: [yagni, architecture, design, simplicity, evolutionary-architecture]
 ---
 

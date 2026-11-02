@@ -1,7 +1,6 @@
 ---
 name: test-layer-architecture-mapping
-description: |
-  Invoke when deciding what kind of test to write for a given piece of logic — domain function, repository adapter, HTTP/gRPC endpoint wiring, or cross-service contract — or when designing a test strategy for a new service.
+description: Use when deciding what kind of test to write for a piece of logic (domain function, repository adapter, HTTP or gRPC endpoint wiring, cross-service contract), or when designing a test strategy for a new service.
 ---
 # Test Architecture Mapping to Code Layers
 

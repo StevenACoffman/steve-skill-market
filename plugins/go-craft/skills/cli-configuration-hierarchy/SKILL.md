@@ -1,19 +1,6 @@
 ---
 name: cli-configuration-hierarchy
-description: |
-  Use this skill when a user needs to decide where to put a CLI configuration
-  value — whether that is a flag, an environment variable, a project-level config
-  file, a user-level config file, or a system-wide config — or when designing the
-  full configuration system for a new CLI tool.
-
-  Trigger signals:
-  - "Where should my CLI store the API endpoint / region / base URL?"
-  - "Should I use a flag or an env var for this setting?"
-  - "My users have to retype the same flags every time — is there a better way?"
-  - "What's the right precedence order for flags vs env vars vs config files?"
-  - "Should this go in a .env file or a real config file?"
-  - Developer designing a CLI's configuration system for the first time
-  - Any question of the form "how should my CLI accept X?"
+description: "Use when deciding how a CLI should accept a setting — flag, environment variable, project or user config file, or system-wide config — and their precedence, or when designing a new CLI tool's configuration system. Covers .env files vs real config files and users retyping flags."
 tags: [cli, configuration, flags, env-vars, xdg, precedence, dotfiles]
 ---
 

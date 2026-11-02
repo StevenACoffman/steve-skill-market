@@ -1,6 +1,6 @@
 ---
 name: terraform-module-size-smell
-description: Invoke when a user has a large Terraform module or monolithic configuration, asks when to split a module, or reports that plan/apply is slow, tests are impractical, or changes feel high-risk.
+description: Use when a Terraform module or configuration is large or monolithic, when deciding whether to split a module, or when plan and apply are slow, tests are impractical, or changes feel high-risk.
 ---
 # Terraform Module Size as Code Smell: Six Specific Harms of Large Modules
 

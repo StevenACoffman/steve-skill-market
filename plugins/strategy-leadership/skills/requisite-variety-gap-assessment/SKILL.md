@@ -1,7 +1,6 @@
 ---
 name: requisite-variety-gap-assessment
-description: |
-  Invoke when a management or governance system is visibly failing to regulate an environment whose complexity it was designed to control — specifically when a program, project, or organization is experiencing failure modes that keep appearing despite the management system believing it has appropriate oversight in place. Use when the question is not "what went wrong" but "why was the management system structurally unable to catch this before it became a failure."
+description: "Invoke when a management or governance system keeps failing to regulate the complexity it was meant to control, with recurring failures despite apparent oversight, and the question is why it was structurally unable to catch them. Applies Ashby's law of requisite variety."
 ---
 # Requisite Variety Gap Assessment
 

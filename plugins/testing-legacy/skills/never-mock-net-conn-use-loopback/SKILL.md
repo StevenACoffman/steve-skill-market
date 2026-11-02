@@ -1,7 +1,6 @@
 ---
 name: never-mock-net-conn-use-loopback
-description: |
-  Invoke when production code tests networked Go code by mocking net.Conn, net.Listener, or net.Dial. Invoke when choosing between loopback TCP, net.Pipe, and bufconn for testing connection-oriented protocols. Covers the testConn helper pattern, real SSH server in-process testing, and when to use net/http/httptest instead.
+description: Use when Go tests mock net.Conn, net.Listener, or net.Dial, or when choosing between loopback TCP, net.Pipe, bufconn, and httptest for testing connection-oriented protocols. Covers the testConn helper and running a real SSH server in-process.
 tags: [go, testing, networking, tcp, mocking, testable-code]
 ---
 

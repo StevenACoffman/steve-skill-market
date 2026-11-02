@@ -1,7 +1,6 @@
 ---
 name: lock-in-cost-optimization
-description: |
-  Invoke this skill when you encounter any of the following: - An architecture review rejects a managed service because it is "cloud-specific" without calculating whether the expected switching cost exceeds the underutilization cost of avoiding it. - An engineer or architect proposes building an abstraction layer to avoid cloud-provider API dependency. - A team debates whether to use a native cloud database (DynamoDB, Firestore, Cloud Spanner) versus a portable open-source database, and the deciding factor is lock-in concern without quantification. - An organization's multicloud strategy requires building a uniform experience across all providers. - A cloud vendor is offering favorable commercial terms, deeper integration, or a roadmap partnership in exchange for increased platform commitment, and the team needs to evaluate whether to accept. - Architecture principles include "avoid vendor lock-in" without a threshold or cost model that defines what level of lock-in is acceptable.
+description: "Use when vendor lock-in fears drive architecture: rejecting a managed or native cloud service (DynamoDB, Spanner) as cloud-specific, building abstraction layers for portability, or avoid-lock-in principles with no cost model. Weighs switching cost against the cost of avoidance."
 ---
 
 # Lock-in Cost Optimization

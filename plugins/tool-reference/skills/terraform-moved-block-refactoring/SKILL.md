@@ -1,6 +1,6 @@
 ---
 name: terraform-moved-block-refactoring
-description: Invoke when a user wants to rename a Terraform resource, move a resource into a module, or restructure module layout without destroying and recreating live infrastructure.
+description: Use when renaming a Terraform resource, moving a resource into a module, or restructuring module layout without destroying and recreating live infrastructure, using moved blocks.
 ---
 # Terraform moved Block: Safe Rename and Module Extraction Without Destroy
 

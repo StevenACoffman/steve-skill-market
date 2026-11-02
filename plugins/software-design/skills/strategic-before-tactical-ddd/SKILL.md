@@ -1,7 +1,6 @@
 ---
 name: strategic-before-tactical-ddd
-description: |
-  Invoke when a team is adopting DDD, planning service decomposition, or questioning whether their DDD implementation is delivering expected benefits — especially when they have tactical patterns in place but service boundaries feel wrong.
+description: "Invoke when a team is adopting DDD, planning service decomposition, or doubting its DDD payoff, especially when tactical patterns (entities, aggregates, repositories) exist but service boundaries feel wrong. Do strategic design and bounded contexts first."
 ---
 # Strategic Before Tactical DDD
 

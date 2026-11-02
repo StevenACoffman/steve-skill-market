@@ -1,7 +1,6 @@
 ---
 name: pull-complexity-downward
-description: |
-  Invoke this skill when you encounter any of the following: - A config object or options struct with many fields, especially where most callers leave most fields at their zero value - A function or constructor parameter whose only purpose is "let the caller decide" and the module could derive the right value from its own state - Code review comments of the form: "we should expose this so callers can control it" — this is the moment to ask whether callers actually have better information - A parameter added to avoid a decision: timeouts, buffer sizes, batch sizes, retry counts set to arbitrary "safe" defaults by the caller - Any time all callers pass the same value to a parameter — the parameter should be eliminated and the value made internal Do NOT apply when: Callers have genuine context the module cannot access.\ User-facing timeout values depend on user expectations and product requirements. A database connection pool size depends on deployment topology.
+description: "Use when an API pushes decisions onto callers: options structs where most fields stay zero, timeout, buffer, batch, or retry parameters set arbitrarily, or every caller passing the same value. Move the decision into the module. Not when callers hold context the module lacks."
 ---
 
 # Pull Complexity Downward

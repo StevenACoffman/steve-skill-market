@@ -1,7 +1,6 @@
 ---
 name: matryer-run-function
-description: |
-  Apply this skill when a Go developer needs to make their program's startup logic testable, wants to call their program from tests with controlled inputs, or needs t.Parallel() safety across tests that read environment variables or parse flags. Trigger on: "how do I test my main function", "os.Getenv in tests breaks parallel", "flag.Parse global state", "graceful shutdown from tests", "inject environment variables in Go tests". DO NOT INVOKE when the question is about HTTP handler logic, middleware construction, or request/response decoding — those are covered by matryer-maker-func, matryer-middleware-constructor, and matryer-decode-valid.
+description: "Apply when making a Go program's startup testable: testing main, calling the program from tests with controlled args, env, and stdio, avoiding flag.Parse and os.Getenv global state that blocks t.Parallel(), and graceful shutdown from tests. Not for handler, middleware, or decoding logic."
 tags: [go, testing, http-services, dependency-injection, entry-point, parallelism]
 ---
 

@@ -1,19 +1,6 @@
 ---
 name: webapp-make
-description: |
-  Use when working in github.com/Khan/webapp and need to know which Make
-  target to run. Covers service-level targets (check, lint, fix, serve,
-  deploy, codegen), root-level targets (deps, tesc, linc, dev server,
-  proto, graphql), linting infrastructure targets (go_lint_deps), and
-  typical developer workflows. ONLY applies to github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I run tests in webapp?"
-  - "how do I start the dev server?"
-  - "how do I rebuild the linter?"
-  - "what make target do I use for X in webapp?"
-  - "make check vs make tesc vs make lint"
-  - Any question about running, building, or deploying a webapp service
+description: "Use when working in github.com/Khan/webapp and you need the Make target to test, lint, fix, serve, deploy, run codegen, start the dev server, or rebuild linters. Covers make check vs tesc vs lint, deps, proto, graphql, and go_lint_deps. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read
 ---
 

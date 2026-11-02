@@ -1,24 +1,6 @@
 ---
 name: gqlgen-app
-description: |
-  Use when building a GraphQL server in Go with gqlgen
-  (github.com/99designs/gqlgen). Covers project setup, gqlgen.yml
-  configuration, code generation, resolver patterns, dependency injection,
-  schema design, middleware, context, dataloaders, error handling,
-  subscriptions, custom directives, testing, and Apollo Federation.
-
-  Trigger signals:
-  - Setting up or configuring a gqlgen project (gqlgen.yml, generated.go)
-  - Writing or wiring resolver implementations
-  - Injecting dependencies into resolvers
-  - Adding middleware, extensions, or interceptors to the server
-  - Handling N+1 queries with dataloaders
-  - Returning errors with GraphQL extensions
-  - Implementing subscriptions
-  - Writing custom schema directives
-  - Testing resolvers with the gqlgen client helper
-  - Configuring Apollo Federation
-  - Any "how do I do X with gqlgen" question
+description: "Use when building a GraphQL server in Go with gqlgen (github.com/99designs/gqlgen): gqlgen.yml, code generation, resolvers and dependency injection, schema design, middleware, dataloaders for N+1, errors, subscriptions, custom directives, resolver tests, and Apollo Federation."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

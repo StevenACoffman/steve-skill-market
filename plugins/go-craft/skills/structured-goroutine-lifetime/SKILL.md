@@ -1,19 +1,6 @@
 ---
 name: structured-goroutine-lifetime
-description: |
-  Activate when a user is writing, reviewing, or debugging Go code that spawns goroutines
-  and any of these signals appear: bare `go func()` without an accompanying WaitGroup or
-  errgroup, a function that returns before all goroutines finish, channels that senders can
-  block on indefinitely, unbounded goroutine fan-out in a loop, or a question about goroutine
-  leaks and how to detect them.
-
-  Trigger signals:
-  - "goroutine leak", "leaked goroutine", "goroutine stuck", "blocked on channel send"
-  - "how do I wait for goroutines", "fan-out pattern", "worker pool", "bounded concurrency"
-  - `go func()` without WaitGroup/errgroup visible in the same scope
-  - Early return inside a function that spawned goroutines writing to unbuffered channels
-  - `make(chan ...)` with no buffer where multiple senders may not all be read
-  - "semaphore", "limit goroutines", "max concurrent", "backpressure"
+description: "Use when writing, reviewing, or debugging Go code that spawns goroutines: goroutine leaks, bare go func() without a WaitGroup or errgroup, senders blocked on channels, early returns, unbounded fan-out, worker pools, semaphores, bounded concurrency, or backpressure."
 tags: [go, concurrency, goroutines, safety]
 ---
 

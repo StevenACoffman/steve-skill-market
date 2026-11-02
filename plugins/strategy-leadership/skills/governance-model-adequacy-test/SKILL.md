@@ -1,7 +1,6 @@
 ---
 name: governance-model-adequacy-test
-description: |
-  Invoke when a governance structure holds formal authority over a complex program but outcomes are diverging from plan and the governing body appears to be reacting to information rather than anticipating it — specifically when you suspect the oversight layer is governing on someone else's representation of reality rather than its own working model of the system.
+description: "Invoke when a governing body has formal authority over a complex program but outcomes diverge from plan and it reacts rather than anticipates, suggesting it governs from someone else's representation of reality instead of its own working model of the system."
 ---
 # Governance Model Adequacy Test (Conant-Ashby Good Regulator Audit)
 

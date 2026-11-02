@@ -1,20 +1,6 @@
 ---
 name: cli-interface-stability
-description: |
-  Use this skill when designing, evolving, or reviewing a CLI tool's public surfaces — flags,
-  subcommands, environment variables, config file keys, and exit codes — where backward
-  compatibility matters.
-
-  WHEN TO CALL: A user asks (a) whether it is safe to rename, remove, or change the behavior of
-  a flag or subcommand; (b) how to deprecate a CLI feature without breaking existing scripts;
-  (c) how to design a subcommand namespace that won't box them in later; (d) whether they can
-  freely change their program's output format; (e) how to structure machine-readable output for
-  script consumers.
-
-  WHEN NOT TO CALL: Do not call when the question is about internal API design (library
-  functions, RPCs, HTTP endpoints) — those have their own versioning disciplines. Do not call
-  when the user is asking purely about UX aesthetics of a CLI (colors, column widths, help text
-  wording) with no concern for scripting consumers.
+description: "Use when renaming, removing, or deprecating a CLI flag, subcommand, env var, config key, or exit code without breaking scripts, designing a subcommand namespace, or changing output format and machine-readable output. Not for library, RPC, or HTTP API versioning, or purely cosmetic CLI UX."
 tags: [cli, api-stability, backward-compatibility, deprecation, versioning]
 ---
 

@@ -1,11 +1,6 @@
 ---
 name: embedding-sre-ops-overload-recovery
-description: |
-  Use this skill when a team has slid into full ops mode — spending the majority of their time reacting to tickets, pages, and incidents with no capacity for project work — and standard approaches (add headcount, add process) have not resolved the situation. Call it when an SRE leader needs a structured intervention plan for a team that is operationally overloaded.
-
-  Trigger: "the team is 70%+ on ops work," "they can't make progress on engineering projects," "they're burning out," "every week is fire season," "adding engineers hasn't helped."
-
-  Do NOT call this skill for a team that is merely having a rough quarter or dealing with a product launch spike. This is a structured multi-week intervention for chronic, structural overload. Do not send more than one embedded SRE — the framework explicitly prohibits it.
+description: Use when a team is stuck in chronic ops mode (70%+ tickets, pages, and incidents; no project progress; burnout) and adding headcount or process has not helped. Plans a multi-week intervention embedding one SRE. Not for a rough quarter or a launch spike.
 tags: [sre-engagement, operational-overload, team-health, toil, slo, recovery, embedding]
 ---
 

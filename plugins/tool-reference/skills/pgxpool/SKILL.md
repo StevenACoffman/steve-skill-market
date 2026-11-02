@@ -1,6 +1,6 @@
 ---
 name: pgxpool
-description: Use when setting up database connections, tuning pool settings, or using the DBTX interface. Covers creating and configuring PostgreSQL connection pools in this repo using pgxpool.
+description: Use when setting up database connections, tuning pool settings, or using the DBTX interface. Covers creating and configuring PostgreSQL connection pools in this repo with pgxpool.
 allowed-tools: Bash, Read, Edit
 ---
 

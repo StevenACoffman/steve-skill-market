@@ -1,18 +1,6 @@
 ---
 name: option-configuration-patterns
-description: |
-  Trigger: user is designing configuration or options for a struct constructor and wondering which
-  pattern to use — functional options (Rob Pike), exposed config struct, or some form of method
-  chaining.
-
-  This skill selects between three Go option patterns based on option count, API stability, and
-  whether callers need to compose or store options programmatically. The key finding from
-  rednafi: functional options (opts ...func(*Config)) are almost never the right choice. The
-  standard library prefers simple constructors (bufio.NewReader). For external APIs with many
-  optional fields, the "dysfunctional options" pattern — method chaining on a returned *Config —
-  is ~76× faster than functional options, maintains IDE discoverability, and requires no
-  closure allocation. Functional options are reserved for cases where callers must build,
-  store, or conditionally apply option slices at runtime.
+description: "Use when choosing how a Go constructor takes options: functional options, an exposed config struct, or method chaining on a returned *Config. Picks by option count, API stability, and whether callers must store or compose options; functional options are rarely the right choice."
 tags: [go, api-design, configuration, performance, patterns]
 ---
 

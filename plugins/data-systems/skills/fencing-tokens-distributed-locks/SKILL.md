@@ -1,18 +1,6 @@
 ---
 name: fencing-tokens-distributed-locks
-description: |
-  Use this skill when designing or reviewing any system that uses a distributed lock, lease, or mutex to protect a shared resource from concurrent access.
-
-  Invoke when:
-  - A service acquires a lock (Redis SETNX, ZooKeeper, etcd lease) and then writes to storage, calls an external API, or coordinates a job
-  - A process holds a lock with a TTL and performs any operation that must not run concurrently
-  - A post-mortem reveals duplicate writes, double job execution, or split-brain data corruption despite correct lock usage
-  - Designing distributed job schedulers, leader election, or exclusive-access file/record modification
-
-  Do NOT invoke when:
-  - The locking mechanism is a database row lock within a single ACID transaction (the database handles this)
-  - The resource being protected is append-only and duplicate writes are harmless
-  - The coordination problem only involves nodes you control, and you can guarantee no GC pauses or network delays exceed the lease TTL (this is never safe to assume)
+description: Use when designing or reviewing a distributed lock, lease, or leader election (Redis SETNX, ZooKeeper, etcd) that guards writes to shared storage or a job, or when a post-mortem shows duplicate writes, double job runs, or split-brain despite locking. Not for single-transaction row locks.
 tags: [distributed-systems, locking, leases, fencing, process-pauses, correctness]
 allowed-tools: Bash, Read, Edit
 ---

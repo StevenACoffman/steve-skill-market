@@ -1,19 +1,6 @@
 ---
 name: mutex-closure-atomic-mutation
-description: |
-  Apply when a user has a struct with separate Get() and Set() methods each protected by a mutex,
-  or when they ask why concurrent mutations produce wrong values despite using locks, or when
-  go test -race passes but their counter or shared state is incorrect.
-
-  The core trap: individually-locked Get() and Set() methods are each safe in isolation, but the
-  sequence Get → mutate → Set is not atomic. Between the Get and the Set, another goroutine can
-  run and modify the same value. The first goroutine then overwrites that change. This is a logical
-  race (lost-update bug), not a data race. The Go race detector is silent because each lock
-  acquisition is individually valid — there is no unsynchronized memory access to detect.
-
-  The fix is closure inversion: instead of Get()/Set(v), expose Set(func(*T)). The method acquires
-  the lock once and holds it for the entire closure body. The read, check, and write all happen
-  inside the same lock window, with no gap where another goroutine can interfere.
+description: "Apply when separate mutex-protected Get() and Set() methods lose updates under concurrency, or go test -race passes but shared state is wrong. Get-mutate-Set is a logical race; fix it with closure inversion, Set(func(*T)), holding the lock for the whole read-check-write."
 tags: [go, concurrency, mutex, safety, data-races]
 ---
 

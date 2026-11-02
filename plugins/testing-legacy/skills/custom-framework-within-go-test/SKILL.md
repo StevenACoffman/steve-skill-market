@@ -1,7 +1,6 @@
 ---
 name: custom-framework-within-go-test
-description: |
-  Invoke when building a pluggable system where multiple backends or plugins must satisfy the same multi-step acceptance scenario, or when considering a separate test binary or external test runner. Covers building a custom harness (TestCase struct + Test function) as a Go library so go test orchestrates all backends with full -run/-race/-cover support.
+description: Use when multiple backends or plugins must pass the same multi-step acceptance scenario, or when tempted to build a separate test binary or external runner. Build a reusable TestCase harness as a Go library so go test drives every backend with -run, -race, and -cover.
 tags: [go, testing, custom-framework, plugin-systems, acceptance-testing]
 ---
 

@@ -1,7 +1,6 @@
 ---
 name: matryer-maker-func
-description: |
-  Apply when a developer needs to wire up HTTP handler dependencies and is choosing between methods on a server struct versus direct parameter injection. Trigger phrases include: "handler needs a db and logger", "where do I put dependencies for handlers", "should I use a server struct", "handler function signature". Use maker functions that return http.Handler with explicit dependency parameters; the function body holds per-handler setup, the returned closure handles each request. DO NOT INVOKE when the question is about middleware construction, global application wiring (NewServer), or request-scoped data (use context for that).
+description: "Apply when wiring Go HTTP handler dependencies such as a db and logger, choosing between methods on a server struct and maker functions that take explicit dependencies and return http.Handler. Not for middleware construction, NewServer wiring, or request-scoped data."
 tags: [go, http-services, handlers, closures, dependency-injection]
 ---
 

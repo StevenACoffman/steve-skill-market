@@ -1,14 +1,6 @@
 ---
 name: cli-secret-handling
-description: |
-  Use this skill when a CLI needs to accept a SECRET — a value that must not be visible to other
-  processes or appear in logs. Secrets include passwords, API keys, tokens, and private credentials.
-
-  WHEN TO CALL: (a) A developer is adding authentication to a CLI and asks how to accept a password,
-  API key, or token; (b) a user asks whether an environment variable is a safe way to pass credentials
-  to a CLI; (c) code review of a CLI shows a --password, --token, or --api-key flag; (d) a user is
-  about to use shell substitution like --password $(cat file.txt) and wants to know if it is safe;
-  (e) a user asks "how should my CLI accept credentials?"
+description: "Use when a CLI must accept a secret such as a password, API key, or token: choosing between flags, env vars, files, and stdin, reviewing a --password or --token flag, or judging whether shell substitution like $(cat file) is safe. Keeps secrets out of process lists and logs."
 tags: [cli, security, secrets, credentials, authentication]
 ---
 

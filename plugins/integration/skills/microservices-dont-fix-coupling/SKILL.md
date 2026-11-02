@@ -1,7 +1,6 @@
 ---
 name: microservices-dont-fix-coupling
-description: |
-  Invoke when a team is planning a monolith-to-microservices migration, evaluating whether their microservices are delivering promised independence, or diagnosing why coordinated deployments are still required after service splitting.
+description: Invoke when planning a monolith-to-microservices migration, checking whether microservices deliver their promised independence, or diagnosing why coordinated deployments are still needed after splitting services.
 ---
 # Microservices Do Not Automatically Reduce Coupling
 

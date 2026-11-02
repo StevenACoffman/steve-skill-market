@@ -1,7 +1,6 @@
 ---
 name: wardley-pace-slo
-description: |
-  Use this skill when an organization or team needs a strategic starting point for SLO levels across multiple systems, especially when those systems serve different business purposes and change at different rates. The core heuristic: Systems of Innovation (SOI) ~95%, Systems of Differentiation (SOD) ~99.6%, Systems of Record (SOR) ~99.99%. Evolution stage determines appropriate SLO level — not organizational prestige, not competitor benchmarking, not historical performance.
+description: "Use when picking starting SLO levels across many systems that serve different business purposes and change at different rates. Heuristic by evolution stage: systems of innovation about 95%, differentiation about 99.6%, record about 99.99%."
 tags: [wardley-maps, pace-layering, slo, soi, sod, sor, strategic-reliability, system-evolution]
 ---
 

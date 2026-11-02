@@ -1,6 +1,6 @@
 ---
 name: vale
-description: Use when the user asks to run vale, lint markdown, or check prose style. Covers running vale, fixing genuine errors, and suppressing false positives by adding terms to the project vocabulary. Also covers linting a git commit message with the vale-ai-tells `ai-tells-commits` style before committing.
+description: "Use when the user asks to run vale, lint Markdown, or check prose style. Covers fixing genuine errors, suppressing false positives via the project vocabulary, and linting a commit message with the vale-ai-tells ai-tells-commits style before committing."
 allowed-tools: Bash, Read, Edit
 ---
 

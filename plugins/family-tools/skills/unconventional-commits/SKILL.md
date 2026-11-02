@@ -1,7 +1,6 @@
 ---
 name: unconventional-commits
-description: |
-  Use when writing git commit messages, committing changes, or setting a project's commit convention — especially when the user wants scope-first (Linux/Git/Go/kernel-style) commits and explicitly wants to AVOID Conventional Commits (no `feat:`/`fix:`/`chore:` type prefixes). Triggers on "write a commit message", "commit this", "/commit", "what should the commit say", or any request to define commit guidelines where the user rejects the `type:` prefix style. Produces `scope: description` subject lines plus a body explaining what and why. Prefer this over the conventional `git-commit` skill whenever the user signals they dislike Conventional Commits, wants scoped commits, or points to a scope-prefixed project style.
+description: "Use when writing a commit message, committing changes, or setting a commit convention, and the user wants scope-first subjects (scope: description, Linux/Git/Go style) instead of Conventional Commits prefixes like feat, fix, or chore."
 allowed-tools: Bash
 ---
 

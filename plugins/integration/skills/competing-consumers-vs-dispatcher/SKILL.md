@@ -1,7 +1,6 @@
 ---
 name: competing-consumers-vs-dispatcher
-description: |
-  Invoke when a team wants to add more workers to speed up message processing and is deciding how to structure that parallelism, when different message subtypes require different processing logic, when transactional message processing is required, or when the team asks whether to let the queue handle load balancing or write their own dispatcher logic.
+description: "Invoke when adding workers to speed up message processing and choosing between competing consumers and a message dispatcher: message subtypes need different logic, processing must be transactional, or the question is whether the queue or your code does load balancing."
 ---
 # Competing Consumers vs. Message Dispatcher
 

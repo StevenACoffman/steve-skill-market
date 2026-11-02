@@ -1,11 +1,6 @@
 ---
 name: sre-team-lifecycle-tuckman
-description: |
-  Use this skill when forming, diagnosing, or intervening in an SRE team — specifically when the team is struggling to become effective, experiencing internal resistance, or when a manager is applying the wrong intervention for the team's formation type.
-
-  Call when: A new SRE team is being assembled (by any formation method), a team appears stuck and not making progress toward the Norming or Performing milestones, or a manager is applying generic team management advice to an SRE team context.
-
-  Do not call when: The problem is a specific reliability or technical issue (not a team formation or organizational issue), or when the team is clearly Performing and the question is about sustaining performance rather than reaching it.
+description: Use when forming, diagnosing, or intervening in an SRE team that is stuck, resisting, or not reaching norming or performing, or when a manager applies generic advice that fits the wrong formation type. Applies Tuckman stages. Not for technical reliability issues.
 tags: [team-formation, tuckman, sre-team, organizational-change, lifecycle, converted-ops, storming]
 ---
 

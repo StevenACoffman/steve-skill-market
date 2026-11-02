@@ -1,15 +1,6 @@
 ---
 name: canary-as-error-budget-arithmetic
-description: |
-  Use this skill when sizing a canary deployment or evaluating whether a canary process is epistemically sound.
-
-  Call when: A team is deciding what percentage of traffic to route to a canary, how long to run it, or whether to use blue/green deployment as a canary mechanism.
-
-  Do not call when: The deployment is a full rollout with no partial population control, or when the decision is purely about rollback speed rather than defect detection.
-
-  Key trigger: Someone proposes a canary size by convention ("we always do 5%") or proposes blue/green as a canary evaluation strategy. The correct frame is arithmetic, not convention. Canary size × estimated defect rate × duration = budget consumed. If the team cannot state that calculation, they have not sized the canary.
-
-  Before/after canaries — including blue/green — are structurally unsound for defect attribution because time is itself a confound. Concurrent canaries (control and canary populations simultaneously active) are required for valid comparison.
+description: "Use when sizing a canary deployment (traffic percentage, duration) or judging whether blue/green counts as a canary. Size by arithmetic: canary size x defect rate x duration = error budget consumed. Requires concurrent control and canary populations, not before/after."
 tags: [canary, release-engineering, error-budget, deployment, slo, blue-green]
 ---
 

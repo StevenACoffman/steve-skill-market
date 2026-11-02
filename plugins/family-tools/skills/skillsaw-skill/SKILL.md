@@ -1,20 +1,6 @@
 ---
 name: skillsaw-skill
-description: |
-  Autonomous skill optimizer that replicates darwin-skill's evaluate → improve →
-  validate → keep-or-revert loop, delegating every deterministic step to the
-  skillsaw CLI (github.com/StevenACoffman/skillsaw) and reserving the agent only
-  for irreducible qualitative judgments. skillsaw runs the 9-dimension rubric
-  scoring, runtime-neutrality scan, next-dimension diagnosis, keep/revert gate,
-  content hash, and rule-judge; the agent designs test prompts, scores the
-  judge-only dimensions, applies one edit per round, and drives git.
-
-  WHEN TO CALL:
-  - The user asks to optimize, score, improve, or review a SKILL.md.
-  - The user asks to evaluate skill quality against a rubric.
-  - The user asks whether a skill is bound to a single agent runtime.
-  - Trigger words: "optimize skill", "score skill", "skill quality", "skill
-    review", "auto-optimize", "darwin", "skillsaw", "rubric".
+description: "Use when the user asks to optimize, score, review or improve a SKILL.md against the skillsaw rubric, or to check whether a skill is bound to one agent runtime. Runs skillsaw's deterministic evaluate, improve and validate loop."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the skillsaw CLI (v0.2.0 or later, installed with Go), git and jq; reads skills-manifest.json written by the exegesis CLI.
 tags: [skill-optimization, rubric, skillsaw, darwin, evaluation, hill-climbing, cli]
 ---

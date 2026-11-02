@@ -1,7 +1,6 @@
 ---
 name: ddd-fitness-scorecard
-description: |
-  Apply when a team or individual needs to make a defensible, shared decision about whether to adopt full DDD for a project — specifically at project inception, architecture review, or when someone challenges whether DDD overhead is justified for a given system.
+description: "Apply when a team needs a defensible, shared decision on whether full DDD is worth adopting for a project: at inception, in architecture review, or when someone challenges whether DDD overhead is justified."
 ---
 # DDD Fitness Scorecard
 

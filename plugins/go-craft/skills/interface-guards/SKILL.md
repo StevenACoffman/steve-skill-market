@@ -1,16 +1,6 @@
 ---
 name: interface-guards
-description: |
-  Apply when a user defines exported types that must implement specific interfaces, or wants
-  compile-time safety for interface conformance. The pattern is: var _ InterfaceName = (*ConcreteType)(nil).
-  This is a zero-cost compile-time assertion — the compiler verifies the assignment is valid
-  (i.e., the type satisfies the interface) but drops the unused variable; no runtime overhead,
-  no allocation. If any required method is missing, has the wrong signature, or is removed, the
-  build fails immediately at the guard line. The subtlety is when to add one: only for exported
-  types with critical interface contracts where no other static conversion already exists in the
-  code. If the type is already passed as the interface somewhere (e.g., a function parameter),
-  the compiler already checks it — adding a guard is redundant. For unexported types used
-  internally, interface conformance is usually obvious from usage.
+description: "Apply when an exported Go type must implement an interface and you want compile-time conformance checks with var _ Interface = (*T)(nil). Covers when a guard is worth adding and when it is redundant because the type is already used as the interface."
 tags: [go, interfaces, compile-time-safety, type-system]
 ---
 

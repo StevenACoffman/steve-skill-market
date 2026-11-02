@@ -1,15 +1,6 @@
 ---
 name: zero-trust-beyondcorp
-description: |
-  Use this skill when designing network access architecture, evaluating VPN-based access
-  models, designing corporate network security after a perimeter breach, or implementing
-  access controls for a remote-work or cloud-first organization. The core trigger: any
-  system where "being on the internal network" implicitly grants access that would not be
-  granted from the internet.
-
-  Apply when: migrating from VPN to identity-based access, designing service-to-service
-  authentication, evaluating the access model for production systems, designing incident
-  isolation mechanisms, or post-breach architectural redesign.
+description: "Use when designing network access where being on the internal network grants access: migrating from VPN to identity-based access, service-to-service authentication, remote or cloud-first access, or post-breach redesign. Zero Trust in the BeyondCorp model."
 tags: [zero-trust, beyondcorp, network-security, identity-based-access, least-privilege, lateral-movement]
 ---
 

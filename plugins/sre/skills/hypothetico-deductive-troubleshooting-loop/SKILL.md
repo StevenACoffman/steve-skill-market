@@ -1,11 +1,6 @@
 ---
 name: hypothetico-deductive-troubleshooting-loop
-description: |
-  Use this skill when an engineer is responding to a production incident, alert, or system anomaly and must determine its root cause. The framework imposes a four-phase discipline: (1) Triage — stop the bleeding before root-causing; (2) Examine — gather telemetry and logs to understand current state; (3) Diagnose — form ranked hypotheses from evidence; (4) Test — seek disconfirming evidence before treating.
-
-  Call this skill whenever an on-call or incident response situation requires systematic diagnosis. The key trigger is the impulse to act before examining: when an engineer says "let's just roll back the last deploy" or "this looks like the X problem we had last week," the loop has been skipped.
-
-  Do not call this skill when the mitigation is obvious from monitoring (e.g., a known alert with an established playbook — use the playbook skill instead), or when triage dictates immediate action to prevent data loss before any diagnosis is possible.
+description: Use when responding to a production incident, alert, or anomaly and finding its root cause, especially when tempted to "just roll back" or blame last week's problem. Triage, examine telemetry, rank hypotheses, then test them. Not when a known playbook applies.
 tags: [troubleshooting, incident-response, debugging, on-call, diagnosis, root-cause-analysis]
 ---
 

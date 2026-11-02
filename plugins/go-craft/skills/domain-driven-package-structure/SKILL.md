@@ -1,20 +1,6 @@
 ---
 name: domain-driven-package-structure
-description: |
-  Trigger: user is structuring a new Go project, asks how to improve an existing
-  models/controllers/handlers layout, reports import cycles between layers, or
-  struggles with namespace confusion when adding a new business domain.
-
-  In Go, the package is the only namespace boundary. Unlike Python (file-level) or
-  Java (class-level), everything in a directory shares a single namespace. Grouping
-  multiple business domains under generic packages like models/, controllers/, or
-  handlers/ collapses all domains into one namespace — Order.Create and Product.Create
-  both live in "models" with no domain signal at the import site.
-
-  Domain-driven structure gives each business concept its own top-level package:
-  order/, user/, payment/. Technology packages (http/, postgres/, redis/) import from
-  domain packages; domain packages never import from technology packages. The Go
-  compiler enforces this via import cycle prohibition — no linter or convention needed.
+description: "Use when structuring a new Go project, replacing a models/controllers/handlers layout, fixing import cycles between layers, or adding a business domain. Gives each domain its own package (order, user, payment); technology packages like http and postgres import domain packages, never the reverse."
 tags: [go, architecture, packages, domain-driven-design]
 ---
 

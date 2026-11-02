@@ -1,18 +1,6 @@
 ---
 name: leafwiki
-description: |
-  Use when building or maintaining a personal/team knowledge base with LeafWiki
-  (the self-hosted Go wiki at github.com/perber/leafwiki, local copy in
-  ~/Documents/git/leafwiki) — running the server, editing its markdown-on-disk
-  content under data/root/, triggering resync after external edits, and writing
-  pages so they are also valid Open Knowledge Format (OKF v0.2) concepts. Triggers
-  on "leafwiki", "self-hosted wiki", "LLM wiki", "ingest this source into the
-  wiki", "update the wiki", "wiki lint pass", or any request to accumulate/curate
-  knowledge as interlinked markdown that a wiki serves and an OKF consumer can
-  read. Covers the LeafWiki on-disk layout (sections = folder + index.md, leaf
-  pages = slug.md, assets/pageID/), reserved vs. preservable frontmatter, the
-  edit-then-resync loop (SIGUSR1/SIGHUP), and the exact frontmatter to add so
-  pages carry OKF provenance/trust/lifecycle without breaking LeafWiki.
+description: "Use when running or curating a LeafWiki knowledge base (self-hosted Go wiki, markdown on disk under data/root/): editing or ingesting pages, resyncing after external edits, wiki lint passes, and adding frontmatter so pages are also valid Open Knowledge Format (OKF) concepts."
 ---
 
 # LeafWiki as an LLM-maintained, OKF-compatible knowledge base

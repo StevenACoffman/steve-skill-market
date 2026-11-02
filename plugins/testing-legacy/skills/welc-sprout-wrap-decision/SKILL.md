@@ -1,6 +1,6 @@
 ---
 name: welc-sprout-wrap-decision
-description: Trigger when a developer must add new behavior to existing code that cannot be immediately tested, and must choose among Sprout Method, Sprout Class, Wrap Method, or Wrap Class.
+description: Use when adding new behavior to existing code that cannot be tested right away and choosing among Sprout Method, Sprout Class, Wrap Method, or Wrap Class.
 ---
 # Sprout/Wrap Decision — Adding Behavior to Untestable Legacy Code
 

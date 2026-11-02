@@ -1,11 +1,6 @@
 ---
 name: grpc-l4-lb-failure-mode
-description: |
-  Invoke when diagnosing uneven traffic distribution across gRPC backend pods,
-  or when reviewing a gRPC deployment architecture that places services behind
-  a TCP/L4 load balancer. Core issue: L4 LBs distribute connections, not RPCs;
-  HTTP/2 multiplexing means all gRPC RPCs share one connection, so all go to
-  one backend.
+description: "Invoke when gRPC traffic is unevenly distributed across backend pods, or when reviewing a gRPC deployment behind a TCP/L4 load balancer. L4 balancers distribute connections, not RPCs, and HTTP/2 multiplexing sends every RPC on a connection to one backend."
 tags: [grpc, load-balancing, http2, l4, multiplexing, kubernetes, failure-mode, production]
 ---
 # L4 Load Balancer Failure Mode with gRPC

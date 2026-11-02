@@ -1,19 +1,6 @@
 ---
 name: error-translation-layer-boundaries
-description: |
-  Activate this skill when a user is designing or debugging error handling across architectural
-  layers in a Go service — specifically at the repository-to-service boundary or the
-  service-to-wire (HTTP/gRPC) boundary.
-
-  Trigger signals:
-  - Handler code imports `database/sql`, `pgx`, `redis`, or other storage packages to check errors
-  - Multiple handlers (HTTP + gRPC) duplicate the same storage error checks (`sql.ErrNoRows`, `redis.Nil`)
-  - A function returns `(bool, error)` where both signals attempt to answer "did this succeed?"
-  - A repository wraps storage errors with `%w`, making internal driver types (`pgx.ErrNoRows`,
-    `pgconn.PgError`) part of the caller-visible API
-  - A user asks when to use `%w` vs `%v` in `fmt.Errorf`
-  - Adding a new storage backend or cache layer requires touching handler code
-  - A user says "callers are checking for sql.ErrNoRows" or "I need to translate errors"
+description: "Use when designing or debugging Go error handling across layers: handlers checking sql.ErrNoRows, pgx, or redis.Nil errors, HTTP and gRPC handlers duplicating storage error checks, (bool, error) returns, driver errors leaking via %w, or choosing %w vs %v in fmt.Errorf."
 tags: [go, error-handling, architecture, layer-boundaries]
 ---
 

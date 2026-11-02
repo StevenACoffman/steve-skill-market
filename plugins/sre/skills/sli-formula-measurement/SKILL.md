@@ -1,18 +1,6 @@
 ---
 name: sli-formula-measurement
-description: |
-  Use this skill when designing or reviewing the formula and measurement location for a
-  Service Level Indicator — deciding what counts as a "good" event, what counts as a
-  "valid" event, and where in the system architecture to collect the data.
-
-  **When to call:**
-  - Writing a new SLI formula and needing to decide good/valid boundaries
-  - Reviewing an existing SLI that uses "total" in the denominator instead of "valid"
-  - Choosing where in the architecture to measure (client, edge, load balancer, inside
-    the service, inside the instance)
-  - Determining whether an existing metric is worth waking someone up for
-  - Scoping an SLI to what one team actually controls (control boundary alignment)
-  - Deciding between event-based and time-based SLI formulas
+description: "Use when writing or reviewing an SLI formula: defining good and valid events (valid, not total, in the denominator), choosing where to measure (client, edge, load balancer, service), event-based vs time-based SLIs, and scoping to what one team controls."
 tags: [sli, formula, valid-vs-total, measurement-location, consumer-perception, good-events, fidelity]
 ---
 

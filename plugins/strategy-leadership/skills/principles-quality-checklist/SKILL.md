@@ -1,7 +1,6 @@
 ---
 name: principles-quality-checklist
-description: |
-  Invoke this skill when you encounter any of the following: - A team is writing or reviewing a principles document for a cloud program, architecture review board, or technology strategy - A principle statement ends with phrases like "to deliver value" or "for our customers" — these are almost always wishful-principle signals - Someone refers to a product name, vendor, or architectural buzzword inside a stated principle - A strategy presentation has a large gap between stated goals and funding request with no clear decision chain connecting them (hourglass) - No one on the team can recite a principle from memory during a design discussion — the principles exist only in a document - A set of principles was adopted with no debate — unanimous easy agreement is a red flag - A team has fewer than five or more than twelve guiding principles and is wondering why they don't seem useful - A decision is described as "aligned with our principles" but no specific principle is cited — it may be that
+description: "Use when writing or reviewing architecture or cloud strategy principles: wishful principles (to deliver value), vendor names or buzzwords inside principles, principles nobody can recite or adopted without debate, or decisions claimed as aligned with no principle cited."
 ---
 
 # Principles Quality Checklist

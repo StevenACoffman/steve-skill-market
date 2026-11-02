@@ -1,18 +1,6 @@
 ---
 name: dep-comp-cross-package-contract-decision
-description: |
-  Invoke this skill when a Go developer is deciding how two packages should
-  share a type or contract without one importing the other's concrete type.
-  The trigger is any question of the form: "my two packages both need a
-  struct — where should it live?" or "should I extract this type to a shared
-  package?" or "how do I avoid importing package X just to use one field?"
-
-  The skill provides a four-option decision framework. Default to
-  function-typed fields for single-operation dependencies. Use a local
-  interface for multi-method contracts or third-party insulation. Use a
-  shared package only when confident types will NEVER diverge. Use duplicate
-  types + adapter when uncertain about divergence — merging separated types
-  later is cheap; pulling apart merged types with many callers is expensive.
+description: "Invoke when two Go packages must share a type or contract without importing each other's concrete types: where a shared struct should live, or whether to extract a shared package. Chooses among function-typed fields, a local interface, a shared package, or duplicate types plus an adapter."
 tags: [go, dependency-injection, interfaces, type-design, package-design, coupling, architecture]
 ---
 

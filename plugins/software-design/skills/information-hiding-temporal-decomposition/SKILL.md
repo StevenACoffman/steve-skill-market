@@ -1,7 +1,6 @@
 ---
 name: information-hiding-temporal-decomposition
-description: |
-  Invoke this skill whenever you encounter these structural patterns: - Pipeline class designs: classes named `XReader`, `XParser`, `XProcessor`, `XWriter` for the same data format. Each boundary is a candidate for temporal decomposition. - Step-by-step processing classes: any decomposition where the class names describe stages rather than responsibilities (e.g., `RequestReceiver` + `RequestHandler` rather than `RequestProcessor`). - "Open → process → close" triads: a class that opens a resource, a second that consumes it, a third that closes or flushes it. If open and close both require format or protocol knowledge, they belong together. - Microservice decompositions that follow workflow steps: services named after saga steps ("CreateOrder", "ReserveInventory", "ChargePayment") where adjacent services must agree on the shared data schema — the schema is a design decision that both services now encode.
+description: "Use when classes or services are split by processing step rather than knowledge: Reader/Parser/Processor/Writer for one format, open-process-close triads, or microservices per saga step sharing a schema. Detects temporal decomposition that leaks information across modules."
 ---
 
 # Skill: Information Hiding and Temporal Decomposition

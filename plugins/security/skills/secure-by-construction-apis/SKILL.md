@@ -1,15 +1,6 @@
 ---
 name: secure-by-construction-apis
-description: |
-  Use this skill when designing an API or framework that will be used by many developers
-  and where a class of security vulnerability (injection, XSS, command injection, LDAP
-  injection) would be introduced by passing unsanitized user input to a sensitive sink.
-
-  WHEN TO CALL: You are designing a database access layer, a template rendering system,
-  a shell command API, or any other system with injection-prone sinks. You are auditing
-  code for injection vulnerabilities across a large codebase. You are choosing between
-  "train developers to sanitize" and "make the mistake impossible to compile." The
-  vulnerability class is one that recurs despite code review and developer awareness.
+description: Use when designing an API, framework, database layer, template system, or shell command API with injection-prone sinks (SQL injection, XSS, command injection), or when such bugs recur despite review. Make unsafe input impossible to compile instead of training developers.
 tags: [secure-by-construction, type-safety, injection-prevention, api-design, XSS, SQL-injection]
 ---
 

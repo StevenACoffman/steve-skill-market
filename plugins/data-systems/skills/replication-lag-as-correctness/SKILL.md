@@ -1,7 +1,6 @@
 ---
 name: replication-lag-as-correctness
-description: |
-  Invoke this skill when replication lag is producing incorrect or confusing behavior for users, not merely slow or stale behavior. The specific trigger is when a system uses read replicas and users experience one of three named violations: they submit a change and immediately see the old value (read-your-writes violation); they see data move backward in time on refresh (monotonic reads violation); or they observe causally-inconsistent sequences like a reply appearing before its question (consistent prefix violation).
+description: "Use when read replicas make users see wrong or confusing data, not merely slow data: a just-saved change shows the old value (read-your-writes), data moves backward on refresh (monotonic reads), or a reply appears before its question (consistent prefix)."
 tags: [replication, replication-lag, read-your-writes, monotonic-reads, consistent-prefix, consistency, correctness]
 allowed-tools: Bash, Read, Edit
 ---

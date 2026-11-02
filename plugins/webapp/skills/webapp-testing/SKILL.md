@@ -1,20 +1,6 @@
 ---
 name: webapp-testing
-description: |
-  Use when writing or reading Go tests in github.com/Khan/webapp. Covers
-  suite selection (khantest.Suite vs servicetest.Suite), KAContext setup in
-  tests, fake service clients (datastore, pubsub, tasks, secrets,
-  featureflags), BuildTestClientForSchema for GraphQL resolver tests, and
-  gqltest.Query/Mutate/QueryType. ONLY applies to github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I write a test in webapp?"
-  - "which test suite should I use?"
-  - "how do I get a KAContext in a test?"
-  - "how do I test a GraphQL resolver?"
-  - "how do I assert on a pub/sub message in a test?"
-  - "how do I mock a fake datastore/tasks/secrets client?"
-  - Any question about testing patterns inside webapp
+description: "Use when writing or reading Go tests in github.com/Khan/webapp. Covers khantest.Suite vs servicetest.Suite, KAContext in tests, fake datastore, pubsub, tasks, secrets, and featureflags clients, BuildTestClientForSchema, and gqltest.Query/Mutate/QueryType. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

@@ -1,7 +1,6 @@
 ---
 name: four-forces-situational-assessment
-description: |
-  Invoke when a program leader needs to diagnose *why* a complex program is hard before deciding how to respond — specifically when multiple things are going wrong simultaneously and the standard diagnostic (scope creep, resource gaps, stakeholder issues) is not producing actionable insight. Also invoke when a program leader is preparing to take on a new complex assignment and needs to assess what they're walking into before selecting their initial governance posture.
+description: "Invoke when a program leader must diagnose why a complex program is hard before choosing a response: many things failing at once and scope, resource, or stakeholder diagnoses aren't actionable, or when sizing up a new complex assignment before setting governance posture."
 ---
 # Four Forces Situational Assessment
 

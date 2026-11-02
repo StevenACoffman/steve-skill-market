@@ -1,7 +1,6 @@
 ---
 name: somewhat-general-purpose-interface
-description: |
-  Invoke this skill during API design or review when any of the following signals appear: - A method's name includes a UI action or user operation: `backspace()`, `onClickSave()`, `handleDeleteKey()`, `submitForm()`. Names like these reveal that caller context has leaked into the module. The method is not describing what the module does — it is describing why a caller might call it. - The API is growing by accretion: each new product requirement adds a new method to the interface. The method count tracks the feature backlog rather than the underlying capability set. This is the clearest sign of special-purpose drift. - A method is called in exactly one place: if you grep the codebase and a method has a single caller, it probably encodes that caller's specific need. Ask whether the logic belongs in the caller or whether a more general form would serve both current and future callers.
+description: "Use in API design or review when methods are named for UI actions (backspace, onClickSave), the interface grows one method per feature request, or a method has a single caller. Prefer somewhat general-purpose interfaces that capture the underlying capability."
 ---
 
 # Skill: Somewhat-General-Purpose Interface

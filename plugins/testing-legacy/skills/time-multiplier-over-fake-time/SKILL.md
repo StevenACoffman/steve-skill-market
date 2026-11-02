@@ -1,12 +1,6 @@
 ---
 name: time-multiplier-over-fake-time
-description: |
-  Apply when a test waits on a goroutine, channel, or event; the test passes locally
-  but times out in CI; or a colleague suggests injecting a Clock interface. Use a
-  real timeout via `select` + `time.After` with a package-level `var timeMultiplier`
-  — set it larger in CI via TestMain or an env var, with no production code changes.
-  Do not apply when the test must assert on ordering of time events (cache TTL vs
-  retry); real time is too non-deterministic for that, and a clock mock is warranted.
+description: Use when a Go test waits on a goroutine, channel, or event and times out in CI but passes locally, or someone proposes a Clock interface. Use select with time.After scaled by a package-level timeMultiplier set larger in CI. Not when asserting the order of timed events.
 tags: [go, testing, timing, async, concurrency, test-methodology]
 allowed-tools: Bash, Read, Edit
 ---

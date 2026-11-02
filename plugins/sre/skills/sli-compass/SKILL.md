@@ -1,17 +1,6 @@
 ---
 name: sli-compass
-description: |
-  Use this skill when evaluating the signal quality and cost-efficiency of an existing SLI,
-  comparing SLI implementation options, or deciding how to evolve measurement infrastructure.
-  The skill answers: "Is this SLI worth what it costs? Is it measuring real consumer experience
-  or a proxy? How should we evolve our measurement approach?"
-
-  WHEN TO CALL: (a) A user needs to evaluate whether a synthetic health-check SLI is sufficient
-  or whether organic measurement is required; (b) a user is comparing simple endpoint pings vs.
-  full user journey monitoring; (c) the SLI is too expensive for the signal quality it provides;
-  (d) a user asks "should we invest in RUM (real user monitoring)?"; (e) the SLI fires on noise
-  or misses real incidents and you need to diagnose why from the measurement dimension; (f)
-  the user wants to plan an SLI investment roadmap from cheap/simple to expensive/high-fidelity.
+description: "Use when judging an existing SLI's signal quality against its cost: synthetic health checks vs organic measurement, endpoint pings vs user journey monitoring, whether to invest in RUM, or an SLI that fires on noise or misses incidents. Plans an SLI investment roadmap."
 tags: [sli, measurement, signal-quality, investment, evolution, fidelity, granularity]
 ---
 

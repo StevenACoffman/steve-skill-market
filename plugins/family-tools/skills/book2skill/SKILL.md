@@ -1,6 +1,6 @@
 ---
 name: book2skill
-description: Distill a book into a coherent set of executable skills. Use when the user asks to "Disassemble a book" / "Distill a book" / "Make a book skill" / "turn a book into skills" — i.e. wants a book's frameworks, principles, and methodologies extracted into atomic, reusable Claude skills that an agent can invoke in real-world situations. NOT for simple summarization, book reviews, or role-playing as the author (that is nuwa-skill's job).
+description: "Use when the user asks to distill or disassemble a book into skills: extracting its frameworks, principles and methods into atomic, reusable Agent Skills. Not for summaries, book reviews, or role-playing the author."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the exegesis (v0.3.0 or later) and skillsaw (v0.2.0 or later) CLIs, installed with Go, and the book's text.
 ---
 

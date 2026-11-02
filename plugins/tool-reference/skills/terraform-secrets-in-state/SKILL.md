@@ -1,7 +1,6 @@
 ---
 name: terraform-secrets-in-state
-description: |
-  Invoke when a user asks how to keep secrets out of Terraform state, whether sensitive=true protects secrets, or whether AWS Secrets Manager or environment variables solve the secrets problem in Terraform.
+description: Use when keeping secrets out of Terraform state, or asking whether sensitive = true, AWS Secrets Manager, or environment variables solve the secrets-in-state problem.
 ---
 # Terraform Secrets Always Land in State: Why Injection Method Doesn't Matter
 

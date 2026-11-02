@@ -1,14 +1,6 @@
 ---
 name: 10x9-cost-reliability
-description: |
-  Use this skill when a conversation involves setting, challenging, or justifying an SLO target and the cost of achieving it has not been made explicit. The canonical trigger is a leader or stakeholder demanding a high-nines SLO ("we need five-nines") without having modeled what that actually costs. The skill translates the abstract SLO number into an economic argument: each additional "9" makes the system 10x more reliable but costs roughly 10x more to deliver.
-
-  WHEN TO CALL:
-  - Someone proposes a specific SLO level (e.g., "99.999%") without a cost justification.
-  - A team is debating whether to upgrade from 3-nines to 4-nines and needs a framework to evaluate that decision.
-  - Leadership is treating high reliability as a prestige signal rather than a cost/benefit question.
-  - An engineer needs to push back on an unrealistic SLO mandate from above.
-  - A cost-of-reliability conversation needs a quantitative anchor.
+description: Use when someone sets, demands, or challenges an SLO target ("we need five nines") without stating its cost. Frames each extra nine as roughly 10x more reliability for roughly 10x more cost, to justify or push back on 3-nines vs 4-nines vs 5-nines mandates.
 tags: [slo, cost-of-reliability, 10x9, error-budget, reliability-economics]
 ---
 

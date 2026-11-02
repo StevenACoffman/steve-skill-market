@@ -1,6 +1,6 @@
 ---
 name: lefthook
-description: Use when configuring or debugging Git hooks in this project. Covers lefthook.yaml structure, pre-commit commands, stage_fixed, and running hooks manually.
+description: "Use when configuring or debugging Git hooks with lefthook in this project. Covers lefthook.yaml structure, pre-commit commands, stage_fixed, and running hooks manually."
 ---
 
 # Lefthook — Git Hooks Manager

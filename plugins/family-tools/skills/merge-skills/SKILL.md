@@ -1,19 +1,6 @@
 ---
 name: merge-skills
-description: |-
-  Consolidate overlapping skills from two or more book2skill output directories into
-  a single higher-quality merged skill. Use when the user has already run book2skill
-  on multiple books and wants to: collapse duplicate skills that address the same
-  methodology from different sources, create a synthesis skill that draws on
-  converging evidence from multiple authors, or reduce skill-set noise before
-  feeding to darwin-skill.
-
-  Trigger signals: "merge these skills", "consolidate overlapping skills",
-  "these two skills cover the same thing", "combine two books/ output directories".
-
-  NOT for: merging skills that are merely related or adjacent (use Zettelkasten
-  links instead), merging skills without their source book2skill output directories
-  present, or creating new skills from scratch (use book2skill).
+description: "Use when book2skill has run on several books and overlapping skills should become one merged skill drawing on both sources. Not for skills that are merely related, or when the source book2skill output is not present."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the exegesis and skillsaw CLIs and the plain text of every source book.
 ---
 

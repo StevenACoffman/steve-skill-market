@@ -1,7 +1,6 @@
 ---
 name: define-errors-out-of-existence
-description: |
-  Invoke this skill when: - You are writing a function and find yourself adding a parameter-validation block that throws when the input is "already in the desired state" (e.g., deleting something that doesn't exist, setting something to its current value, inserting a duplicate into a set). - You are reviewing a call site that begins with `if (exists) { delete }` or `if (!initialized) { initialize }` — defensive checks that exist only to avoid an exception the callee would throw. - A code review surfaces that callers must call function A before function B or catch an exception — ordering requirements that could be absorbed into the function's own contract. - You are designing a new API and instinctively adding "throws X if Y" clauses to the spec — pause before committing those to the interface. - An exception is propagating across multiple layers and none of the intermediate layers can do anything useful with it — the error exists only because a lower layer defined it into existence.
+description: "Use when designing an API or function that throws for inputs already in the desired state (delete missing item, duplicate insert), when callers wrap calls in defensive exists-checks, or exceptions cross layers that can't handle them. Redefine semantics so the error vanishes."
 ---
 
 # Define-Errors-Out-of-Existence

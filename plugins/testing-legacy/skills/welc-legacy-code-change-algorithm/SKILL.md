@@ -1,21 +1,6 @@
 ---
 name: welc-legacy-code-change-algorithm
-description: |
-  Use this skill when a user needs to make ANY change to a codebase that has no tests
-  — or insufficient tests — around the area to be changed.
-
-  WHEN TO CALL: A user describes needing to (a) add a feature to a class or module
-  with no tests; (b) fix a bug in code they are afraid to touch; (c) refactor legacy
-  code safely; (d) get a class under test when it currently has none; (e) add tests
-  retroactively to existing code before modifying it; (f) make changes to a class
-  that has heavyweight constructor dependencies.
-
-  WHEN NOT TO CALL: Do not call when the user is writing new code from scratch with
-  no existing legacy to integrate with — that is greenfield TDD territory. Do not call
-  when the question is specifically about HOW to break a particular dependency
-  (use welc-seam-model or welc-sensing-vs-separation for that). Do not call when the
-  user's code already has comprehensive tests around the change area and they just
-  need to add behavior — that is standard TDD.
+description: "Use when changing code that has no or insufficient tests: adding a feature, fixing a bug in code you fear touching, refactoring legacy code, or getting a class with heavy constructor dependencies under test. Not for greenfield TDD or code already well covered."
 tags: [legacy-code, change-management, testing, dependency-breaking, characterization-tests, process]
 ---
 

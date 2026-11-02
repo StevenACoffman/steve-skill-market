@@ -1,19 +1,6 @@
 ---
 name: webapp-pubsub
-description: |
-  Use when writing Go code in github.com/Khan/webapp that publishes or
-  receives Google Cloud Pub/Sub messages. Covers the KAContext interface,
-  SendJSON/SendProtobuf, push subscription handling, pubsub.yaml format,
-  ordering keys, read-only mode, and how to assert on published messages in
-  tests. ONLY applies to github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I publish a pub/sub message in webapp?"
-  - "how do I handle a push subscription in webapp?"
-  - "how do I assert that a message was published in a test?"
-  - "what is pubsub.yaml for?"
-  - "how do I use ordering keys?"
-  - Any question about Pub/Sub in webapp Go code
+description: "Use when writing Go code in github.com/Khan/webapp that publishes or receives Google Cloud Pub/Sub messages. Covers SendJSON/SendProtobuf, push subscription handlers, pubsub.yaml, ordering keys, read-only mode, and asserting published messages in tests. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

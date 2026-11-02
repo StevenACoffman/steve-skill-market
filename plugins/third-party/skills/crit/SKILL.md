@@ -1,6 +1,6 @@
 ---
 name: crit
-description: "Review code changes, a plan, a live page (running dev server), or a local HTML file with crit inline comments. Use when asked to review code, a plan, a diff, a running web app, or when you want structured human feedback on your work."
+description: "Use when asked to review code changes, a plan, a diff, a live page on a running dev server, or a local HTML file with crit inline comments, or when you want structured human feedback on your work."
 disable-model-invocation: true
 allowed-tools: Bash(crit:*), Bash(command ls:*), Read, Edit, Glob
 metadata:

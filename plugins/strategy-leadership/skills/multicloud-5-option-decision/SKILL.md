@@ -1,7 +1,6 @@
 ---
 name: multicloud-5-option-decision
-description: |
-  Invoke this skill when you encounter any of the following: - Someone says "we're going multicloud" without specifying which of the five scenarios they intend. - A team is building an abstraction layer to make applications run on any cloud, and you need to evaluate the cost of that decision. - An organization has workloads spread across multiple cloud providers and is trying to decide whether this is intentional or accidental. - Leadership wants "cloud portability" as a hedge against vendor lock-in and you need to evaluate whether that goal justifies the cost. - Different business units are using different cloud providers and you need to decide whether to centralize, formalize, or leave it. - A team is evaluating cloud options and the word "multicloud" is being used to justify native-service avoidance. - You need to explain to a CTO why their stated multicloud ambition is more complex than they realize.
+description: "Use when someone says we're going multicloud without saying which kind, or when portability, abstraction layers, or avoiding native services are justified as a lock-in hedge. Distinguishes five multicloud options and their costs, including accidental multicloud across business units."
 ---
 
 # Multicloud: 5-Option Decision Table

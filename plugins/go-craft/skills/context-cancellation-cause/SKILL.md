@@ -1,18 +1,6 @@
 ---
 name: context-cancellation-cause
-description: |
-  Trigger: user uses context cancellation or timeout and wants to know WHY a context was
-  canceled — for logging, debugging, alerting, or routing retry logic. The standard
-  "context canceled" / "context deadline exceeded" errors say a context was canceled but
-  not what caused it. Go 1.20 added context.WithCancelCause and context.Cause to attach
-  a specific reason to any cancellation. Go 1.21 added WithTimeoutCause to label the
-  timeout path. The critical gotcha: WithTimeoutCause returns a plain CancelFunc, so
-  defer cancel() on the success path discards the cause — context.Cause returns nil.
-  Fix: use WithCancelCause + time.AfterFunc to wire the timer manually; a single
-  CancelCauseFunc covers all paths, and first-cancel-wins records the most specific
-  reason. When downstream code also needs errors.Is(err, context.DeadlineExceeded) to
-  work, stack WithCancelCause on top of WithTimeoutCause with careful LIFO defer
-  ordering.
+description: "Use when you need to know why a Go context was canceled, beyond 'context canceled' or 'deadline exceeded': context.WithCancelCause, context.Cause, WithTimeoutCause. Covers the gotcha where defer cancel() discards the timeout cause, and the time.AfterFunc fix."
 tags: [go, context, concurrency, observability, debugging]
 ---
 

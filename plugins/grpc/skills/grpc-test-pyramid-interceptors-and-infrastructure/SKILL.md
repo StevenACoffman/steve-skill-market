@@ -1,14 +1,6 @@
 ---
 name: grpc-test-pyramid-interceptors-and-infrastructure
-description: |
-  Invoke when structuring a test suite for a gRPC service that has both interceptors
-  (auth, rate-limit, TLS) and infrastructure dependencies (database, downstream
-  services). Key trigger: "my unit tests pass but integration is flaky" or "I'm
-  not sure which tier owns interceptor testing vs. database adapter testing."
-  The synthesis: the integration tier covers two distinct sub-concerns that must
-  stay separate — (1) interceptor chain with real TLS via bufconn, and (2)
-  infrastructure adapters with real containers via testcontainers + wait.ForSQL.
-  Collapsing them mixes setup complexity and obscures root cause on failure.
+description: "Invoke when structuring tests for a gRPC service with interceptors (auth, rate limit, TLS) and infrastructure dependencies, or when unit tests pass but integration is flaky. Keeps interceptor-chain tests (real TLS over bufconn) separate from adapter tests (testcontainers, wait.ForSQL)."
 tags: []
 allowed-tools: Bash, Read, Edit
 ---

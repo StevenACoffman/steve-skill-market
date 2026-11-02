@@ -1,21 +1,6 @@
 ---
 name: fallback-failover
-description: |
-  Use this skill when you need to select or design a resilience mechanism that keeps a
-  service operational when a primary system or dependency fails.
-
-  **When to call:**
-  - Choosing between failover and fallback for a specific reliability requirement
-  - Evaluating whether to use a homogeneous or heterogeneous backup strategy
-  - Designing resilience for a service that has a dependency with a lower SLO than required
-  - Reviewing existing fallback/failover architecture for common-cause failure risks
-  - Deciding whether partial service (with degradation) is preferable to no service
-
-  **When NOT to call:**
-  - Classifying the severity of an ongoing incident (use `degradation-disruption`)
-  - Calculating the combined SLO of parallel or serial dependencies (use `composite-slo`)
-  - Setting the SLO target for a service (use `slo-definition-calibration-framework`)
-  - Designing the SLI formula for the service (use `sli-formula-measurement`)
+description: "Use when choosing or designing a resilience mechanism that keeps a service up when a primary system or dependency fails: failover vs fallback, homogeneous vs heterogeneous backups, a dependency with a lower SLO than required, or common-cause failure risk."
 tags: [failover, fallback, resilience, availability, degradation, common-cause-failure, heterogeneous]
 ---
 

@@ -1,20 +1,6 @@
 ---
 name: webapp-analytics
-description: |
-  Use when writing Go code in github.com/Khan/webapp that instruments
-  analytics events via the CEDAR pipeline. Covers analytics_events.yml
-  format, the make eventgen workflow (eventsync + eventgen), the shape of
-  generated models/publish/test files, how to call generated publish
-  functions, and how to verify published events in tests. ONLY applies to
-  github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I add a new analytics event in webapp?"
-  - "how do I publish an analytics event?"
-  - "what does make eventgen do?"
-  - "what is analytics_events.yml?"
-  - "how do I test that an event was published?"
-  - Any question about CEDAR event instrumentation in webapp
+description: "Use when writing Go code in github.com/Khan/webapp that adds, publishes, or tests CEDAR analytics events. Covers analytics_events.yml, make eventgen (eventsync, eventgen), generated publish functions, and verifying published events in tests. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

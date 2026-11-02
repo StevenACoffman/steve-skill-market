@@ -1,21 +1,6 @@
 ---
 name: degradation-disruption
-description: |
-  Use this skill when you need to classify the severity of a service failure, decide whether
-  to keep a degraded service running or deliberately take it down, or determine how to report
-  an incident's business impact accurately.
-
-  **When to call:**
-  - Classifying an active incident as degradation vs. disruption vs. outage
-  - Deciding whether a partial failure is "good enough to leave running" or actively harmful
-  - Auditing severity models that treat partial availability as automatically lower severity
-  - Framing stakeholder communications about an incident's business consequences
-  - Designing SLI targets that capture quality failures (not just availability drops)
-
-  **When NOT to call:**
-  - Calculating SLO targets numerically (use `slo-definition-calibration-framework` or `multi-tier-slo`)
-  - Designing fallback/failover mechanisms to prevent failures (use `fallback-failover`)
-  - Defining which SLI metric to measure (use `sli-formula-measurement`)
+description: Use when classifying an incident as degradation, disruption, or outage, deciding whether to keep a degraded service running or take it down, or reporting an incident's business impact. Not for computing SLO targets or designing fallback and failover.
 tags: [incident-classification, severity, degradation, disruption, service-levels, slo]
 ---
 

@@ -1,14 +1,6 @@
 ---
 name: transaction-isolation-level-selection
-description: |
-  Invoke this skill when an engineer must decide which database isolation level to configure or verify for a specific application, or when debugging concurrency anomalies (lost updates, dirty reads, write skew, phantom reads) that appear intermittently under concurrent load.
-
-  Specific trigger situations:
-  - A check-then-act pattern exists in application code: read a value, make a decision based on it, write a result (booking, reservation, quota enforcement, inventory decrement).
-  - An ORM read-modify-write cycle may silently lose updates under concurrency.
-  - The team assumes "we use PostgreSQL / MySQL / Oracle, so we're fine" without stating which isolation level is configured.
-  - A database is described as "ACID" or "serializable" and the team is relying on that for correctness.
-  - Concurrency bugs appear only at high traffic and are difficult to reproduce.
+description: "Use when choosing or verifying a database isolation level, or debugging intermittent concurrency anomalies (lost updates, dirty reads, write skew, phantoms): check-then-act bookings or quotas, ORM read-modify-write, or assuming ACID or Postgres defaults make it safe."
 tags: [transactions, isolation-levels, concurrency, serializability, snapshot-isolation, write-skew]
 allowed-tools: Bash, Read, Edit
 ---

@@ -1,14 +1,6 @@
 ---
 name: clock-skew-ordering-hazard
-description: |
-  Use this skill when reviewing any distributed system that uses wall-clock timestamps (System.currentTimeMillis(), time.time(), CLOCK_REALTIME) to order events, resolve conflicts, or enforce ordering guarantees across multiple nodes.
-
-  Invoke when:
-  - A system uses timestamps from application nodes as the tiebreaker in conflict resolution (LWW — last write wins)
-  - An audit log, event stream, or financial ledger sorts events by wall-clock timestamp from multiple machines
-  - Engineers claim "our NTP is good enough" to justify using timestamps for ordering
-  - A Cassandra, ScyllaDB, or similar leaderless database uses its default LWW conflict resolution
-  - Events timestamped on different nodes are being compared, sorted, or deduplicated by timestamp
+description: "Use when a distributed system orders events, resolves conflicts, or deduplicates by wall-clock timestamps from multiple nodes: last-write-wins (LWW) in Cassandra or ScyllaDB, audit logs or ledgers sorted by timestamp, or claims that NTP is good enough for ordering."
 tags: [distributed-systems, clocks, ntp, ordering, causality, lww, consistency]
 allowed-tools: Bash, Read, Edit
 ---

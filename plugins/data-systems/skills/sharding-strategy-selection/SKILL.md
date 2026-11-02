@@ -1,9 +1,6 @@
 ---
 name: sharding-strategy-selection
-description: |
-  Invoke this skill when a system's data volume or write throughput has grown beyond what a single node can handle and you must decide how to distribute data across multiple machines. Specific triggers: the team is choosing between key-range and hash-based sharding; a single shard is overloaded while others are idle (hot spot); a new compound key design is being evaluated; a time-series or sequential-ID partitioning scheme is under consideration.
-
-  Do NOT invoke when: the problem is read throughput only (use read replicas instead of sharding); the data fits comfortably on one node with replication (single-node first); you are choosing a replication topology (see `replication-topology-selection`); the question is about within-machine PostgreSQL table partitioning rather than cross-machine distribution.
+description: "Use when data volume or write throughput outgrows one node and you must shard: choosing key-range vs hash partitioning, fixing a hot shard, designing compound or time-series keys. Not for read-only scaling (use read replicas) or single-machine Postgres table partitioning."
 tags: [sharding, partitioning, hot-spot, distributed-systems, scalability, partition-key]
 allowed-tools: Bash, Read, Edit
 ---

@@ -1,17 +1,6 @@
 ---
 name: transport-agnostic-service-functions
-description: |
-  Use when a service needs to expose the same operation over HTTP and gRPC (or any two
-  transports), or when handler code repeats a decode → validate → call → encode cycle in
-  every endpoint. The pattern pins a canonical service function shape —
-  `func(ctx context.Context, in DomainIn) (DomainOut, error)` — that contains no transport
-  types, then wraps it with a generic `Wrap[In, Out]` adapter that encodes the four plumbing
-  steps once per transport. Adding a new endpoint costs one decode function, one encode
-  function, and one router registration line — the service function is untouched. Also
-  applies when wrapping a generated gRPC client behind a Go-native interface: the wrapper
-  holds the generated stub as an unexported field, translates protobuf request/response types
-  to plain Go types, and converts gRPC status codes to domain sentinel errors using `%v` (not
-  `%w`) so proto types never leak to callers.
+description: "Use when a Go service exposes the same operation over HTTP and gRPC, or handlers repeat decode, validate, call, encode in every endpoint. Uses transport-free service functions with a generic Wrap adapter, and wraps generated gRPC clients behind Go-native interfaces."
 tags: [go, architecture, http, grpc, handlers, generics]
 ---
 

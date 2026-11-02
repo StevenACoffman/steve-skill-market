@@ -1,24 +1,6 @@
 ---
 name: zero-touch-production
-description: |
-  Use this skill when a user is designing or auditing production access controls,
-  evaluating whether direct human access to production systems is acceptable, or
-  planning the automation of operational tasks.
-
-  Trigger signals:
-  - "Engineers SSH into production servers to fix issues"
-  - "We need direct database access for emergency ops"
-  - "Our on-call team makes manual changes during incidents"
-  - "We're designing an admin CLI for production systems"
-  - "We want to reduce the risk of human error in production"
-  - Any architecture discussion involving human access to live infrastructure
-
-  Do NOT use this skill when:
-  - The system is a development or staging environment (not production)
-  - The question is specifically about code review or supply chain — use
-    supply-chain-binary-provenance-deployment-policy
-  - The question is about least privilege scoping without the human-access
-    framing — use least-privilege-tooling-enforced-time-bounded
+description: "Use when designing or auditing production access: engineers SSH into prod, need direct database access in emergencies, make manual changes during incidents, or you are building an admin CLI. Replace direct human access with automation and safe proxies. Not for staging."
 tags: [zero-touch-production, automation, safe-proxy, insider-risk, reliability, MPA, breakglass, audit]
 ---
 

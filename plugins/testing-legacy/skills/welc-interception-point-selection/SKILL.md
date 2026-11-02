@@ -1,9 +1,6 @@
 ---
 name: welc-interception-point-selection
-description: |
-  Invoke this skill when deciding WHERE to place tests to detect the effects of a set of planned changes in legacy code. Specific triggers: a developer has identified which methods need to change but doesn't know which methods to test; there are multiple related changes spread across several classes and the question is whether to write separate tests for each or find a shared test location; a test is passing but it's unclear whether it actually covers the change point; a single test suite is needed to cover several interrelated changes.
-
-  Do NOT invoke when: the question is how to break dependencies to get code into a test harness (see welc-seam-model or welc-sensing-vs-separation); the question is what characterization tests to write once the test location is known (see welc-characterization-test); the question is which code to change, not where to test it (see welc-legacy-code-change-algorithm).
+description: Use when deciding where to place tests to detect the effects of planned changes in legacy code, especially when changes span several classes and you want one test location (pinch point) that covers them all, or are unsure a passing test actually covers the change point.
 tags: [legacy-code, testing, effect-sketching, interception-points, pinch-points, characterization-tests]
 ---
 

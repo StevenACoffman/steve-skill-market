@@ -1,7 +1,6 @@
 ---
 name: testing-go-public-test-api
-description: |
-  Invoke when multiple packages or external consumers need to test against a Go package's interface, or when consumers duplicate setup code because *_test.go files cannot be imported. Covers the testing.go pattern: factory functions (TestServer, TestConfig), compliance suite functions (TestMyInterface), and mock structs — all exported from a regular .go file importable by other packages.
+description: Use when other packages need to test against a Go package's interface, or duplicate setup because _test.go files cannot be imported. Export test factories (TestServer, TestConfig), compliance suites, and mocks from a regular testing.go file.
 tags: [go, testing, public-api, test-infrastructure, library-design]
 allowed-tools: Bash, Read, Edit
 ---

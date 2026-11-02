@@ -1,7 +1,6 @@
 ---
 name: first-derivative-economies-of-speed
-description: |
-  Invoke this skill when you encounter any of the following: - A team argues about cloud savings by comparing per-unit server prices across providers rather than modeling actual consumption over time - An IT organization budgets cloud as a fixed annual line item rather than a variable rate to be managed continuously - A cloud migration is measured by percentage of servers migrated as if that were a proxy for value delivered - Someone asks "how many engineers do we need?" rather than "what delivery rate do we need to achieve?" - A roadmap is structured as projects with start/end dates instead of a continuous delivery pipeline with prioritized throughput - An organization resists per-consumption billing and insists on reserved capacity because "we like to know what we're spending" - A team frames cloud adoption as a one-time transformation project with a target end state - A CIO presents cloud strategy progress by counting servers moved rather than by improvements in deployment frequency o
+description: "Use when cloud is judged by unit prices, fixed budgets, or servers migrated instead of rate of change (consumption over time, delivery throughput, deployment frequency), or when teams resist pay-per-use billing or treat cloud as a one-time project. Economies of speed."
 ---
 
 # First-Derivative Thinking: Economies of Speed

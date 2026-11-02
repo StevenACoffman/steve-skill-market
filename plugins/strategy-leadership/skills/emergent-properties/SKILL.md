@@ -1,18 +1,6 @@
 ---
 name: emergent-properties
-description: |
-  Use this skill when you need to classify a system property, incident, or AI
-  behavior according to whether it arises from components in isolation (resultant)
-  or from interactions between components (emergent, weak or strong). The primary
-  engineering payoff is choosing the correct response: how to predict, contain, and
-  reason about the behavior.
-
-  Call this skill when: a post-incident review needs to frame contributing factors
-  rather than a single root cause; a system exhibits non-linear behavior (small
-  change → large blast radius); you are evaluating whether a simulation or test can
-  realistically predict a system behavior; you are designing resilience patterns for
-  an LLM-powered or multi-agent system; a team claims they can "unit test away" a
-  class of failures that involves component interactions.
+description: "Use when classifying a system property, incident, or AI behavior as resultant or emergent (weak or strong) to pick the right response: post-incident contributing factors, non-linear blast radius, whether tests or simulation can predict it, or multi-agent LLM resilience."
 tags: [systems-thinking, incident-analysis, resilience, ai-reliability, emergence]
 ---
 

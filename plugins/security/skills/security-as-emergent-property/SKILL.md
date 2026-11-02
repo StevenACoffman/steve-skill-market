@@ -1,18 +1,6 @@
 ---
 name: security-as-emergent-property
-description: |
-  Use this skill when a user is evaluating whether security (or reliability) can be
-  added to an existing system, estimating the cost of retrofitting a security control,
-  or deciding where in the development lifecycle security reviews should occur.
-
-  Trigger signals:
-  - "Can we add authentication/authorization/encryption after the fact?"
-  - "We'll do security review before launch"
-  - "We didn't have time to design security in — we'll harden it post-MVP"
-  - "We need to add TLS/mTLS to our existing internal service mesh"
-  - Any estimate for "adding security" to a system that is already partially built
-  - Security review requested at the pre-launch gate rather than at design time
-  - "Why is retrofitting authentication taking 3× longer than estimated?"
+description: Use when asked whether security or reliability can be added later, estimating a security retrofit (authentication, encryption, mTLS on an existing mesh), or deciding when security review happens. Security is emergent and must be designed in; pre-launch review is too late.
 tags: [emergent-properties, design-tradeoffs, security-by-design, architecture, technical-debt, reliability, lifecycle]
 ---
 

@@ -1,7 +1,6 @@
 ---
 name: cynefin-pm-domain-identification
-description: |
-  Invoke when a project or program is exhibiting signs of governance mismatch — the team is doing everything right by the process but the situation keeps deteriorating, escalations aren't resolving, or the standard governance instruments feel like they're making things worse. Also invoke when a significant event (technical failure, regulatory shift, political reversal, vendor collapse) may have moved the underlying situation into a new domain without the governance structure following it.
+description: "Invoke when a project or program shows governance mismatch: following the process but the situation keeps deteriorating, escalations don't resolve, or a major event (failure, regulation, vendor collapse) may have shifted its Cynefin domain."
 ---
 # Cynefin Domain Identification for PM Governance
 

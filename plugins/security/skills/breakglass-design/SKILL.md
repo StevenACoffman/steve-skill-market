@@ -1,21 +1,6 @@
 ---
 name: breakglass-design
-description: |
-  Use this skill when designing a strict access control, implementing Zero Trust
-  networking, enforcing MFA, or tightening any security control where the team or
-  operations staff object "but what if we get locked out?" Breakglass is the design
-  answer to that objection — and it must be designed, not improvised.
-
-  WHEN TO CALL: A security control is being resisted because operators fear lockout during
-  incidents. You are implementing ZTP, MFA enforcement, or fine-grained least privilege.
-  You are reviewing an emergency access path that was built ad-hoc during an incident.
-  Someone asks "what do we do if the auth system is down?" and the answer is "we'll figure
-  it out" — that is not a breakglass design.
-
-  WHEN NOT TO CALL: The control being implemented is so low-risk that lockout is not a
-  meaningful concern. You are designing the normal access path (not the emergency bypass).
-  Breakglass already exists and is properly designed — the question is about the normal
-  access model.
+description: Use when a strict access control (Zero Trust, MFA, least privilege) meets the objection "what if we get locked out?", or when reviewing an ad-hoc emergency access path. Designs breakglass emergency access deliberately. Not for designing the normal access path.
 tags: [breakglass, least-privilege, access-control, audit, emergency-access, zero-trust]
 ---
 

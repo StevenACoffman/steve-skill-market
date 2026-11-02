@@ -1,19 +1,6 @@
 ---
 name: continuous-fuzzing-strategy
-description: |
-  Use this skill when a user is designing a test strategy for a parser, serializer,
-  protocol handler, or any component that processes external input — and needs to
-  determine whether fuzzing is required and how to structure it.
-
-  Trigger signals:
-  - "We have unit tests for our parser — is that enough?"
-  - "We're writing a binary protocol implementation in C/C++/Rust"
-  - "We process user-uploaded files (PDF, image, archive, etc.)"
-  - "Our service parses JSON/XML/protobuf from external clients"
-  - "We're building a cryptographic library or TLS handshake handler"
-  - "How do we set up fuzzing in CI?"
-  - "Which components should we prioritize for security testing?"
-  - Any component in the TCB for a security-critical invariant
+description: Use when designing a test strategy for parsers, serializers, protocol handlers, file uploads, crypto or TLS code, or any component that processes untrusted external input, to decide whether fuzzing is needed, which components to prioritize, and how to run fuzzing in CI.
 tags: [fuzzing, testing, security-testing, continuous-fuzzing, memory-safety, parsers, TCB, ClusterFuzz]
 ---
 

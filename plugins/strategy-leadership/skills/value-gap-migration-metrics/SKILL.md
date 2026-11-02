@@ -1,7 +1,6 @@
 ---
 name: value-gap-migration-metrics
-description: |
-  Invoke this skill when you encounter any of the following: - A cloud program is reporting progress as a percentage of servers or workloads migrated - Business stakeholders say they "don't see value" from a cloud migration despite strong IT-side progress metrics - A program board presentation cannot answer what business metric will improve as a result of the migration - A migration plan is sequenced by technical convenience (easiest applications first) rather than by business value contribution - A CIO is presenting cloud progress to the board and the presentation contains words like "servers," "workloads," "pipelines" but not "availability," "deployment frequency," or "customer experience" - An organization is three or more quarters into a migration and business support is beginning to wane - A team is defending a "hockey stick" value curve — "we'll deliver value later, once we've finished migrating" - Program leadership cannot name, before the migration starts,
+description: "Use when a cloud migration reports progress as servers or workloads migrated but business stakeholders see no value, the plan is sequenced by technical ease, or value is promised later on a hockey stick. Ties migration to business metrics like availability and deployment frequency."
 ---
 
 # Value Gap and Migration Metrics

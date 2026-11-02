@@ -1,11 +1,6 @@
 ---
 name: slo-consequences-governance-principle
-description: |
-  Use this skill when diagnosing why an SLO is not improving reliability behavior, when establishing whether an organization has real SRE practice or just SRE vocabulary, or when designing the organizational commitment structure required to make SLOs function as a governance instrument rather than a reporting metric.
-
-  Call when: An executive asks why the SLO hasn't improved reliability. A team has had SLOs for a year and outage frequency is unchanged. Engineers discuss SLO numbers but don't change priorities when the budget is exhausted. The SLO exists but the error budget policy does not, or exists but has never been invoked.
-
-  Do not call when: The SLO and error budget policy are already ratified and enforced — the question is about implementing the policy's specific consequences (use error-budget-policy-framework) or about whether the SLO number is correct (use slo-stakeholder-negotiation-gate).
+description: "Use when SLOs exist but reliability is not improving: priorities don't change when the error budget is exhausted, there is no error budget policy or it is never invoked, or you must tell real SRE practice from SRE vocabulary. SLOs need agreed consequences."
 tags: [slo, error-budget, governance, principle-1, consequences, policy, leadership-commitment]
 ---
 

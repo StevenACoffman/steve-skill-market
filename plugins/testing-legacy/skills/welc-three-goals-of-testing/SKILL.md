@@ -1,20 +1,6 @@
 ---
 name: welc-three-goals-of-testing
-description: |
-  Use this skill when a user is confused about why their tests aren't working —
-  why the test suite is slow and distrusted, why coverage is high but bugs still
-  reach production, why TDD isn't preventing regressions, or which kind of test
-  to write for a given situation.
-
-  Trigger signals:
-  - "Our tests don't seem to help" / "we write tests but still ship bugs"
-  - "We have high test coverage but still ship bugs in production"
-  - "Should we write unit tests or integration tests for this?"
-  - "Our test suite is slow and nobody trusts it"
-  - "TDD isn't catching the bugs we care about"
-  - "We have a regression suite but refactoring always breaks everything"
-  - "How do we know if users will actually accept this feature?"
-  - Any question about the purpose, mix, or value of a test suite
+description: "Use when tests are not helping: high coverage but bugs still ship, a slow suite nobody trusts, TDD not catching regressions, refactoring breaking tests, or choosing between unit, integration, and acceptance tests. Covers the purpose and mix of a test suite."
 tags: [testing, tdd, characterization-tests, acceptance-tests, test-strategy, legacy-code]
 ---
 

@@ -1,12 +1,6 @@
 ---
 name: pbt
-description: >
-  Write property-based and metamorphic tests using rapid (pgregory.net/rapid) for Go. Triggers on: "property-based tests",
-  "PBT", "rapid tests", "test with random inputs",
-  "generative tests", "test properties", "randomized testing",
-  "metamorphic testing", "metamorphic relations", and situations with no
-  test oracle: expected outputs can't be written down, outputs legitimately
-  vary between runs, or the code under test is concurrent/nondeterministic.
+description: "Use when writing property-based or metamorphic tests in Go with rapid (pgregory.net/rapid): PBT, generative or randomized testing, metamorphic relations, or code with no test oracle, whose outputs vary between runs, or that is concurrent or nondeterministic."
 ---
 
 # Rapid: Property-Based Testing for Go

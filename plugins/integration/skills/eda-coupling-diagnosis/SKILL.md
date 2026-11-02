@@ -1,7 +1,6 @@
 ---
 name: eda-coupling-diagnosis
-description: |
-  Invoke when someone claims "we use EDA so we're loosely coupled," when evaluating a new event bus or message broker, when adding a new consumer to an existing event stream, when an event schema change ripples to many consumers, or when designing a greenfield microservice architecture using "event-driven" as a selling point.
+description: Invoke when someone claims "we use EDA so we're loosely coupled", when evaluating an event bus or message broker, adding a consumer to an event stream, or when an event schema change ripples to many consumers. Diagnoses the coupling event-driven architecture hides.
 ---
 # EDA Coupling Diagnosis
 

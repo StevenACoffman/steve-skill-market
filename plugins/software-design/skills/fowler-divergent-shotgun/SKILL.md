@@ -1,11 +1,6 @@
 ---
 name: fowler-divergent-shotgun
-description: |
-  Invoke this skill when a developer is trying to diagnose why a module is painful to change, or why a single logical change requires edits in many places. The skill applies whenever a code review or PR analysis reveals either: one class/module changes for multiple unrelated reasons (Divergent Change), or one conceptual change requires touching many different classes (Shotgun Surgery).
-
-  Key trigger signal: "Every time I change X, I also have to change Y and Z in this same class." (Divergent Change) or "Every time I change X, I have to edit five different files." (Shotgun Surgery).
-
-  Do NOT invoke this skill for general code smell detection across a whole codebase (use fowler-code-smells for the full smell vocabulary), or when the question is specifically about a function that is too long (Long Function smell), or when the question is about untangling feature from refactoring work (use fowler-two-hats for that).
+description: "Use when a module is painful to change: one class changes for many unrelated reasons (Divergent Change) or one logical change needs edits across many files (Shotgun Surgery). Not for whole-codebase smell sweeps or Long Function."
 tags: [code-smells, modularity, cohesion, refactoring]
 ---
 

@@ -1,16 +1,6 @@
 ---
 name: fowler-opportunistic-refactoring
-description: |
-  Use this skill when deciding *when* and *why* to refactor during normal development work.
-  Fowler identifies four distinct modes: (1) Preparatory — refactor before adding a feature to
-  make the addition easy; (2) Comprehension — refactor while reading unfamiliar code to move
-  understanding from head into code; (3) Litter-pickup — fix small problems found in passing,
-  note large ones for later; (4) Long-term — gradually migrate large structural problems over
-  weeks using Branch By Abstraction, with every small step leaving the code working.
-
-  Trigger signals: "I need to add X but the code isn't structured for it", "I'm reading this
-  code and it's hard to follow", "I noticed a problem while working on something else",
-  "we have a large architectural problem that needs months to fix."
+description: "Use when deciding when and why to refactor during normal work: preparatory (code isn't shaped for a new feature), comprehension (code is hard to follow), litter-pickup (problems found in passing), or long-term structural fixes over weeks."
 tags: [refactoring, workflow, preparatory, opportunistic]
 ---
 

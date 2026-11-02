@@ -1,7 +1,6 @@
 ---
 name: go-test-state-driven-table
-description: |
-  Use when writing a Go test for a function that has stateful external dependencies AND multiple input scenarios. Combines a map[string]struct{} table (so every failure names the scenario) with a handwritten fake collaborator (so every assertion checks observable state, not call sequences). The composition makes failures simultaneously identifiable by name and behaviorally meaningful by state — neither source describes this pattern; it emerges from applying both.
+description: Use when writing a Go test for a function with stateful external dependencies and multiple input scenarios. Combine a named map-based test table with a handwritten fake collaborator so each failure names its scenario and asserts on observable state, not call sequences.
 tags: [go, testing, quality, mocking, fakes, table-driven]
 allowed-tools: Bash, Read, Edit
 ---

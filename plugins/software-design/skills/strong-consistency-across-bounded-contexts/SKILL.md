@@ -1,7 +1,6 @@
 ---
 name: strong-consistency-across-bounded-contexts
-description: |
-  Apply when designing inter-service communication, choosing between synchronous and asynchronous coordination, or deciding whether a cross-context state change should be part of the same database transaction — specifically whenever a developer reaches for a distributed transaction or synchronous RPC call to update data in a different bounded context.
+description: "Apply when designing inter-service communication or choosing sync vs async coordination, especially when reaching for a distributed transaction or synchronous RPC to update another bounded context atomically. Prefer eventual consistency across contexts."
 ---
 # Strong Consistency Inside / Eventual Consistency Across Bounded Contexts
 

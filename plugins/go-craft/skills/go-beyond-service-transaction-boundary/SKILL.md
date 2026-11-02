@@ -1,20 +1,6 @@
 ---
 name: go-beyond-service-transaction-boundary
-description: |
-  Invoke this skill when a user is designing a service layer that needs database
-  transactions and is asking where the transaction should live: in the HTTP handler,
-  in a unit-of-work wrapper, in a repository, or in the service method itself. Also
-  invoke when a user asks "how do I make multiple service operations atomic?", or when
-  they're passing *sql.Tx as a parameter through their call stack and it's getting messy.
-
-  Trigger signals: "where should I put my transaction?", "how do I make two service
-  calls atomic?", "should I expose transactions to callers?", "I'm passing *sql.Tx
-  through all my functions and it's ugly", "how do I handle transactions in a service
-  layer?", "should my repository methods accept a transaction parameter?".
-
-  Not suitable for: questions about distributed transactions or sagas across multiple
-  services; questions about database connection pooling; questions purely about SQL
-  query design (use the four-tenet layout or error design skills for those aspects).
+description: "Invoke when deciding where a database transaction belongs in a Go service — handler, unit-of-work wrapper, repository, or service method — making multiple service operations atomic, or untangling *sql.Tx passed through the call stack. Not for distributed transactions, sagas, or connection pooling."
 tags: [transactions, service-design, go, database, architecture]
 ---
 

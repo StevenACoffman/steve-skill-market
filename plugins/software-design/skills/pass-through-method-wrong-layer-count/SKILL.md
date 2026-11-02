@@ -1,7 +1,6 @@
 ---
 name: pass-through-method-wrong-layer-count
-description: |
-  Invoke this skill when you observe any of the following: - A service layer delegates every call to a repository layer with no transformation, validation, or transaction wrapping. - An adapter class that exists between two components but adds no type conversion, format change, or protocol translation. - A decorator whose `Wrap()` or `Execute()` method calls the wrapped object with the same arguments and does nothing else — no logging, no retry, no access control. - A code review comment "we need a class for X" where X is behavior already fully implemented by an existing class. - Any method whose first and only substantive action is calling another method with the same parameters. Check: could a caller call the inner method directly without losing anything? - A variable appearing in N consecutive method signatures that is not used by any of the intermediate methods — only by the final one.
+description: "Use when a method, service layer, adapter, or decorator just forwards calls with the same arguments and adds nothing, or a variable is threaded through many signatures only the last one uses. Signals the wrong number of layers; merge or redistribute responsibility."
 ---
 
 # Pass-Through-Method-Wrong-Layer-Count

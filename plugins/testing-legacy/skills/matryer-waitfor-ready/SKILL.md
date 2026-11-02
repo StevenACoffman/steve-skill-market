@@ -1,12 +1,6 @@
 ---
 name: matryer-waitfor-ready
-description: |
-  When a test starts a server in a goroutine via `run()`, there is a race: the test can send
-  requests before the server is listening. The idiomatic fix is not a channel or a sleep — it
-  is a `/healthz` or `/readyz` HTTP endpoint plus a `waitForReady` helper that polls until a
-  200 response arrives or the context is cancelled. This doubles as a production health-check
-  used by Kubernetes probes, load-balancer checks, and orchestrators, so the test requirement
-  surfaces a feature the production system needs anyway.
+description: Use when a Go test starts a server in a goroutine via run() and may send requests before it is listening. Instead of sleeps or channels, add a /healthz or /readyz endpoint and a waitForReady helper that polls until 200 or context cancellation; it doubles as a production probe.
 tags: [go, testing, health-checks, readiness, http-services, e2e-testing]
 ---
 

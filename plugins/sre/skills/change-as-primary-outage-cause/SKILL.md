@@ -1,11 +1,6 @@
 ---
 name: change-as-primary-outage-cause
-description: |
-  Use this skill when designing a release or deployment process, when a team is experiencing frequent production outages of unclear origin, or when management is debating change control policies (change freezes, approval gates, deployment windows).
-
-  The framework begins from the empirical finding that approximately 70% of production outages originate from changes in a live system — config, code, or traffic changes. The engineering response is not to prohibit change but to make every change smaller, slower, more observable, and more reversible. Progressive rollouts, canarying, and automatic rollback are the primary instruments.
-
-  Key trigger signal: a team proposes a change freeze as a reliability strategy, or a team has frequent outages but blames hardware, external systems, or bad luck rather than examining their change management process.
+description: Use when designing a release process, debating change freezes, approval gates, or deploy windows, or when frequent outages get blamed on bad luck. About 70% of outages come from changes; make them smaller, observable, and reversible via progressive rollout, canarying, and automatic rollback.
 tags: [change-management, progressive-rollout, canarying, rollback, release-engineering, outages, reliability]
 ---
 

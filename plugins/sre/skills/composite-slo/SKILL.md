@@ -1,7 +1,6 @@
 ---
 name: composite-slo
-description: |
-  Use this skill when a system's SLO must be derived from multiple dependent components, or when someone asks "what is the overall availability of our system?" and the system has serial or parallel dependencies. The two rules are: multiply SLOs for serial dependencies; multiply *error budgets* (1 - SLO) for parallel dependencies. Most engineers get the parallel case wrong by multiplying SLOs rather than error budgets.
+description: "Use when deriving a system's overall availability or SLO from serial or parallel dependencies. Serial: multiply SLOs. Parallel: multiply error budgets (1 - SLO), the case most engineers get wrong."
 tags: [composite-slo, serial-dependencies, parallel-dependencies, error-budget, system-reliability, probability]
 ---
 

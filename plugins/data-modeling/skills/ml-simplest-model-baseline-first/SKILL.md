@@ -1,6 +1,6 @@
 ---
 name: ml-simplest-model-baseline-first
-description: Trigger when considering adding model complexity (more features, nonlinear terms, ensemble layers); require a measured improvement in the pre-defined metric to justify each addition.
+description: "Trigger when considering adding model complexity (more features, nonlinear terms, ensemble layers). Start from the simplest baseline and require a measured improvement in the pre-defined metric to justify each addition."
 ---
 # ML Simplest Model Baseline First — Justify Complexity with Measured Metric Improvement
 

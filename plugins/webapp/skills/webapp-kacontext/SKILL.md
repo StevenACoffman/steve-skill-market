@@ -1,7 +1,6 @@
 ---
 name: webapp-kacontext
-description: |
-  Use when writing or reviewing any Go code in github.com/Khan/webapp that touches context. Covers KAContext sub-interface selection, Upgrade() entry points, logging, time, HTTP, web request data, lifecycle methods, and test contexts. ONLY applies to github.com/Khan/webapp — do not apply to any other repository.
+description: "Use when writing or reviewing Go code in github.com/Khan/webapp that touches context. Covers KAContext sub-interface selection, Upgrade() entry points, logging, time, HTTP, request data, lifecycle methods, and test contexts. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit
 ---
 

@@ -1,17 +1,6 @@
 ---
 name: consumer-journey-org
-description: |
-  Use this skill when evaluating, diagnosing, or designing an organizational structure
-  and you need a principled method for determining team boundaries. The core insight is
-  that the consumer journey — the sequence of steps a user takes to accomplish a goal
-  with the service — should be the primary driver of how teams are structured, not the
-  technology they produce or the function they perform.
-
-  Call this skill when: reliability problems persist despite strong individual team
-  performance (individual SLOs are green but the end-to-end experience is broken);
-  incidents consistently occur at the handover point between two teams; leadership is
-  considering a reorg and needs a non-arbitrary basis for new team boundaries; a team
-  cannot clearly articulate who their consumer is or what journey they own.
+description: "Use when designing or diagnosing team boundaries or a reorg: individual SLOs are green but the end-to-end experience breaks, incidents cluster at team handoffs, or teams can't name their consumer. Structures teams around consumer journeys, not technology or function."
 tags: [organization, conways-law, consumer-journey, reliability, team-topology]
 ---
 

@@ -1,20 +1,6 @@
 ---
 name: go-beyond-four-tenet-layout
-description: |
-  Invoke this skill when a user is structuring a new Go application or reorganizing an
-  existing one and asks about package layout, directory structure, or how to prevent
-  circular imports. Trigger signals include: "how should I organize my Go packages?",
-  "I keep getting import cycle errors", "where should I put my models/types?",
-  "how do I structure my Go project?", or "should I use models/, handlers/, controllers/
-  directories?" Also activate when a user has functional-grouping packages (models/,
-  handlers/, services/) and is hitting circular dependency errors.
-
-  Not suitable for: questions about individual file organization within a package,
-  Go module setup (go.mod), questions about code formatting or style, or architecture
-  decisions that are purely about business logic with no package structure dimension.
-
-  Key trigger: user is deciding where code lives across multiple packages — especially
-  when they ask about "structure" or when they describe a circular import error.
+description: "Invoke when organizing Go packages for a new or existing application: directory structure, where models and types belong, whether to use models/, handlers/, controllers/ directories, or fixing import cycle errors between functional-grouping packages. Not for go.mod setup or formatting."
 tags: [package-layout, architecture, domain-design, go, dependency-management]
 ---
 

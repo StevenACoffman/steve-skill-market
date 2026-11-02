@@ -1,19 +1,6 @@
 ---
 name: tcb-identification-minimization
-description: |
-  Use this skill when designing a system that must enforce a specific security policy and
-  you need to identify which components must be correct for the policy to hold — and then
-  shrink that set as small as possible.
-
-  WHEN TO CALL: You are drawing a security boundary and asking "what do we need to
-  audit?" You are decomposing a monolith and wondering which microservices need security
-  review. You are choosing a language or runtime for a security-critical component. You
-  are asked to estimate the audit scope for a security property.
-
-  WHEN NOT TO CALL: The security policy is not yet defined — TCB identification requires
-  a specific, stated policy to work from. You are doing a general attack-surface reduction
-  (which is adjacent but broader). You are assessing a running system for known
-  vulnerabilities (penetration testing is a different skill).
+description: "Use when a system must enforce a specific security policy and you must find which components have to be correct for it to hold (the trusted computing base, TCB), then shrink it: audit scope, which services need security review, language choice. Not for pentesting."
 tags: [tcb, security-boundary, least-privilege, system-decomposition, understandability, audit]
 ---
 

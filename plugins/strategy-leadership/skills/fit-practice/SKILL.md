@@ -1,9 +1,6 @@
 ---
 name: fit-practice
-description: |
-  Use this skill to evaluate whether an externally-sourced practice, methodology, or technical approach is appropriate for the current context — and to derive a context-specific alternative when it is not. The fit-practice framework replaces the binary "best practice / not best practice" judgment with a four-question evaluation that exposes the conditions required for a practice to work and tests whether those conditions are present.
-
-  Call this skill when: (1) A team or leader wants to adopt a practice that originated elsewhere and the justification relies on the source's reputation rather than an explicit fit analysis. (2) An existing practice is producing poor results and you need to diagnose whether it was ever appropriate. (3) You want to help a team extract the underlying wisdom from a "best practice" and apply that wisdom in a way that fits their actual context. (4) A practice is being applied uniformly across teams with very different contexts and needs.
+description: "Use when deciding whether to adopt a best practice, methodology, or approach from elsewhere, or diagnosing why an adopted one fails. Replaces best-practice thinking with a four-question fit test of required conditions, then derives a context-specific alternative."
 tags: [best-practice, fit-practice, critical-thinking, cargo-culting, decision-making, context]
 ---
 

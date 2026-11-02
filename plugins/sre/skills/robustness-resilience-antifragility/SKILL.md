@@ -1,7 +1,6 @@
 ---
 name: robustness-resilience-antifragility
-description: |
-  Invoke this skill when you encounter any of the following: - A team is evaluating whether to invest in chaos engineering and needs to determine whether their current system is ready. - An organization is debating the trade-off between high-availability hardware and automated failover/respawn architecture. - An SRE team is designing an availability strategy and needs a conceptual framework for setting targets and choosing mechanisms. - A postmortem reveals that a failure mode was anticipated but never tested in production, and operators were unpracticed at recovery. - A team is determining which reliability metric matters most: MTBF, MTTR, or some combination. - An architecture review must evaluate whether a proposed redundancy design adds availability or just cost. - A team is adopting Chaos Engineering but has not yet established automated recovery capabilities.
+description: Invoke when deciding whether a system is ready for chaos engineering, weighing high-availability hardware vs automated failover, choosing MTBF or MTTR as the key metric, or checking whether redundancy adds availability or only cost. Robustness vs resilience vs antifragility.
 ---
 
 # Robustness, Resilience, and Antifragility

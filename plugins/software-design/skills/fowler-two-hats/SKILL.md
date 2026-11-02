@@ -1,11 +1,6 @@
 ---
 name: fowler-two-hats
-description: |
-  Invoke this skill when a developer is mixing refactoring work with feature or bug-fix work in the same session, or when they cannot tell whether a failing test is caused by a structural change or a new behavior change. The skill applies whenever forward progress is stalling because both goals are being pursued simultaneously without separation.
-
-  Key trigger signal: "I've been refactoring and fixing at the same time and now I don't know what's broken." Or: spending more than a few minutes restructuring while trying to add or fix something.
-
-  Do NOT invoke this skill to decide whether to refactor at all (use fowler-opportunistic-refactoring for that), or when the question is about organizing a long-term migration (use fowler-branch-by-abstraction for that). This skill is specifically about the moment-to-moment discipline of keeping the two modes separate.
+description: "Use when refactoring and feature or bug-fix work are mixed in one session and you can't tell whether a failing test comes from structure or behavior changes. Enforces the two-hats discipline of switching modes explicitly. Not for whether to refactor or long migrations."
 tags: [refactoring, workflow, discipline, tdd]
 ---
 

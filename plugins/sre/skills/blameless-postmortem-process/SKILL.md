@@ -1,9 +1,6 @@
 ---
 name: blameless-postmortem-process
-description: |
-  Use this skill after any significant incident to convert the event into organizational learning that prevents recurrence. The trigger signal is any event that meets one or more of the postmortem criteria: user-visible downtime or degradation beyond a threshold, data loss of any kind, on-call engineer intervention (rollback, traffic rerouting), resolution time above threshold, or monitoring failure requiring manual discovery.
-
-  The skill requires three properties to be simultaneously present, and all three must hold or the process fails: (1) blameless — the postmortem must focus on systemic causes, not individual actions; (2) written — the findings must be documented in a shared artifact, not discussed verbally and forgotten; (3) broadly distributed — the postmortem must be published beyond the immediate team so organizational learning can accumulate.
+description: Use after a significant incident (user-visible downtime, data loss, rollback, slow resolution, missed alert) to run a postmortem that is blameless, written, and widely shared, turning the incident into organizational learning that prevents recurrence.
 tags: [postmortem, blameless, learning, incident-response, culture]
 ---
 

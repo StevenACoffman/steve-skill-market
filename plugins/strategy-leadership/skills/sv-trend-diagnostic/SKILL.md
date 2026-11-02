@@ -1,7 +1,6 @@
 ---
 name: sv-trend-diagnostic
-description: |
-  Invoke when a project is reporting EVM Schedule Variance (SV) that is negative, flat, or worsening and the team or stakeholders are treating it as a status data point rather than a corrective trigger. Specifically useful when SV has been consistently negative across multiple reporting periods without a visible corrective response, or when a PM needs to diagnose *why* a program is not recovering despite visible schedule pressure.
+description: "Invoke when EVM Schedule Variance (SV) is negative, flat, or worsening across reporting periods and is treated as a status number instead of a corrective trigger, or when a PM must diagnose why a program isn't recovering despite visible schedule pressure."
 ---
 # Schedule Variance Trend Diagnostic
 

@@ -1,6 +1,6 @@
 ---
 name: terraform-for-each-over-count
-description: Invoke when a user is creating multiple resources with count and any resource has a distinct name, ID, or configuration — or when they ask why removing one item destroys seemingly unrelated resources.
+description: Use when creating multiple Terraform resources with count where items have distinct names, IDs, or settings, or when removing one item destroys seemingly unrelated resources. Prefer for_each.
 ---
 # Terraform for_each vs count: The Index-Shift Cascade Destroy Bug
 

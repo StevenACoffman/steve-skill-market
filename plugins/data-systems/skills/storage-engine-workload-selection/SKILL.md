@@ -1,7 +1,6 @@
 ---
 name: storage-engine-workload-selection
-description: |
-  Invoke this skill when selecting a storage engine or database for a new system, or when an existing storage engine is producing performance problems that are workload-driven (not query or schema problems). The key input is the ratio of writes to reads, whether access is by single key or by range/aggregate, and whether the workload is operational (low-latency per-row access) or analytical (bulk column scans).
+description: "Use when selecting a storage engine or database for a new system, or when performance problems stem from the workload rather than queries or schema: write/read ratio, point vs range access, OLTP vs analytical column scans, LSM-tree vs B-tree."
 tags: [storage-engine, lsm-tree, b-tree, columnar, write-amplification, compaction, oltp, olap, workload-classification]
 allowed-tools: Bash, Read, Edit
 ---

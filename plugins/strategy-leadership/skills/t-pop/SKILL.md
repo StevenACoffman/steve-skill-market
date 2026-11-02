@@ -1,7 +1,6 @@
 ---
 name: t-pop
-description: |
-  Use this skill when a technical leader at Staff+ level needs to self-assess their energy allocation across four dimensions — Technology, People, Operations, and Product — or when onboarding to a new technical leadership role and mapping the unfamiliar environment. T-POP is both an onboarding diagnostic and an ongoing energy-management tool that prevents the specific failure modes that derail senior IC roles: ivory tower isolation, snacking on low-value work, preening on high-visibility low-impact work, and proposing premature technical solutions to organizational or product problems.
+description: "Use when a Staff+ technical leader self-assesses energy across Technology, People, Operations, and Product (T-POP), or onboards to a new leadership role. Catches ivory-tower isolation, snacking, preening, and premature technical fixes for org or product problems."
 tags: [technical-leadership, staff-engineer, t-pop, onboarding, organizational-awareness, ivory-tower]
 ---
 

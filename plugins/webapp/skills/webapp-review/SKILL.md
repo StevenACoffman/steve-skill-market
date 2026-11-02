@@ -1,16 +1,6 @@
 ---
 name: webapp-review
-description: |
-  Use to review a github.com/Khan/webapp pull request end to end: scope the diff
-  from the merge base with the deploy branch, judge it against the Go advice plus
-  webapp's overriding rules, polish the write-up with `rumdl` and vale, and post the
-  file-and-line findings as inline GitHub review comments.
-
-  Trigger signals:
-  - "review PR 1234 in webapp"
-  - "review the changes on a branch from the merge base of its deploy branch"
-  - "post that review as comments on the PR"
-  - Any webapp code review that should end up on GitHub rather than in chat
+description: "Use to review a github.com/Khan/webapp pull request end to end: scope the diff from the deploy-branch merge base, judge it against Go advice and webapp rules, polish with rumdl and vale, and post findings as inline GitHub PR review comments rather than in chat."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

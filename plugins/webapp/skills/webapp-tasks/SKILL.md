@@ -1,20 +1,6 @@
 ---
 name: webapp-tasks
-description: |
-  Use when writing Go code in github.com/Khan/webapp that creates or handles
-  Cloud Tasks. Covers the KAContext interface, TaskConfig, queue.yaml format,
-  CreateTask/DeleteTask, GraphQLTask helper, task handler registration with
-  serve.CreateTaskHandler, header forwarding, and taskstest patterns. ONLY
-  applies to github.com/Khan/webapp.
-
-  Trigger signals:
-  - "how do I enqueue a task in webapp?"
-  - "how do I write a task handler?"
-  - "how do I create a deferred GraphQL mutation task?"
-  - "how do I test Cloud Tasks?"
-  - "what is queue.yaml for?"
-  - "how do I use RunAllTasks in a test?"
-  - Any question about Cloud Tasks in webapp Go code
+description: "Use when writing Go code in github.com/Khan/webapp that enqueues or handles Cloud Tasks. Covers TaskConfig, queue.yaml, CreateTask/DeleteTask, the GraphQLTask helper, serve.CreateTaskHandler, header forwarding, and taskstest patterns such as RunAllTasks. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

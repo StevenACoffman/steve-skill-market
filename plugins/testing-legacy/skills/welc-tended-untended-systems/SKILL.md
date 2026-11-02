@@ -1,23 +1,6 @@
 ---
 name: welc-tended-untended-systems
-description: |
-  Invoke this skill when someone is deciding how much testing to invest in
-  a system, component, or piece of code — especially when they are asking
-  whether their current test strategy is appropriate for their deployment
-  model, or when they are comparing testing practices across different
-  system types (firmware vs. web apps, embedded vs. cloud, regulated vs.
-  rapid-release).
-
-  Also invoke when someone is treating a tended system as if it were
-  untended (e.g., demanding zero-defect pre-release verification for a
-  cloud service that supports hotfixes), or treating an untended system as
-  if it were tended (e.g., shipping firmware without formal verification
-  because "we can always push an update").
-
-  The skill introduces a two-axis classification: tended/untended
-  (recoverability of post-deployment defects) and transient/long-lived
-  (expected code lifetime). Test investment calibrates to both axes, not
-  to a universal standard.
+description: "Use when deciding how much testing to invest in a system based on its deployment model: tended (hotfixable, like cloud services) vs untended (firmware, embedded, regulated) and transient vs long-lived code, or when comparing test practices across those system types."
 tags: [testing-strategy, risk-analysis, deployment-model, transience, firmware, cloud]
 ---
 

@@ -1,14 +1,6 @@
 ---
 name: replication-topology-selection
-description: |
-  Invoke this skill when designing or evaluating a database replication strategy — specifically when choosing between single-leader, multi-leader, and leaderless topologies, or when an existing topology is producing availability, consistency, or conflict problems.
-
-  Specific trigger situations:
-  - A system needs writes to be accepted in multiple geographic regions simultaneously with low latency.
-  - A post-mortem attributes data loss or corruption to failover behavior (split-brain, stale follower promoted, LWW silently discarding writes).
-  - A team argues that Cassandra quorum reads provide "strong consistency" and is designing correctness-critical logic on that assumption.
-  - A system experiences write conflicts and needs a conflict resolution strategy.
-  - A new architecture is being designed and "how many leaders" has not been explicitly decided.
+description: "Use when choosing single-leader, multi-leader, or leaderless database replication, or when a topology causes trouble: multi-region writes, failover data loss or split-brain, write conflicts needing resolution, or assuming Cassandra quorum reads give strong consistency."
 tags: [replication, single-leader, multi-leader, leaderless, conflict-resolution, consistency, availability]
 allowed-tools: Bash, Read, Edit
 ---

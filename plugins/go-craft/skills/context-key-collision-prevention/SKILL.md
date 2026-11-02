@@ -1,19 +1,6 @@
 ---
 name: context-key-collision-prevention
-description: |
-  Trigger: user is using context.WithValue or asking about context keys, storing values in
-  context, or finding that context values are missing or wrong at runtime.
-
-  context.WithValue accepts any comparable value as a key, but keys are compared by their
-  boxed interface representation — both type AND value must match. Two packages that
-  independently use the string "userID" as a key produce identical boxed representations, so
-  the second WithValue call silently shadows the first. The fix is to make key types unique
-  per package: use an unexported empty struct type for package-internal keys (zero allocation,
-  collision-proof by type distinctness), or a struct pointer variable for exported/cross-package
-  keys (uniqueness guaranteed by pointer identity, not type name). Wrap all access behind
-  WithX / XFromContext accessor functions to hide the key type and eliminate repeated type
-  assertions at call sites. This is the pattern used by net/http, net/http/httptrace,
-  runtime/pprof, and the OpenTelemetry Go SDK.
+description: "Use when storing values with context.WithValue, choosing context key types, or debugging context values that are missing or wrong at runtime. Prevents cross-package key collisions with unexported struct key types or pointer keys, wrapped in WithX and XFromContext accessors."
 tags: [go, context, concurrency, api-design, safety]
 ---
 

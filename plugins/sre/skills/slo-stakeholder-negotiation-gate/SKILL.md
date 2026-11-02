@@ -1,11 +1,6 @@
 ---
 name: slo-stakeholder-negotiation-gate
-description: |
-  Use this skill when an SLO is being set, revised, or validated for fitness — specifically when determining whether the SLO number is appropriate, defensible, and agreed upon by all parties who will be bound by its consequences.
-
-  Call when: A team is setting an initial SLO, revising an existing one after a post-incident review, or there is disagreement about whether an SLO is achievable or appropriate. Also call when the error budget policy cannot be ratified because one or more parties refuses to sign.
-
-  Do not call when: The SLO is already ratified and the question is about what to do now that the budget has been exhausted (use error-budget-policy-framework) or about whether to adjust alerting thresholds (use multiwindow-multi-burn-rate-alerting).
+description: "Use when setting, revising, or validating an SLO number: checking it is appropriate and defensible, resolving disagreement over whether it is achievable, or when an error budget policy can't be ratified because a party won't sign. Not for actions after budget exhaustion."
 tags: [slo, negotiation, stakeholder-alignment, error-budget-policy, governance, toil]
 ---
 

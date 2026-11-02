@@ -1,11 +1,6 @@
 ---
 name: toil-six-property-identification-test
-description: |
-  Use this skill when you need to classify operational work as toil versus legitimate engineering work versus administrative overhead. Call it when an SRE team is debating what to automate, when an engineer proposes eliminating a category of work under the banner of "toil reduction," or when you need to justify which operational activities to invest in reducing.
-
-  Trigger: any question of the form "is this work toil?" or "should we automate this away?" or "does this count against our 50% ops cap?"
-
-  Do NOT call this skill for classifying project work, feature development, or non-operational activities. Do not use it to argue that all unpleasant work should be eliminated — pleasantness is explicitly not a criterion. Do not apply it to overhead (meetings, HR, goal-setting), which is a separate category that is also not toil.
+description: "Use when asking \"is this work toil?\", deciding what to automate, or whether work counts against the 50% ops cap. Classifies work as toil, engineering, or overhead by six properties: manual, repetitive, automatable, tactical, no enduring value, O(n) with service growth."
 tags: [toil, automation, operational-work, prioritization, scaling, sre-model]
 ---
 

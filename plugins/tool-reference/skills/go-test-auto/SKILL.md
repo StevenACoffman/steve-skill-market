@@ -1,7 +1,6 @@
 ---
 name: go-test-auto
-description: |
-  Use when the user asks about change-aware testing, affected tests, or wants to avoid running the full test suite. Covers gta (Go Test Affected) to find and run only the packages affected by current changes.
+description: Use when the user asks about change-aware testing, affected tests, or avoiding a full test suite run. Covers gta (Go Test Affected) to find and run only the packages affected by current changes.
 allowed-tools: Bash, Read, Edit
 ---
 

@@ -1,7 +1,6 @@
 ---
 name: project-complexity-source-diagnosis
-description: |
-  Invoke when a project is consistently failing standard PM interventions and the cause is unclear — the team is competent, the tools are being used correctly, but outcomes keep degrading. Also invoke at program initiation when governance approach is being selected and the nature of the difficulty is contested: some stakeholders are calling for more rigorous planning and control, others are calling for agility and iteration, and neither position is clearly wrong.
+description: "Invoke when a competent team keeps failing despite correct use of standard PM interventions, or at program initiation when stakeholders split between more planning and control versus agility and iteration. Diagnoses the source of project complexity."
 ---
 # Project Complexity Source Diagnosis
 

@@ -1,7 +1,6 @@
 ---
 name: integration-style-selection
-description: |
-  Invoke when designing a new integration point between two or more systems and the question is how they should communicate, when evaluating an existing integration that is misbehaving, when choosing between REST and a message queue, when designing a microservice architecture, or when auditing an architecture for hidden coupling.
+description: Invoke when designing an integration between systems and choosing how they communicate (file transfer, shared database, RPC or REST, messaging), evaluating a misbehaving integration, choosing REST vs a message queue, or auditing an architecture for hidden coupling.
 ---
 # Integration Style Selection
 

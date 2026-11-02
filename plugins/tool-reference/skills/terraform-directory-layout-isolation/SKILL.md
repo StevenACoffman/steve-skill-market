@@ -1,7 +1,6 @@
 ---
 name: terraform-directory-layout-isolation
-description: |
-  Invoke when a user asks how to manage multiple environments (staging, production) with Terraform, whether workspaces are sufficient for environment isolation, or how to prevent a staging change from reaching production.
+description: Use when managing multiple Terraform environments (staging, production), asking whether workspaces give enough isolation, or preventing a staging change from reaching production.
 ---
 # Terraform Environment Isolation: File Layout Over Workspaces
 

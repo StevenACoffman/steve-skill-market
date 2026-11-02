@@ -1,9 +1,6 @@
 ---
 name: welc-scratch-refactoring
-description: |
-  Use this skill when an engineer needs to understand a large or deeply tangled legacy code module well enough to change it safely, but reading the code has not produced a working mental model. The technique is: check out a branch (or scratch copy), refactor aggressively purely to understand — extract methods, rename variables, reorganize classes, expose dependencies — then delete the branch without checking it in. The understanding persists; the mess is discarded.
-
-  Call this skill when an engineer expresses that they have been reading legacy code for a long time without gaining comprehension, cannot follow the control flow, does not know where to put a seam, or is about to make a change they do not yet fully understand. It is a pre-condition technique: it builds the mental model before safe change work begins.
+description: "Use when reading a large, tangled legacy module has not produced a working mental model: refactor aggressively on a throwaway branch (extract, rename, reorganize) purely to understand the control flow and find seams, then discard the branch before making the real change."
 tags: [legacy-code, comprehension, refactoring, mental-model, exploration, characterization-tests, understanding]
 ---
 

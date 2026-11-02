@@ -1,9 +1,6 @@
 ---
 name: vsi-cargo-culting
-description: |
-  Use this skill to diagnose whether an adoption decision — for a tool, process, methodology, or organizational model — is being driven by genuine fit-to-context analysis or by cargo culting. The VSI framework identifies the three-element mechanism that explains why intelligent practitioners adopt practices that don't fit: Value dominance, Shallow understanding, and Imitation.
-
-  Call this skill when: (1) A team or leader is proposing to adopt something because "Google/Netflix/Spotify does it" or because a prestigious speaker endorsed it. (2) A practice is being adopted wholesale without analysis of the conditions that made it work elsewhere. (3) Rituals and processes have been installed but outcomes haven't improved. (4) You need to explain to leadership why a technically sophisticated adoption effort failed. (5) You want to audit an existing practice to see if it's cargo-culted.
+description: "Use when diagnosing whether adopting a tool, process, or org model is cargo culting: because Google or Netflix does it, wholesale copying, or rituals without results. The VSI framework checks Value dominance, Shallow understanding, and Imitation."
 tags: [cargo-culting, vsi, critical-thinking, best-practice, organizational-failure, mindset]
 ---
 

@@ -1,21 +1,6 @@
 ---
 name: least-privilege-tooling-enforced
-description: |
-  Use this skill when designing or auditing an access control system where the question
-  is not just "who should have access?" but "how do we prevent excess access from being
-  used, even under pressure?" The skill applies when access is granted permanently or
-  broadly and the enforcement mechanism is policy documents, training, or human honor
-  rather than tooling.
-
-  WHEN TO CALL: You are designing access control for a production system, a data pipeline,
-  a shared service account, or an administrative API. You are reviewing an existing system
-  where engineers have broad access "just in case." You observe frequent breakglass use
-  for routine operations. You are choosing between policy-based and tooling-enforced
-  access models.
-
-  WHEN NOT TO CALL: The access model is already time-bounded and tooling-enforced and
-  the question is about a specific access decision. You are designing authentication (who
-  can prove identity) rather than authorization (what an authenticated identity can do).
+description: Use when designing or auditing authorization where broad or permanent access is held "just in case" and enforced only by policy or training, or breakglass is used for routine work. Enforce least privilege with tooling and time-bounded access. Not for authentication design.
 tags: [least-privilege, access-control, breakglass, time-bounded, tooling-enforced, insider-risk]
 ---
 

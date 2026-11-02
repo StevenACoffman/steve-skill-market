@@ -1,18 +1,6 @@
 ---
 name: multi-party-authorization
-description: |
-  Use this skill when designing or reviewing controls for operations that, if performed
-  unilaterally by a single insider, could cause significant damage — whether through
-  malice, compromise, or error. Canonical triggers: production access elevation, secret
-  rotation, mass-delete or mass-send operations, emergency database maintenance, and
-  deployment of code that bypasses the normal review pipeline. The non-obvious trigger:
-  any code review gate that is enforced as a deployment precondition IS multi-party
-  authorization — treat it explicitly as a security control, not just a quality practice.
-
-  Do NOT apply as a universal overhead tax. Low-risk routine operations (reading logs,
-  viewing dashboards, deploying to dev) should not require MPA — overuse produces
-  rubber-stamp approvals that defeat the control. Apply proportionally to the risk tier
-  established by least-privilege classification.
+description: "Use when designing controls for high-risk operations one insider could abuse or botch: production access elevation, secret rotation, mass delete or send, emergency database maintenance, review bypass. Treat code review gates as MPA. Not for low-risk routine work."
 tags: [MPA, multi-party-authorization, insider-risk, code-review, 3FA, audit, least-privilege]
 ---
 

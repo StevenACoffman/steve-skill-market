@@ -1,6 +1,6 @@
 ---
 name: ml-data-pipeline-type-integrity
-description: Trigger when designing an ML data pipeline; enforce types at ingestion, not at model training; silence on bad data is worse than a loud failure.
+description: "Trigger when designing an ML data pipeline. Enforce types and schemas at ingestion, not at model training, and fail loudly on bad data; silently passing bad data through is worse than a loud failure."
 ---
 # ML Data Pipeline Type Integrity — Fail Loudly at Parse Time, Standardize Ingress, Version Data
 

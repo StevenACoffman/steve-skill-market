@@ -1,11 +1,6 @@
 ---
 name: slo-decision-matrix
-description: |
-  Use this skill when a team needs to determine the right engineering action from SLO state alone is insufficient. Call it when you know whether the SLO is being met, but still don't know what to do — because you need two additional dimensions: toil level and user satisfaction.
-
-  Trigger scenarios: SLO is met but users are still complaining, SLO is met but the team is burning out on operational work, SLO is missed but users don't seem to notice, or a service review where the team needs to decide whether to tighten, relax, automate, or hand back a service.
-
-  Do not use as a real-time incident response tool (use incident command for that). Do not use when you don't have data on at least two of the three dimensions — the matrix requires all three inputs to prescribe the right action. Do not use to justify inaction: the "met / low / high" cell (everything looks good) still has a prescribed action (increase velocity or reduce engagement).
+description: "Use when SLO status alone does not say what to do: SLO met but users complain, met but toil burns out the team, missed but users don't notice. Combines SLO, toil, and user satisfaction to choose tighten, relax, automate, or hand back. Not for incident response."
 tags: [slo, decision-making, toil, customer-satisfaction, prioritization, calibration]
 ---
 

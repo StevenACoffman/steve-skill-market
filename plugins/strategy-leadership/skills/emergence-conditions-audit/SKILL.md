@@ -1,7 +1,6 @@
 ---
 name: emergence-conditions-audit
-description: |
-  Invoke when a program is producing strong component-level results (projects on schedule, within budget, reporting green) but weak or absent program-level outcomes (benefits not realizing, strategic objectives not moving, the whole underperforming its parts). Also invoke when setting up governance for a new multi-project program to determine whether the governance design has any mechanism for owning the interaction layer where program-level outcomes actually emerge.
+description: "Invoke when a program's projects all report green (on schedule, on budget) but program-level benefits aren't materializing, or when designing governance for a new multi-project program that needs an owner for the interaction layer where outcomes emerge."
 ---
 # Emergence Conditions Audit for Program Governance
 

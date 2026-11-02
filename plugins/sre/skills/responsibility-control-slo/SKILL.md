@@ -1,16 +1,6 @@
 ---
 name: responsibility-control-slo
-description: |
-  Use this skill when designing SLI/SLO assignments for teams in multi-team architectures, or
-  when diagnosing why a team is being paged for incidents they cannot resolve. The core question
-  this skill answers: "Which team should own this metric, and how should it be scoped?"
-
-  WHEN TO CALL: (a) A user is running an SLO workshop and needs to decide which team owns which
-  metric; (b) a team is responsible for an end-to-end metric that aggregates variables from
-  multiple teams; (c) you need to decompose a top-level SLO target across dependent teams; (d)
-  a composite metric (latency, availability, error rate) spans a control boundary; (e) a team is
-  being held accountable for a dependency they don't control; (f) the user asks "how do we
-  split the latency budget?" or "which team should own the availability SLO?"
+description: Use when assigning SLI and SLO ownership across teams, splitting a latency or availability budget across dependent teams, or diagnosing why a team is paged for incidents it cannot fix. Scope each metric to what the owning team actually controls.
 tags: [ownership, slo, team-boundaries, accountability, organizational-design, sli]
 ---
 

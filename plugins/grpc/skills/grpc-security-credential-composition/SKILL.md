@@ -1,11 +1,6 @@
 ---
 name: grpc-security-credential-composition
-description: |
-  Invoke when configuring authentication and transport security for a gRPC
-  service or client in production. Key trigger: "how do I secure a gRPC
-  service?" or "can I use OAuth2/JWT with gRPC?" The core rule: two
-  independent credential layers must both be configured — channel credentials
-  (TLS/mTLS) for the transport and call credentials (OAuth2/JWT) per RPC.
+description: "Invoke when securing a gRPC service or client in production, including OAuth2 or JWT with gRPC. Two independent layers must both be configured: channel credentials (TLS or mTLS) for transport and per-RPC call credentials (OAuth2 or JWT)."
 tags: [grpc, security, tls, mtls, oauth2, jwt, credentials, production]
 ---
 # gRPC Security Credential Composition

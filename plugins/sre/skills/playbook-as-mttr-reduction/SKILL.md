@@ -1,11 +1,6 @@
 ---
 name: playbook-as-mttr-reduction
-description: |
-  Use this skill when designing an on-call program, when an on-call team is experiencing high MTTR on recurring alerts, or when allocating limited time to improve reliability documentation.
-
-  The framework begins from the empirical finding that pre-written playbooks for known failure modes reduce MTTR by approximately 3x compared to on-call engineers troubleshooting from scratch under stress. A playbook is not a substitute for engineer judgment — it is a cognitive load reduction tool that preserves expert-level decision quality when the engineer is fatigued, time-pressured, or unfamiliar with a specific failure mode.
-
-  Key trigger signal: an alert fires repeatedly without a documented response procedure, an on-call handoff produces inconsistent resolutions for the same alert, or an engineer reports "winging it" during a 3am page.
+description: Use when designing an on-call program, cutting high MTTR on recurring alerts, or when an alert has no documented response and on-call is "winging it". Pre-written playbooks for known failure modes cut MTTR about 3x; decide where to spend documentation time.
 tags: [playbook, runbook, mttr, on-call, documentation, incident-response, cognitive-load]
 ---
 

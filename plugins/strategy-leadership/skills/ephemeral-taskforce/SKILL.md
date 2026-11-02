@@ -1,17 +1,6 @@
 ---
 name: ephemeral-taskforce
-description: |
-  Use this skill when a cross-organizational initiative requires more execution
-  bandwidth and knowledge than one person can deliver, but the initiative has a
-  clear deliverable and a foreseeable end-state. The core trigger is: the work
-  spans multiple team ownership boundaries and cannot be completed in an
-  acceptable timeframe by a single person acting alone.
-
-  Call this skill when you are assembling or evaluating a temporary group to
-  deliver a bounded, cross-functional mission. Typical signals: a regulatory
-  compliance rollout (GDPR, EAA), a platform-wide observability change, a
-  catalog migration, or any technical initiative that requires both knowledge
-  and mandate from multiple teams simultaneously.
+description: "Use when assembling or evaluating a temporary cross-team taskforce for a bounded mission spanning several teams' ownership and too big for one person, such as a compliance rollout (GDPR, EAA), platform-wide observability change, or catalog migration."
 tags: [organization, leadership, cross-functional, delivery, ownership]
 ---
 

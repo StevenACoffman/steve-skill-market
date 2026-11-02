@@ -1,15 +1,6 @@
 ---
 name: ioc-ai-systems
-description: |
-  Use this skill when designing or reviewing an AI-powered system and you need to
-  determine how to divide responsibility between deterministic code and LLM components.
-  The central question is: who controls the workflow state machine? The IOC (Inversion
-  of Control) principle gives the answer: always deterministic code, never the LLM.
-
-  Call this skill when: you are architecting a new AI-powered feature or agent; you are
-  reviewing an existing AI system that exhibits unpredictable behavior; someone proposes
-  an "agentic" or "vibe-coding" approach where the LLM decides what to do next; you are
-  evaluating whether to let an LLM plan and execute a multi-step workflow end-to-end.
+description: "Use when designing or reviewing an AI-powered system or agent and deciding what deterministic code versus the LLM controls, especially when behavior is unpredictable or someone proposes letting the LLM plan and run a multi-step workflow. Inversion of control: code owns the state machine."
 tags: [ai-architecture, ioc, deterministic, workflow, llm, reliability]
 ---
 

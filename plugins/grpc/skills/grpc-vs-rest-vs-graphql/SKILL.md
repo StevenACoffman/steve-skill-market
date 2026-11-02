@@ -1,10 +1,6 @@
 ---
 name: grpc-vs-rest-vs-graphql
-description: |
-  Invoke when an architecture decision requires choosing between gRPC, REST/HTTP-JSON,
-  or GraphQL for a service interface. Key trigger: "should we use gRPC for this API?"
-  or "should we expose gRPC to external consumers?" The framework resolves internal
-  vs. external, synchronous vs. event-driven, and field-selection requirements.
+description: "Invoke when an architecture decision must choose between gRPC, REST/HTTP-JSON, or GraphQL for a service interface, including whether to expose gRPC to external consumers. Weighs internal vs external, synchronous vs event-driven, and field-selection needs."
 tags: [grpc, rest, graphql, api-design, external-vs-internal, architecture]
 ---
 # gRPC vs. REST vs. GraphQL Selection Framework

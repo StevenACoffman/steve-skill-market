@@ -1,7 +1,6 @@
 ---
 name: test-helper-contract
-description: |
-  Invoke when writing or reviewing Go test helpers that return errors, or when a test body has repeated setup error-checking boilerplate. Covers the no-error-return contract (call t.Fatalf internally), the cleanup func() pattern, t.Helper() for correct failure line numbers, and t.Cleanup() as the Go 1.14+ alternative to returning func().
+description: Use when writing or reviewing Go test helpers that return errors, or when tests repeat setup error checks. Helpers should call t.Fatalf instead of returning errors, call t.Helper() for correct line numbers, and register teardown with t.Cleanup() or a returned cleanup func.
 tags: [go, testing, test-helpers, cleanup, test-methodology]
 allowed-tools: Bash, Read, Edit
 ---

@@ -1,7 +1,6 @@
 ---
 name: enterprise-non-cloud-diagnostic
-description: |
-  Invoke this skill when you encounter any of the following: - An organization is building a private cloud or "enterprise cloud" platform and you want to evaluate whether it will actually be a cloud - Developers complain that provisioning a new environment takes days or weeks via a ticketing process - All cloud access is routed through a corporate proxy or VPN that is not available to external collaborators or mobile workers - Teams are allocated dedicated cloud resources for financial tracking rather than drawing from a shared pool - The cloud platform is primarily used for the same applications unchanged from on-premises deployments — no auto-scaling, no stateless design,
+description: "Use when evaluating whether a private or enterprise cloud is really a cloud: ticket-based provisioning taking days, access only via corporate VPN or proxy, dedicated rather than pooled resources, or lift-and-shift apps with no auto-scaling or stateless design."
 ---
 
 # Enterprise Non-Cloud Diagnostic

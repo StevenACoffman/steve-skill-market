@@ -1,7 +1,6 @@
 ---
 name: terraform-no-cluster-app-same-module
-description: |
-  Invoke when a user is deploying an EKS cluster and Kubernetes resources (Deployments, Services, etc.) in the same Terraform module, gets a provider configuration error referencing cluster outputs, or asks why depends_on doesn't fix the Kubernetes provider initialization failure.
+description: Use when an EKS cluster and Kubernetes resources (Deployments, Services) are in the same Terraform module, when the Kubernetes provider errors on cluster outputs, or when depends_on does not fix provider initialization.
 ---
 # Terraform: Never Mix EKS Cluster Provisioning and Kubernetes App Deployment in One Module
 

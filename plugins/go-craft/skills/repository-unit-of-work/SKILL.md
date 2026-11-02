@@ -1,19 +1,6 @@
 ---
 name: repository-unit-of-work
-description: |
-  Activate this skill when a user has database operations that need atomicity across multiple
-  tables or stores, when a service layer is calling SQL or sqlc-generated code directly, or
-  when transaction management is leaking into service logic.
-
-  Trigger signals:
-  - Service struct holds `*sql.DB` or a sqlc `*Queries` directly
-  - A checkout or saga-like flow writes to two different tables and needs them to succeed or
-    fail together (e.g., decrement stock AND insert order)
-  - Code nests `store1.Tx(store2.Tx(...))` expecting one atomic transaction but getting two
-  - Service methods call `db.Begin()`, `tx.Commit()`, or `tx.Rollback()` directly
-  - A user asks "how do I handle transactions when the interface hides storage details"
-  - A user asks "how do I make two stores share a single transaction"
-  - A user says "my stock decremented but the order failed and now inventory is wrong"
+description: "Use when Go database writes across multiple tables or stores must be atomic, or transaction management leaks into service logic: a service holding *sql.DB or sqlc Queries, calling Begin, Commit, or Rollback directly, or nested store transactions that end up as two transactions."
 tags: [go, database, transactions, repository-pattern, unit-of-work]
 ---
 

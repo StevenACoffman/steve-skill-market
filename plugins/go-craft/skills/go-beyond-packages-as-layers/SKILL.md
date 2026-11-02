@@ -1,21 +1,6 @@
 ---
 name: go-beyond-packages-as-layers
-description: |
-  Invoke this skill when a user is confused about WHY circular imports happen in Go,
-  or when they understand the error but not the mental model needed to prevent it
-  structurally. Also invoke when a user is asking "why can't I have these two packages
-  import each other?" or when they're trying to reason about Go package design from a
-  perspective shaped by Ruby, Java, Python, or JavaScript module systems.
-
-  Trigger signals: "I keep getting circular import errors and don't understand why",
-  "how are Go packages different from Python modules?", "why does Go prevent circular
-  dependencies?", "I can't seem to get my package structure right — everything depends
-  on everything else", or any situation where the user is debugging import graph
-  problems rather than just applying a fix.
-
-  Not suitable for: users who already understand the layers model and just need the
-  four-tenet layout recipe (use go-beyond-four-tenet-layout instead); performance
-  questions; build system questions.
+description: "Invoke when someone is confused about why Go forbids circular imports, or brings a Ruby, Java, Python, or JavaScript module mental model to Go package design and everything depends on everything. Explains the packages-as-layers mental model behind import graph problems, not just the fix."
 tags: [mental-model, package-layout, circular-dependencies, go, architecture]
 ---
 

@@ -1,19 +1,6 @@
 ---
 name: fcis-shell-exploration-cadence
-description: |
-  Invoke this skill when a user is integrating a new library or technology they've
-  never used before and asking whether to write tests first. Also invoke when a user
-  asks how to do TDD when they don't know what the design should be yet, or when they're
-  stuck writing tests for code whose interface hasn't stabilized. Also invoke when a
-  user is building a new feature in an exploratory, iterative way and asking how to
-  avoid accumulating untested code permanently.
-
-  Trigger signals: "should I write tests when I'm still figuring out the design?",
-  "I'm exploring a new API / library — how do I test while learning it?", "I keep
-  rewriting my tests as the design changes", "my shell / entry point / main is growing
-  and getting messy — when should I refactor?", "how do I do TDD when I don't know
-  what I'm building yet?", "I have a lot of untested code in my main file — what do
-  I do?".
+description: Use when exploring a new library or API, or building a feature whose design is not yet known, and asking whether to write tests first, how to do TDD without a stable interface, or when to refactor a growing, untested main or shell into a tested functional core.
 tags: [tdd, exploration, refactor-cadence, shell, design-discovery]
 ---
 

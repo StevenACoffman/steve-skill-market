@@ -1,7 +1,6 @@
 ---
 name: architect-elevator
-description: |
-  Invoke this skill when you encounter any of the following: - An EA team is producing architecture diagrams and principles that the engineering teams describe as "out of touch" or never reference. - Engineers are making significant technology choices (cloud provider, database, container orchestration) without any business-level framing of the trade-offs. - A CTO or CIO is making cloud commitments ("we will be fully cloud-native in two years") while the engineering org is building something that cannot fulfill that commitment. - A vendor pitch is accepted or rejected based on a feature checklist, without anyone asking what assumptions are baked into the product's design. - Technical trade-offs (managed vs. self-hosted, lock-in vs. portability, MTBF vs. MTTR) are being discussed only among engineers, with no mechanism to surface the business consequences to leadership.
+description: "Use when architecture and business leadership are disconnected: EA diagrams engineers ignore, tech choices (cloud, database, lock-in, managed vs self-hosted) made without business framing, or CIO cloud commitments engineering can't deliver. Riding the architect elevator."
 ---
 
 # Architect Elevator

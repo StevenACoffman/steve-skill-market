@@ -1,7 +1,6 @@
 ---
 name: write-comments-first-as-design-tool
-description: |
-  Invoke this skill when: - Starting any new class or interface: before writing the first line of implementation. - In code review: when a reviewer cannot understand what a module does from reading it, the interface comment is missing or misleading — redesign, do not just annotate. - Onboarding a new developer: if they cannot understand a module by reading its interface comments alone, the comments (and possibly the design) need work. - After a refactor changes interface semantics: the interface comment is now wrong — update it first, then verify the implementation still matches. - As a pre-implementation checklist item: on any pull request, before requesting review, confirm that each new class and each public method has a complete interface comment. - When you feel the urge to write a long inline comment inside a method signature: that urge signals the interface may be too complex. Do NOT apply when: 1.
+description: "Use when starting a new class, interface, or public method: write the interface comment before the implementation as a design check. Also when a module can't be understood from its interface comments, after a refactor changes semantics, or when a long comment hints at complexity."
 ---
 
 # Skill: Write Comments First as a Design Tool

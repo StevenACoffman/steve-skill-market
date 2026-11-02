@@ -1,16 +1,6 @@
 ---
 name: supply-chain-binary-provenance
-description: |
-  Use this skill when designing deployment controls, evaluating build pipeline security, or
-  responding to the question "how do we know the binary running in production corresponds to
-  the code that was reviewed?" Canonical triggers: CI/CD pipeline design, artifact signing
-  strategy, developer workstation compromise scenarios, insider-threat deployment controls,
-  and any situation where code review is enforced socially but not machine-verifiably.
-
-  The key shift: the question is not "did a human approve this?" but "can the deployment
-  system cryptographically verify that this artifact was produced by the verified pipeline
-  from reviewed source?" Binary provenance is the mechanism that closes the gap between
-  human approval and machine verification.
+description: Use when designing CI/CD or deployment controls, artifact signing, or insider-threat defenses, or when asked how to know the production binary matches reviewed code. Deployment must cryptographically verify binary provenance, not rely on social code review.
 tags: [supply-chain, binary-provenance, build-integrity, deployment-policy, verifiable-builds, code-signing, insider-risk]
 ---
 

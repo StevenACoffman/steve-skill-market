@@ -1,7 +1,6 @@
 ---
 name: jagged-frontier-work-allocation
-description: |
-  Invoke when a PM or knowledge worker needs to decide which portions of a specific task or workflow to delegate to AI versus retain for human judgment — particularly when facing a mix of synthesis/formatting work and consequential judgment calls, or when AI output quality has been inconsistent in ways that are hard to explain.
+description: "Invoke when deciding which parts of a task or workflow to delegate to AI and which to keep for human judgment, especially when synthesis or formatting is mixed with consequential calls, or AI output quality has been inconsistent in hard-to-explain ways."
 ---
 # Jagged Frontier Work Allocation
 

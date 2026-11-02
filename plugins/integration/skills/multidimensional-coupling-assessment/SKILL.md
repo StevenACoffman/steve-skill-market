@@ -1,7 +1,6 @@
 ---
 name: multidimensional-coupling-assessment
-description: |
-  Invoke when someone says "we use messaging, so we're loosely coupled," when evaluating whether to use REST vs. a message queue vs. Pub-Sub, when designing an integration with a system you do not control, when auditing a "decoupled" architecture that keeps causing cascading failures, or when reviewing an event-driven architecture proposal that claims decoupling benefits.
+description: Invoke when someone says "we use messaging, so we're loosely coupled", when choosing REST vs message queue vs Pub-Sub, integrating with a system you don't control, or when a "decoupled" architecture keeps causing cascading failures. Assesses coupling across several dimensions.
 ---
 # Multidimensional Coupling Assessment
 

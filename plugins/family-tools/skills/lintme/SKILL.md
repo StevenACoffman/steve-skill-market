@@ -1,6 +1,6 @@
 ---
 name: lintme
-description: Use when the user asks to run linters, fix lint errors, or mentions golangci-lint or /lintme. Covers running lint across all modules, interpreting output, and auto-fixing.
+description: Use when the user asks to run linters, fix lint errors, or mentions golangci-lint or the lintme skill. Covers running lint across all modules, interpreting output, and auto-fixing.
 allowed-tools: Bash, Read, Edit
 ---
 

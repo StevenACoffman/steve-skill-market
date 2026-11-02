@@ -1,12 +1,6 @@
 ---
 name: matryer-decode-valid
-description: |
-  Eliminate repetitive decode-then-validate boilerplate in HTTP handlers by combining
-  both operations into a single generic helper. Define a Validator interface with a
-  Valid(ctx) method returning a problems map, then use decodeValid[T Validator] to
-  decode JSON and validate in one call. The returned problems map is structured for
-  direct use as an API error response, and the type constraint enforces validation
-  at compile time.
+description: "Use when Go HTTP handlers repeat decode-then-validate boilerplate. Combines JSON decoding and validation in one generic decodeValid[T Validator] helper, with a Valid(ctx) method returning a problems map ready to use as an API error response."
 tags: [go, validation, generics, http-services, json, request-handling]
 ---
 

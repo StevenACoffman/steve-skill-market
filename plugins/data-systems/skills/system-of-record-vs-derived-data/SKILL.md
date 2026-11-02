@@ -1,9 +1,6 @@
 ---
 name: system-of-record-vs-derived-data
-description: |
-  Invoke this skill when a system writes to multiple storage systems and you must determine which one is authoritative, or when two systems have diverged and you need to reason about how to fix them permanently. Specific triggers: application code writes to both a database and a search index (or cache, or data warehouse) in the same request; two systems have diverged and no one knows which is "right"; a team is debating "which should we trust, the database or the cache?"; a new downstream system needs to be kept in sync; a schema migration must be applied to multiple stores simultaneously.
-
-  Do NOT invoke when: there is only one storage system; the question is about replication topology within a single system (see `replication-topology-selection`); the question is about latency of derived data production (see `batch-vs-stream-processing-selection`).
+description: Use when an application writes to several stores (database plus search index, cache, or warehouse) and you must decide which is authoritative, when two stores have diverged, when keeping a new downstream system in sync, or when a migration must reach multiple stores.
 tags: [derived-data, system-of-record, CDC, dual-write, data-architecture, event-sourcing]
 allowed-tools: Bash, Read, Edit
 ---

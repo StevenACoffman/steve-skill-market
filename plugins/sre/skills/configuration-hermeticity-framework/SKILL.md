@@ -1,11 +1,6 @@
 ---
 name: configuration-hermeticity-framework
-description: |
-  Use this skill when evaluating, designing, or debugging a configuration system — especially when rollbacks are failing, configs produce different outputs at different times, or the team is debating which configuration language or tooling to adopt.
-
-  Call when: A team reports intermittent rollback failures, configuration rendering produces different results at different times, or a new configuration system is being designed. Also call when evaluating whether a proposed config tool (Helm, Jinja2, Ansible, CUE, Dhall) is safe for use in a reliability-sensitive deployment pipeline.
-
-  Do not call when: The issue is a runtime configuration value being wrong (a data problem), not a configuration evaluation problem (a system property problem). This skill governs configuration system design, not configuration content auditing.
+description: "Use when designing, evaluating, or debugging a configuration system: rollbacks fail intermittently, config renders differently at different times, or choosing a config tool (Helm, Jinja2, Ansible, CUE, Dhall). Not for auditing a single wrong config value."
 tags: [configuration, hermeticity, rollback, reproducibility, infrastructure-as-code, language-design]
 ---
 

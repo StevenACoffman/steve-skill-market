@@ -1,9 +1,6 @@
 ---
 name: consistency-model-selection
-description: |
-  Invoke this skill when a system uses replicated storage and you must decide whether an operation requires linearizability (single-copy semantics) or whether eventual consistency is acceptable. Specific triggers: a uniqueness constraint, quota, rate limit, or distributed lock must be enforced across replicas; a counter is incremented by concurrent writers; a "check then act" pattern reads from a replica before making a decision; the team is debating whether to pay the performance cost of strong consistency.
-
-  Do NOT invoke when: there is only one replica (single-node database, no replication); the question is about transaction isolation levels within a single database (see `transaction-isolation-level-selection`); the question is about which replication topology to use (see `replication-topology-selection`).
+description: "Use when deciding whether an operation on replicated storage needs linearizability or can accept eventual consistency: uniqueness constraints, quotas, rate limits, distributed locks, concurrent counters, or check-then-act reads from a replica. Not for single-node databases."
 tags: [consistency, linearizability, eventual-consistency, distributed-systems, CAP-theorem, replication]
 allowed-tools: Bash, Read, Edit
 ---

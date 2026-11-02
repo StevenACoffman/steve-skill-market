@@ -1,13 +1,6 @@
 ---
 name: test-helper-process-subprocess-mock
-description: |
-  When production code calls exec.Command to run an external binary, or when
-  you need to simulate subprocess failure modes (non-zero exit, garbage stdout,
-  crash) that a real binary cannot produce on demand. Make *exec.Cmd creation
-  injectable via a commandFactory field; in tests supply helperProcess(), which
-  re-executes the test binary itself with TestHelperProcess and
-  GO_WANT_HELPER_PROCESS=1. Do not use for HTTP services (use httptest) or
-  databases (use testcontainers).
+description: Use when Go code calls exec.Command and tests need to fake the external binary or its failures (non-zero exit, garbage stdout, crash). Inject a command factory and re-run the test binary via TestHelperProcess and GO_WANT_HELPER_PROCESS=1. Not for HTTP services or databases.
 tags: [go, testing, subprocess, exec, mocking, testable-code]
 allowed-tools: Bash, Read, Edit
 ---

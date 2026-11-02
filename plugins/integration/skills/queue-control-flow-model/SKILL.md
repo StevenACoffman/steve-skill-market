@@ -1,7 +1,6 @@
 ---
 name: queue-control-flow-model
-description: |
-  Invoke when connecting two cloud services that don't seem to support direct connection, when a colleague draws an integration diagram with unlabeled arrows, when message ordering matters for a downstream consumer using parallel workers, when selecting between pull-based and push-based delivery, or when a serverless pipeline shows unexpectedly high P90 latency.
+description: Invoke when connecting two cloud services that lack a direct connection, an integration diagram has unlabeled arrows, message ordering matters with parallel workers, choosing pull vs push delivery, or a serverless pipeline shows unexpectedly high P90 latency.
 ---
 # Queue Control Flow Model
 

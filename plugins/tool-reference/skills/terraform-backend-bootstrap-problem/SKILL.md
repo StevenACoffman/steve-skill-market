@@ -1,7 +1,6 @@
 ---
 name: terraform-backend-bootstrap-problem
-description: |
-  Invoke when a user tries to use variables in a backend block and gets an error, asks how to share backend configuration across environments without copy-pasting, or needs to set up an S3+DynamoDB remote backend for the first time.
+description: Use when Terraform errors on variables in a backend block, when sharing backend configuration across environments without copy-paste, or when setting up an S3 and DynamoDB remote backend for the first time.
 ---
 # Terraform Backend Bootstrap Problem: Variables Forbidden, Chicken-and-Egg Setup
 

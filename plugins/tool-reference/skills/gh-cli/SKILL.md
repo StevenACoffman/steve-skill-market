@@ -1,7 +1,6 @@
 ---
 name: gh-cli
-description: |
-  Use when performing any GitHub operation from the command line — creating PRs, managing issues, checking Actions status, working with releases, gists, codespaces, or organizations. Comprehensive reference for the gh CLI.
+description: "Use when performing any GitHub operation from the command line with the gh CLI: creating PRs, managing issues, checking Actions status, working with releases, gists, codespaces, or organizations."
 ---
 
 # GitHub CLI (`gh`)
