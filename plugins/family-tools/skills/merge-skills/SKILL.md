@@ -193,7 +193,20 @@ its convergence/divergence map to `<output>/dev/<slug>/merge-audit.md`, outside 
 skill directory (see Output Structure). Each generated `SKILL.md` stays under 500
 lines (agentskills.io's recommendation; `exegesis verify` gates it): move longer
 material into reference files in the skill directory, and have the body say when to
-read each one. Each segment has specific guidance for the merge case:
+read each one. Each segment has specific guidance for the merge case.
+
+Declare the sources in the merged skill's frontmatter, by folder name and separated by
+spaces:
+
+```yaml
+metadata:
+  merged-from: repository-interface-in-domain-package update-function-closure-repository
+```
+
+The key marks the skill as merged, so `exegesis verify` and `exegesis tests` gate it
+under the merged composition even in a tree of ordinary skills. It also lets exegesis
+treat a reference to a source that is no longer in the tree as a reference to this
+skill. `## Provenance` still carries each source's book, author and note.
 
 Read `references/merge-segment-guidance.md` before writing each segment: R takes a dual
 citation with a convergence note, I a single unified synthesis, A1 one case per book in
@@ -270,8 +283,10 @@ exegesis tests --merge books/merged/<merge-slug>/<merged-skill>/
 
 `--merge` enforces the four-category gate (≥3 `should_trigger`, ≥2
 `should_not_trigger`, ≥2 `edge_case`, ≥2 `prefer_merged_over_source`) and exits
-non-zero until it passes. Runtime pass-rate scoring stays with darwin. Read
-`references/phase4-cli.md` before migrating a test file in an older shape.
+non-zero until it passes. A skill declaring `metadata.merged-from` gets the same gate
+without the flag, so one run checks a plugin that mixes merged and ordinary skills.
+Runtime pass-rate scoring stays with darwin. Read `references/phase4-cli.md` before
+migrating a test file in an older shape.
 
 The `prefer_merged_over_source` tests are the unique quality gate for merged skills.
 The comparison must include a **no-skill baseline arm**, not just the two sources: a
@@ -305,6 +320,8 @@ every source skill this run modified (Phase 0 `## Merge status`, Phase 3
 - Frontmatter has only spec-allowed keys (`name`, `description`, `tags`,
   `allowed-tools`, `license`, `compatibility`, `metadata`); `name` equals the folder
   name.
+- `metadata.merged-from` lists every source skill once, by valid skill name, and not
+  the merged skill itself.
 - The merged `SKILL.md` is under 500 lines (agentskills.io's recommendation;
   `exegesis verify` gates it). Move longer material into reference files the body says
   when to read.

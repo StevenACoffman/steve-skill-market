@@ -675,6 +675,7 @@ graph TD
   replication-topology-selection -->|contrasts-with| replication-lag-as-correctness
   replication-topology-selection -->|contrasts-with| sharding-strategy-selection
   repository-unit-of-work -->|composes-with| error-translation-layer-boundaries
+  repository-unit-of-work -->|composes-with| go-test-state-driven-table
   requisite-variety-gap-assessment -->|contrasts-with| cynefin-pm-domain-identification
   requisite-variety-gap-assessment -->|contrasts-with| governance-model-adequacy-test
   responsibility-control-slo -->|composes-with| composite-slo
@@ -741,6 +742,7 @@ graph TD
   terraform-no-cluster-app-same-module -->|informs| terraform-moved-block-refactoring
   terraform-secrets-in-state -->|composes-with| terraform-directory-layout-isolation
   terraform-secrets-in-state -->|depends-on| terraform-backend-bootstrap-problem
+  test-helper-contract -->|composes-with| go-test-state-driven-table
   test-helper-contract -->|composes-with| never-mock-net-conn-use-loopback
   test-helper-contract -->|composes-with| testing-go-public-test-api
   test-helper-process-subprocess-mock -->|contrasts-with| never-mock-net-conn-use-loopback

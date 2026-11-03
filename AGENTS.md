@@ -46,8 +46,10 @@ claude plugin validate .
 for p in plugins/*/; do claude plugin validate "$p"; done
 ```
 
-`exegesis verify` fails on four merged skills in go-craft, grpc and testing-legacy, whose
-`prefer_merged_over_source` cases need `--merge`. Read any other failure as real.
+A merged skill declares its sources as `metadata.merged-from: source-a source-b`, which
+gates its test prompts under the merged composition (adding `prefer_merged_over_source`)
+and resolves references to sources no longer in the market. Its merge audit stays in
+`dev/<skill>/merge-audit.md`, where `exegesis verify` looks for it.
 
 Markdown is formatted by `mdformat` (`.mdformat.toml`) and linted by `rumdl` (`.rumdl.toml`)
 and Vale (`.vale.ini`). Shell scripts pass `shellcheck` (`.shellcheckrc`) and test for a program
