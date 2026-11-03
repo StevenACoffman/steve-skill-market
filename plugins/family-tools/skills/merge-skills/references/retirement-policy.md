@@ -28,6 +28,12 @@ of this — and it is built: `exegesis verify` prints each as a `graph:` line ("
 this tree … verify does not fail on it"), reporting the tree incomplete rather than
 broken.
 
+A retired parent is the one dangling target the tree can still resolve. When a skill in
+the tree lists the parent in its `metadata.merged-from`, `verify` reports the reference
+as merged into that skill, and `exegesis index` draws the edge there instead of dropping
+it. A parent claimed by two merged skills stays dropped, since either choice would be a
+guess.
+
 This keys on the ledger state, so state it accurately: a `partial` parent stays in both
 trees, because `excluded` names content the child does not carry. If `excluded` is
 trivial — a sentence, a duplicate example — the honest ledger entry is `merged`, not
