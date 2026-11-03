@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "go-craft",
+  "version": "0.1.0",
+  "description": "Go application design: packages, dependency injection, errors, HTTP services, and CLIs.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

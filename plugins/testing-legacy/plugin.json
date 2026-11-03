@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "testing-legacy",
+  "version": "0.1.0",
+  "description": "Go testing practice and legacy code: table tests, helpers, fuzzing, and safe change.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

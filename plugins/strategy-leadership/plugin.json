@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "strategy-leadership",
+  "version": "0.1.0",
+  "description": "Architecture strategy, program governance, complexity diagnosis, and organization design.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "family-tools",
+  "version": "0.1.0",
+  "description": "The skill family's own tools: book2skill, merge-skills, skillsaw-skill and canonizer, and the linters and formatters they run.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

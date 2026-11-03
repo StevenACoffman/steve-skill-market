@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "tool-reference",
+  "version": "0.1.0",
+  "description": "Reference skills for tools: Terraform, gh, gqlgen, genqlient, sqlc, pgxpool, leafwiki, and Go test tooling.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

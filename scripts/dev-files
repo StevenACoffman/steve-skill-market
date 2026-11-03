@@ -1,0 +1,104 @@
+#!/bin/sh
+# dev-files — move development artifacts between skill directories and dev/.
+#
+# A skill directory under plugins/ holds only what ships. Reports and maintainer notes
+# (test results, merge audits, backlogs) live in dev/<skill>/, keyed by skill name so
+# the layout survives skills moving between plugins.
+#
+# usage: scripts/dev-files park              move every artifact into dev/
+#        scripts/dev-files restore [SKILL]   move artifacts back beside their skill
+#
+# Both directions use `git mv` for tracked files, so history follows them, and neither
+# overwrites an existing file.
+
+set -eu
+
+# Files that are development artifacts wherever they sit in a skill directory.
+ARTIFACTS="test-results.md merge-audit.md TODO.md GITHUB_REPO.md"
+
+usage() {
+    echo "usage: scripts/dev-files park | restore [SKILL...]" >&2
+    exit 2
+}
+
+# move SRC DST — move one file or directory, refusing to overwrite.
+move() {
+    if [ -e "$2" ]; then
+        echo "dev-files: refusing to overwrite $2" >&2
+        return 1
+    fi
+    mkdir -p "$(dirname "$2")"
+    if git ls-files --error-unmatch -- "$1" >/dev/null 2>&1; then
+        git mv -- "$1" "$2"
+    else
+        mv -- "$1" "$2"
+    fi
+    echo "$1 -> $2"
+}
+
+# skill_dir NAME — print the plugins/ directory holding skill NAME, if there is one.
+skill_dir() {
+    for d in plugins/*/skills/"$1"; do
+        if [ -f "$d/SKILL.md" ]; then
+            echo "$d"
+            return 0
+        fi
+    done
+    return 1
+}
+
+park() {
+    for dir in plugins/*/skills/*/; do
+        dir=${dir%/}
+        skill=${dir##*/}
+        case $skill in
+        *-workspace)
+            # skill-creator's evaluation workspace sits beside the skill it evaluates.
+            move "$dir" "dev/${skill%-workspace}/$skill"
+            continue
+            ;;
+        esac
+        for name in $ARTIFACTS; do
+            if [ -e "$dir/$name" ]; then
+                move "$dir/$name" "dev/$skill/$name"
+            fi
+        done
+    done
+}
+
+restore() {
+    if [ "$#" -eq 0 ]; then
+        for d in dev/*/; do
+            [ -d "$d" ] || continue
+            d=${d%/}
+            set -- "$@" "${d##*/}"
+        done
+    fi
+    for skill in "$@"; do
+        if ! target=$(skill_dir "$skill"); then
+            echo "dev-files: no skill named $skill under plugins/*/skills/" >&2
+            continue
+        fi
+        for path in "dev/$skill"/* "dev/$skill"/.[!.]*; do
+            [ -e "$path" ] || continue
+            name=${path##*/}
+            case $name in
+            *-workspace) move "$path" "${target%/*}/$name" ;;
+            *) move "$path" "$target/$name" ;;
+            esac
+        done
+        rmdir "dev/$skill" 2>/dev/null || true
+    done
+}
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+[ "$#" -ge 1 ] || usage
+command=$1
+shift
+case $command in
+park) park ;;
+restore) restore "$@" ;;
+*) usage ;;
+esac

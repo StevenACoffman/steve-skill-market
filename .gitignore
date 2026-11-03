@@ -223,3 +223,6 @@ gha-kubeconfig-*
 .rumdl_cache
 # Vale - grammar checker and style lint
 .vale
+
+# skill-creator evaluation workspaces; scripts/dev-files parks them in dev/.
+plugins/**/*-workspace/
