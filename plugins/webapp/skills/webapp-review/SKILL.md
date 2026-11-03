@@ -14,16 +14,16 @@ the comments useful to a reader who has never seen the rule documents.
 
 ## Placeholders
 
-| Placeholder          | Meaning                                     | Example                                               |
-| -------------------- | ------------------------------------------- | ----------------------------------------------------- |
-| `$REPO`              | Local webapp checkout                       | `~/khan/webapp`                                       |
-| `$PR_NUM`            | Pull request number                         | `41145`                                               |
-| `$HEAD_BRANCH`       | Branch under review                         | `local-roster-db-script`                              |
-| `$BASE_BRANCH`       | Deploy branch the PR targets                | `deploy/timmcca-be`                                   |
-| `$GO_ADVICE`         | General Go advice document                  | `~/Documents/agent-orange/go-advice/summary_rules.md` |
-| `$WEBAPP_EXCEPTIONS` | Rules that override the above               | `RULES.md` in the installed webapp skill              |
-| `$LINT_REPO`         | Repo whose `rumdl` and vale config to reuse | `~/Documents/git/canonizer`                           |
-| `$SCRATCH`           | Temporary directory for the write-up        | session scratchpad                                    |
+| Placeholder          | Meaning                                     | Example                                      |
+| -------------------- | ------------------------------------------- | -------------------------------------------- |
+| `$REPO`              | Local webapp checkout                       | `~/khan/webapp`                              |
+| `$PR_NUM`            | Pull request number                         | `1234`                                       |
+| `$HEAD_BRANCH`       | Branch under review                         | `add-roster-sync-script`                     |
+| `$BASE_BRANCH`       | Deploy branch the PR targets                | `deploy/<your-deploy-branch>`                |
+| `$GO_ADVICE`         | General Go advice document                  | a Go style or rules document you maintain    |
+| `$WEBAPP_EXCEPTIONS` | Rules that override the above               | `RULES.md` in the installed webapp skill     |
+| `$LINT_REPO`         | Repo whose `rumdl` and vale config to reuse | any checkout with `.rumdl.toml` and `.vale/` |
+| `$SCRATCH`           | Temporary directory for the write-up        | session scratchpad                           |
 
 ## Stage 1: Scope and Read the Diff
 
