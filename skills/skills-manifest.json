@@ -1,0 +1,2726 @@
+{
+  "tool": "exegesis",
+  "tree": "skills",
+  "structure_verified": false,
+  "skills": [
+    {
+      "slug": "10x9-cost-reliability",
+      "dir": "skills/10x9-cost-reliability",
+      "sha256": "b2d3d46b2dbb47ed",
+      "test_prompts": "skills/10x9-cost-reliability/test-prompts.json",
+      "test_prompts_sha256": "797c1047d5d33888",
+      "edges": {
+        "composes-with": [
+          "slo-definition-calibration-framework",
+          "wardley-pace-slo"
+        ]
+      }
+    },
+    {
+      "slug": "3ts-premature-optimization",
+      "dir": "skills/3ts-premature-optimization",
+      "sha256": "118c279a5d6f7c2f",
+      "test_prompts": "skills/3ts-premature-optimization/test-prompts.json",
+      "test_prompts_sha256": "05fc6a0f4207cd79",
+      "edges": {
+        "composes-with": [
+          "fit-practice"
+        ],
+        "contrasts-with": [
+          "vsi-cargo-culting"
+        ]
+      }
+    },
+    {
+      "slug": "anti-dry-separate-read-write-models",
+      "dir": "skills/anti-dry-separate-read-write-models",
+      "sha256": "2abb909be0145710",
+      "test_prompts": "skills/anti-dry-separate-read-write-models/test-prompts.json",
+      "test_prompts_sha256": "8dae1644661bc9b7",
+      "edges": {
+        "contrasts-with": [
+          "microservices-dont-fix-coupling"
+        ],
+        "depends-on": [
+          "strategic-before-tactical-ddd"
+        ],
+        "informs": [
+          "test-layer-architecture-mapping"
+        ]
+      }
+    },
+    {
+      "slug": "architect-elevator",
+      "dir": "skills/architect-elevator",
+      "sha256": "2dd3eceb3fa77072",
+      "test_prompts": "skills/architect-elevator/test-prompts.json",
+      "test_prompts_sha256": "1ab297ab226c7037",
+      "edges": {
+        "composes-with": [
+          "principles-quality-checklist"
+        ]
+      }
+    },
+    {
+      "slug": "batch-vs-stream-processing-selection",
+      "dir": "skills/batch-vs-stream-processing-selection",
+      "sha256": "1c2bf1c97b2b6924",
+      "edges": {
+        "composes-with": [
+          "end-to-end-idempotence-request-ids",
+          "schema-evolution-compatibility-planning"
+        ],
+        "depends-on": [
+          "system-of-record-vs-derived-data"
+        ]
+      }
+    },
+    {
+      "slug": "blameless-postmortem-process",
+      "dir": "skills/blameless-postmortem-process",
+      "sha256": "86716ba9a786959c",
+      "test_prompts": "skills/blameless-postmortem-process/test-prompts.json",
+      "test_prompts_sha256": "bc89696e0192dea4",
+      "edges": {
+        "composes-with": [
+          "incident-management-role-separation",
+          "on-call-sustainability-model"
+        ],
+        "depends-on": [
+          "hypothetico-deductive-troubleshooting-loop"
+        ]
+      }
+    },
+    {
+      "slug": "book2skill",
+      "dir": "skills/book2skill",
+      "sha256": "97fe05a184689372"
+    },
+    {
+      "slug": "breakglass-design",
+      "dir": "skills/breakglass-design",
+      "sha256": "5dd793f486bf018d",
+      "test_prompts": "skills/breakglass-design/test-prompts.json",
+      "test_prompts_sha256": "b7e3c18ef664a982",
+      "edges": {
+        "composes-with": [
+          "zero-touch-production"
+        ],
+        "contrasts-with": [
+          "fail-safe-vs-fail-secure"
+        ],
+        "depends-on": [
+          "least-privilege-tooling-enforced"
+        ]
+      }
+    },
+    {
+      "slug": "canary-as-error-budget-arithmetic",
+      "dir": "skills/canary-as-error-budget-arithmetic",
+      "sha256": "6e3e3e6a7d12fb9b",
+      "test_prompts": "skills/canary-as-error-budget-arithmetic/test-prompts.json",
+      "test_prompts_sha256": "16220a98a150181a",
+      "edges": {
+        "composes-with": [
+          "multiwindow-multi-burn-rate-alerting"
+        ],
+        "contrasts-with": [
+          "configuration-hermeticity-framework"
+        ],
+        "depends-on": [
+          "error-budget-policy-framework"
+        ]
+      }
+    },
+    {
+      "slug": "canonical-data-model-decision",
+      "dir": "skills/canonical-data-model-decision",
+      "sha256": "e6a1a2ddd08f5d6e",
+      "test_prompts": "skills/canonical-data-model-decision/test-prompts.json",
+      "test_prompts_sha256": "4a4592395e4fb598",
+      "edges": {
+        "depends-on": [
+          "eda-coupling-diagnosis",
+          "integration-style-selection",
+          "multidimensional-coupling-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "canonizer",
+      "dir": "skills/canonizer",
+      "sha256": "578fda54b2e81c7f",
+      "edges": {
+        "contrasts-with": [
+          "book2skill",
+          "skillsaw-skill"
+        ]
+      }
+    },
+    {
+      "slug": "change-as-primary-outage-cause",
+      "dir": "skills/change-as-primary-outage-cause",
+      "sha256": "1f2085be9dd918a9",
+      "test_prompts": "skills/change-as-primary-outage-cause/test-prompts.json",
+      "test_prompts_sha256": "c49f19430cd47395",
+      "edges": {
+        "composes-with": [
+          "blameless-postmortem-process",
+          "hypothetico-deductive-troubleshooting-loop"
+        ],
+        "contrasts-with": [
+          "error-budget-conflict-resolution"
+        ],
+        "depends-on": [
+          "four-golden-signals-monitoring"
+        ]
+      }
+    },
+    {
+      "slug": "cli-configuration-hierarchy",
+      "dir": "skills/cli-configuration-hierarchy",
+      "sha256": "13e317961d997272",
+      "test_prompts": "skills/cli-configuration-hierarchy/test-prompts.json",
+      "test_prompts_sha256": "efd4bd0fe7dcaece",
+      "edges": {
+        "composes-with": [
+          "cli-interface-stability",
+          "cli-secret-handling"
+        ]
+      }
+    },
+    {
+      "slug": "cli-destructive-confirmation-tiers",
+      "dir": "skills/cli-destructive-confirmation-tiers",
+      "sha256": "df7c1979b009fa0f",
+      "test_prompts": "skills/cli-destructive-confirmation-tiers/test-prompts.json",
+      "test_prompts_sha256": "dbf9a2861a8b01c4",
+      "edges": {
+        "composes-with": [
+          "cli-interface-stability"
+        ]
+      }
+    },
+    {
+      "slug": "cli-interface-stability",
+      "dir": "skills/cli-interface-stability",
+      "sha256": "a6bccc8546226360",
+      "test_prompts": "skills/cli-interface-stability/test-prompts.json",
+      "test_prompts_sha256": "bf1b6c4d5387fd58",
+      "edges": {
+        "composes-with": [
+          "cli-configuration-hierarchy",
+          "cli-destructive-confirmation-tiers"
+        ]
+      }
+    },
+    {
+      "slug": "cli-secret-handling",
+      "dir": "skills/cli-secret-handling",
+      "sha256": "7375d69c0837f086",
+      "test_prompts": "skills/cli-secret-handling/test-prompts.json",
+      "test_prompts_sha256": "3b1a7ea23fce5e12",
+      "edges": {
+        "composes-with": [
+          "cli-configuration-hierarchy"
+        ]
+      }
+    },
+    {
+      "slug": "climax-cli-scaffold",
+      "dir": "skills/climax-cli-scaffold",
+      "sha256": "88a87e49b8780ebb",
+      "edges": {
+        "composes-with": [
+          "go-constructor-option-pattern-selection",
+          "go-http-service-di-composition"
+        ]
+      }
+    },
+    {
+      "slug": "clock-skew-ordering-hazard",
+      "dir": "skills/clock-skew-ordering-hazard",
+      "sha256": "37f815227588ac05",
+      "edges": {
+        "composes-with": [
+          "fencing-tokens-distributed-locks"
+        ],
+        "contrasts-with": [
+          "consistency-model-selection"
+        ],
+        "depends-on": [
+          "distributed-fault-taxonomy"
+        ]
+      }
+    },
+    {
+      "slug": "competing-consumers-vs-dispatcher",
+      "dir": "skills/competing-consumers-vs-dispatcher",
+      "sha256": "af7e51945fc85e85",
+      "test_prompts": "skills/competing-consumers-vs-dispatcher/test-prompts.json",
+      "test_prompts_sha256": "6d621c8b66233e64",
+      "edges": {
+        "composes-with": [
+          "messaging-observability-design",
+          "queue-flow-control-decision"
+        ],
+        "depends-on": [
+          "multidimensional-coupling-assessment",
+          "queue-control-flow-model"
+        ]
+      }
+    },
+    {
+      "slug": "composite-slo",
+      "dir": "skills/composite-slo",
+      "sha256": "4cca5e170fd0b9ef",
+      "test_prompts": "skills/composite-slo/test-prompts.json",
+      "test_prompts_sha256": "d548347dc32b1a80",
+      "edges": {
+        "composes-with": [
+          "responsibility-control-slo"
+        ],
+        "contrasts-with": [
+          "multi-tier-slo"
+        ],
+        "depends-on": [
+          "sli-formula-measurement"
+        ]
+      }
+    },
+    {
+      "slug": "configuration-hermeticity-framework",
+      "dir": "skills/configuration-hermeticity-framework",
+      "sha256": "27968a2535613916",
+      "test_prompts": "skills/configuration-hermeticity-framework/test-prompts.json",
+      "test_prompts_sha256": "5868e76ad095b4f4",
+      "edges": {
+        "composes-with": [
+          "nalsd-iterative-design-methodology"
+        ],
+        "contrasts-with": [
+          "canary-as-error-budget-arithmetic"
+        ]
+      }
+    },
+    {
+      "slug": "consistency-model-selection",
+      "dir": "skills/consistency-model-selection",
+      "sha256": "c54cf46b26e382c5",
+      "edges": {
+        "composes-with": [
+          "distributed-fault-taxonomy",
+          "timeliness-vs-integrity-distinction"
+        ],
+        "contrasts-with": [
+          "transaction-isolation-level-selection"
+        ],
+        "depends-on": [
+          "replication-topology-selection"
+        ]
+      }
+    },
+    {
+      "slug": "consumer-journey-org",
+      "dir": "skills/consumer-journey-org",
+      "sha256": "5d4780f009d26f4f",
+      "test_prompts": "skills/consumer-journey-org/test-prompts.json",
+      "test_prompts_sha256": "ea25864018458395",
+      "edges": {
+        "composes-with": [
+          "service-level-topology"
+        ],
+        "contrasts-with": [
+          "ephemeral-taskforce"
+        ],
+        "depends-on": [
+          "ownership-trio"
+        ]
+      }
+    },
+    {
+      "slug": "context-cancellation-cause",
+      "dir": "skills/context-cancellation-cause",
+      "sha256": "f3d960316cf81f8c",
+      "test_prompts": "skills/context-cancellation-cause/test-prompts.json",
+      "test_prompts_sha256": "193c47de299cccd0",
+      "edges": {
+        "composes-with": [
+          "context-key-collision-prevention",
+          "structured-goroutine-lifetime"
+        ]
+      }
+    },
+    {
+      "slug": "context-key-collision-prevention",
+      "dir": "skills/context-key-collision-prevention",
+      "sha256": "2d1e0f801ee19e11",
+      "test_prompts": "skills/context-key-collision-prevention/test-prompts.json",
+      "test_prompts_sha256": "4aaed7a0c724a215",
+      "edges": {
+        "composes-with": [
+          "context-cancellation-cause"
+        ]
+      }
+    },
+    {
+      "slug": "continuous-fuzzing-strategy",
+      "dir": "skills/continuous-fuzzing-strategy",
+      "sha256": "4c01a8bb24331799",
+      "test_prompts": "skills/continuous-fuzzing-strategy/test-prompts.json",
+      "test_prompts_sha256": "bc2d3c91b433d918",
+      "edges": {
+        "composes-with": [
+          "secure-by-construction-apis"
+        ],
+        "depends-on": [
+          "tcb-identification-minimization"
+        ]
+      }
+    },
+    {
+      "slug": "crit",
+      "dir": "skills/crit",
+      "sha256": "07d2f89187c26ba0"
+    },
+    {
+      "slug": "crit-cli",
+      "dir": "skills/crit-cli",
+      "sha256": "3e6bf2be5eb2e441"
+    },
+    {
+      "slug": "crit-story",
+      "dir": "skills/crit-story",
+      "sha256": "6eaf2cd1a8821749"
+    },
+    {
+      "slug": "custom-framework-within-go-test",
+      "dir": "skills/custom-framework-within-go-test",
+      "sha256": "22b1cd894e524c4b",
+      "test_prompts": "skills/custom-framework-within-go-test/test-prompts.json",
+      "test_prompts_sha256": "11ca9151f10010e7",
+      "edges": {
+        "composes-with": [
+          "testing-go-public-test-api"
+        ]
+      }
+    },
+    {
+      "slug": "cynefin-pm-domain-identification",
+      "dir": "skills/cynefin-pm-domain-identification",
+      "sha256": "d9050a638eb982b5",
+      "test_prompts": "skills/cynefin-pm-domain-identification/test-prompts.json",
+      "test_prompts_sha256": "4a792d52a30ac96e",
+      "edges": {
+        "composes-with": [
+          "four-forces-situational-assessment",
+          "project-complexity-source-diagnosis"
+        ],
+        "contrasts-with": [
+          "requisite-variety-gap-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "ddd-fitness-scorecard",
+      "dir": "skills/ddd-fitness-scorecard",
+      "sha256": "1af6c881875f470a",
+      "test_prompts": "skills/ddd-fitness-scorecard/test-prompts.json",
+      "test_prompts_sha256": "ab86727328df08ea"
+    },
+    {
+      "slug": "define-errors-out-of-existence",
+      "dir": "skills/define-errors-out-of-existence",
+      "sha256": "0e2d452871368e55",
+      "test_prompts": "skills/define-errors-out-of-existence/test-prompts.json",
+      "test_prompts_sha256": "5800559f2b2921b9"
+    },
+    {
+      "slug": "degradation-disruption",
+      "dir": "skills/degradation-disruption",
+      "sha256": "6f7584b281a12bad",
+      "test_prompts": "skills/degradation-disruption/test-prompts.json",
+      "test_prompts_sha256": "33d1f8fb340aec06",
+      "edges": {
+        "composes-with": [
+          "multi-tier-slo"
+        ],
+        "contrasts-with": [
+          "fallback-failover"
+        ],
+        "depends-on": [
+          "sli-formula-measurement"
+        ]
+      }
+    },
+    {
+      "slug": "dep-comp-cross-package-contract-decision",
+      "dir": "skills/dep-comp-cross-package-contract-decision",
+      "sha256": "0a55b2bc232587a9",
+      "test_prompts": "skills/dep-comp-cross-package-contract-decision/test-prompts.json",
+      "test_prompts_sha256": "e872e3afc1217889"
+    },
+    {
+      "slug": "dep-comp-function-first-composition",
+      "dir": "skills/dep-comp-function-first-composition",
+      "sha256": "7769308e3b1e7c7d",
+      "test_prompts": "skills/dep-comp-function-first-composition/test-prompts.json",
+      "test_prompts_sha256": "932e9b4993fca2c3"
+    },
+    {
+      "slug": "design-it-twice",
+      "dir": "skills/design-it-twice",
+      "sha256": "89a135bd28d1fbba",
+      "test_prompts": "skills/design-it-twice/test-prompts.json",
+      "test_prompts_sha256": "7c05c9e47fdbbb05"
+    },
+    {
+      "slug": "domain-driven-package-structure",
+      "dir": "skills/domain-driven-package-structure",
+      "sha256": "766208624a593fc4",
+      "test_prompts": "skills/domain-driven-package-structure/test-prompts.json",
+      "test_prompts_sha256": "f6bf93a86e8c8b43",
+      "edges": {
+        "composes-with": [
+          "error-translation-layer-boundaries",
+          "manual-dependency-injection"
+        ]
+      }
+    },
+    {
+      "slug": "domain-repository-contract",
+      "dir": "skills/domain-repository-contract",
+      "sha256": "f22582cc6d056ab5",
+      "test_prompts": "skills/domain-repository-contract/test-prompts.json",
+      "test_prompts_sha256": "978efad353ee384c"
+    },
+    {
+      "slug": "domain-service-interface-composition",
+      "dir": "skills/domain-service-interface-composition",
+      "sha256": "897da09380322929",
+      "test_prompts": "skills/domain-service-interface-composition/test-prompts.json",
+      "test_prompts_sha256": "0134a68d81778b7c",
+      "edges": {
+        "depends-on": [
+          "ddd-fitness-scorecard"
+        ],
+        "informs": [
+          "go-value-object-immutability",
+          "internal-package-bounded-context-enforcement",
+          "strong-consistency-across-bounded-contexts"
+        ]
+      }
+    },
+    {
+      "slug": "eda-coupling-diagnosis",
+      "dir": "skills/eda-coupling-diagnosis",
+      "sha256": "1dd15d8314e47410",
+      "test_prompts": "skills/eda-coupling-diagnosis/test-prompts.json",
+      "test_prompts_sha256": "8c43590da8fc0a52",
+      "edges": {
+        "composes-with": [
+          "multidimensional-coupling-assessment"
+        ],
+        "depends-on": [
+          "integration-style-selection"
+        ]
+      }
+    },
+    {
+      "slug": "embedding-sre-ops-overload-recovery",
+      "dir": "skills/embedding-sre-ops-overload-recovery",
+      "sha256": "73481abac784914c",
+      "test_prompts": "skills/embedding-sre-ops-overload-recovery/test-prompts.json",
+      "test_prompts_sha256": "ea1469e917120fb8",
+      "edges": {
+        "contrasts-with": [
+          "fifty-percent-engineering-time-cap"
+        ],
+        "depends-on": [
+          "blameless-postmortem-process",
+          "sli-slo-sla-tier-framework",
+          "toil-six-property-identification-test"
+        ]
+      }
+    },
+    {
+      "slug": "emergence-conditions-audit",
+      "dir": "skills/emergence-conditions-audit",
+      "sha256": "bc78384dfbb85f38",
+      "test_prompts": "skills/emergence-conditions-audit/test-prompts.json",
+      "test_prompts_sha256": "735ccf001d3e4bee",
+      "edges": {
+        "composes-with": [
+          "governance-model-adequacy-test",
+          "program-governance-ecological-design"
+        ],
+        "contrasts-with": [
+          "sv-trend-diagnostic"
+        ]
+      }
+    },
+    {
+      "slug": "emergent-properties",
+      "dir": "skills/emergent-properties",
+      "sha256": "cd083b63a80ef5fc",
+      "test_prompts": "skills/emergent-properties/test-prompts.json",
+      "test_prompts_sha256": "6d3c1767b5c80f9b",
+      "edges": {
+        "composes-with": [
+          "ioc-ai-systems",
+          "multi-agent-reliability"
+        ]
+      }
+    },
+    {
+      "slug": "enterprise-non-cloud-diagnostic",
+      "dir": "skills/enterprise-non-cloud-diagnostic",
+      "sha256": "7021357bd222b784",
+      "test_prompts": "skills/enterprise-non-cloud-diagnostic/test-prompts.json",
+      "test_prompts_sha256": "d7fb705fe250fd99"
+    },
+    {
+      "slug": "entity-vs-value-object-decision",
+      "dir": "skills/entity-vs-value-object-decision",
+      "sha256": "623c3af746e14210",
+      "test_prompts": "skills/entity-vs-value-object-decision/test-prompts.json",
+      "test_prompts_sha256": "0dfc24996d2297e1",
+      "edges": {
+        "depends-on": [
+          "ddd-fitness-scorecard"
+        ],
+        "informs": [
+          "domain-service-interface-composition"
+        ]
+      }
+    },
+    {
+      "slug": "ephemeral-taskforce",
+      "dir": "skills/ephemeral-taskforce",
+      "sha256": "b3e238116f4c8457",
+      "test_prompts": "skills/ephemeral-taskforce/test-prompts.json",
+      "test_prompts_sha256": "2ef6afaf7e514413",
+      "edges": {
+        "composes-with": [
+          "t-pop"
+        ],
+        "contrasts-with": [
+          "consumer-journey-org"
+        ],
+        "depends-on": [
+          "ownership-trio"
+        ]
+      }
+    },
+    {
+      "slug": "error-translation-layer-boundaries",
+      "dir": "skills/error-translation-layer-boundaries",
+      "sha256": "003bd0f6fe6d1393",
+      "test_prompts": "skills/error-translation-layer-boundaries/test-prompts.json",
+      "test_prompts_sha256": "d931ca2ef36291ff",
+      "edges": {
+        "composes-with": [
+          "repository-unit-of-work",
+          "transport-agnostic-service-functions"
+        ],
+        "depends-on": [
+          "domain-driven-package-structure"
+        ]
+      }
+    },
+    {
+      "slug": "fail-safe-vs-fail-secure",
+      "dir": "skills/fail-safe-vs-fail-secure",
+      "sha256": "2551bf2a11892211",
+      "test_prompts": "skills/fail-safe-vs-fail-secure/test-prompts.json",
+      "test_prompts_sha256": "702b272a3bb46927",
+      "edges": {
+        "composes-with": [
+          "security-as-emergent-property"
+        ],
+        "contrasts-with": [
+          "breakglass-design"
+        ],
+        "depends-on": [
+          "tcb-identification-minimization"
+        ]
+      }
+    },
+    {
+      "slug": "fallback-failover",
+      "dir": "skills/fallback-failover",
+      "sha256": "b0f19cc8887586a3",
+      "test_prompts": "skills/fallback-failover/test-prompts.json",
+      "test_prompts_sha256": "8ad27e1a9b56bc96",
+      "edges": {
+        "composes-with": [
+          "composite-slo",
+          "slo-definition-calibration-framework"
+        ],
+        "depends-on": [
+          "degradation-disruption"
+        ]
+      }
+    },
+    {
+      "slug": "fcis-shell-exploration-cadence",
+      "dir": "skills/fcis-shell-exploration-cadence",
+      "sha256": "c0918231c382ea9b",
+      "test_prompts": "skills/fcis-shell-exploration-cadence/test-prompts.json",
+      "test_prompts_sha256": "156e10080f8c6890",
+      "edges": {
+        "composes-with": [
+          "test-double-diagnostic-sensing-to-core"
+        ],
+        "depends-on": [
+          "seam-to-zone-refactoring-trajectory"
+        ]
+      }
+    },
+    {
+      "slug": "fencing-tokens-distributed-locks",
+      "dir": "skills/fencing-tokens-distributed-locks",
+      "sha256": "4d8c458a708ad016",
+      "edges": {
+        "composes-with": [
+          "clock-skew-ordering-hazard",
+          "end-to-end-idempotence-request-ids"
+        ],
+        "contrasts-with": [
+          "consistency-model-selection"
+        ],
+        "depends-on": [
+          "distributed-fault-taxonomy"
+        ]
+      }
+    },
+    {
+      "slug": "fifty-percent-engineering-time-cap",
+      "dir": "skills/fifty-percent-engineering-time-cap",
+      "sha256": "d13981dabce38188",
+      "test_prompts": "skills/fifty-percent-engineering-time-cap/test-prompts.json",
+      "test_prompts_sha256": "a1e16bcf305385e3",
+      "edges": {
+        "composes-with": [
+          "embedding-sre-ops-overload-recovery",
+          "error-budget-conflict-resolution"
+        ],
+        "depends-on": [
+          "on-call-sustainability-model",
+          "toil-six-property-identification-test"
+        ]
+      }
+    },
+    {
+      "slug": "first-derivative-economies-of-speed",
+      "dir": "skills/first-derivative-economies-of-speed",
+      "sha256": "840f3174c82def52",
+      "test_prompts": "skills/first-derivative-economies-of-speed/test-prompts.json",
+      "test_prompts_sha256": "f3c7857b8914dd5c",
+      "edges": {
+        "composes-with": [
+          "architect-elevator",
+          "value-gap-migration-metrics"
+        ]
+      }
+    },
+    {
+      "slug": "fit-practice",
+      "dir": "skills/fit-practice",
+      "sha256": "f076b3889b357f18",
+      "test_prompts": "skills/fit-practice/test-prompts.json",
+      "test_prompts_sha256": "ccfad25a788f836a",
+      "edges": {
+        "composes-with": [
+          "3ts-premature-optimization",
+          "vsi-cargo-culting"
+        ],
+        "contrasts-with": [
+          "vsi-cargo-culting"
+        ]
+      }
+    },
+    {
+      "slug": "four-forces-situational-assessment",
+      "dir": "skills/four-forces-situational-assessment",
+      "sha256": "386e82bf42024f26",
+      "test_prompts": "skills/four-forces-situational-assessment/test-prompts.json",
+      "test_prompts_sha256": "c51f4addfa9f2d98",
+      "edges": {
+        "composes-with": [
+          "cynefin-pm-domain-identification",
+          "jagged-frontier-work-allocation",
+          "project-complexity-source-diagnosis"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-branch-by-abstraction",
+      "dir": "skills/fowler-branch-by-abstraction",
+      "sha256": "3615c66d30556f1d",
+      "test_prompts": "skills/fowler-branch-by-abstraction/test-prompts.json",
+      "test_prompts_sha256": "46b45bc9b06621f2",
+      "edges": {
+        "composes-with": [
+          "fowler-database-parallel-change",
+          "fowler-opportunistic-refactoring"
+        ],
+        "contrasts-with": [
+          "fowler-yagni-refactoring"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-database-parallel-change",
+      "dir": "skills/fowler-database-parallel-change",
+      "sha256": "bab51d3cc1bf5154",
+      "test_prompts": "skills/fowler-database-parallel-change/test-prompts.json",
+      "test_prompts_sha256": "c9b336812d0fc1f9",
+      "edges": {
+        "composes-with": [
+          "fowler-branch-by-abstraction"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-divergent-shotgun",
+      "dir": "skills/fowler-divergent-shotgun",
+      "sha256": "2ceb3b39366e766d",
+      "test_prompts": "skills/fowler-divergent-shotgun/test-prompts.json",
+      "test_prompts_sha256": "6d76e19071c133f4",
+      "edges": {
+        "depends-on": [
+          "fowler-code-smells"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-opportunistic-refactoring",
+      "dir": "skills/fowler-opportunistic-refactoring",
+      "sha256": "69222e5ff480da82",
+      "test_prompts": "skills/fowler-opportunistic-refactoring/test-prompts.json",
+      "test_prompts_sha256": "6dacd4afe277e2f1",
+      "edges": {
+        "composes-with": [
+          "fowler-branch-by-abstraction",
+          "fowler-code-smells",
+          "fowler-two-hats"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-performance-sequencing",
+      "dir": "skills/fowler-performance-sequencing",
+      "sha256": "bc3ec7219e98c313",
+      "test_prompts": "skills/fowler-performance-sequencing/test-prompts.json",
+      "test_prompts_sha256": "cba2e8f4da23edb7",
+      "edges": {
+        "composes-with": [
+          "fowler-design-stamina",
+          "fowler-two-hats"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-two-hats",
+      "dir": "skills/fowler-two-hats",
+      "sha256": "07331948daa4f212",
+      "test_prompts": "skills/fowler-two-hats/test-prompts.json",
+      "test_prompts_sha256": "dba4f66fdb7dd352",
+      "edges": {
+        "composes-with": [
+          "fowler-opportunistic-refactoring",
+          "fowler-performance-sequencing"
+        ]
+      }
+    },
+    {
+      "slug": "fowler-yagni-refactoring",
+      "dir": "skills/fowler-yagni-refactoring",
+      "sha256": "a0f517016847b0a8",
+      "test_prompts": "skills/fowler-yagni-refactoring/test-prompts.json",
+      "test_prompts_sha256": "01e28149c530e7c9",
+      "edges": {
+        "contrasts-with": [
+          "fowler-branch-by-abstraction"
+        ],
+        "depends-on": [
+          "fowler-design-stamina"
+        ]
+      }
+    },
+    {
+      "slug": "genqlient",
+      "dir": "skills/genqlient",
+      "sha256": "87de3a064079176c"
+    },
+    {
+      "slug": "gh-cli",
+      "dir": "skills/gh-cli",
+      "sha256": "cbd62f9bed8d3d09"
+    },
+    {
+      "slug": "gh-stack",
+      "dir": "skills/gh-stack",
+      "sha256": "f1cce7efdf3828a3"
+    },
+    {
+      "slug": "go-beyond-four-tenet-layout",
+      "dir": "skills/go-beyond-four-tenet-layout",
+      "sha256": "1ab90ac8e9eca42e",
+      "test_prompts": "skills/go-beyond-four-tenet-layout/test-prompts.json",
+      "test_prompts_sha256": "718b3acdb16697d7",
+      "edges": {
+        "composes-with": [
+          "go-beyond-service-transaction-boundary",
+          "go-beyond-three-consumer-error"
+        ],
+        "depends-on": [
+          "go-beyond-packages-as-layers"
+        ]
+      }
+    },
+    {
+      "slug": "go-beyond-packages-as-layers",
+      "dir": "skills/go-beyond-packages-as-layers",
+      "sha256": "9a906c2ca033dfba",
+      "test_prompts": "skills/go-beyond-packages-as-layers/test-prompts.json",
+      "test_prompts_sha256": "652fd9a7fa42af97",
+      "edges": {
+        "composes-with": [
+          "go-beyond-four-tenet-layout"
+        ]
+      }
+    },
+    {
+      "slug": "go-beyond-service-transaction-boundary",
+      "dir": "skills/go-beyond-service-transaction-boundary",
+      "sha256": "bfbda61a81b6bf07",
+      "test_prompts": "skills/go-beyond-service-transaction-boundary/test-prompts.json",
+      "test_prompts_sha256": "d1b07f3ecf63287d",
+      "edges": {
+        "composes-with": [
+          "go-beyond-three-consumer-error"
+        ],
+        "depends-on": [
+          "go-beyond-four-tenet-layout"
+        ]
+      }
+    },
+    {
+      "slug": "go-beyond-three-consumer-error",
+      "dir": "skills/go-beyond-three-consumer-error",
+      "sha256": "128a09f9cf509d43",
+      "test_prompts": "skills/go-beyond-three-consumer-error/test-prompts.json",
+      "test_prompts_sha256": "cb306aa3975e0390",
+      "edges": {
+        "composes-with": [
+          "go-beyond-service-transaction-boundary"
+        ],
+        "depends-on": [
+          "go-beyond-four-tenet-layout"
+        ]
+      }
+    },
+    {
+      "slug": "go-http-service-di-composition",
+      "dir": "skills/go-http-service-di-composition",
+      "sha256": "52d005b2d7eadbc4",
+      "test_prompts": "skills/go-http-service-di-composition/test-prompts.json",
+      "test_prompts_sha256": "42d4f3ce21e1044a"
+    },
+    {
+      "slug": "go-test-auto",
+      "dir": "skills/go-test-auto",
+      "sha256": "12e4c73b6a45abad"
+    },
+    {
+      "slug": "go-test-state-driven-table",
+      "dir": "skills/go-test-state-driven-table",
+      "sha256": "93d67def4f574013",
+      "test_prompts": "skills/go-test-state-driven-table/test-prompts.json",
+      "test_prompts_sha256": "ff47064437928d0c"
+    },
+    {
+      "slug": "go-test-tools",
+      "dir": "skills/go-test-tools",
+      "sha256": "23587cdc76087b83"
+    },
+    {
+      "slug": "go-value-object-immutability",
+      "dir": "skills/go-value-object-immutability",
+      "sha256": "53045e36fa5d22d5",
+      "test_prompts": "skills/go-value-object-immutability/test-prompts.json",
+      "test_prompts_sha256": "f81cc55acf6e6f98",
+      "edges": {
+        "depends-on": [
+          "entity-vs-value-object-decision"
+        ],
+        "informs": [
+          "domain-service-interface-composition"
+        ]
+      }
+    },
+    {
+      "slug": "governance-model-adequacy-test",
+      "dir": "skills/governance-model-adequacy-test",
+      "sha256": "401c386475ae4d52",
+      "test_prompts": "skills/governance-model-adequacy-test/test-prompts.json",
+      "test_prompts_sha256": "8fe6419b1feb0054",
+      "edges": {
+        "composes-with": [
+          "emergence-conditions-audit"
+        ],
+        "contrasts-with": [
+          "requisite-variety-gap-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "governance-variety-lever-selection",
+      "dir": "skills/governance-variety-lever-selection",
+      "sha256": "5800ecdd9d07b620",
+      "test_prompts": "skills/governance-variety-lever-selection/test-prompts.json",
+      "test_prompts_sha256": "2abdbf56d8301a76",
+      "edges": {
+        "composes-with": [
+          "cynefin-pm-domain-identification"
+        ],
+        "depends-on": [
+          "requisite-variety-gap-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "gqlgen-app",
+      "dir": "skills/gqlgen-app",
+      "sha256": "1506de972ea43ddd"
+    },
+    {
+      "slug": "grpc-bufconn-unit-testing",
+      "dir": "skills/grpc-bufconn-unit-testing",
+      "sha256": "1781abf4f471ab82",
+      "test_prompts": "skills/grpc-bufconn-unit-testing/test-prompts.json",
+      "test_prompts_sha256": "868600a011a748c1"
+    },
+    {
+      "slug": "grpc-communication-pattern-selection",
+      "dir": "skills/grpc-communication-pattern-selection",
+      "sha256": "aae22a8589ba01b2",
+      "test_prompts": "skills/grpc-communication-pattern-selection/test-prompts.json",
+      "test_prompts_sha256": "cbc92ed34da34596",
+      "edges": {
+        "depends-on": [
+          "grpc-vs-rest-vs-graphql"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-dual-server-observability",
+      "dir": "skills/grpc-dual-server-observability",
+      "sha256": "1cc0084510c0e249",
+      "test_prompts": "skills/grpc-dual-server-observability/test-prompts.json",
+      "test_prompts_sha256": "9994d727f1359f03"
+    },
+    {
+      "slug": "grpc-fieldmask-partial-updates",
+      "dir": "skills/grpc-fieldmask-partial-updates",
+      "sha256": "56fc57f0e52e622b",
+      "test_prompts": "skills/grpc-fieldmask-partial-updates/test-prompts.json",
+      "test_prompts_sha256": "f11c747e4a1a6214",
+      "edges": {
+        "contrasts-with": [
+          "grpc-flatten-streaming-requests"
+        ],
+        "depends-on": [
+          "grpc-payload-optimization"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-flatten-streaming-requests",
+      "dir": "skills/grpc-flatten-streaming-requests",
+      "sha256": "6650da39466a5814",
+      "test_prompts": "skills/grpc-flatten-streaming-requests/test-prompts.json",
+      "test_prompts_sha256": "bde7d06e9f286e44",
+      "edges": {
+        "contrasts-with": [
+          "grpc-fieldmask-partial-updates"
+        ],
+        "depends-on": [
+          "grpc-payload-optimization"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-kubernetes-deployment-topology",
+      "dir": "skills/grpc-kubernetes-deployment-topology",
+      "sha256": "61236d9306892f0c",
+      "test_prompts": "skills/grpc-kubernetes-deployment-topology/test-prompts.json",
+      "test_prompts_sha256": "d11297899008d668",
+      "edges": {
+        "depends-on": [
+          "grpc-service-decomposition-by-capability"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-l4-lb-failure-mode",
+      "dir": "skills/grpc-l4-lb-failure-mode",
+      "sha256": "870299c39d1e4e1d",
+      "test_prompts": "skills/grpc-l4-lb-failure-mode/test-prompts.json",
+      "test_prompts_sha256": "26a527bc04322722",
+      "edges": {
+        "contrasts-with": [
+          "grpc-load-balancer-selection"
+        ],
+        "depends-on": [
+          "grpc-observability-three-pillar"
+        ],
+        "informs": [
+          "grpc-security-credential-composition"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-load-balancer-selection",
+      "dir": "skills/grpc-load-balancer-selection",
+      "sha256": "929b394bae8fcf78",
+      "test_prompts": "skills/grpc-load-balancer-selection/test-prompts.json",
+      "test_prompts_sha256": "2b5464379f3d1b2f",
+      "edges": {
+        "composes-with": [
+          "grpc-observability-three-pillar"
+        ],
+        "contrasts-with": [
+          "grpc-l4-lb-failure-mode"
+        ],
+        "informs": [
+          "grpc-security-credential-composition",
+          "grpc-vs-rest-vs-graphql"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-not-for-external-apis",
+      "dir": "skills/grpc-not-for-external-apis",
+      "sha256": "932a98c02f71cf00",
+      "test_prompts": "skills/grpc-not-for-external-apis/test-prompts.json",
+      "test_prompts_sha256": "e414f6ae8b8b2e7c",
+      "edges": {
+        "depends-on": [
+          "grpc-vs-rest-vs-graphql"
+        ],
+        "informs": [
+          "grpc-security-credential-composition"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-payload-optimization",
+      "dir": "skills/grpc-payload-optimization",
+      "sha256": "7a25e9f09336bcbc",
+      "test_prompts": "skills/grpc-payload-optimization/test-prompts.json",
+      "test_prompts_sha256": "bd716606108cd3cf",
+      "edges": {
+        "composes-with": [
+          "grpc-fieldmask-partial-updates",
+          "grpc-flatten-streaming-requests"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-saga-compensation-ordering",
+      "dir": "skills/grpc-saga-compensation-ordering",
+      "sha256": "e37ae107c43e734a",
+      "test_prompts": "skills/grpc-saga-compensation-ordering/test-prompts.json",
+      "test_prompts_sha256": "29f439ea830f9348",
+      "edges": {
+        "depends-on": [
+          "grpc-service-decomposition-by-capability"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-security-credential-composition",
+      "dir": "skills/grpc-security-credential-composition",
+      "sha256": "0a3d7b0e3dbdd4f2",
+      "test_prompts": "skills/grpc-security-credential-composition/test-prompts.json",
+      "test_prompts_sha256": "ca03d3545814d13b",
+      "edges": {
+        "composes-with": [
+          "grpc-observability-three-pillar"
+        ],
+        "informs": [
+          "grpc-load-balancer-selection",
+          "grpc-not-for-external-apis"
+        ]
+      }
+    },
+    {
+      "slug": "grpc-service-decomposition-by-capability",
+      "dir": "skills/grpc-service-decomposition-by-capability",
+      "sha256": "93432312d1c14c9a",
+      "test_prompts": "skills/grpc-service-decomposition-by-capability/test-prompts.json",
+      "test_prompts_sha256": "bc5c44d1bf272ed6"
+    },
+    {
+      "slug": "grpc-test-pyramid-interceptors-and-infrastructure",
+      "dir": "skills/grpc-test-pyramid-interceptors-and-infrastructure",
+      "sha256": "6ff625451e844f35",
+      "test_prompts": "skills/grpc-test-pyramid-interceptors-and-infrastructure/test-prompts.json",
+      "test_prompts_sha256": "3f38e3534ef93b60"
+    },
+    {
+      "slug": "grpc-vs-rest-vs-graphql",
+      "dir": "skills/grpc-vs-rest-vs-graphql",
+      "sha256": "ced783c1bab92bb5",
+      "test_prompts": "skills/grpc-vs-rest-vs-graphql/test-prompts.json",
+      "test_prompts_sha256": "e54d4c1068751b50",
+      "edges": {
+        "informs": [
+          "grpc-load-balancer-selection"
+        ]
+      }
+    },
+    {
+      "slug": "hypothetico-deductive-troubleshooting-loop",
+      "dir": "skills/hypothetico-deductive-troubleshooting-loop",
+      "sha256": "c277605f8ed80be7",
+      "test_prompts": "skills/hypothetico-deductive-troubleshooting-loop/test-prompts.json",
+      "test_prompts_sha256": "33a36c3223929dab",
+      "edges": {
+        "composes-with": [
+          "blameless-postmortem-process",
+          "incident-management-role-separation"
+        ],
+        "contrasts-with": [
+          "playbook-as-mttr-reduction"
+        ],
+        "depends-on": [
+          "four-golden-signals-monitoring"
+        ]
+      }
+    },
+    {
+      "slug": "information-hiding-temporal-decomposition",
+      "dir": "skills/information-hiding-temporal-decomposition",
+      "sha256": "f9b35f299d87e8ef",
+      "test_prompts": "skills/information-hiding-temporal-decomposition/test-prompts.json",
+      "test_prompts_sha256": "e76f787c5c1b6417"
+    },
+    {
+      "slug": "integration-style-selection",
+      "dir": "skills/integration-style-selection",
+      "sha256": "7a7fcccfc2b2cb82",
+      "test_prompts": "skills/integration-style-selection/test-prompts.json",
+      "test_prompts_sha256": "248194424f38299e"
+    },
+    {
+      "slug": "interface-guards",
+      "dir": "skills/interface-guards",
+      "sha256": "b5f2dcb0730f235e",
+      "test_prompts": "skills/interface-guards/test-prompts.json",
+      "test_prompts_sha256": "0479f87a06e12794",
+      "edges": {
+        "composes-with": [
+          "consumer-side-interface-segregation"
+        ]
+      }
+    },
+    {
+      "slug": "internal-package-bounded-context-enforcement",
+      "dir": "skills/internal-package-bounded-context-enforcement",
+      "sha256": "80f909d70681913f",
+      "test_prompts": "skills/internal-package-bounded-context-enforcement/test-prompts.json",
+      "test_prompts_sha256": "40545d1c3fc11b22",
+      "edges": {
+        "composes-with": [
+          "strong-consistency-across-bounded-contexts"
+        ],
+        "depends-on": [
+          "ddd-fitness-scorecard"
+        ],
+        "informs": [
+          "domain-service-interface-composition"
+        ]
+      }
+    },
+    {
+      "slug": "ioc-ai-systems",
+      "dir": "skills/ioc-ai-systems",
+      "sha256": "b6c1ab4bafbf84c5",
+      "test_prompts": "skills/ioc-ai-systems/test-prompts.json",
+      "test_prompts_sha256": "612dbef8950f9f85",
+      "edges": {
+        "composes-with": [
+          "multi-agent-reliability"
+        ],
+        "depends-on": [
+          "emergent-properties"
+        ]
+      }
+    },
+    {
+      "slug": "jagged-frontier-work-allocation",
+      "dir": "skills/jagged-frontier-work-allocation",
+      "sha256": "224cbbbf6f44ea26",
+      "test_prompts": "skills/jagged-frontier-work-allocation/test-prompts.json",
+      "test_prompts_sha256": "6f9b5b247e7c4015",
+      "edges": {
+        "composes-with": [
+          "four-forces-situational-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "leafwiki",
+      "dir": "skills/leafwiki",
+      "sha256": "740bbd587f8cf23b"
+    },
+    {
+      "slug": "least-privilege-tooling-enforced",
+      "dir": "skills/least-privilege-tooling-enforced",
+      "sha256": "1817a74ab86c363d",
+      "test_prompts": "skills/least-privilege-tooling-enforced/test-prompts.json",
+      "test_prompts_sha256": "781d9a90fd1ba1e6",
+      "edges": {
+        "composes-with": [
+          "breakglass-design",
+          "multi-party-authorization"
+        ],
+        "depends-on": [
+          "tcb-identification-minimization"
+        ]
+      }
+    },
+    {
+      "slug": "lefthook",
+      "dir": "skills/lefthook",
+      "sha256": "884fad63cab750c6"
+    },
+    {
+      "slug": "letsgo-db-sentinel-error-translation",
+      "dir": "skills/letsgo-db-sentinel-error-translation",
+      "sha256": "19225dab28e580ed",
+      "test_prompts": "skills/letsgo-db-sentinel-error-translation/test-prompts.json",
+      "test_prompts_sha256": "5453411d5d942b10",
+      "edges": {
+        "depends-on": [
+          "go-http-service-di-composition"
+        ],
+        "informs": [
+          "go-http-service-test-strategy",
+          "letsgo-form-validator",
+          "letsgo-session-token-renewal"
+        ]
+      }
+    },
+    {
+      "slug": "letsgo-form-validator",
+      "dir": "skills/letsgo-form-validator",
+      "sha256": "f674f4274f75e5a5",
+      "test_prompts": "skills/letsgo-form-validator/test-prompts.json",
+      "test_prompts_sha256": "6fa8e11bb52db832",
+      "edges": {
+        "composes-with": [
+          "letsgo-template-safe-render"
+        ],
+        "depends-on": [
+          "go-http-service-di-composition",
+          "letsgo-postform-not-postformvalue"
+        ],
+        "informs": [
+          "go-http-service-test-strategy",
+          "letsgo-db-sentinel-error-translation"
+        ]
+      }
+    },
+    {
+      "slug": "letsgo-postform-not-postformvalue",
+      "dir": "skills/letsgo-postform-not-postformvalue",
+      "sha256": "71e8025cf7763a6a",
+      "test_prompts": "skills/letsgo-postform-not-postformvalue/test-prompts.json",
+      "test_prompts_sha256": "5a2b51e60cc823d9",
+      "edges": {
+        "informs": [
+          "go-http-service-di-composition",
+          "go-http-service-test-strategy"
+        ]
+      }
+    },
+    {
+      "slug": "letsgo-session-token-renewal",
+      "dir": "skills/letsgo-session-token-renewal",
+      "sha256": "765b4ebf6ebb99bc",
+      "test_prompts": "skills/letsgo-session-token-renewal/test-prompts.json",
+      "test_prompts_sha256": "f634efa6177afdc6",
+      "edges": {
+        "depends-on": [
+          "go-http-middleware-construction-and-organization",
+          "go-http-service-di-composition"
+        ],
+        "informs": [
+          "go-http-service-test-strategy",
+          "letsgo-db-sentinel-error-translation",
+          "letsgo-form-validator"
+        ]
+      }
+    },
+    {
+      "slug": "letsgo-template-safe-render",
+      "dir": "skills/letsgo-template-safe-render",
+      "sha256": "db0144f6fbd83f90",
+      "test_prompts": "skills/letsgo-template-safe-render/test-prompts.json",
+      "test_prompts_sha256": "81d49477fe8b4dca",
+      "edges": {
+        "composes-with": [
+          "letsgo-form-validator"
+        ],
+        "depends-on": [
+          "go-http-service-di-composition"
+        ],
+        "informs": [
+          "go-http-middleware-construction-and-organization",
+          "go-http-service-test-strategy"
+        ]
+      }
+    },
+    {
+      "slug": "lintme",
+      "dir": "skills/lintme",
+      "sha256": "6ea9a8ddfba7aede"
+    },
+    {
+      "slug": "lock-in-cost-optimization",
+      "dir": "skills/lock-in-cost-optimization",
+      "sha256": "007160010db69598",
+      "test_prompts": "skills/lock-in-cost-optimization/test-prompts.json",
+      "test_prompts_sha256": "eef75f2ce7532d12",
+      "edges": {
+        "composes-with": [
+          "multicloud-5-option-decision",
+          "principles-quality-checklist"
+        ],
+        "contrasts-with": [
+          "enterprise-non-cloud-diagnostic"
+        ],
+        "depends-on": [
+          "architect-elevator"
+        ]
+      }
+    },
+    {
+      "slug": "manual-dependency-injection",
+      "dir": "skills/manual-dependency-injection",
+      "sha256": "0c13d8a6de3964ed",
+      "test_prompts": "skills/manual-dependency-injection/test-prompts.json",
+      "test_prompts_sha256": "534a7c554a5b4bd8",
+      "edges": {
+        "composes-with": [
+          "consumer-side-interface-segregation",
+          "option-configuration-patterns"
+        ],
+        "depends-on": [
+          "domain-driven-package-structure"
+        ]
+      }
+    },
+    {
+      "slug": "matryer-decode-valid",
+      "dir": "skills/matryer-decode-valid",
+      "sha256": "e4bb8baaeaa3d48f",
+      "test_prompts": "skills/matryer-decode-valid/test-prompts.json",
+      "test_prompts_sha256": "57f6bd164451823f"
+    },
+    {
+      "slug": "matryer-getenv-injection",
+      "dir": "skills/matryer-getenv-injection",
+      "sha256": "b249c97d36e64b0f",
+      "test_prompts": "skills/matryer-getenv-injection/test-prompts.json",
+      "test_prompts_sha256": "861f1fd427584b9b",
+      "edges": {
+        "depends-on": [
+          "matryer-run-function"
+        ]
+      }
+    },
+    {
+      "slug": "matryer-maker-func",
+      "dir": "skills/matryer-maker-func",
+      "sha256": "78fe107be7dde9e9",
+      "test_prompts": "skills/matryer-maker-func/test-prompts.json",
+      "test_prompts_sha256": "889ffe2f39218757"
+    },
+    {
+      "slug": "matryer-run-function",
+      "dir": "skills/matryer-run-function",
+      "sha256": "d5596293e70edcd3",
+      "test_prompts": "skills/matryer-run-function/test-prompts.json",
+      "test_prompts_sha256": "6cc51d6156b0caf1"
+    },
+    {
+      "slug": "matryer-waitfor-ready",
+      "dir": "skills/matryer-waitfor-ready",
+      "sha256": "99d1f8c03eb869e8",
+      "test_prompts": "skills/matryer-waitfor-ready/test-prompts.json",
+      "test_prompts_sha256": "aa41c5b05ff6472e",
+      "edges": {
+        "depends-on": [
+          "matryer-run-function"
+        ]
+      }
+    },
+    {
+      "slug": "mdformat",
+      "dir": "skills/mdformat",
+      "sha256": "c690156f33642341"
+    },
+    {
+      "slug": "merge-skills",
+      "dir": "skills/merge-skills",
+      "sha256": "5354aabf42439e50"
+    },
+    {
+      "slug": "messaging-observability-design",
+      "dir": "skills/messaging-observability-design",
+      "sha256": "4de33f469941296b",
+      "test_prompts": "skills/messaging-observability-design/test-prompts.json",
+      "test_prompts_sha256": "555b54b0a6fd4dd1",
+      "edges": {
+        "composes-with": [
+          "queue-control-flow-model"
+        ],
+        "depends-on": [
+          "integration-style-selection"
+        ]
+      }
+    },
+    {
+      "slug": "microservices-dont-fix-coupling",
+      "dir": "skills/microservices-dont-fix-coupling",
+      "sha256": "1c089fce42cd9def",
+      "test_prompts": "skills/microservices-dont-fix-coupling/test-prompts.json",
+      "test_prompts_sha256": "f74215915fb1c808",
+      "edges": {
+        "contrasts-with": [
+          "anti-dry-separate-read-write-models"
+        ],
+        "depends-on": [
+          "strategic-before-tactical-ddd"
+        ]
+      }
+    },
+    {
+      "slug": "ml-data-pipeline-type-integrity",
+      "dir": "skills/ml-data-pipeline-type-integrity",
+      "sha256": "ae41d2a64ce9c654",
+      "test_prompts": "skills/ml-data-pipeline-type-integrity/test-prompts.json",
+      "test_prompts_sha256": "71538f1292ba996e",
+      "edges": {
+        "composes-with": [
+          "ml-simplest-model-baseline-first"
+        ]
+      }
+    },
+    {
+      "slug": "ml-simplest-model-baseline-first",
+      "dir": "skills/ml-simplest-model-baseline-first",
+      "sha256": "34ae943b6d26315e",
+      "test_prompts": "skills/ml-simplest-model-baseline-first/test-prompts.json",
+      "test_prompts_sha256": "b01a8f31716fb474",
+      "edges": {
+        "composes-with": [
+          "ml-data-pipeline-type-integrity"
+        ],
+        "depends-on": [
+          "ml-pipeline-integrity-pre-training"
+        ]
+      }
+    },
+    {
+      "slug": "multi-agent-reliability",
+      "dir": "skills/multi-agent-reliability",
+      "sha256": "104e934cf0beccfd",
+      "test_prompts": "skills/multi-agent-reliability/test-prompts.json",
+      "test_prompts_sha256": "372b2bd46bbecb50",
+      "edges": {
+        "composes-with": [
+          "ioc-ai-systems"
+        ],
+        "depends-on": [
+          "emergent-properties"
+        ]
+      }
+    },
+    {
+      "slug": "multi-party-authorization",
+      "dir": "skills/multi-party-authorization",
+      "sha256": "826c261399ed9833",
+      "test_prompts": "skills/multi-party-authorization/test-prompts.json",
+      "test_prompts_sha256": "d239ee21ea05c265",
+      "edges": {
+        "composes-with": [
+          "supply-chain-binary-provenance",
+          "zero-touch-production"
+        ],
+        "depends-on": [
+          "least-privilege-tooling-enforced"
+        ]
+      }
+    },
+    {
+      "slug": "multi-tier-slo",
+      "dir": "skills/multi-tier-slo",
+      "sha256": "7658bb019edad23b",
+      "test_prompts": "skills/multi-tier-slo/test-prompts.json",
+      "test_prompts_sha256": "ef6d36c6669e2bea",
+      "edges": {
+        "composes-with": [
+          "sli-formula-measurement"
+        ],
+        "contrasts-with": [
+          "composite-slo"
+        ],
+        "depends-on": [
+          "slo-definition-calibration-framework"
+        ]
+      }
+    },
+    {
+      "slug": "multicloud-5-option-decision",
+      "dir": "skills/multicloud-5-option-decision",
+      "sha256": "bc4a348c0bce3148",
+      "test_prompts": "skills/multicloud-5-option-decision/test-prompts.json",
+      "test_prompts_sha256": "5df85c055e1d1cda",
+      "edges": {
+        "depends-on": [
+          "architect-elevator",
+          "principles-quality-checklist"
+        ]
+      }
+    },
+    {
+      "slug": "multidimensional-coupling-assessment",
+      "dir": "skills/multidimensional-coupling-assessment",
+      "sha256": "dee19ec633e0c9bd",
+      "test_prompts": "skills/multidimensional-coupling-assessment/test-prompts.json",
+      "test_prompts_sha256": "5ae5610438f25334",
+      "edges": {
+        "composes-with": [
+          "eda-coupling-diagnosis"
+        ],
+        "depends-on": [
+          "integration-style-selection"
+        ]
+      }
+    },
+    {
+      "slug": "multiwindow-multi-burn-rate-alerting",
+      "dir": "skills/multiwindow-multi-burn-rate-alerting",
+      "sha256": "444ad8a9ef51964c",
+      "test_prompts": "skills/multiwindow-multi-burn-rate-alerting/test-prompts.json",
+      "test_prompts_sha256": "1b20fa3a18195784",
+      "edges": {
+        "composes-with": [
+          "slo-stakeholder-negotiation-gate"
+        ],
+        "contrasts-with": [
+          "slo-decision-matrix"
+        ],
+        "depends-on": [
+          "error-budget-policy-framework"
+        ]
+      }
+    },
+    {
+      "slug": "mutex-closure-atomic-mutation",
+      "dir": "skills/mutex-closure-atomic-mutation",
+      "sha256": "a144ffa5f8597d36",
+      "test_prompts": "skills/mutex-closure-atomic-mutation/test-prompts.json",
+      "test_prompts_sha256": "0700a72d6658c244",
+      "edges": {
+        "contrasts-with": [
+          "structured-goroutine-lifetime"
+        ]
+      }
+    },
+    {
+      "slug": "nalsd-iterative-design-methodology",
+      "dir": "skills/nalsd-iterative-design-methodology",
+      "sha256": "6764b3d26cca4df5",
+      "test_prompts": "skills/nalsd-iterative-design-methodology/test-prompts.json",
+      "test_prompts_sha256": "e6c48d5b4f5115b6",
+      "edges": {
+        "composes-with": [
+          "error-budget-policy-framework"
+        ],
+        "contrasts-with": [
+          "overload-recovery-sequencing"
+        ]
+      }
+    },
+    {
+      "slug": "never-mock-net-conn-use-loopback",
+      "dir": "skills/never-mock-net-conn-use-loopback",
+      "sha256": "79fbcd143bd4f4de",
+      "test_prompts": "skills/never-mock-net-conn-use-loopback/test-prompts.json",
+      "test_prompts_sha256": "7e6663764386e14a",
+      "edges": {
+        "composes-with": [
+          "test-helper-contract"
+        ],
+        "contrasts-with": [
+          "test-helper-process-subprocess-mock"
+        ]
+      }
+    },
+    {
+      "slug": "option-configuration-patterns",
+      "dir": "skills/option-configuration-patterns",
+      "sha256": "b0184fa13542ea9d",
+      "test_prompts": "skills/option-configuration-patterns/test-prompts.json",
+      "test_prompts_sha256": "548721a27153839e",
+      "edges": {
+        "composes-with": [
+          "manual-dependency-injection"
+        ]
+      }
+    },
+    {
+      "slug": "overload-recovery-sequencing",
+      "dir": "skills/overload-recovery-sequencing",
+      "sha256": "d414949dfed93593",
+      "test_prompts": "skills/overload-recovery-sequencing/test-prompts.json",
+      "test_prompts_sha256": "40b9b33f08d07488",
+      "edges": {
+        "composes-with": [
+          "slo-decision-matrix"
+        ],
+        "contrasts-with": [
+          "nalsd-iterative-design-methodology"
+        ]
+      }
+    },
+    {
+      "slug": "ownership-trio",
+      "dir": "skills/ownership-trio",
+      "sha256": "58743af6d61a1e90",
+      "test_prompts": "skills/ownership-trio/test-prompts.json",
+      "test_prompts_sha256": "0ca2eb8afe12662e",
+      "edges": {
+        "composes-with": [
+          "ephemeral-taskforce",
+          "oncall-ownership-sustainability",
+          "responsibility-control-slo"
+        ]
+      }
+    },
+    {
+      "slug": "pass-through-method-wrong-layer-count",
+      "dir": "skills/pass-through-method-wrong-layer-count",
+      "sha256": "b0e5c340a799f335",
+      "test_prompts": "skills/pass-through-method-wrong-layer-count/test-prompts.json",
+      "test_prompts_sha256": "c8552656952f422e"
+    },
+    {
+      "slug": "pbt",
+      "dir": "skills/pbt",
+      "sha256": "2a60421a4f357e39"
+    },
+    {
+      "slug": "pgxpool",
+      "dir": "skills/pgxpool",
+      "sha256": "b4663acf2157b751"
+    },
+    {
+      "slug": "playbook-as-mttr-reduction",
+      "dir": "skills/playbook-as-mttr-reduction",
+      "sha256": "e262d88325f6c6af",
+      "test_prompts": "skills/playbook-as-mttr-reduction/test-prompts.json",
+      "test_prompts_sha256": "ca9db2542544d038",
+      "edges": {
+        "composes-with": [
+          "incident-management-role-separation",
+          "on-call-sustainability-model"
+        ],
+        "contrasts-with": [
+          "four-golden-signals-monitoring"
+        ],
+        "depends-on": [
+          "blameless-postmortem-process",
+          "hypothetico-deductive-troubleshooting-loop"
+        ]
+      }
+    },
+    {
+      "slug": "power-interest-grid-stakeholders",
+      "dir": "skills/power-interest-grid-stakeholders",
+      "sha256": "0689536086e46330",
+      "test_prompts": "skills/power-interest-grid-stakeholders/test-prompts.json",
+      "test_prompts_sha256": "ab6df4a880579a91",
+      "edges": {
+        "composes-with": [
+          "productland-vs-enterpriseland-selling",
+          "tacit-knowledge-extraction"
+        ]
+      }
+    },
+    {
+      "slug": "principles-quality-checklist",
+      "dir": "skills/principles-quality-checklist",
+      "sha256": "14fbf575027b4399",
+      "test_prompts": "skills/principles-quality-checklist/test-prompts.json",
+      "test_prompts_sha256": "d885227fdd07bb43",
+      "edges": {
+        "depends-on": [
+          "architect-elevator"
+        ]
+      }
+    },
+    {
+      "slug": "program-governance-ecological-design",
+      "dir": "skills/program-governance-ecological-design",
+      "sha256": "4b4c08da2050447b",
+      "test_prompts": "skills/program-governance-ecological-design/test-prompts.json",
+      "test_prompts_sha256": "2f2e44f36a593f0d",
+      "edges": {
+        "composes-with": [
+          "emergence-conditions-audit"
+        ],
+        "informs": [
+          "sv-trend-diagnostic"
+        ]
+      }
+    },
+    {
+      "slug": "project-complexity-source-diagnosis",
+      "dir": "skills/project-complexity-source-diagnosis",
+      "sha256": "472b218f625a04ca",
+      "test_prompts": "skills/project-complexity-source-diagnosis/test-prompts.json",
+      "test_prompts_sha256": "a59924d2e75a2467",
+      "edges": {
+        "composes-with": [
+          "cynefin-pm-domain-identification",
+          "four-forces-situational-assessment"
+        ]
+      }
+    },
+    {
+      "slug": "pull-complexity-downward",
+      "dir": "skills/pull-complexity-downward",
+      "sha256": "ca9d540d8b6966f4",
+      "test_prompts": "skills/pull-complexity-downward/test-prompts.json",
+      "test_prompts_sha256": "8f90a1d0252132fe"
+    },
+    {
+      "slug": "queue-control-flow-model",
+      "dir": "skills/queue-control-flow-model",
+      "sha256": "0028d74dcf48ac59",
+      "test_prompts": "skills/queue-control-flow-model/test-prompts.json",
+      "test_prompts_sha256": "e0944f8958a0807f",
+      "edges": {
+        "depends-on": [
+          "integration-style-selection"
+        ]
+      }
+    },
+    {
+      "slug": "queue-flow-control-decision",
+      "dir": "skills/queue-flow-control-decision",
+      "sha256": "36a332a08461910f",
+      "test_prompts": "skills/queue-flow-control-decision/test-prompts.json",
+      "test_prompts_sha256": "87578943ae2ee73f",
+      "edges": {
+        "depends-on": [
+          "integration-style-selection",
+          "messaging-observability-design",
+          "queue-control-flow-model"
+        ]
+      }
+    },
+    {
+      "slug": "recovery-design-masvn",
+      "dir": "skills/recovery-design-masvn",
+      "sha256": "d9a2a64725077312",
+      "test_prompts": "skills/recovery-design-masvn/test-prompts.json",
+      "test_prompts_sha256": "df53908b194941a7",
+      "edges": {
+        "composes-with": [
+          "breakglass-design",
+          "unified-incident-management-imag"
+        ],
+        "depends-on": [
+          "supply-chain-binary-provenance"
+        ]
+      }
+    },
+    {
+      "slug": "replication-lag-as-correctness",
+      "dir": "skills/replication-lag-as-correctness",
+      "sha256": "08ec8e3453bbe4f1",
+      "edges": {
+        "composes-with": [
+          "timeliness-vs-integrity-distinction"
+        ],
+        "contrasts-with": [
+          "transaction-isolation-level-selection"
+        ],
+        "depends-on": [
+          "replication-topology-selection"
+        ]
+      }
+    },
+    {
+      "slug": "replication-topology-selection",
+      "dir": "skills/replication-topology-selection",
+      "sha256": "1909a8e4abaa7f1c",
+      "edges": {
+        "composes-with": [
+          "consistency-model-selection",
+          "fencing-tokens-distributed-locks"
+        ],
+        "contrasts-with": [
+          "replication-lag-as-correctness",
+          "sharding-strategy-selection"
+        ]
+      }
+    },
+    {
+      "slug": "repository-unit-of-work",
+      "dir": "skills/repository-unit-of-work",
+      "sha256": "68698abfd310f3d9",
+      "test_prompts": "skills/repository-unit-of-work/test-prompts.json",
+      "test_prompts_sha256": "4544344ebb6108a7",
+      "edges": {
+        "composes-with": [
+          "error-translation-layer-boundaries",
+          "test-state-not-interactions"
+        ]
+      }
+    },
+    {
+      "slug": "requisite-variety-gap-assessment",
+      "dir": "skills/requisite-variety-gap-assessment",
+      "sha256": "9eb81303a2196cba",
+      "test_prompts": "skills/requisite-variety-gap-assessment/test-prompts.json",
+      "test_prompts_sha256": "bda38a3833dcd32a",
+      "edges": {
+        "contrasts-with": [
+          "cynefin-pm-domain-identification",
+          "governance-model-adequacy-test"
+        ]
+      }
+    },
+    {
+      "slug": "responsibility-control-slo",
+      "dir": "skills/responsibility-control-slo",
+      "sha256": "e4868385ecc09094",
+      "test_prompts": "skills/responsibility-control-slo/test-prompts.json",
+      "test_prompts_sha256": "0c6aeaa7d8a16318",
+      "edges": {
+        "composes-with": [
+          "composite-slo"
+        ],
+        "depends-on": [
+          "ownership-trio"
+        ]
+      }
+    },
+    {
+      "slug": "robustness-resilience-antifragility",
+      "dir": "skills/robustness-resilience-antifragility",
+      "sha256": "92c90dd4cd2842bb",
+      "test_prompts": "skills/robustness-resilience-antifragility/test-prompts.json",
+      "test_prompts_sha256": "6612007caf196d3e",
+      "edges": {
+        "composes-with": [
+          "architect-elevator"
+        ],
+        "depends-on": [
+          "enterprise-non-cloud-diagnostic"
+        ]
+      }
+    },
+    {
+      "slug": "rumdl",
+      "dir": "skills/rumdl",
+      "sha256": "eada1f5f69d95ba4"
+    },
+    {
+      "slug": "secure-by-construction-apis",
+      "dir": "skills/secure-by-construction-apis",
+      "sha256": "fd17cf0f220e5695",
+      "test_prompts": "skills/secure-by-construction-apis/test-prompts.json",
+      "test_prompts_sha256": "48474a1082e6fc6b",
+      "edges": {
+        "composes-with": [
+          "continuous-fuzzing-strategy"
+        ],
+        "depends-on": [
+          "tcb-identification-minimization"
+        ]
+      }
+    },
+    {
+      "slug": "security-as-emergent-property",
+      "dir": "skills/security-as-emergent-property",
+      "sha256": "d8086af568e08450",
+      "test_prompts": "skills/security-as-emergent-property/test-prompts.json",
+      "test_prompts_sha256": "5eaee4658fca15e5",
+      "edges": {
+        "composes-with": [
+          "tcb-identification-minimization"
+        ],
+        "contrasts-with": [
+          "fail-safe-vs-fail-secure"
+        ]
+      }
+    },
+    {
+      "slug": "service-level-topology",
+      "dir": "skills/service-level-topology",
+      "sha256": "20c06e64110947e0",
+      "test_prompts": "skills/service-level-topology/test-prompts.json",
+      "test_prompts_sha256": "ff47623aa5b5e2e5",
+      "edges": {
+        "composes-with": [
+          "consumer-journey-org",
+          "sli-compass",
+          "sli-monitoring-design-maturity"
+        ]
+      }
+    },
+    {
+      "slug": "sharding-strategy-selection",
+      "dir": "skills/sharding-strategy-selection",
+      "sha256": "3c72eecef236b171",
+      "edges": {
+        "composes-with": [
+          "consistency-model-selection"
+        ],
+        "contrasts-with": [
+          "replication-topology-selection"
+        ],
+        "depends-on": [
+          "storage-engine-workload-selection"
+        ]
+      }
+    },
+    {
+      "slug": "skillsaw-skill",
+      "dir": "skills/skillsaw-skill",
+      "sha256": "44b5e028b0018f31"
+    },
+    {
+      "slug": "sli-compass",
+      "dir": "skills/sli-compass",
+      "sha256": "8af22317c80d034c",
+      "test_prompts": "skills/sli-compass/test-prompts.json",
+      "test_prompts_sha256": "3ea3f48dfab21c74",
+      "edges": {
+        "composes-with": [
+          "service-level-topology"
+        ],
+        "depends-on": [
+          "sli-monitoring-design-maturity"
+        ]
+      }
+    },
+    {
+      "slug": "sli-formula-measurement",
+      "dir": "skills/sli-formula-measurement",
+      "sha256": "76f7948cb2e9e30d",
+      "test_prompts": "skills/sli-formula-measurement/test-prompts.json",
+      "test_prompts_sha256": "4153f5ac33fe3491",
+      "edges": {
+        "composes-with": [
+          "composite-slo",
+          "degradation-disruption",
+          "multi-tier-slo",
+          "sli-monitoring-design-maturity",
+          "slo-definition-calibration-framework"
+        ]
+      }
+    },
+    {
+      "slug": "slo-consequences-governance-principle",
+      "dir": "skills/slo-consequences-governance-principle",
+      "sha256": "4461b0cfcfad338b",
+      "test_prompts": "skills/slo-consequences-governance-principle/test-prompts.json",
+      "test_prompts_sha256": "09e3759a4050e375",
+      "edges": {
+        "composes-with": [
+          "slo-decision-matrix"
+        ],
+        "contrasts-with": [
+          "error-budget-policy-framework"
+        ],
+        "depends-on": [
+          "slo-stakeholder-negotiation-gate"
+        ]
+      }
+    },
+    {
+      "slug": "slo-decision-matrix",
+      "dir": "skills/slo-decision-matrix",
+      "sha256": "a663e7d27a4b6758",
+      "test_prompts": "skills/slo-decision-matrix/test-prompts.json",
+      "test_prompts_sha256": "7ad6a1835c09bfe6",
+      "edges": {
+        "composes-with": [
+          "multiwindow-multi-burn-rate-alerting"
+        ],
+        "contrasts-with": [
+          "error-budget-policy-framework"
+        ],
+        "depends-on": [
+          "slo-stakeholder-negotiation-gate"
+        ]
+      }
+    },
+    {
+      "slug": "slo-stakeholder-negotiation-gate",
+      "dir": "skills/slo-stakeholder-negotiation-gate",
+      "sha256": "7e7a53ac16db514b",
+      "test_prompts": "skills/slo-stakeholder-negotiation-gate/test-prompts.json",
+      "test_prompts_sha256": "893a789fa48996c7",
+      "edges": {
+        "composes-with": [
+          "error-budget-policy-framework"
+        ],
+        "contrasts-with": [
+          "slo-decision-matrix"
+        ],
+        "depends-on": [
+          "slo-consequences-governance-principle"
+        ]
+      }
+    },
+    {
+      "slug": "somewhat-general-purpose-interface",
+      "dir": "skills/somewhat-general-purpose-interface",
+      "sha256": "2e100c2975ffdf05",
+      "test_prompts": "skills/somewhat-general-purpose-interface/test-prompts.json",
+      "test_prompts_sha256": "f2516a3dfae1e776"
+    },
+    {
+      "slug": "sqlc",
+      "dir": "skills/sqlc",
+      "sha256": "905a0393fa2f83ac"
+    },
+    {
+      "slug": "sre-team-lifecycle-tuckman",
+      "dir": "skills/sre-team-lifecycle-tuckman",
+      "sha256": "eecfd56bf72d7536",
+      "test_prompts": "skills/sre-team-lifecycle-tuckman/test-prompts.json",
+      "test_prompts_sha256": "6a7605bf65496256",
+      "edges": {
+        "composes-with": [
+          "overload-recovery-sequencing",
+          "slo-consequences-governance-principle"
+        ],
+        "contrasts-with": [
+          "overload-recovery-sequencing"
+        ]
+      }
+    },
+    {
+      "slug": "storage-engine-workload-selection",
+      "dir": "skills/storage-engine-workload-selection",
+      "sha256": "90b4c321f0279f34",
+      "edges": {
+        "composes-with": [
+          "sharding-strategy-selection",
+          "system-of-record-vs-derived-data"
+        ]
+      }
+    },
+    {
+      "slug": "strategic-before-tactical-ddd",
+      "dir": "skills/strategic-before-tactical-ddd",
+      "sha256": "c90c5f3ad0b2f39e",
+      "test_prompts": "skills/strategic-before-tactical-ddd/test-prompts.json",
+      "test_prompts_sha256": "6fba9c60e8d3f951",
+      "edges": {
+        "informs": [
+          "anti-dry-separate-read-write-models"
+        ]
+      }
+    },
+    {
+      "slug": "strong-consistency-across-bounded-contexts",
+      "dir": "skills/strong-consistency-across-bounded-contexts",
+      "sha256": "99f1ddf3172336b2",
+      "test_prompts": "skills/strong-consistency-across-bounded-contexts/test-prompts.json",
+      "test_prompts_sha256": "12e0ab90d0493c7b",
+      "edges": {
+        "composes-with": [
+          "internal-package-bounded-context-enforcement"
+        ],
+        "depends-on": [
+          "ddd-fitness-scorecard"
+        ],
+        "informs": [
+          "domain-service-interface-composition"
+        ]
+      }
+    },
+    {
+      "slug": "structured-goroutine-lifetime",
+      "dir": "skills/structured-goroutine-lifetime",
+      "sha256": "8f2c6d2e751c5127",
+      "test_prompts": "skills/structured-goroutine-lifetime/test-prompts.json",
+      "test_prompts_sha256": "9bd4eeb48254132c",
+      "edges": {
+        "composes-with": [
+          "context-cancellation-cause"
+        ],
+        "contrasts-with": [
+          "mutex-closure-atomic-mutation"
+        ]
+      }
+    },
+    {
+      "slug": "supply-chain-binary-provenance",
+      "dir": "skills/supply-chain-binary-provenance",
+      "sha256": "9d29a7cb9f8d150f",
+      "test_prompts": "skills/supply-chain-binary-provenance/test-prompts.json",
+      "test_prompts_sha256": "37e133fe2c691edc",
+      "edges": {
+        "composes-with": [
+          "recovery-design-masvn",
+          "zero-touch-production"
+        ],
+        "depends-on": [
+          "multi-party-authorization"
+        ]
+      }
+    },
+    {
+      "slug": "sv-trend-diagnostic",
+      "dir": "skills/sv-trend-diagnostic",
+      "sha256": "e41be7df710285e5",
+      "test_prompts": "skills/sv-trend-diagnostic/test-prompts.json",
+      "test_prompts_sha256": "651b8221f90c00ac",
+      "edges": {
+        "contrasts-with": [
+          "emergence-conditions-audit"
+        ],
+        "informs": [
+          "program-governance-ecological-design"
+        ]
+      }
+    },
+    {
+      "slug": "system-of-record-vs-derived-data",
+      "dir": "skills/system-of-record-vs-derived-data",
+      "sha256": "29bce3d2fcd77775",
+      "edges": {
+        "composes-with": [
+          "batch-vs-stream-processing-selection",
+          "consistency-model-selection",
+          "schema-evolution-compatibility-planning"
+        ],
+        "contrasts-with": [
+          "replication-topology-selection"
+        ]
+      }
+    },
+    {
+      "slug": "t-pop",
+      "dir": "skills/t-pop",
+      "sha256": "de3ddef952983e90",
+      "test_prompts": "skills/t-pop/test-prompts.json",
+      "test_prompts_sha256": "06b745affb21791b",
+      "edges": {
+        "composes-with": [
+          "ephemeral-taskforce",
+          "fit-practice"
+        ]
+      }
+    },
+    {
+      "slug": "tcb-identification-minimization",
+      "dir": "skills/tcb-identification-minimization",
+      "sha256": "2e65865156bfc9e2",
+      "test_prompts": "skills/tcb-identification-minimization/test-prompts.json",
+      "test_prompts_sha256": "5d09e4877f9632b3",
+      "edges": {
+        "composes-with": [
+          "least-privilege-tooling-enforced",
+          "secure-by-construction-apis"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-backend-bootstrap-problem",
+      "dir": "skills/terraform-backend-bootstrap-problem",
+      "sha256": "2e6f45ab6f5c7a98",
+      "test_prompts": "skills/terraform-backend-bootstrap-problem/test-prompts.json",
+      "test_prompts_sha256": "fee34558551bdfc9",
+      "edges": {
+        "depends-on": [
+          "terraform-directory-layout-isolation"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-directory-layout-isolation",
+      "dir": "skills/terraform-directory-layout-isolation",
+      "sha256": "4de512003e8e6b20",
+      "test_prompts": "skills/terraform-directory-layout-isolation/test-prompts.json",
+      "test_prompts_sha256": "6fe0edd59933b298",
+      "edges": {
+        "composes-with": [
+          "terraform-module-size-smell",
+          "terraform-secrets-in-state"
+        ],
+        "informs": [
+          "terraform-backend-bootstrap-problem",
+          "terraform-no-cluster-app-same-module"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-for-each-over-count",
+      "dir": "skills/terraform-for-each-over-count",
+      "sha256": "e8485c467b8f71d1",
+      "test_prompts": "skills/terraform-for-each-over-count/test-prompts.json",
+      "test_prompts_sha256": "89a8b7b8b39baac1",
+      "edges": {
+        "depends-on": [
+          "terraform-moved-block-refactoring"
+        ],
+        "informs": [
+          "terraform-directory-layout-isolation",
+          "terraform-module-size-smell"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-module-size-smell",
+      "dir": "skills/terraform-module-size-smell",
+      "sha256": "6dd841c2d225abdc",
+      "test_prompts": "skills/terraform-module-size-smell/test-prompts.json",
+      "test_prompts_sha256": "acc2d8ec20455494",
+      "edges": {
+        "composes-with": [
+          "terraform-directory-layout-isolation"
+        ],
+        "contrasts-with": [
+          "terraform-no-cluster-app-same-module"
+        ],
+        "depends-on": [
+          "terraform-moved-block-refactoring"
+        ],
+        "informs": [
+          "terraform-for-each-over-count"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-moved-block-refactoring",
+      "dir": "skills/terraform-moved-block-refactoring",
+      "sha256": "81a205cf8bcc158f",
+      "test_prompts": "skills/terraform-moved-block-refactoring/test-prompts.json",
+      "test_prompts_sha256": "a6e320645337f0c7",
+      "edges": {
+        "informs": [
+          "terraform-no-cluster-app-same-module"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-no-cluster-app-same-module",
+      "dir": "skills/terraform-no-cluster-app-same-module",
+      "sha256": "0935aa77bca325d2",
+      "test_prompts": "skills/terraform-no-cluster-app-same-module/test-prompts.json",
+      "test_prompts_sha256": "ee501f6416357b6e",
+      "edges": {
+        "contrasts-with": [
+          "terraform-module-size-smell"
+        ],
+        "informs": [
+          "terraform-directory-layout-isolation",
+          "terraform-moved-block-refactoring"
+        ]
+      }
+    },
+    {
+      "slug": "terraform-secrets-in-state",
+      "dir": "skills/terraform-secrets-in-state",
+      "sha256": "4aa47c28b5b887f4",
+      "test_prompts": "skills/terraform-secrets-in-state/test-prompts.json",
+      "test_prompts_sha256": "27cc73aeec760d2a",
+      "edges": {
+        "composes-with": [
+          "terraform-directory-layout-isolation"
+        ],
+        "depends-on": [
+          "terraform-backend-bootstrap-problem"
+        ]
+      }
+    },
+    {
+      "slug": "test-helper-contract",
+      "dir": "skills/test-helper-contract",
+      "sha256": "2c6c372192a187d5",
+      "edges": {
+        "composes-with": [
+          "golden-files-update-flag",
+          "never-mock-net-conn-use-loopback",
+          "table-driven-named-cases",
+          "testing-go-public-test-api"
+        ]
+      }
+    },
+    {
+      "slug": "test-helper-process-subprocess-mock",
+      "dir": "skills/test-helper-process-subprocess-mock",
+      "sha256": "985e236c2f4be1ad",
+      "edges": {
+        "contrasts-with": [
+          "never-mock-net-conn-use-loopback"
+        ]
+      }
+    },
+    {
+      "slug": "test-layer-architecture-mapping",
+      "dir": "skills/test-layer-architecture-mapping",
+      "sha256": "d1afe8af97117bf2",
+      "test_prompts": "skills/test-layer-architecture-mapping/test-prompts.json",
+      "test_prompts_sha256": "e57e1d89975ffbb7",
+      "edges": {
+        "informs": [
+          "anti-dry-separate-read-write-models"
+        ]
+      }
+    },
+    {
+      "slug": "testing-go-public-test-api",
+      "dir": "skills/testing-go-public-test-api",
+      "sha256": "648f56faa17129dd",
+      "edges": {
+        "composes-with": [
+          "custom-framework-within-go-test",
+          "test-helper-contract"
+        ]
+      }
+    },
+    {
+      "slug": "time-multiplier-over-fake-time",
+      "dir": "skills/time-multiplier-over-fake-time",
+      "sha256": "225b4fbc727401a4",
+      "edges": {
+        "contrasts-with": [
+          "avoid-t-parallel-use-multiple-processes"
+        ]
+      }
+    },
+    {
+      "slug": "timeliness-vs-integrity-distinction",
+      "dir": "skills/timeliness-vs-integrity-distinction",
+      "sha256": "befab2ed087fc1e9",
+      "edges": {
+        "composes-with": [
+          "end-to-end-idempotence-request-ids",
+          "transaction-isolation-level-selection"
+        ],
+        "contrasts-with": [
+          "replication-lag-as-correctness"
+        ],
+        "depends-on": [
+          "consistency-model-selection"
+        ]
+      }
+    },
+    {
+      "slug": "toil-six-property-identification-test",
+      "dir": "skills/toil-six-property-identification-test",
+      "sha256": "77879d927d6df914",
+      "test_prompts": "skills/toil-six-property-identification-test/test-prompts.json",
+      "test_prompts_sha256": "9347f8cc08316a7a",
+      "edges": {
+        "composes-with": [
+          "embedding-sre-ops-overload-recovery"
+        ],
+        "contrasts-with": [
+          "fifty-percent-engineering-time-cap"
+        ],
+        "depends-on": [
+          "sli-slo-sla-tier-framework"
+        ]
+      }
+    },
+    {
+      "slug": "transaction-isolation-level-selection",
+      "dir": "skills/transaction-isolation-level-selection",
+      "sha256": "47f47755b7719f0b",
+      "edges": {
+        "composes-with": [
+          "timeliness-vs-integrity-distinction"
+        ],
+        "contrasts-with": [
+          "consistency-model-selection",
+          "replication-lag-as-correctness"
+        ]
+      }
+    },
+    {
+      "slug": "transport-agnostic-service-functions",
+      "dir": "skills/transport-agnostic-service-functions",
+      "sha256": "cb9d66839f16e05f",
+      "test_prompts": "skills/transport-agnostic-service-functions/test-prompts.json",
+      "test_prompts_sha256": "2f5edfa9abd7de6c",
+      "edges": {
+        "composes-with": [
+          "consumer-side-interface-segregation",
+          "error-translation-layer-boundaries"
+        ]
+      }
+    },
+    {
+      "slug": "unconventional-commits",
+      "dir": "skills/unconventional-commits",
+      "sha256": "53cd1051e2112352"
+    },
+    {
+      "slug": "vale",
+      "dir": "skills/vale",
+      "sha256": "234dfb03d6f8e5a1"
+    },
+    {
+      "slug": "vale-cli",
+      "dir": "skills/vale-cli",
+      "sha256": "b3df48e7d416ddb2"
+    },
+    {
+      "slug": "value-gap-migration-metrics",
+      "dir": "skills/value-gap-migration-metrics",
+      "sha256": "c1e8432ba8f78868",
+      "test_prompts": "skills/value-gap-migration-metrics/test-prompts.json",
+      "test_prompts_sha256": "91b1dbcdf6df03a4",
+      "edges": {
+        "composes-with": [
+          "enterprise-non-cloud-diagnostic"
+        ],
+        "depends-on": [
+          "architect-elevator"
+        ]
+      }
+    },
+    {
+      "slug": "vsi-cargo-culting",
+      "dir": "skills/vsi-cargo-culting",
+      "sha256": "c682a2e93ad9f950",
+      "test_prompts": "skills/vsi-cargo-culting/test-prompts.json",
+      "test_prompts_sha256": "eef3df787dd3ed8b",
+      "edges": {
+        "composes-with": [
+          "fit-practice"
+        ],
+        "contrasts-with": [
+          "3ts-premature-optimization",
+          "fit-practice"
+        ]
+      }
+    },
+    {
+      "slug": "wardley-pace-slo",
+      "dir": "skills/wardley-pace-slo",
+      "sha256": "935b250e7ba67863",
+      "test_prompts": "skills/wardley-pace-slo/test-prompts.json",
+      "test_prompts_sha256": "d1035c663b76fa83",
+      "edges": {
+        "composes-with": [
+          "10x9-cost-reliability"
+        ],
+        "depends-on": [
+          "slo-definition-calibration-framework"
+        ]
+      }
+    },
+    {
+      "slug": "webapp",
+      "dir": "skills/webapp",
+      "sha256": "e07360aec5710a33"
+    },
+    {
+      "slug": "webapp-analytics",
+      "dir": "skills/webapp-analytics",
+      "sha256": "57de50c643615300"
+    },
+    {
+      "slug": "webapp-featureflags",
+      "dir": "skills/webapp-featureflags",
+      "sha256": "5e597f940c0d24c9"
+    },
+    {
+      "slug": "webapp-graphql",
+      "dir": "skills/webapp-graphql",
+      "sha256": "cac630eb03810af7"
+    },
+    {
+      "slug": "webapp-kacontext",
+      "dir": "skills/webapp-kacontext",
+      "sha256": "94f55722b068d0d3"
+    },
+    {
+      "slug": "webapp-make",
+      "dir": "skills/webapp-make",
+      "sha256": "8cab7b063ea90041"
+    },
+    {
+      "slug": "webapp-pubsub",
+      "dir": "skills/webapp-pubsub",
+      "sha256": "925612fc0c3ada5a"
+    },
+    {
+      "slug": "webapp-review",
+      "dir": "skills/webapp-review",
+      "sha256": "bdec913a5f670bdb"
+    },
+    {
+      "slug": "webapp-tasks",
+      "dir": "skills/webapp-tasks",
+      "sha256": "0b2f789aaab0985c"
+    },
+    {
+      "slug": "webapp-testing",
+      "dir": "skills/webapp-testing",
+      "sha256": "37ffd84cb3a8bcfa"
+    },
+    {
+      "slug": "welc-interception-point-selection",
+      "dir": "skills/welc-interception-point-selection",
+      "sha256": "d6148e2319cd3c74",
+      "test_prompts": "skills/welc-interception-point-selection/test-prompts.json",
+      "test_prompts_sha256": "9de26b14c3781565",
+      "edges": {
+        "depends-on": [
+          "welc-seam-model",
+          "welc-sensing-vs-separation"
+        ]
+      }
+    },
+    {
+      "slug": "welc-legacy-code-change-algorithm",
+      "dir": "skills/welc-legacy-code-change-algorithm",
+      "sha256": "7c72c790d439e9a9",
+      "test_prompts": "skills/welc-legacy-code-change-algorithm/test-prompts.json",
+      "test_prompts_sha256": "6a7f9d4bb4851750",
+      "edges": {
+        "composes-with": [
+          "welc-characterization-test",
+          "welc-interception-point-selection",
+          "welc-seam-model",
+          "welc-sensing-vs-separation",
+          "welc-sprout-wrap-decision"
+        ]
+      }
+    },
+    {
+      "slug": "welc-property-based-design-pressure",
+      "dir": "skills/welc-property-based-design-pressure",
+      "sha256": "5ad3ad555b6284d9",
+      "test_prompts": "skills/welc-property-based-design-pressure/test-prompts.json",
+      "test_prompts_sha256": "fabc1587fee33371",
+      "edges": {
+        "depends-on": [
+          "welc-characterization-test"
+        ]
+      }
+    },
+    {
+      "slug": "welc-scratch-refactoring",
+      "dir": "skills/welc-scratch-refactoring",
+      "sha256": "28bd13a6bbbdac8f",
+      "test_prompts": "skills/welc-scratch-refactoring/test-prompts.json",
+      "test_prompts_sha256": "6f92abf78a3bece0",
+      "edges": {
+        "contrasts-with": [
+          "welc-characterization-test"
+        ]
+      }
+    },
+    {
+      "slug": "welc-sprout-wrap-decision",
+      "dir": "skills/welc-sprout-wrap-decision",
+      "sha256": "1fa4b5f49d9c3a0f",
+      "test_prompts": "skills/welc-sprout-wrap-decision/test-prompts.json",
+      "test_prompts_sha256": "5e46f8492104d3a9",
+      "edges": {
+        "composes-with": [
+          "welc-legacy-code-change-algorithm"
+        ],
+        "contrasts-with": [
+          "welc-characterization-test",
+          "welc-sensing-vs-separation"
+        ]
+      }
+    },
+    {
+      "slug": "welc-tended-untended-systems",
+      "dir": "skills/welc-tended-untended-systems",
+      "sha256": "5d0c9b1fdaac06a4",
+      "test_prompts": "skills/welc-tended-untended-systems/test-prompts.json",
+      "test_prompts_sha256": "c13891765c355165",
+      "edges": {
+        "depends-on": [
+          "welc-three-goals-of-testing"
+        ]
+      }
+    },
+    {
+      "slug": "welc-three-goals-of-testing",
+      "dir": "skills/welc-three-goals-of-testing",
+      "sha256": "669261f6f10090d7",
+      "test_prompts": "skills/welc-three-goals-of-testing/test-prompts.json",
+      "test_prompts_sha256": "2edf985c251674a2"
+    },
+    {
+      "slug": "write-comments-first-as-design-tool",
+      "dir": "skills/write-comments-first-as-design-tool",
+      "sha256": "8d102ffb3c84f53b",
+      "test_prompts": "skills/write-comments-first-as-design-tool/test-prompts.json",
+      "test_prompts_sha256": "b79237c44178c5df"
+    },
+    {
+      "slug": "zero-touch-production",
+      "dir": "skills/zero-touch-production",
+      "sha256": "8a7b3a334e2b7bc7",
+      "test_prompts": "skills/zero-touch-production/test-prompts.json",
+      "test_prompts_sha256": "d76026d143e27aa3",
+      "edges": {
+        "composes-with": [
+          "least-privilege-tooling-enforced",
+          "multi-party-authorization",
+          "supply-chain-binary-provenance"
+        ],
+        "depends-on": [
+          "breakglass-design"
+        ]
+      }
+    },
+    {
+      "slug": "zero-trust-beyondcorp",
+      "dir": "skills/zero-trust-beyondcorp",
+      "sha256": "11f917adb36e892c",
+      "test_prompts": "skills/zero-trust-beyondcorp/test-prompts.json",
+      "test_prompts_sha256": "fddae401425e4cef",
+      "edges": {
+        "composes-with": [
+          "least-privilege-tooling-enforced",
+          "multi-party-authorization",
+          "unified-incident-management-imag"
+        ],
+        "depends-on": [
+          "breakglass-design"
+        ]
+      }
+    }
+  ],
+  "edges_recorded": true,
+  "examined": 217
+}
