@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I've checked out PR 1234 in my webapp clone with gh pr checkout. Review it against our Go rules and leave the findings on GitHub as line comments, not here in chat.",
+    "expected": "Invokes webapp-review and runs its four stages. Verifies which branch is checked out and that both branches exist. Scopes the diff from git merge-base of the deploy branch and the head branch. Judges against the Go advice with webapp's RULES.md taking precedence. Rewrites the findings without rule citations, formats and lints the write-up with rumdl and vale, asks about low-confidence findings, then posts one review through gh api repos/Khan/webapp/pulls/<n>/reviews.",
+    "notes": "Positive scenario: the end-to-end request the skill exists for."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Reviewing a colleague's webapp branch, git diff against their deploy branch shows hundreds of files and a pile of commits that aren't theirs. How do I see only their change?",
+    "expected": "Invokes webapp-review. Scopes from the merge base, not the base branch tip: MB=$(git merge-base origin/<base> origin/<head>), then git log and git diff --stat \"$MB\"..origin/<head>. Excludes */generated/* and uses --name-status -M so renames show.",
+    "notes": "Positive scenario: Stage 1 merge-base scoping."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My draft review of a webapp PR says things like 'violates rule 6' and 'see section 4'. The author has never read those docs. Fix the wording and then put it on the PR.",
+    "expected": "Invokes webapp-review. Stage 2 replaces each citation with the reasoning it stands for, keeping linter names and real symbols and dropping document names and rule numbers. Orders findings by cost to the reader and sets unverified ones aside. Then runs rumdl and vale and posts inline comments in Stage 4.",
+    "notes": "Positive scenario: rewrite for a reader who hasn't read the rules."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "gh pr review won't let me attach comments to specific lines. I have six webapp findings tied to file and line. How do I post them as one review?",
+    "expected": "Invokes webapp-review. Builds a JSON payload with event COMMENT, a summary body, and a comments array of path, line and body, with line numbers taken from the head version and inside the diff. Posts it with gh api repos/Khan/webapp/pulls/<n>/reviews -X POST --input, then checks each anchor with the pulls/<n>/comments endpoint. Findings with no single line go in the review body.",
+    "notes": "Positive scenario: Stage 4 inline posting."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "My webapp feature is ready. Open a pull request for it.",
+    "expected": "Should invoke the umbrella webapp skill, not webapp-review: base the PR on the author's deploy branch, never master, and confirm it before creating, since a closed PR's base can't be changed.",
+    "notes": "Decoy: PR workflow in webapp, but opening a PR is not reviewing one."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Run vale over the docs folder in this repo and fix what it flags.",
+    "expected": "Should invoke vale, not webapp-review. A plain prose-lint request with no webapp PR review involved.",
+    "notes": "Decoy: vale is one step inside webapp-review, but a standalone vale run belongs to the vale skill."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Review the open PR on my personal Go library and post comments inline.",
+    "expected": "Should not invoke webapp-review; its rule sources, linters and deploy-branch conventions are specific to github.com/Khan/webapp. A general code review approach applies.",
+    "notes": "Decoy: identical workflow shape, different repository."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Before I push, can you look over my uncommitted webapp Go changes for anything CI's linters will reject? Just tell me here.",
+    "expected": "Should invoke the umbrella webapp skill and walk its Code Review Checklist (errors, context, logging, time, testing, datastore, GraphQL). webapp-review is for reviewing a pull request and posting to GitHub, which the user does not want.",
+    "notes": "Boundary: a review, but of local changes reported in chat, which is the umbrella's checklist use."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "In this webapp PR, a genqlient call's error is returned without errors.Wrap. I'm not sure generated code counts as third-party for the wrapping rule. Should I post it?",
+    "expected": "Invokes webapp-review's confidence gate. Doubt about whether the observation is true means pause: prefer to verify (run the linter) and otherwise ask the operator with what would settle it. Do not post a finding that stays uncertain. The umbrella webapp skill holds the wrapping rule itself.",
+    "notes": "Boundary: the rule comes from the umbrella; the decision to post comes from webapp-review."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I ran rumdl fmt on my webapp review write-up and the H1, which had the branch name in it, came out as My-Feature-Branch-Name. What happened?",
+    "expected": "webapp-review documents this pitfall: rumdl's MD063 rule title-cases headings and mangles identifiers. Move the branch name into a code span or the body text and recheck the H1 after formatting. The rumdl skill may also load for the rule's configuration.",
+    "notes": "Boundary: shared with the rumdl sibling; webapp-review names the specific pitfall."
+  }
+]

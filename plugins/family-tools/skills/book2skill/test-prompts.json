@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I have the EPUB of 'Release It!' (Nygard, 2nd edition, 2018). I want its stability patterns and antipatterns turned into skills an agent can actually call when designing services.",
+    "expected": "Invokes book2skill. Confirms text source, title/author/year, and whether this is a first run; installs or upgrades exegesis and skillsaw with go install. Stage 0 Adler read into BOOK_OVERVIEW.md gated by `exegesis verify --gates overview`, then waits for user confirmation before Phase 1's five parallel extractors (framework, principle, case, counterexample, glossary), Phase 1.5 triple verification (V1/V2/V3) with rejects written to rejected/, Phase 2 RIA++ skills, Phase 3 links, and Phase 4 tests and hand-off to skillsaw-skill.",
+    "notes": "Positive scenario: full distillation request with the text supplied."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Here's a text file of a management book I like. Pull out the decision frameworks as reusable skills, but just do one to start so I can see what it looks like.",
+    "expected": "Invokes book2skill, following its 'always test with 1 unit first' convention: one candidate through the pipeline, reporting progress between stages. Asks for title, author and year if missing.",
+    "notes": "Positive scenario: pilot run of a single unit."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm in Phase 4 of distilling a book. How do I build and check the test prompts for each generated skill?",
+    "expected": "Invokes book2skill Phase 4: `exegesis tests --scaffold books/<slug>/<skill>/`, replace every placeholder prompt and expected, run `exegesis tests` (>=3 should_trigger, >=2 should_not_trigger, >=1 edge_case), then `exegesis verify --check redlines books/<slug>/` and `exegesis index --check`, plus `skillsaw activation`. An UNRESOLVED activation means add prompts, not edit the skill.",
+    "notes": "Positive scenario: mid-pipeline question about the stress-test stage."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Can you run the book2skill pipeline for this book without spawning subagents? I want it agent-agnostic and resumable.",
+    "expected": "Invokes book2skill's Agent-Driven CLI mode: `exegesis distill --driver agent --title \"...\" <book-file>`, read the JSON, answer each pending prompt by writing a schema-valid reply to its response_path, re-run the `resume` command until status is complete.",
+    "notes": "Positive scenario: CLI-driven mode."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Give me a chapter-by-chapter summary of 'Thinking, Fast and Slow'.",
+    "expected": "Summarization. Should not invoke book2skill; its description excludes summaries.",
+    "notes": "Decoy: book topic, explicitly out of scope."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Pretend you're Charlie Munger and answer my investing question the way he would.",
+    "expected": "Author persona role-play. Should not invoke book2skill; the skill points to nuwa-skill for distilling a person.",
+    "notes": "Decoy: excluded role-play use."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I already ran book2skill on two SRE books and several skills cover the same error-budget idea. Combine the duplicates.",
+    "expected": "Consolidating overlapping skills across book2skill outputs. Should not invoke book2skill; merge-skills owns this.",
+    "notes": "Decoy: sibling skill's job."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Distill 'The Pragmatic Programmer' into skills. I don't have a copy handy, but you know the book well enough.",
+    "expected": "Invokes book2skill but stops: it requires the book's text and says not to dissect from memory. Asks the user for a PDF/EPUB/TXT before proceeding.",
+    "notes": "Boundary: the input requirement turns this into a stop-and-ask."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Turn our team's Go style guide and the Effective Go doc into a set of rules an agent must follow when writing code.",
+    "expected": "Boundary: source documents to an enforceable coding ruleset is canonizer's job (distill, synthesize, critic, rework with `§`-numbered rules and provenance anchors), not book2skill's invocable skill tree. book2skill fits only if the user wants callable methodology skills.",
+    "notes": "Boundary: book2skill vs canonizer. Both distill documents; the output form differs."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "All my book's skills pass exegesis verify. Can I call them good now?",
+    "expected": "Invokes book2skill to clarify: exegesis certifies structure, not quality. Red lines #1 (triple verification) and #7 (the four SkillLens anti-patterns) are judgments no command checks. Quality optimization is the hand-off to skillsaw-skill, after `skillsaw verified books/<slug>/skills-manifest.json`.",
+    "notes": "Boundary: book2skill's last step meets skillsaw-skill."
+  }
+]

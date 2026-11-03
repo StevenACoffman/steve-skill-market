@@ -1,6 +1,6 @@
 ---
 name: webapp-featureflags
-description: "Use when writing Go code in github.com/Khan/webapp that checks, gates on, or mocks a GrowthBook feature flag. Covers the KAContext interface, IsOn, IsOff, GetFeatureValue, the Attributes struct, and mocking flag values in tests. Only for github.com/Khan/webapp."
+description: "Use when writing Go code in github.com/Khan/webapp that checks, gates on, or mocks a GrowthBook feature flag. Covers the KAContext interface, featureflags.IsOn, IsOff, GetFeatureValue, the Attributes struct, and mocking flag values in tests. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

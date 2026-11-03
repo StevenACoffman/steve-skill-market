@@ -1,6 +1,6 @@
 ---
 name: webapp-graphql
-description: "Use when writing Go code in github.com/Khan/webapp that makes service-to-service GraphQL requests or tests resolvers. Covers gqlclient.Client vs ClientAdapter, AsUser and AsServiceAdmin, BuildTestClientForSchema, gqltest.Query/Mutate/QueryType, js.Obj, and the query safelist."
+description: "Use when writing Go code in github.com/Khan/webapp that makes service-to-service GraphQL requests or tests resolvers. Covers gqlclient.Client vs ClientAdapter, AsUser and AsServiceAdmin, BuildTestClientForSchema, gqltest.Query/Mutate/QueryType for federated types, js.Obj, and the query safelist."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

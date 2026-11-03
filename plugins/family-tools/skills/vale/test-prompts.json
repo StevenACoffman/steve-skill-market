@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Can you run vale over the docs folder in this repo and fix whatever it complains about? I'm about to open a PR and CI keeps failing on prose lint.",
+    "expected": "Invokes vale. Checks vale is installed, then runs `vale --config=.vale/.vale.ini --no-global --minAlertLevel=error` on the Markdown files (find . -name '*.md' -not -path './.vale/*'). Triages each error: genuine errors (Vale.Terms casing, real typos, wrong product-name casing) are fixed in the file; false positives (product names, API fields, acronyms, intentionally lowercase code strings) go into the vocab files instead. Re-runs at error level to confirm zero errors.",
+    "notes": "Positive scenario: run-and-fix request in a repo that already has .vale/.vale.ini."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Vale keeps flagging 'ClassLink' and 'sourcedId' in our integration doc as spelling errors. Those are correct. How do I make it stop without rewording the doc?",
+    "expected": "Invokes vale. Treats both as false positives and adds them to the project vocabulary rather than changing the file: product/company names like ClassLink go in `.vale/styles/config/vocabularies/ThirdPartyProducts/accept.txt`; API fields like sourcedId go in `TechJargon/accept.txt`, using `(?i)` for a case-insensitive match. Prefers vocab additions over inline `<!-- vale off -->` because they improve future linting.",
+    "notes": "Positive scenario: false-positive suppression routed to the right vocab file."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I had the assistant draft a commit message for my change and it reads kind of robotic ('This commit refactors...'). Before I commit, can you lint it for AI-sounding phrasing?",
+    "expected": "Invokes vale's commit-message section. Writes the draft to a .md file in a scratch dir with its own .vale.ini whose BasedOnStyles = ai-tells, ai-tells-commits (not the repo's .vale/.vale.ini), runs `vale --config=\"$SCRATCH/.vale.ini\" --no-global` on it, rewords genuine smells like hollow openers and hedging, leaves real identifiers or error strings intact, re-runs until clean, then commits with `git commit -F`.",
+    "notes": "Positive scenario: commit-message lint with ai-tells-commits; vale owns the lint-and-fix loop."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Errors are all fixed now. Can you also go through the vale warnings? There are a ton of readability and passive voice ones in our API reference.",
+    "expected": "Invokes vale step 8. Re-runs at `--minAlertLevel=warning` with the same triage. Treats `Readability.*`, `write-good.Passive` and `alex.ProfanityUnlikely` as expected false positives in engineering docs and suppresses them inline (e.g. `<!-- vale write-good.Passive = NO -->` ... `= YES`) rather than rewriting the text.",
+    "notes": "Positive scenario: warning-level pass, with the skill's listed expected false-positive categories."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our README has inconsistent list markers and some headings missing blank lines around them. Can you fix the Markdown structure?",
+    "expected": "Structural Markdown lint/format, not prose style. Should not invoke vale; this belongs to rumdl (MD004/MD022 style rules with `rumdl check --fix`) or mdformat.",
+    "notes": "Decoy: 'lint Markdown' wording overlaps, but heading spacing and list markers are structure, owned by rumdl/mdformat."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Write me a commit message for these staged changes. We use the scope-first style, no feat: or fix: prefixes.",
+    "expected": "Commit message structure request. Should not invoke vale; unconventional-commits owns the scope-first subject and why-focused body. Vale only enters if the user then asks to lint the drafted message.",
+    "notes": "Decoy: commit-message topic, but the work is composing, not linting."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our team keeps using 'utilize' and 'e.g.' in docs. Is there any argument for just banning them in our style guide, or is that being too picky?",
+    "expected": "Editorial opinion question with no tool to run. Should not invoke vale; answer directly about style-guide trade-offs.",
+    "notes": "Decoy: prose-style topic with no linting requested."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I just cloned a new project that has no vale setup at all. I'd like to add vale with the Google and write-good styles and a vocab file, then lint the docs.",
+    "expected": "Primarily vale-cli: first-time setup (choosing global vs project-local, writing .vale.ini with Packages and BasedOnStyles, `vale sync`, top-level `Vocab =` key) is vale-cli's ground. The vale skill assumes an existing `.vale/.vale.ini`; it applies only once the config exists and the linting/triage loop begins.",
+    "notes": "Boundary: vale vs vale-cli. vale is the run-and-triage workflow for a repo already configured; vale-cli owns installation and configuration."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Vale is flagging words in our docs that aren't even from the styles in our .vale.ini, like Readability scores we never enabled. What's going on?",
+    "expected": "Likely vale, with a pointer to vale-cli for config debugging. The vale skill's answer: the global platform config is leaking in, so always pass `--no-global` alongside `--config=.vale/.vale.ini`, and check active configs with `vale --config=.vale/.vale.ini --no-global ls-config | jq '{Paths, ConfigFiles}'`. Deeper global-vs-project config questions belong to vale-cli's setup reference.",
+    "notes": "Boundary: diagnosing unexpected Vale output is listed in vale-cli's when-to-use, but the --no-global fix is core to vale's workflow."
+  }
+]

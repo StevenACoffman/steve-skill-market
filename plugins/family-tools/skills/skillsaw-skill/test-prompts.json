@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Here's a SKILL.md I wrote for our deploy process. Can you score it and make it better without changing what it does?",
+    "expected": "Invokes skillsaw-skill. Installs/upgrades skillsaw (v0.2.0+), creates an auto-optimize branch, designs test-prompts.json with checks (Phase 0.5) and stops for approval, runs `skillsaw scan` and `skillsaw eval`, scores judge-only dims in an independent context, writes scores.json via `skillsaw scores`, logs a baseline, then loops: diagnose, one edit, preflight, re-evaluate fresh, `skillsaw gate` (strict >), revert with `git revert` on reject.",
+    "notes": "Positive scenario: optimize one hand-written skill."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Does this skill only work in one agent runtime? Someone said it's full of tool names from a single vendor.",
+    "expected": "Invokes skillsaw-skill. Runs `skillsaw scan <dir>`; exit 1 means runtime-neutrality hits, and the first edit must be P0 runtime drift repair (single-runtime phrasing, badges, hard-coded runtime paths).",
+    "notes": "Positive scenario: runtime-neutrality check."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "book2skill finished and exegesis verify passed. Now hill-climb the quality of all 14 skills in that tree.",
+    "expected": "Invokes skillsaw-skill. First `skillsaw verified books/<slug>/skills-manifest.json` (STOP if it fails or covers no skills), then baseline every skill, sort ascending, and optimize weakest first, up to MAX_ROUNDS each, with --redlines on preflight because it is a book2skill tree. Human checkpoint after every skill.",
+    "notes": "Positive scenario: the book2skill hand-off."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "skillsaw eval says my skill has a DET.SCORE of 94. So it's basically done?",
+    "expected": "Invokes skillsaw-skill's interpretation caveats: DET.SCORE is a lower-bound lint floor that assumes judge dims are perfect; the comparable number is FULL from `skillsaw eval --scores scores.json`, which needs agent bases for every needs_judge dim, including dim 8 via `skillsaw judge`.",
+    "notes": "Positive scenario: misreading the deterministic floor."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Distill this book on incident management into a set of skills.",
+    "expected": "Skill creation from a book. Should not invoke skillsaw-skill; book2skill does this, then hands off.",
+    "notes": "Decoy: upstream sibling."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Check our Go coding ruleset (go_rules.md) for missing provenance anchors and gate it.",
+    "expected": "Ruleset grading. Should not invoke skillsaw-skill; canonizer does this for *_rules.md files.",
+    "notes": "Decoy: the same grader idea on a different artifact."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Merge the two overlapping retry skills from my two book trees into one.",
+    "expected": "Cross-book merge. Should not invoke skillsaw-skill; merge-skills does this.",
+    "notes": "Decoy: sibling skill's pipeline."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Install skillsaw for me, I think it's just pip install skillsaw.",
+    "expected": "Invokes skillsaw-skill failure F2: do not use pip or uvx; those install stbenjam/skillsaw, an unrelated Python linter with the same name. Use `go install github.com/StevenACoffman/skillsaw@latest` and check `skillsaw version` is v0.2.0 or later.",
+    "notes": "Boundary: name collision the skill warns about."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Improve this skill's score. It isn't in a git repo, just a folder on my desktop.",
+    "expected": "Invokes skillsaw-skill failure F1: ask the user to `git init`, or fall back to `cp SKILL.md SKILL.md.bak.<ts>` before each edit; abort rather than edit without a rollback path.",
+    "notes": "Boundary: the skill's precondition is missing."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Just quickly tidy up the wording in this SKILL.md, fix all the weak spots in one pass. I don't need scores.",
+    "expected": "Boundary: skillsaw-skill's loop is one dimension per round with gating and checkpoints; a one-pass rewrite of everything breaks attribution (B4). Either run the loop properly or treat it as a plain edit without the skill. Phase 2.5 rewrite requires explicit opt-in.",
+    "notes": "Boundary: optimization topic, but the user's request conflicts with the skill's method."
+  }
+]

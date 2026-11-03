@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Start a new Go command-line tool for managing our feature flags. I want subcommands for list and set, plus a version command.",
+    "expected": "Invokes climax-cli-scaffold. `go mod init`, `climax init --name ... --short ...`, `climax add list`, `climax add set`, then `go run . --help` to confirm dispatch and `climax lint` to confirm no drift. The version command comes by default unless `--no-version`.",
+    "notes": "Positive scenario: scaffolding a new ff/v4 CLI."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our climax app has a deploy command. I need deploy rollback under it, and rollback should see deploy's --env flag.",
+    "expected": "Invokes the skill. `climax add rollback --parent deploy`; the generated Config embeds `*deploy.Config`, not `*root.Config`, so deploy-level flags are visible to rollback. Confirms with `go run . deploy rollback -h` and `climax lint`.",
+    "notes": "Positive scenario: nested subcommand."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "climax lint fails in CI on cmd/serve/serve.go. It uses os.Stdout and binds a --port flag inside exec. How do I fix it?",
+    "expected": "Invokes the skill. Replaces `os.Stdout` with `cfg.Stdout` and moves the flag binding into `New()` before `cfg.Command` is created (flags are already parsed when exec runs). Re-runs `climax lint` to exit 0.",
+    "notes": "Positive scenario: correcting structural drift."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My climax 'check' subcommand should exit 1 when something's missing, but I don't want an error message printed. Right now I'm calling os.Exit(1) in exec.",
+    "expected": "Invokes the skill. Return `root.ExitError(1)` instead; main() intercepts it and exits silently. os.Exit inside a command skips deferred cleanup and breaks testability.",
+    "notes": "Positive scenario: ExitError pattern."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Add a man page to our climax-based CLI.",
+    "expected": "Invokes the skill. `climax mango [--authors ...]`, then `go get github.com/StevenACoffman/mango-ff github.com/muesli/roff`, preview with `go run . man | man -l -`.",
+    "notes": "Positive scenario: mango subcommand."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Add a new 'export' subcommand to our cobra-based CLI.",
+    "expected": "cobra framework. Should not invoke climax-cli-scaffold; the skill says not for cobra, kong or urfave/cli.",
+    "notes": "Decoy: subcommand request in an excluded framework."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our Go CLI reads settings from a config file, env vars and flags. Which should win when they disagree?",
+    "expected": "Configuration precedence design. Should not invoke climax-cli-scaffold; cli-configuration-hierarchy (go-craft) covers precedence.",
+    "notes": "Decoy: Go CLI design question for a sibling skill."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Build a Python CLI with click that wraps our REST API.",
+    "expected": "Non-Go CLI. Should not invoke climax-cli-scaffold.",
+    "notes": "Decoy: CLI scaffolding in another language."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I just need a tiny Go program that takes one -input flag and prints a checksum. Should I use climax for this?",
+    "expected": "Boundary: the skill says do not use it when the program has no subcommands and is just a flag.Parse wrapper. Plain flag parsing is enough; matryer-run-function's run() pattern may still apply.",
+    "notes": "Boundary: the skill's own 'Do Not Use' case."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our climax command reads an API key from an env var with os.Getenv inside exec, so it doesn't show up in -h. Is that a problem?",
+    "expected": "Invokes the skill: flags-first means every knob must be a registered ff.FlagSet flag in New(); the env var should come through `ff.WithEnvVarPrefix` in cmd.go, which makes it a flag with an env fallback. How to handle the secret value itself is cli-secret-handling's topic.",
+    "notes": "Boundary: flags-first invariant vs secret handling."
+  }
+]

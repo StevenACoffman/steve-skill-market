@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Every time I run the markdown formatter, the --- separators in my docs turn into a giant line of underscores. Is that a bug?",
+    "expected": "Invokes mdformat. Explains it is intentional: mdformat normalizes thematic breaks to 70 underscores because `---` is ambiguous in CommonMark (setext heading, front matter). To keep `---`, wrap it in `<!-- mdformat off -->` / `<!-- mdformat on -->`. Notes `--wrap keep` does not affect this.",
+    "notes": "Positive scenario: investigating why mdformat changes content."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Set up mdformat on my machine so it also formats the Go and bash code blocks inside our Markdown files, and handles YAML front matter.",
+    "expected": "Invokes mdformat. Installs all plugins in one `uv tool install --with mdformat-gfm --with mdformat-shfmt --with mdformat-toc --with mdformat-config --with mdformat-gofmt --with mdformat-front-matters mdformat` invocation (separate installs do not share the entry point), installs shfmt via go install, warns against mdformat-tables and mdformat-frontmatter, and runs `uv tool upgrade --reinstall mdformat` before formatting.",
+    "notes": "Positive scenario: install with the six plugins."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "mdformat --check passes on my laptop but fails in CI on the same files. Nothing changed in the docs.",
+    "expected": "Invokes mdformat. Points to plugin dependency drift: `uv tool upgrade mdformat` alone says nothing to upgrade, while plugin deps like ruamel-yaml or markdown-it-py change output. Prescribes `uv tool upgrade --reinstall mdformat` before formatting, then re-runs the find | xargs -0 -n1 -P4 mdformat --check pipeline.",
+    "notes": "Positive scenario: check-mode discrepancy caused by stale plugins."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I wrapped one item of a numbered list in mdformat off/on comments to stop it renumbering and now the list is split into three lists all starting at 1. What happened?",
+    "expected": "Invokes mdformat. Explains `<!-- mdformat off -->` is an HTML block that terminates the list, so each fragment renumbers independently, and that wrapping the whole list does not stop renumbering either. Fix: remove the directives and run mdformat in write mode to normalize (sequential with `--number`/`number = true`).",
+    "notes": "Positive scenario: ordered-list normalization cannot be suppressed."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Turn off the line-length rule for our changelog file, it's full of long URLs.",
+    "expected": "Lint rule configuration (MD013). Should not invoke mdformat; rumdl owns this via `per-file-ignores` in .rumdl.toml or `<!-- rumdl-disable-file MD013 -->`.",
+    "notes": "Decoy: Markdown tool config that belongs to rumdl."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Vale says our README uses passive voice too much. Should I fix it?",
+    "expected": "Prose style question. Should not invoke mdformat; the vale skill handles triage and suppression of write-good.Passive.",
+    "notes": "Decoy: Markdown file, but prose lint not formatting."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Convert this Markdown file to HTML so I can paste it into our wiki.",
+    "expected": "Rendering/conversion, not formatting. Should not invoke mdformat; use a Markdown renderer directly.",
+    "notes": "Decoy: Markdown topic with no formatter involved."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Format all the Markdown in this repo before I push.",
+    "expected": "Ambiguous between mdformat and rumdl (`rumdl fmt .`). In a repo with `.mdformat.toml`, use mdformat: `find . -type d -name node_modules -prune -o -name '*.md' -type f -print0 | xargs -0 -n1 -P4 uvx mdformat`. If the repo only configures rumdl, rumdl's fmt applies instead.",
+    "notes": "Boundary: mdformat vs rumdl. Both format Markdown; the repo's config decides."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "rumdl and mdformat keep undoing each other's changes to our ordered lists and horizontal rules. Which one should win?",
+    "expected": "Shared boundary. mdformat explains what it always normalizes (ATX headings, `-` markers, underscores for breaks, `1.` or sequential numbering). The fix lives in rumdl's recommended config, which aligns MD003/MD004/MD029 and related settings with mdformat's output; rumdl's references/recommended-config.md is the place to read.",
+    "notes": "Boundary: flip-flop between tools; mdformat is fixed, so rumdl's config bends to match it."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "One Go snippet in our docs is pseudo-code with '...' and mdformat prints 'Failed formatting content of a go code block'. Should I wrap it in mdformat off?",
+    "expected": "Invokes mdformat. The gofmt warning is informational, exits 0, and does not fail --check. Do not wrap it in off/on (risks list damage inside numbered lists); if needed, retag the fence as `go-nofmt` or `text` so mdformat-gofmt skips it.",
+    "notes": "Boundary: a warning that looks like an error; the skill says leave it alone."
+  }
+]

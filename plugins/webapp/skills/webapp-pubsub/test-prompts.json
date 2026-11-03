@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "When an assignment is created in my webapp service, I want to publish a protobuf so other services can react. How do I send it from Go?",
+    "expected": "Invokes webapp-pubsub. Embeds pubsub.KAContext and calls ctx.Pubsub().SendProtobuf(ctx, topic, msg). The message type must implement KAProtobuf (proto.Message plus GetInfo), and SendProtobuf fills Info with a UUID, timestamp and request ID. Optionally checks the result through LogResult. Signing is automatic, and the topic is declared in pubsub.yaml.",
+    "notes": "Positive scenario: publishing a protobuf message."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Another service publishes to a topic I need to consume in webapp. How do I set up a push subscription endpoint and read the message?",
+    "expected": "Invokes webapp-pubsub. Declares the topic and subscription with an endpoint in the service's pubsub.yaml, and in the HTTP handler calls pubsub.DecodeAndValidatePushMsg(ctx, r), which decodes the push envelope, verifies the HMAC signature and returns the bytes, then proto.Unmarshal.",
+    "notes": "Positive scenario: push subscription handler."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Updates for a single learner have to be processed in the order they were sent from webapp. Can Pub/Sub do that?",
+    "expected": "Invokes webapp-pubsub. Publishes with SendProtobufWithOrderingKey using the learner as the key, sets enableMessageOrdering: true on the subscription in pubsub.yaml, and calls ResumePublish(topic, key) before retrying after a failed publish for that key.",
+    "notes": "Positive scenario: ordering keys."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "How do I assert in a webapp test that my function published exactly one message with the right field value?",
+    "expected": "Invokes webapp-pubsub. Uses servicetest.Suite's KAContext, which wires an in-process emulator; after running the code, ctx.Pubsub().ServerForTests().Messages(), requires length 1, proto.Unmarshal(msgs[0].Data, &got) and asserts the field. ClearMessages between subtests if needed. For push handlers, NewPushMessageForTests builds a signed envelope.",
+    "notes": "Positive scenario: asserting on published messages."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "One malformed message keeps getting redelivered to my webapp push handler forever because unmarshal fails and I return the error. How should I handle it?",
+    "expected": "Invokes webapp-pubsub. Returning an error nacks the message and triggers redelivery. For permanent failures such as a bad signature or schema mismatch, log a Warn and return nil to ack it. Return an error only for transient failures. Handlers must be idempotent because delivery is retried.",
+    "notes": "Positive scenario: permanent vs transient failures."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "In webapp I need to run a cleanup job once, 2 hours after a classroom is archived, and never twice for the same classroom. What should I use?",
+    "expected": "Should invoke webapp-tasks, not webapp-pubsub: CreateTask with ScheduleTime and a Name for deduplication. Pub/Sub has no scheduling or deduplication.",
+    "notes": "Decoy: async work, but delayed single-consumer jobs belong to Cloud Tasks."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I want to log a CEDAR analytics event from webapp when a learner earns a badge. Do I publish to a Pub/Sub topic myself?",
+    "expected": "Should invoke webapp-analytics, not webapp-pubsub: declare the event in analytics_events.yml, run make eventgen, and call the generated Publish function, which routes through Pub/Sub for you.",
+    "notes": "Decoy: analytics events travel over Pub/Sub, but the generated code owns publishing."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "In a Python data pipeline outside webapp, how do I set a dead-letter topic on a Google Cloud Pub/Sub subscription?",
+    "expected": "Should not invoke webapp-pubsub; the skill covers webapp's Go pubsub package only. Answer from general Google Cloud Pub/Sub knowledge.",
+    "notes": "Decoy: Pub/Sub, but a different language and repository."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "When a classroom is archived in webapp, three other services need to know. Should I use Cloud Tasks or Pub/Sub?",
+    "expected": "webapp-tasks holds the Tasks vs Pub/Sub comparison and may load first: with multiple consumers and event fan-out, Pub/Sub fits. webapp-pubsub then covers the implementation, with one topic, a subscription per service in pubsub.yaml, and SendProtobuf.",
+    "notes": "Boundary: the comparison table lives in webapp-tasks; the implementation here."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm using sub.Receive in webapp instead of push. Inside the callback I only have a plain context.Context. How do I get a logger and datastore from it?",
+    "expected": "Should invoke webapp-kacontext: Pub/Sub message handlers are an approved Upgrade entry point, using kacontext.Upgrade(baseCtx).MaybeSetRequestIDAndTraceID() with an inline interface. webapp-pubsub covers push subscriptions and publishing, not this context setup.",
+    "notes": "Boundary: a Pub/Sub receiver whose actual question is KAContext setup."
+  }
+]

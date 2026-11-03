@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm cleaning up error handling in one of the Go services in webapp. There are about a dozen spots doing fmt.Errorf(\"loading roster: %w\", err). What should these turn into so CI is happy?",
+    "expected": "Invokes webapp. Explains that fmt.Errorf is banned by ka-banned-symbol and stdlib errors by depguard; errors come from github.com/Khan/webapp/pkg/lib/errors. Replaces each call with errors.Wrap(err) or errors.Wrap(err, \"key\", val) with an odd argument count and string-literal keys, and errors.New for new errors. Points to references/error-handling.md for the conversion details.",
+    "notes": "Positive scenario: the top row of the cheat sheet, phrased as a cleanup task."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "CI on my webapp branch flags ka-log-or-return-error on a function that does ctx.Log().Error(errors.Wrap(err)) and then returns err on the next line. I want the error visible in logs though. What's the fix?",
+    "expected": "Invokes webapp. States the rule: an error is logged OR returned, never both. Choose one: return the wrapped error and let a caller log it, or log it and stop propagating. Does not suggest a //nolint unless it names the linter and gives a reason, which nolintlint enforces.",
+    "notes": "Positive scenario: a named custom linter failure from the cheat sheet."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Adding a new Cloud Datastore model to a webapp service. It has a name string, a created time, an embedded profile struct and a list of tags. How should the struct and its tags look, and is there anything else the model needs?",
+    "expected": "Invokes webapp and reads references/datastore.md. Model embeds datastore.BaseModel and tags every field. time.Time and struct fields get omitempty; slice fields must not. A MakeXKey key constructor lives in the same file, and PreSave calls BaseModel.PreSave and then datastore.CheckTransactionSafetyForPut. Service code builds keys with the generated helper, never datastore.NameKey or IDKey.",
+    "notes": "Positive scenario: datastore model rules from the checklist and datastore reference."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I need to fetch three things concurrently in a webapp service handler, so I wrote a sync.WaitGroup with three goroutines. Is that going to pass lint?",
+    "expected": "Invokes webapp. sync.WaitGroup is banned by ka-banned-symbol in non-test, non-script code. Rewrites with tracegroup.New(ctx), g.Go(func(ctx context.Context) error {...}) and g.Wait(), which carries OpenTelemetry spans across goroutines. Also notes that errgroup is banned for the same reason.",
+    "notes": "Positive scenario: concurrency rule where webapp overrides general Go advice."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "My webapp feature branch is done. I was about to run gh pr create and let it default to master. Anything I should know first?",
+    "expected": "Invokes webapp. Never open a webapp PR against master; base it on the author's personal deploy branch with gh pr create --base. Confirm the base before creating, because a closed PR's base cannot be changed. If git push fails with FileNotFoundError for ka-lint, put webapp/testing on PATH rather than using --no-verify.",
+    "notes": "Positive scenario: the Pull Requests section of the umbrella skill."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I want to start tracking when a learner finishes a unit test in the webapp Go code, as a CEDAR analytics event. The schema is already merged in the event-schemas repo. What are the steps?",
+    "expected": "Should invoke webapp-analytics, not the umbrella webapp skill: add the event and version to analytics_events.yml, run make eventgen, commit the generated files, and call the generated Publish function.",
+    "notes": "Decoy: webapp Go code, but the area skill webapp-analytics owns the CEDAR workflow."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Inside webapp, what's the quickest way to run tests only for the files I changed before I commit?",
+    "expected": "Should invoke webapp-make, not webapp: make tesc tests and lints only files changed relative to the upstream tracking branch, make linc lints only, and make check runs the whole service suite.",
+    "notes": "Decoy: webapp tooling question with no Go code rule involved; belongs to webapp-make."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "In my personal Go CLI project I wrap errors with fmt.Errorf and %w everywhere. Is that idiomatic, or should I use a wrapping library?",
+    "expected": "Should not invoke webapp. The skill's scope note limits its rules to github.com/Khan/webapp; outside it, fmt.Errorf with %w is ordinary idiomatic Go. Answer with general Go guidance.",
+    "notes": "Decoy: same topic as the top cheat-sheet row, but a different repository, which the skill explicitly excludes."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Please review PR 1234 in webapp against our Go rules and put the findings on the PR as line comments.",
+    "expected": "Should invoke webapp-review, which runs the end-to-end workflow: scope from the deploy-branch merge base, judge against Go advice with webapp's RULES.md as overriding exceptions, polish with rumdl and vale, pass the confidence gate, and post inline comments through gh api. The umbrella webapp skill supplies the rules and checklist that the review applies, but it does not post reviews.",
+    "notes": "Boundary: the umbrella's Code Review Checklist overlaps, but posting a PR review belongs to webapp-review."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "CI says ka-permissions on a new query resolver I added in webapp. I'd also like a test that calls the resolver through GraphQL. Can you help with both?",
+    "expected": "Likely invokes webapp for the lint rule: every resolver must call a function annotated //ka:permission-check (references/graphql.md), and the directive goes on its own comment line on the function declaration. Also invokes webapp-graphql or webapp-testing for the test: BuildTestClientForSchema plus gqltest.Query with js.Obj variables.",
+    "notes": "Boundary: the permission rule lives in the umbrella's GraphQL reference; resolver testing belongs to the area skills."
+  }
+]

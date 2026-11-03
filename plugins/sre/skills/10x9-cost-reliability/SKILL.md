@@ -1,6 +1,6 @@
 ---
 name: 10x9-cost-reliability
-description: Use when someone sets, demands, or challenges an SLO target ("we need five nines") without stating its cost. Frames each extra nine as roughly 10x more reliability for roughly 10x more cost, to justify or push back on 3-nines vs 4-nines vs 5-nines mandates.
+description: Use when someone sets, demands, or challenges an SLO target ("we need five nines", 99.999%) without stating its cost. Frames each extra nine as roughly 10x more reliability for roughly 10x more cost, to justify or push back on 3-nines vs 4-nines vs 5-nines mandates.
 tags: [slo, cost-of-reliability, 10x9, error-budget, reliability-economics]
 ---
 

@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our Go service shells out to ffmpeg to make thumbnails. The CI container doesn't have ffmpeg, and installing it doubles the image size. How can I unit test the thumbnail code?",
+    "expected": "Invokes test-helper-process-subprocess-mock. Make exec.Command injectable through a commandFactory field that defaults to exec.Command. In tests, inject a helperProcess that re-runs os.Args[0] with -test.run=TestHelperProcess and GO_WANT_HELPER_PROCESS=1. TestHelperProcess returns immediately unless the env var is set, then strips args up to '--' and switches on the command to fake ffmpeg's stdout and exit code.",
+    "notes": "Positive scenario: the binary is absent in CI, the main reason the skill gives for choosing Option 2."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I need tests for how our deploy tool handles kubectl failing: exit code 1 with an error on stderr, and kubectl printing truncated JSON. Right now the code calls exec.Command(\"kubectl\", ...) directly inside Apply().",
+    "expected": "Invokes test-helper-process-subprocess-mock. Step 1: move exec.Command behind a commandFactory field so tests can swap it. Then add one case per behavior in TestHelperProcess's switch: write to stderr and os.Exit(1) for the failure, print truncated JSON for the bad output. Keep the cases deterministic, with no sleeps or randomness. Each test sets commandFactory = helperProcess.",
+    "notes": "Positive scenario: simulating non-zero exit and garbage stdout, which the description names."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I've heard the Go standard library tests os/exec by having the test binary run itself as a fake child process. How does that work, and how would I use it for my code that runs `terraform init`?",
+    "expected": "Invokes test-helper-process-subprocess-mock and explains the mechanism. os.Args[0] in a test is the compiled test binary, and helperProcess re-invokes it with -test.run=TestHelperProcess. GO_WANT_HELPER_PROCESS=1 is the gate, and without it TestHelperProcess returns at once, so normal runs pay nothing. Then it walks through the steps for terraform: an injectable commandFactory, helperProcess, a TestHelperProcess switch with init and apply cases, and injection in each test.",
+    "notes": "Positive scenario: asks about the pattern by its stdlib origin without naming it."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our backup command calls `aws s3 sync` with exec.Command. Running it for real in tests would upload to S3. How do I test the success and failure paths without touching AWS?",
+    "expected": "Invokes test-helper-process-subprocess-mock. The binary has side effects that are unsafe in tests, which the skill names as a reason to mock the subprocess. Inject a command factory, fake 'aws' in TestHelperProcess with a success case and a non-zero-exit case, and set commandFactory = helperProcess in each test.",
+    "notes": "Positive scenario: an external binary with harmful side effects."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "My Go client calls a third-party REST API for exchange rates. How do I test it without hitting the real API?",
+    "expected": "Should not invoke test-helper-process-subprocess-mock. The skill excludes HTTP services: use net/http/httptest.NewServer to run a real in-process HTTP server.",
+    "notes": "Decoy: an external dependency, but over HTTP, which the description and Boundaries exclude."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My repository layer talks to Postgres through database/sql. What's the best way to test it without a shared dev database?",
+    "expected": "Should not invoke test-helper-process-subprocess-mock. The skill excludes database dependencies and points to testcontainers-go, sqlmock or an in-process database instead.",
+    "notes": "Decoy: a database dependency, excluded by name in the description."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I'm testing a custom binary protocol over TCP and I'm tempted to mock net.Conn. Should I use net.Pipe or a real listener?",
+    "expected": "Should not invoke test-helper-process-subprocess-mock. never-mock-net-conn-use-loopback covers it: a real loopback TCP pair through the testConn helper. The two skills share the philosophy of using a real instance rather than a shallow mock, applied to different domains.",
+    "notes": "Decoy: the contrasts-with sibling from the Related Skills section."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Our module fetcher runs `git clone` and `git rev-parse`. Git is installed on every CI runner and these are read-only operations. Should I still set up the TestHelperProcess mock for it?",
+    "expected": "Invokes test-helper-process-subprocess-mock but recommends Option 1. The binary is reliably present in CI and has no harmful side effects, so guard with exec.LookPath(\"git\") in init() and t.Skip() when it is absent, as Terraform's TestGitGetter does. The real binary exercises protocol and ref resolution that a mock would not reproduce. Use the mock only for failure modes that are hard to trigger for real.",
+    "notes": "Boundary: the skill's own decision rule and its 'Do NOT apply' bullet for available, harmless binaries."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I want to test my own CLI's main() end to end: pass it different flags and env vars and check stdout and the exit code. Is the re-exec-the-test-binary trick the way to do that?",
+    "expected": "Mostly should not invoke test-helper-process-subprocess-mock. The skill fakes an external binary that the code under test calls. Making a program's own startup testable with controlled args, env and stdio belongs to matryer-run-function. For multi-command CLI workflows, the skill's Boundaries section notes that testscript-based runners may be a better fit.",
+    "notes": "Boundary: a subprocess-shaped question about the program's own entry point. Belongs to matryer-run-function, with the skill's testscript caveat."
+  }
+]

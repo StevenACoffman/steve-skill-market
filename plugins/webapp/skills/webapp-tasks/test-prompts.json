@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "In webapp I want to send a reminder 24 hours after a learner enrolls. How do I schedule that from Go and handle it when it fires?",
+    "expected": "Invokes webapp-tasks. Calls ctx.Tasks().CreateTask(ctx, queue, &tasks.TaskConfig{Target, RelativeURI, Body, ScheduleTime}) with a queue declared in queue.yaml (named *-deferred-queue), and registers the handler with serve.CreateTaskHandler, which requires POST and validates the request came from Cloud Tasks. The handler must be idempotent.",
+    "notes": "Positive scenario: scheduled task plus handler."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My webapp backfill sometimes gets triggered twice for the same user. Can the task queue stop the duplicate?",
+    "expected": "Invokes webapp-tasks. Sets TaskConfig.Name, for example backfill-user-<kaid>, so the same logical task is not enqueued twice; Cloud Tasks holds names for 4 days after completion. Treats a codes.AlreadyExists error from CreateTask as success.",
+    "notes": "Positive scenario: named-task deduplication."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I want to fire an enrollment GraphQL mutation in the background with retries from webapp. I passed the mutation string to tasks.GraphQLTask and ka-graphql-task fails.",
+    "expected": "Invokes webapp-tasks. GraphQLTask needs a genqlient <service>_Task_<something>_Operation symbol generated from a # @genqlient directive in the same file, not a raw string. The service prefix must match the owning service (ka-cross-service-opname). The queue's target must be graphql-gateway, and the mutation must be idempotent because the gateway retries.",
+    "notes": "Positive scenario: GraphQL mutation tasks and their linter."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "In my webapp test the task gets enqueued but the handler never runs, and when I call RunAllTasks it panics. What am I doing wrong?",
+    "expected": "Invokes webapp-tasks. Tasks do not run automatically in servicetest. The default taskstest client has a nil handler, which panics, so build one with taskstest.NewTestClient(s.GetTestServer(ctx).Config.Handler), install it in the context, then call TestServer().RunAllTasks(ctx). Use QueuedTasks() to assert without running.",
+    "notes": "Positive scenario: taskstest pitfalls."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "A webapp task failed repeatedly overnight and now it's just gone. No dead-letter queue, nothing. Where did it go?",
+    "expected": "Invokes webapp-tasks. After task_retry_limit retries Cloud Tasks drops the task silently, and webapp routes nothing to a dead-letter queue by default. If loss is unacceptable, keep a durable record before enqueueing and mark it complete in the handler. Return nil for permanent failures so they stop retrying.",
+    "notes": "Positive scenario: retry exhaustion and silent drops."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "When a course is published in webapp, several services each need to update their caches. How do I broadcast that?",
+    "expected": "Should invoke webapp-pubsub, not webapp-tasks: one topic with a subscription per consumer, published with SendProtobuf. Fan-out to multiple consumers is Pub/Sub's job.",
+    "notes": "Decoy: async work, but fan-out belongs to Pub/Sub."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "My webapp RunInTransaction closure appends to a slice declared outside it, and sometimes the slice ends up with duplicates. Is the transaction retrying?",
+    "expected": "Should invoke the umbrella webapp skill (references/datastore.md), not webapp-tasks: transactions may retry up to three times, so outer variables modified in the closure must be re-initialized at its top (ka-datastore-transaction).",
+    "notes": "Decoy: about retries and idempotency, but in datastore transactions, not task queues."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "How do I write a Kubernetes CronJob that runs a Go binary every night at 2am?",
+    "expected": "Should not invoke webapp-tasks; this is general Kubernetes scheduling, not webapp's Cloud Tasks package.",
+    "notes": "Decoy: scheduled work with no webapp involvement."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "For a delayed job in webapp that only one service consumes, is Cloud Tasks or Pub/Sub the better fit?",
+    "expected": "Invokes webapp-tasks, which has the comparison table: deferred work for one consumer with future ScheduleTime and 4-day name deduplication fits Cloud Tasks; Pub/Sub has no scheduling or deduplication and suits fan-out and ordered pipelines. webapp-pubsub is the sibling if the answer were Pub/Sub.",
+    "notes": "Boundary: the Tasks vs Pub/Sub decision sits between the two skills."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "In webapp, my # @genqlient mutation is only fired through a task, and ka-genqlient says it has no call site. What's the fix?",
+    "expected": "Either webapp-graphql or webapp-tasks applies. Add _ = genqlient.<Name>_Operation next to the directive so ka-genqlient sees the symbol used, and pass that same symbol to tasks.GraphQLTask. webapp-graphql owns the ka-genqlient rule; webapp-tasks owns GraphQLTask.",
+    "notes": "Boundary: the directive and task helpers are documented in both skills."
+  }
+]

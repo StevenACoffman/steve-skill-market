@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I cloned the repo, made a commit, and none of the pre-commit formatting ran. The lefthook.yaml is right there in the root.",
+    "expected": "Invokes lefthook. The `.git/hooks/` shims are missing or stale; run `lefthook install` once per clone. Later changes to lefthook.yaml are picked up without reinstalling. Checks `lefthook --version` meets the `min_version` (2.0.0).",
+    "notes": "Positive scenario: hook not firing after clone."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I want to see whether my branch would pass the pre-push checks without actually pushing it.",
+    "expected": "Invokes lefthook. Runs `lefthook run pre-push --all-files` (or `--dry-run` to see what would execute; `--jobs <name>` for one job).",
+    "notes": "Positive scenario: running hooks manually."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We added a new Go module to our workspace. How do I get it into the existing pre-commit and pre-push hooks like the others?",
+    "expected": "Invokes lefthook's add-a-module procedure: add it to go.work, add a `fmt-<module>` pre-commit job (root, glob '*.go', `golangci-lint fmt --config=../.golangci.yml`, stage_fixed: true) and a `<module>` pre-push job with a piped group of `go mod tidy -diff`, `go vet`, `go test -count=1 -timeout 5m`, `golangci-lint run --fix`. Commit lefthook.yaml and go.work together.",
+    "notes": "Positive scenario: extending a multi-module hook config."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My pre-commit hook reformats files, but the commit still has the unformatted version and I have to stage again by hand.",
+    "expected": "Invokes lefthook. Adds `stage_fixed: true` to the job so files the command modifies are re-staged into the commit.",
+    "notes": "Positive scenario: stage_fixed."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I need to make a quick WIP commit and the hooks take forever. How do I skip them just this once, or skip only the slow formatting job?",
+    "expected": "Invokes lefthook. `LEFTHOOK=0 git commit -m \"wip\"` skips all hooks; `LEFTHOOK_EXCLUDE=job1,job2 git commit ...` skips named jobs.",
+    "notes": "Positive scenario: skipping hooks."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Write a commit message for the changes I just staged.",
+    "expected": "Commit message composition. Should not invoke lefthook; unconventional-commits handles this.",
+    "notes": "Decoy: commit topic, no hook configuration."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "golangci-lint is reporting bodyclose and perfsprint issues across our modules. Fix them.",
+    "expected": "Lint findings to fix. Should not invoke lefthook; lintme runs golangci-lint across modules and covers the common fixes.",
+    "notes": "Decoy: the same golangci-lint that lefthook's pre-push runs, but the task is fixing lint findings."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Set up a GitHub Actions workflow that runs our Go tests on every pull request.",
+    "expected": "CI configuration, not local Git hooks. Should not invoke lefthook; write the workflow YAML directly.",
+    "notes": "Decoy: automation of checks, but in CI rather than lefthook."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Add a Markdown lint step to our pre-commit hook using rumdl.",
+    "expected": "Invokes lefthook for the hook structure, with rumdl for the command: a job with `glob: '*.md'`, `run: rumdl check --fix {staged_files}`, `stage_fixed: true`, no `root` so paths are repo-relative. The rumdl config path should be rumdl's own config, not `.vale/.vale.ini`.",
+    "notes": "Boundary: lefthook vs rumdl. Note the skill's own example passes `--config .vale/.vale.ini` to rumdl, which looks like a copy error."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "golangci-lint --fix changed some files during pre-push but the push was still rejected. Why?",
+    "expected": "Invokes lefthook troubleshooting: the fixed files were not in the pushed commits; stage, `git commit --amend --no-edit`, and push again. The underlying lint findings, if any remain, are lintme's job.",
+    "notes": "Boundary: hook behaviour (lefthook) meets lint fixing (lintme)."
+  }
+]

@@ -1,6 +1,6 @@
 ---
 name: ioc-ai-systems
-description: "Use when designing or reviewing an AI-powered system or agent and deciding what deterministic code versus the LLM controls, especially when behavior is unpredictable or someone proposes letting the LLM plan and run a multi-step workflow. Inversion of control: code owns the state machine."
+description: "Use when designing or reviewing an AI-powered system or agent and deciding what deterministic code versus the LLM controls, especially when behavior is unpredictable or an agentic or vibe-coding approach lets the LLM run a multi-step workflow. Inversion of control: code owns the state machine."
 tags: [ai-architecture, ioc, deterministic, workflow, llm, reliability]
 ---
 

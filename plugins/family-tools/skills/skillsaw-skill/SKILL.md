@@ -1,6 +1,6 @@
 ---
 name: skillsaw-skill
-description: "Use when the user asks to optimize, score, review or improve a SKILL.md against the skillsaw rubric, or to check whether a skill is bound to one agent runtime. Runs skillsaw's deterministic evaluate, improve and validate loop."
+description: "Use when the user asks to optimize, score, review or improve a SKILL.md against the skillsaw rubric, or to check whether a skill is bound to one agent runtime. Runs skillsaw's deterministic evaluate, improve and validate loop, a darwin-skill style auto-optimize."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the skillsaw CLI (v0.2.0 or later, installed with Go), git and jq; reads skills-manifest.json written by the exegesis CLI.
 tags: [skill-optimization, rubric, skillsaw, darwin, evaluation, hill-climbing, cli]
 ---

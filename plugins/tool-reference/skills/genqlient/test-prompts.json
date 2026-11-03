@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I've got a GetRepoStats query in my genqlient.graphql file and the code generated fine, but the API needs a bearer token on every request. How do I build the client so the generated GetRepoStats function sends the token?",
+    "expected": "Invokes genqlient. Wraps http.DefaultTransport in a type whose RoundTrip sets the Authorization: Bearer header, passes an http.Client with that Transport to graphql.NewClient(endpoint, ...), then calls the generated function as GetRepoStats(ctx, client, ...args). Mentions that per-request headers (such as trace IDs) can be read from req.Context() inside RoundTrip.",
+    "notes": "Positive scenario: authenticated client setup for genqlient-generated functions, the skill's 'Add auth headers' cheat-sheet row."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "The upstream GraphQL schema has `nickname: String` (nullable). In the Go struct genqlient generated it's a plain string, so I can't tell a null nickname from an empty one. How do I fix that?",
+    "expected": "Invokes genqlient. Explains the default optional: value maps null to the Go zero value. Fix per field with a `# @genqlient(pointer: true)` comment directive on the line before the field, or globally with `optional: pointer` (or pointer_omitempty / generic) in genqlient.yaml, then rerun `go run github.com/Khan/genqlient`. Points to references/types-and-nullability.md.",
+    "notes": "Positive scenario: nullable-field handling, a named trigger signal in the description."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our Go service calls a partner's GraphQL API through genqlient. Sometimes they return HTTP 200 with an `errors` array but some of the data is still filled in. Right now we just bail on err != nil. What's the right way to handle this?",
+    "expected": "Invokes genqlient. Distinguishes three error shapes: errors.As(err, &gqlerror.List) for HTTP 200 with GraphQL errors, where resp is non-nil and may hold partial data; errors.As(err, &*graphql.HTTPError) for non-200 responses with StatusCode; and everything else as network or context errors. Notes resp is always non-nil so zero-value fields are safe to read, and the caller decides whether to use the partial data.",
+    "notes": "Positive scenario: partial data and error handling for genqlient calls."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "The schema we generate against has a custom `DateTime` scalar and a `UUID` scalar. genqlient keeps turning them into strings. I want time.Time and google/uuid.UUID in the generated structs.",
+    "expected": "Invokes genqlient. Adds a `bindings:` section to genqlient.yaml mapping DateTime to type time.Time and UUID to github.com/google/uuid.UUID, optionally with marshaler/unmarshaler functions, then regenerates. May mention package_bindings for binding a whole package of types.",
+    "notes": "Positive scenario: custom scalar bindings in genqlient.yaml."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "genqlient gave me a type called ListOrdersCustomerOrdersEdgesNodeShippingAddress and it's all over my calling code. Is there a way to get sane names?",
+    "expected": "Invokes genqlient. Explains the long names are intentional because they stay stable across query changes. To shorten, use `# @genqlient(typename: \"ShippingAddress\")` on the field, or a Go type alias in calling code; for sharing one type across queries, use a named fragment. Warns that typename and bind cannot be combined except as typename plus bind: \"-\".",
+    "notes": "Positive scenario: verbose generated type names, covered in Common Gotchas and the typename directive."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I'm building a GraphQL API in Go for our inventory service. I've written schema.graphqls and need to generate resolver stubs and wire them to an HTTP server.",
+    "expected": "Should not invoke genqlient; this is server-side GraphQL. The gqlgen-app skill handles it: gqlgen init or gqlgen generate, implementing the generated resolver interfaces, and adding transports with handler.New.",
+    "notes": "Decoy: same topic (GraphQL code generation in Go) but server side, which belongs to sibling skill gqlgen-app."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "In Khan/webapp, my service needs to call another service's GraphQL endpoint as a service admin. Which gqlclient adapter do I use?",
+    "expected": "Should not invoke genqlient. This is the webapp-specific service-to-service GraphQL client (gqlclient.Client, ClientAdapter, AsServiceAdmin), which the webapp-graphql skill covers.",
+    "notes": "Decoy: Go code calling a GraphQL API, but through webapp's own client layer; sibling skill webapp-graphql."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We're designing a new API between two internal Go services. Should it be GraphQL or gRPC?",
+    "expected": "Should not invoke genqlient; no client code is being written yet. This is an architecture decision for grpc-vs-rest-vs-graphql, which weighs internal versus external consumers and field-selection needs.",
+    "notes": "Decoy: GraphQL mentioned, but the question is protocol selection, not using genqlient."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I just want to run one GraphQL query against the GitHub API from my terminal to see which of my repos have open security alerts. No Go program, just the result.",
+    "expected": "Should not invoke genqlient, because nothing is generated or compiled. A one-off query from the shell belongs to gh-cli via `gh api graphql`. genqlient would only fit if this became a Go program that calls the API repeatedly.",
+    "notes": "Boundary: a GitHub GraphQL query with no Go code. The topic overlaps genqlient, but sibling gh-cli (gh api) owns it."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our Go service runs a gqlgen server, and it also calls an upstream catalog service through genqlient. I want to unit test the handler that calls the catalog without hitting the real catalog. How should I fake it?",
+    "expected": "Invokes genqlient for the client half: the options from references/testing.md are an httptest.Server returning canned JSON, a mock http RoundTripper passed to graphql.NewClient, or a type implementing graphql.Client's MakeRequest. Testing the service's own gqlgen resolvers is separate; that belongs to gqlgen-app's client.New(srv) helper.",
+    "notes": "Boundary: one service is both a GraphQL server (gqlgen-app) and a client (genqlient); faking the outbound client is genqlient's part."
+  }
+]

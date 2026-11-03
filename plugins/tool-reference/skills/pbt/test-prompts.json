@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I have Encode and Decode functions for a compact base62 ID format in Go. My tests check five hand-picked IDs. I'd like something that hammers them with random inputs and tells me the smallest failing case.",
+    "expected": "Invokes pbt and loads references/go.md. Reads the code and existing tests first, then writes a round-trip property with rapid.Check, Decode(Encode(x)) == x, using unbounded generators (rapid.Uint64() or similar, including 0 and max values) and parse robustness on rapid.String() for Decode. Adds the tests to the existing test file, not a new pbt_test.go.",
+    "notes": "Positive scenario: round-trip PBT with rapid, without naming 'property-based testing'."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our search ranking function breaks ties arbitrarily, so the exact output order changes from run to run. I can't write expected outputs for it. How do I test it properly?",
+    "expected": "Invokes pbt and uses metamorphic relations (references/metamorphic.md): things that must not change the output (shuffling order-free input, adding records that match nothing) and things that change it predictably (a stronger filter gives a subset; one more matching record gives exactly one more result). Writes 3–6 relations from different families, each with a `// spec:` comment, canonicalizes by sorting before comparing, and does not assert result order the contract doesn't promise.",
+    "notes": "Positive scenario: no test oracle, outputs vary between runs."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I wrote a sharded concurrent map. Unit tests pass but I don't trust it under concurrent writers. How do I test it when I can't predict which racing write wins?",
+    "expected": "Invokes pbt. Uses a model test against a map[K]V for sequential operations, and for concurrency the metamorphic concurrent playbook (determinate workloads, conserved aggregates, unique-value tagging), asserting exact relations only at quiescence. Concentrates keys into a small hot pool with a comment explaining why, so writes actually contend.",
+    "notes": "Positive scenario: concurrent, nondeterministic code."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We have a table-driven test for NormalizeUsername with about 15 cases. Can we turn it into something that covers more of the input space?",
+    "expected": "Invokes pbt and loads references/evolving-tests.md. Evolves the table into properties in the same test file, such as idempotence NormalizeUsername(NormalizeUsername(s)) == NormalizeUsername(s) using rapid.String() rather than ASCII-only generators, since Unicode cases like ß are where bugs hide. Keeps generators unbounded unless the contract excludes inputs.",
+    "notes": "Positive scenario: evolving example-based tests into PBT."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "A few of our old tests use testing/quick. Should we move them to rapid, and is there anything to watch out for?",
+    "expected": "Invokes pbt and loads references/porting.md. Ports them to rapid.Check and drops narrow generator bounds carried over from the old framework unless the function's contract justifies them.",
+    "notes": "Positive scenario: porting from testing/quick."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We parse uploaded image metadata from untrusted users. Should we set up go test -fuzz in CI, and which parsers should get fuzzed first?",
+    "expected": "Should not invoke pbt. Deciding whether and where to fuzz untrusted-input handlers and running fuzzing in CI belongs to continuous-fuzzing-strategy.",
+    "notes": "Decoy: randomized input testing, but coverage-guided fuzzing strategy; sibling skill continuous-fuzzing-strategy."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I write a Hypothesis test in Python for a function that merges two sorted lists?",
+    "expected": "Should not invoke pbt; the skill is for Go with rapid. Answer the Python Hypothesis question directly.",
+    "notes": "Decoy: property-based testing in another language and library."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Every property I write for our pricing engine needs three 'except when' clauses. Is that telling me something about the code?",
+    "expected": "Should not invoke pbt as the main skill. Treating PBT difficulty as design feedback belongs to welc-property-based-design-pressure. pbt's note that a weaker property often still holds is secondary.",
+    "notes": "Decoy: about property tests, but the question is design pressure; sibling skill welc-property-based-design-pressure."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "For a new tax-bracket calculator in Go, should I write property-based tests or stick with example-based ones? If property-based, help me write them.",
+    "expected": "The choice between example-based and property-based testing is listed in welc-property-based-design-pressure. Once PBT is chosen, pbt handles writing it: bounds/contracts and monotonicity properties grounded in the documented brackets, an oracle test against a simple reference implementation, and boundary values with unbounded generators.",
+    "notes": "Boundary: a choose-then-write request that spans welc-property-based-design-pressure (choice) and pbt (writing)."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm testing a cart service that depends on a stateful inventory store. I already have a handwritten fake. Should I write a scenario table, or generate random sequences of add/remove operations?",
+    "expected": "Shares ground with go-test-state-driven-table, which covers a named table plus a handwritten fake asserting on observable state. pbt applies to the random-sequence option as a model test: run generated operations against the fake-backed service and a simple map model, and assert they agree after every step.",
+    "notes": "Boundary: stateful dependency testing; go-test-state-driven-table for fixed scenarios, pbt for generated operation sequences."
+  }
+]

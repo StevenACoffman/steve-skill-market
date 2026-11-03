@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We write roughly 50,000 log events a second into a Postgres table. Write latency keeps creeping up and WAL I/O is saturating the disk. People are floating ClickHouse or Kafka plus RocksDB. How do we choose?",
+    "expected": "Invokes storage-engine-workload-selection. Classifies the workload as operational or analytical and quantifies the write/read ratio. A B-tree store with in-place updates struggles at sustained high write rates; an LSM engine handles high write throughput with sequential appends, but compaction must be planned and monitored. If the logs are mainly queried with aggregations, add columnar storage for that side. For writes plus analytics, recommends the hybrid: LSM (or similar) on the hot write path with a separate export to columnar storage for queries.",
+    "notes": "Positive: trigger scenario 1."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Every so often our RocksDB-backed ingestion service stalls writes for several seconds. The stalls line up with spikes in compaction I/O on the dashboards. Can we tune our way out, or is this the wrong engine?",
+    "expected": "Invokes storage-engine-workload-selection and names LSM compaction interference (ce06). Under sustained writes, compaction falls behind, unmerged SSTables pile up, and the engine throttles writes. This is inherent to LSM and must be sized for, not just tuned away. Prescribes checking the compaction strategy, comparing write rate with compaction throughput, monitoring SSTable count, compaction queue depth, and write stalls, and load-testing compaction at peak write rate.",
+    "notes": "Positive: trigger scenario 5; LSM write throughput is bounded by compaction throughput."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Finance runs GROUP BY reports across three years of transactions in our Postgres database, and each one takes several minutes. We've already added indexes. What should we change?",
+    "expected": "Invokes storage-engine-workload-selection and classifies this as an analytical workload (bulk scans and aggregations over a few columns of many rows). The stop condition for analytical workloads sends it straight to columnar storage (Parquet, ClickHouse, BigQuery, DuckDB, and so on) without evaluating LSM or B-tree. The columnar copy should be derived from the operational database through a separate export with a defined staleness SLA.",
+    "notes": "Positive: trigger scenario 3."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "An engineer wants RocksDB for our new entitlement-lookup service because 'it's what the fast databases use'. It's random point reads, maybe 200 writes a second against tens of thousands of reads. Good choice?",
+    "expected": "Invokes storage-engine-workload-selection. An operational workload that is read-heavy with random point lookups and modest writes fits a B-tree engine (Postgres, InnoDB, SQLite), which gives more predictable read latency. LSM reads must check several SSTables, and its write advantage goes unused here.",
+    "notes": "Positive: trigger scenario 4, an LSM engine proposed for a read-heavy workload."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our user-profile store is on Cassandra. Profiles are written rarely and read constantly, and read latency has been getting worse; traces show each read touching lots of SSTables. Someone says we picked the wrong database. Did we?",
+    "expected": "Invokes storage-engine-workload-selection. An LSM engine (Cassandra) is optimized for writes, and its reads check several SSTables at different compaction levels. For a read-heavy, rarely written workload, a B-tree engine resolves the write/read trade-off in the right direction. The engine choice should follow the measured write/read ratio.",
+    "notes": "Positive: trigger scenario 2."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "This one query on our orders table takes 4 seconds. EXPLAIN shows a sequential scan over 20 million rows filtering on customer_id. What should I do?",
+    "expected": "Should not invoke storage-engine-workload-selection. The skill says to fix a missing index or bad query plan before blaming the engine. Answer directly: add an index on customer_id and re-check the plan.",
+    "notes": "Decoy: a database performance problem caused by a missing index, which the 'Do not use' section lists."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our Django page that lists 50 orders runs 51 SQL queries, one per order to load its customer. How do I collapse that?",
+    "expected": "Should not invoke storage-engine-workload-selection. This is the ORM N+1 query problem, an access-pattern bug that would overwhelm any engine. Answer with select_related or prefetch_related or a join.",
+    "notes": "Decoy: the skill uses N+1 to illustrate that engine choice is not sufficient, but the fix has nothing to do with the engine."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We're splitting our time-series store across 16 nodes. Should the partition key be device_id, timestamp, or both?",
+    "expected": "Should not invoke storage-engine-workload-selection. Choosing which machine holds which data is sharding-strategy-selection's job (a compound key of device_id then timestamp to avoid a timestamp hot spot).",
+    "notes": "Decoy: same data-systems area, but a partition-key decision. Sibling: sharding-strategy-selection."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm building an internal tool for about 200 employees, with a few thousand writes a day. Should I use Postgres or Cassandra?",
+    "expected": "Boundary. The skill excludes workloads small enough for a single-node B-tree database to handle, since picking an engine before the workload calls for it adds complexity. If invoked at all, the classification is quick (operational, low volume, so a single-node B-tree store like Postgres), with no LSM or compaction planning.",
+    "notes": "Boundary: the 'small workload' exclusion."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our platform team mandates DynamoDB for every new service because that's what we run on AWS. My service is basically ad hoc aggregations over a year of events. Can I justify DynamoDB on workload grounds?",
+    "expected": "Boundary. The skill says to state vendor, familiarity, and managed-service constraints openly rather than presenting them as workload-driven choices. On workload grounds alone it classifies the service as analytical, which points to columnar storage. It should report that mismatch honestly rather than invent a workload rationale for the mandated store.",
+    "notes": "Boundary: the 'Do not use' clause on vendor or managed-service-driven selection."
+  }
+]

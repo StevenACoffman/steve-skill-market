@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Open the migration plan you just wrote in crit so I can leave inline comments on it.",
+    "expected": "Invokes crit because the user explicitly asked for crit. A plan file was written earlier in the conversation, so it runs `crit <plan-file>` in the background without asking which mode to use. It relays the startup URL verbatim ('Crit is open at http://localhost:<port>. Leave inline comments, then click Finish Review.'). It waits for the background task to finish without reading the review file early, then reads stdout and checks stderr for approved.",
+    "notes": "Positive scenario: an explicit crit request with a plan file in context, so no arguments are needed."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Let's do a crit review of my branch before I open the PR.",
+    "expected": "Invokes crit. With no file argument and no plan written in this conversation, it runs bare `crit` in the background for the branch diff and relays the URL. When the review finishes, it handles each unresolved comment: apply any suggestion block, edit the referenced file, and reply with `crit comment --reply-to <id> --author 'Claude Code' '<what you did>'`, without --resolve. Then it reruns crit for the next round.",
+    "notes": "Positive scenario: an explicit crit request in branch-diff mode, covering the full revise-and-reply loop."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "/crit --pr 482",
+    "expected": "Invokes crit and passes the user's arguments through unchanged: `crit --pr 482` (range mode) in the background. It relays the review URL and blocks until the user clicks Finish Review.",
+    "notes": "Positive scenario: direct slash invocation with arguments. The skill says to pass arguments through, not ask about mode."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Run crit against http://localhost:5173/signup. I want to mark up the form layout directly on the page.",
+    "expected": "Invokes crit with the URL passed through unchanged, `crit http://localhost:5173/signup`, and lets the CLI detect live-page mode. It runs in the background, relays the URL, and waits for Finish Review before reading comments. Comments with a quote field get changes focused on the quoted text.",
+    "notes": "Positive scenario: an explicit crit request on a running dev server page, one of the skill's review targets."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Use crit to review the commits between main and feature/rate-limits.",
+    "expected": "Invokes crit with `crit --range main..feature/rate-limits` in the background. It relays the URL, waits for Finish Review, addresses each comment with a reply and never resolves, then starts the next round with the command from the finish prompt. It stops when the user finishes with zero comments.",
+    "notes": "Positive scenario: an explicit crit request for a commit range."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Can you review my diff and tell me if anything looks wrong before I push?",
+    "expected": "Should not invoke crit. The skill has disable-model-invocation: true and the user did not ask for crit. Reviews the diff directly in chat, or with a general code-review skill such as code-review.",
+    "notes": "Decoy: a generic code review request that matches the description's wording but makes no explicit request for crit."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Here's my plan for splitting the billing service. Give me your honest feedback on it.",
+    "expected": "Should not invoke crit. The user wants Claude's feedback in chat, not an interactive inline-comment session, and did not ask for crit. Model invocation is disabled, so crit starts only on an explicit request.",
+    "notes": "Decoy: plan feedback, which the description mentions, without an explicit crit request."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Reply to crit comment c_9f2a1b saying the null check is fixed, and leave a file-level note on session.go that it needs splitting.",
+    "expected": "Should not invoke crit, because this is not the interactive review loop. crit-cli covers it: `crit comment --reply-to c_9f2a1b --author 'Claude Code' '...'` and a file-level `crit comment --author 'Claude Code' session.go '...'`, with single-quoted bodies.",
+    "notes": "Decoy: names crit but asks for one-off CLI comment operations, which belong to crit-cli."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Generate a crit story for this branch so reviewers can read the changes chapter by chapter.",
+    "expected": "Should not invoke crit. crit-story handles this: crit story --guide, then --prep, then author the JSON, then --story-file. crit-story is a sibling that does not run inside the normal crit review loop.",
+    "notes": "Boundary: an explicit crit request that is for the story feature, not the review loop."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm on my phone in the Claude app. Share the crit review of plan.md and give me a QR code so I can open it.",
+    "expected": "Invokes crit for an explicit crit share request (crit-cli has the same share guidance). Runs `crit share plan.md` and relays the full URL in the response. Skips --qr, because the Unicode block characters do not render in mobile apps or web chat, and explains why.",
+    "notes": "Boundary: share is covered by both crit and crit-cli, and the --qr terminal-only rule decides the output."
+  }
+]

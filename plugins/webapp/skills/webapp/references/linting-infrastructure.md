@@ -11,7 +11,7 @@ the exact binary version is tied to the repo's Go module graph.
 
 In addition to the upstream binary, webapp compiles 30 custom linter plugins as
 Go shared objects (`-buildmode=plugin`) under `genfiles/go/plugins/linters/*.so`.
-Every rule prefixed `ka-` in the cheat sheet above comes from one of these plugins.
+Every rule prefixed `ka-` in SKILL.md's Quick-Reference Cheat Sheet comes from one of these plugins.
 
 ### Rebuilding the Linting Tools
 
@@ -40,7 +40,7 @@ a plugin load error or a binary-not-found error.
 Each plugin source lives at `dev/linters/plugins/<name>/main.go` and compiles
 to `genfiles/go/plugins/linters/<name>.so`:
 
-| Plugin                   | Rule enforced (see sections above)               |
+| Plugin                   | Rule enforced (see SKILL.md's rule sections)     |
 | ------------------------ | ------------------------------------------------ |
 | `always-close`           | `ka-always-close` — defer Close on io.Closer     |
 | `backfill-cedar`         | enforces backfill patterns                       |

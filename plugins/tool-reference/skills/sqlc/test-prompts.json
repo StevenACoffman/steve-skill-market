@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Add a query that lists districts, optionally filtered by country code. If the caller passes an empty country code, return everything. Then get the Go method generated.",
+    "expected": "Invokes sqlc. Adds a .sql file under the right pkg/queries/<set>/ directory with `-- name: ListDistricts :many`, named parameters with explicit casts, and the `(@country_code::text = '' OR country_code = @country_code)` optional-filter pattern, then runs `cd pkg && sqlc generate`. Does not edit anything under pkg/generated/.",
+    "notes": "Positive scenario: writing a query and regenerating."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My UPDATE query is annotated :exec, but I need to know whether it actually changed any rows so I can return a 404.",
+    "expected": "Invokes sqlc. Switch the annotation to :execresult, which returns (pgconn.CommandTag, error); check RowsAffected() on the tag. Regenerate with sqlc generate.",
+    "notes": "Positive scenario: choosing the right return-type command."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "One of our timestamp columns can be NULL, but the generated struct field is a time.Time and I can't tell 'never set' from the zero time.",
+    "expected": "Invokes sqlc. The repo's type overrides map non-nullable pg_catalog.timestamp to time.Time and nullable timestamps to pgtype.Timestamp. Ensure the column is nullable in the migration schema so the generated field is pgtype.Timestamp, and check Valid to tell NULL from a real value.",
+    "notes": "Positive scenario: type overrides and nullability."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I'm looking for the Prepare() constructor sqlc normally generates so I can use prepared statements, but it isn't in districtsql. Did codegen break?",
+    "expected": "Invokes sqlc. Nothing is broken: with sql_package: pgx/v5, the generated DBTX has no PrepareContext and no Prepare() constructor is generated. pgx prepares statements implicitly through its per-connection LRU cache (512 entries), so no explicit step is needed or possible.",
+    "notes": "Positive scenario: a pgx/v5 codegen surprise the skill documents."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Before I push, is there a fast way to check that all my new SQL queries are valid without spinning up a database?",
+    "expected": "Invokes sqlc. Runs `cd pkg && sqlc compile`, which validates queries without generating code or needing a database. Installs sqlc with `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest` if missing.",
+    "notes": "Positive scenario: validating queries."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our pods keep logging 'too many connections' from Postgres. How do I lower the max pool size and connection lifetime?",
+    "expected": "Should not invoke sqlc. Pool sizing (MaxConns default 25, MaxConnLifetime 30 minutes) is set through configCustomizer on sqldb.ConfigureConnectionPool, which the pgxpool skill covers.",
+    "notes": "Decoy: same database stack, but connection-pool tuning; sibling skill pgxpool."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "The span names in our traces for DB calls are the full SQL text. How do I make them show just the query name?",
+    "expected": "Should not invoke sqlc, even though the name comes from sqlc's `-- name:` annotation. Tracer configuration (otelpgx.WithSpanNameCtxFunc in configCustomizer) belongs to pgxpool.",
+    "notes": "Decoy: mentions sqlc query names, but the change is tracer config; sibling skill pgxpool."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "This SELECT is slow on a large table. How do I read the EXPLAIN ANALYZE output and decide what index to add?",
+    "expected": "Should not invoke sqlc; query planning and indexing are general Postgres questions that neither sqlc nor the code-generation workflow covers.",
+    "notes": "Decoy: SQL performance, unrelated to code generation."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I started a transaction with pool.Begin and tried to pass tx into NewDistrictStore(db sqldb.DBTX). It won't compile. What's the right way to run the store's queries in that transaction?",
+    "expected": "Invokes sqlc (pgxpool covers the same interface). pgx.Tx satisfies districtsql.DBTX but not sqldb.DBTX because it has no Begin method. Pass tx straight to districtsql.New(tx), or call q.WithTx(tx) on an existing *Queries. Keep defer tx.Rollback(ctx) and tx.Commit(ctx).",
+    "notes": "Boundary: DBTX and transactions are documented in both sqlc and pgxpool; the WithTx detail is sqlc's."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our service holds a districtsql.Queries and calls Begin/Commit inline in six different methods. Writes to two tables sometimes half-succeed. How should this be restructured?",
+    "expected": "The restructuring, moving transaction management out of service logic so multi-table writes are atomic, belongs to repository-unit-of-work. sqlc supplies only the mechanics: a pgx.Tx from pool.Begin, districtsql.New(tx) or q.WithTx(tx), and depending on the Querier interface.",
+    "notes": "Boundary: sqlc mechanics versus the architecture handled by sibling skill repository-unit-of-work."
+  }
+]

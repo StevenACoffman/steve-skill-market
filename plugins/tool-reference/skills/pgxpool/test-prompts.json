@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm adding a new background job to this repo that needs to talk to Postgres. In production it runs in Kubernetes against AlloyDB; locally it uses a plain Postgres. How should I open the connection pool?",
+    "expected": "Invokes pgxpool. Uses sqldb.ConfigureConnectionPool(ctx, logger, dbInfo, useProdDialer, configCustomizer) rather than building a pool directly. useProdDialer true routes through the AlloyDB connector (mutual TLS, IAM) in Kubernetes; false uses a plain TCP pgxpool.ParseConfig locally. Builds DBInfo with sqldb.MakeDBInfo, defers cleanup and pool.Close, and notes the function pings before returning.",
+    "notes": "Positive scenario: the canonical entry point and the prod/local dialer choice."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Our integration tests open a pool per test package and Postgres keeps running out of connections. Can I lower the pool size just for tests?",
+    "expected": "Invokes pgxpool. The default MaxConns is 25; override it through the configCustomizer argument, for example func(cfg *pgxpool.Config) { cfg.MaxConns = 5 }. For a local test DB, set DBHost (localhost) and the other DBInfo fields directly with useProdDialer false.",
+    "notes": "Positive scenario: tuning pool settings."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "In our tracing UI every database span is named with the entire SQL text, starting with '-- name: GetDistrict :one'. It's unreadable. Can I get just the query name?",
+    "expected": "Invokes pgxpool. Overrides ConnConfig.Tracer in configCustomizer with otelpgx.NewTracer(otelpgx.WithSpanNameCtxFunc(...)) and a regex that pulls the sqlc `name:` annotation, falling back to the first SQL keyword. Optionally adds WithDisableSQLStatementInAttributes for production. Mentions WithTrimSQLInSpanName as the simpler keyword-only option.",
+    "notes": "Positive scenario: otelpgx span naming."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I want our readiness endpoint to report how many DB connections are in use and how many are idle.",
+    "expected": "Invokes pgxpool. Calls pool.Stat() and reads TotalConns(), IdleConns() and AcquiredConns().",
+    "notes": "Positive scenario: pool-level metrics."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "My service struct takes a *pgxpool.Pool and that makes it a pain to test. What should it depend on instead?",
+    "expected": "Invokes pgxpool. Services should accept sqldb.DBTX (the generated districtsql.DBTX plus Begin) instead of *pgxpool.Pool. *pgxpool.Pool satisfies it with no adapter, which keeps the service testable with a transaction-backed double.",
+    "notes": "Positive scenario: the DBTX interface."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I need a new query that lists all classrooms for a teacher, with an optional grade filter. Where do I put the SQL and how do I get the Go method generated?",
+    "expected": "Should not invoke pgxpool. Writing a query and regenerating code belongs to sqlc: add a `-- name: ... :many` query under pkg/queries/<set>/ using @param::type and the `@param::text = ''` optional-filter pattern, then run `cd pkg && sqlc generate`.",
+    "notes": "Decoy: same database layer, but query authoring and codegen; sibling skill sqlc."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Two requests booking the last seat sometimes both succeed. We're on Postgres with default settings. What isolation level do we need?",
+    "expected": "Should not invoke pgxpool. Choosing an isolation level and diagnosing a check-then-act anomaly belongs to transaction-isolation-level-selection.",
+    "notes": "Decoy: Postgres transactions, but concurrency anomalies and isolation; sibling skill transaction-isolation-level-selection."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our service methods each call Begin/Commit themselves, and now two of them need to run in one transaction. Where should the transaction boundary live?",
+    "expected": "Should not invoke pgxpool. Transaction-boundary placement and atomic multi-operation writes belong to go-beyond-service-transaction-boundary or repository-unit-of-work.",
+    "notes": "Decoy: transactions over the pool, but an architecture question; sibling skills repository-unit-of-work / go-beyond-service-transaction-boundary."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Someone wrapped our queries in a database/sql *sql.Tx, and now the query spans inside that transaction disappear from our traces. Why, and what should we use?",
+    "expected": "Invokes pgxpool, with overlap with sqlc, since both skills cover this. Use pool.Begin(ctx) to get a pgx.Tx, which keeps the otelpgx tracer chain; *sql.Tx does not carry the tracer, so spans are dropped. Pattern: defer tx.Rollback(ctx) (a no-op after Commit), districtsql.New(tx), then tx.Commit(ctx).",
+    "notes": "Boundary: the transaction pattern is documented in both pgxpool and sqlc; pgxpool owns the tracer explanation."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I'm building query params by hand with pgtype.Text{String: s, Valid: true} and uuid.NullUUID literals everywhere. Is there a helper?",
+    "expected": "Either pgxpool or sqlc fits; both document pkg/sqldb/params.go. Use sqldb.ToUUID, sqldb.ToText, sqldb.ToNullableText (empty string becomes NULL), sqldb.ToBool and sqldb.ToUUIDs instead of building pgtype values directly. sqlc's table also lists ToFloat8 and CastStrings.",
+    "notes": "Boundary: params helpers sit between the pool skill and the generated-query skill; sqlc is arguably the closer fit because the params feed generated query structs."
+  }
+]

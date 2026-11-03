@@ -1,46 +1,59 @@
-# Khan Academy Districts
+# Steve-Skill-Market
 
-Khan Academy districts integration services — 19-module Go workspace (`go.work`).
+Agent Skills published as 14 [Agent Plugins](https://agent-plugins.org/specification), installable
+from Claude Code (`.claude-plugin/marketplace.json`) and Pi (`package.json`). `README.md` covers
+installing. This file covers changing the repository.
 
-## Skills
+## Layout
 
-Detailed how-to guides live in `.agents/skills/`. Read the relevant `SKILL.md` before
-starting the task it covers. The table below maps tasks to skills.
+- `plugins/<plugin>/plugin.json` describes a plugin. `plugins/<plugin>/skills/<skill>/` holds
+  only what installs with the skill: `SKILL.md`, `test-prompts.json`, and the `references/`, `scripts/` and other
+  files the skill names.
+- `dev/<skill>/` holds development files: test results, merge audits, backlogs, evaluation
+  workspaces. `scripts/dev-files restore SKILL` moves them back beside the skill to work on it,
+  and `scripts/dev-files park` moves every one out again before committing.
+- `INDEX.md` lists every skill and its related-skill graph. `./skill-list` prints the skills by
+  plugin.
 
-| Task                                                        | Skill                                   |
-| ----------------------------------------------------------- | --------------------------------------- |
-| Run or write Go tests; coverage; benchmarks; suite patterns | `.agents/skills/go-test-tools/SKILL.md` |
-| Find and run only affected tests after code changes (gta)   | `.agents/skills/go-test-auto/SKILL.md`  |
-| Run Go linters; fix lint errors; golangci-lint; repowrite   | `.agents/skills/lintme/SKILL.md`        |
-| Lint or fix markdown prose; vale errors; vocabulary files   | `.agents/skills/vale/SKILL.md`          |
-| Create or manage stacked GitHub PRs                         | `.agents/skills/gh-stack/SKILL.md`      |
-| GitHub CLI: create PRs, check status, manage issues         | `.agents/skills/gh-cli/SKILL.md`        |
-| Create a git commit with correct format                     | `.agents/skills/git-commit/SKILL.md`    |
-| Write SQL queries; regenerate sqlc code; use Querier        | `.agents/skills/sqlc/SKILL.md`          |
-| Create or configure PostgreSQL connection pools; pgxpool    | `.agents/skills/pgxpool/SKILL.md`       |
+## Rules for a Skill
 
-## Go Guidelines
+- **The folder name is the skill's `name`**: lowercase letters, digits and single hyphens, at
+  most 64 characters.
+- **The description is at most 300 characters, key use case first.** Claude Code and Pi send
+  every enabled skill's description on every request. Keep the words a user would type to ask
+  for the skill.
+- **`SKILL.md` stays under 500 lines.** Move detail into `references/` files that the body names,
+  and make each one readable on its own: write "SKILL.md's cheat sheet", not "the cheat sheet
+  above".
+- **Every skill has a `test-prompts.json`**: a bare JSON array of cases with `id`, `type`,
+  `prompt`, `expected` and `notes`, holding at least 3 `should_trigger`, 2 `should_not_trigger`
+  and 1 `edge_case`.
+- **No `` !`command` `` lines.** Only Claude Code runs them, and other clients show them raw. A skill that needs the
+  repository's state names a bundled read-only POSIX `scripts/current-state.sh` instead.
+- **Nothing secret, sensitive or confidential.** The repository is public, the webapp plugin
+  included: no credentials, internal hostnames, people's names or personal paths.
+- **A new skill goes in an existing plugin**, and the skill count in `README.md`'s plugin table
+  changes with it.
 
-`RULES.md` at the repo root contains Go code guidelines. Apply them when writing or
-reviewing Go code in any module.
+## Checks
 
-## Repo Conventions
+Run before committing. [exegesis](https://github.com/StevenACoffman/exegesis) verifies one
+plugin's skills at a time:
 
-**Workspace:** 19 modules share `go.work`. Tests run per-module from within each module
-directory; the workspace root is not a runnable module. The `lintme` skill handles running
-linters across all modules.
+```sh
+for p in plugins/*/; do exegesis verify --manifest /dev/null "$p/skills"; done
+claude plugin validate .
+for p in plugins/*/; do claude plugin validate "$p"; done
+```
 
-**Formatting:** `golangci-lint fmt --config=../.golangci.yml` (lefthook runs this automatically
-on pre-commit for changed files).
+`exegesis verify` fails on four merged skills in go-craft, grpc and testing-legacy, whose
+`prefer_merged_over_source` cases need `--merge`. Read any other failure as real.
 
-**Datastore writes:** Direct puts/deletes on `UserDistrictInfo`, `ClassroomDistrictInfo`,
-`District`, and `School` are prohibited. Use `repo.*` functions from `pkg/repo/`. The
-`repowrite` analyzer enforces this at compile time — see the `lintme` skill.
+Markdown is formatted by `mdformat` (`.mdformat.toml`) and linted by `rumdl` (`.rumdl.toml`)
+and Vale (`.vale.ini`). Shell scripts pass `shellcheck` (`.shellcheckrc`) and test for a program
+with a `has_cmd` helper, never a bare `type -P` or `whence -p`.
 
-**Test suites:** Tests use testify suites via `khantest.Suite` (pure logic, no external
-services) or `servicetest.Suite` (with Cloud Datastore emulator). Do not write tests
-using the hand-rolled `assert`/`equals` helper pattern from `RULES.md` — follow the
-suite pattern documented in the `go-test-tools` skill instead.
+## Commits
 
-**SQL:** Uses `pgx` and `sqlc` for PostgreSQL (as permitted by RULES.md §8). The transaction
-and query patterns in RULES.md apply — use `pgx` transaction types rather than `*sql.Tx`.
+Scope first, imperative: `leafwiki: restore the "LLM wiki" trigger`. No `feat:` or `fix:`
+prefixes.

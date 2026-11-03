@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I added three new markdown pages straight into wiki-data/root/ for my LeafWiki, but they don't show up in the sidebar or search. The server is still running. What did I miss?",
+    "expected": "Invokes leafwiki. LeafWiki does not watch the filesystem, so edits stay invisible until a resync. Sends the running process a signal (`pkill -USR1 -f 'leafwiki .*--data-dir'` or `kill -USR1 <pid>`/`-HUP`) or uses the admin UI's resync. Notes that resync writes a generated leafwiki_id back into files that lack one.",
+    "notes": "Positive scenario: the core edit-then-resync loop, given as a symptom."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Here's a long article on the history of hypertext. File it into my wiki: summarize it and update whatever existing pages it touches.",
+    "expected": "Invokes leafwiki and follows the ingest operation: read the source fully, write a source-summary page (type: Reference, with sources), update every entity or concept page it touches and add cross-links, flag contradictions on the affected page instead of overwriting, update the relevant index.md, append a newest-first log.md entry, set generated/stale_after, and resync. Raw sources stay outside root/.",
+    "notes": "Positive scenario: the ingest workflow."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I want the pages in my LeafWiki to also be valid Open Knowledge Format concepts so other tools can read them. What frontmatter do they need?",
+    "expected": "Invokes leafwiki. Uses the page template: type (the only required OKF field), title, description, tags (one list serves both LeafWiki and OKF), status, generated {by, at}, verified only when a real check happened, stale_after, and sources with id/resource. Quote dates, avoid repurposing leafwiki_* keys, and use bundle-relative standard markdown links.",
+    "notes": "Positive scenario: OKF frontmatter."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My wiki has grown to a few hundred pages over the last few months. Can you do a health pass and tell me what's rotting?",
+    "expected": "Invokes leafwiki and runs the lint sweep: contradictions between pages, stale claims (especially past stale_after), orphan pages with no inbound links, important concepts with no page, missing cross-references, and claims without sources. Reports findings and proposes new questions or sources; applies fixes only with the human's direction, then resyncs.",
+    "notes": "Positive scenario: lint and health check."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I have a page at root/people.md and now want sub-pages under it for individual people. I created a people/ folder next to it and the wiki is acting weird.",
+    "expected": "Invokes leafwiki. A <slug>.md file and a <slug>/ folder cannot coexist in the same directory. Convert the leaf to a section by moving people.md's content into people/index.md, put the child pages in the folder, then resync.",
+    "notes": "Positive scenario: leaf-to-section conversion conflict."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Lint all the Markdown in our docs/ folder and auto-fix heading and list-style violations.",
+    "expected": "Should not invoke leafwiki; nothing involves a LeafWiki knowledge base. Markdown linting belongs to rumdl (or vale for prose style).",
+    "notes": "Decoy: Markdown files, but linting syntax, not curating a wiki; sibling skill rumdl."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I want to publish our project's docs as a static site with a sidebar and search. Is MkDocs or Hugo easier to set up?",
+    "expected": "Should not invoke leafwiki. A static-site generator choice is a general question with no matching skill; LeafWiki is a self-hosted wiki server, not a docs-site builder.",
+    "notes": "Decoy: markdown-based documentation with navigation and search, unrelated to LeafWiki."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "How do I set up backlinks and a graph view in my Obsidian vault?",
+    "expected": "Should not invoke leafwiki; Obsidian is a different tool. Answer directly or decline; nothing in the leafwiki skill applies.",
+    "notes": "Decoy: personal markdown knowledge base, but a different product."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm going to run mdformat over the wiki's root/ folder to tidy things up. Will that mess with LeafWiki's frontmatter or ordering?",
+    "expected": "Running and configuring the formatter belongs to mdformat (which has a frontmatter plugin). leafwiki contributes the compatibility facts: LeafWiki itself re-sorts extra frontmatter keys alphabetically with leafwiki_* last, so key order does not matter; dates must stay quoted; sidebar order lives in .order.json, not in file contents; and the wiki needs a resync after files change on disk.",
+    "notes": "Boundary: a markdown-formatting tool applied to a LeafWiki corpus; mdformat owns the tool, leafwiki owns the invariants."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Just add verified: by human:me to all the pages you wrote last week so they show as reviewed. I'll skim them later.",
+    "expected": "Invokes leafwiki and declines to fabricate verification. The skill's rules say to add a verified entry only when a check actually happened and never to fake human sign-off. Offers to list the pages for review and add verified entries as the human confirms each one.",
+    "notes": "Boundary: a request that falls under the skill's Don'ts (no fake verified human: entries)."
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I changed a helper in pkg/encryption. I don't want to run all 19 modules. How do I find out which packages actually import it and test only those?",
+    "expected": "Invokes go-test-auto. From the workspace root, runs `gta -base origin/main -include <repo import-path prefix>` and feeds the output to `go test -count=1 -timeout 5m $(gta ...)` or gotestsum. Explains gta builds a reverse dependency graph and reports direct changes plus transitive importers.",
+    "notes": "Positive scenario: core use case, affected-package detection after a change."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I tried gta and the output was full of stdlib and third-party packages. It also complained that origin/master doesn't exist. What flags am I missing?",
+    "expected": "Invokes go-test-auto. -include with the repo's import-path prefix is required to filter out stdlib and third-party packages, and -base origin/main is required because gta defaults to origin/master, which this repo doesn't have.",
+    "notes": "Positive scenario: the two required-flag gotchas, given as symptoms."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My script does go test $(gta ...) and on a docs-only PR it fails with go test's usage message. How do I make it skip cleanly?",
+    "expected": "Invokes go-test-auto. When no packages are affected gta prints nothing and go test gets no arguments. Guard with AFFECTED=$(gta ...); `if [ -n \"$AFFECTED\" ]` run gotestsum -- ... $AFFECTED (intentionally unquoted), else echo a skip message.",
+    "notes": "Positive scenario: empty-output guard."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I haven't committed anything yet. Can I still work out which tests my working-tree changes affect?",
+    "expected": "Invokes go-test-auto. Builds a list of absolute paths with `git diff HEAD --name-only | sed \"s|^|$(git rev-parse --show-toplevel)/|\"` (or `git diff --staged --name-only` for staged only) into a file and passes it via `gta -changed-files <file> -include ...`. -changed-files expects newline-separated absolute paths.",
+    "notes": "Positive scenario: uncommitted changes via -changed-files."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our GitHub Actions test job runs a matrix of 8 modules on every PR no matter what changed. I'd like it to test only what the PR touched and skip entirely when nothing Go changed.",
+    "expected": "Invokes go-test-auto. Adds CI steps: install gta, a step that writes `pkgs=$AFFECTED` to $GITHUB_OUTPUT, and a gotestsum step conditioned on `steps.affected.outputs.pkgs != ''`. May suggest -json to log what gta detected (changes, dependencies, all_changes).",
+    "notes": "Positive scenario: CI integration."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Run every test in the roster module with verbose output so I can see the t.Log lines.",
+    "expected": "Should not invoke go-test-auto; no change-awareness is needed. go-test-tools: `cd roster && go test -count=1 -v ./...` (or gotestsum).",
+    "notes": "Decoy: running Go tests in the workspace, but a plain full-module run; sibling skill go-test-tools."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "One test fails only in CI and I want to step through it in a debugger locally. How do I attach delve to a single test?",
+    "expected": "Should not invoke go-test-auto. Debugging a failing test belongs to go-test-tools: `dlv test ./pkg/mypkg -- -test.run TestSpecificFunction`, plus -v and -failfast.",
+    "notes": "Decoy: test debugging; sibling skill go-test-tools."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "The test workflow on my PR went red. How do I pull up the logs for the failed job from my terminal?",
+    "expected": "Should not invoke go-test-auto. Inspecting CI runs belongs to gh-cli: `gh run list`, then `gh run view <run-id> --log` or `--job <job-id>`.",
+    "notes": "Decoy: CI tests, but the task is reading GitHub Actions logs; sibling skill gh-cli."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I read that gta's module-root detection breaks in go.work workspaces because go list -m prints one line per module. Can I trust its output in our workspace, or do we need to patch it?",
+    "expected": "Invokes go-test-auto and cites its Known Limitation: moduleroot() stores the multi-line result, but it only feeds a single early-exit optimization that never matches, so filtering still runs and all affected packages are reported. No patch is needed; the eventual fix is to detect workspace mode via `go env GOWORK`.",
+    "notes": "Boundary: a skeptical question about the tool's correctness that the skill's own limitation section answers."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We also have a TypeScript frontend in a separate folder. Can gta tell me which of its Jest tests my change affects too?",
+    "expected": "go-test-auto applies only to the Go side. gta walks the Go package import graph and outputs Go import paths, so it cannot select Jest tests. Should not suggest gta flags for TypeScript or claim support the skill does not describe.",
+    "notes": "Boundary: change-aware testing outside Go; the skill's scope ends at the Go package graph."
+  }
+]

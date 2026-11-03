@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our PM wants to serve inventory counts from a read replica that can be a few seconds behind, to take load off the primary. Engineering is uneasy but can't say exactly why. How should we think about it?",
+    "expected": "Invokes timeliness-vs-integrity-distinction. Separates the operations: showing '10 left' on the product page is a display read, where staleness is a timeliness issue that heals itself. Deciding whether to allow a purchase is a decision read that gates a state change, so a stale count can oversell, which permanently violates sold <= stocked. Relax timeliness for display only, and enforce the purchase decrement with a serializable transaction or compare-and-swap on the actual inventory record.",
+    "notes": "Positive: the book's inventory-overselling case."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Product says customers can live with their account balance being a little stale on the dashboard. Fine. But does that mean the overdraft check at withdrawal can read from the same eventually consistent source?",
+    "expected": "Invokes timeliness-vs-integrity-distinction. The dashboard balance is a display read, so relaxing timeliness is safe. The overdraft check is a decision read that gates a debit. Applies the compensating-transaction test: if an overdraft caused by a stale read can't be corrected at acceptable cost, it's a hard integrity requirement and needs synchronous enforcement (linearizable storage or a serializable transaction) scoped to that operation only.",
+    "notes": "Positive: trigger scenario 2, display vs. decision on the same data."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Writing up the post-mortem for last week's network partition. The summary currently says 'data was briefly inconsistent'. Leadership wants to know how bad it really was. How do I classify it properly?",
+    "expected": "Invokes timeliness-vs-integrity-distinction. Determine whether the data was only temporarily stale (timeliness, healed by waiting) or lost, contradictory, or corrupted (integrity, permanent, needs explicit detection and repair). Calls out that writes silently discarded by LWW are an integrity violation even if the team filed them under eventual consistency (ce11). The classification sets both severity and remediation.",
+    "notes": "Positive: trigger scenario 4, post-mortem classification."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "A teammate wants an eventually consistent counter for the API quota that feeds into customer billing, arguing 'a few extra requests over the limit is fine'. Is it?",
+    "expected": "Invokes timeliness-vs-integrity-distinction. Quota enforcement is a decision read gating a state change. Applies the compensating-transaction test: if overruns can be fixed afterward at acceptable cost (a credit or adjustment), the constraint is loosely interpreted and async plus compensation works. If overruns have contractual or security consequences that can't be undone, it's a hard integrity requirement and needs synchronous enforcement.",
+    "notes": "Positive: trigger scenario 1, the eventually consistent rate limiter."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our payments consumer crashed after applying a payment event but before committing its offset, so when it restarted it applied the same event again. Half the team calls this a temporary glitch; the other half thinks it's serious. Who's right?",
+    "expected": "Invokes timeliness-vs-integrity-distinction and classifies the duplicate as an integrity violation from the moment it is applied: both debits commit and waiting doesn't undo them (compare ce19, retry after timeout). Remediation needs explicit detection and repair, and prevention needs idempotent application (idempotency keys) on the consumer.",
+    "notes": "Positive: trigger scenario 3, duplicate processing."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We've decided the seat-reservation call needs linearizable reads. Concretely, how do I get that with etcd: which read options and transaction APIs should I use?",
+    "expected": "Should not invoke timeliness-vs-integrity-distinction. The classification is already done and the question is purely how to implement a consistency level, which the skill's boundary sends to consistency-model-selection.",
+    "notes": "Decoy: an implementation question after the decision. Sibling: consistency-model-selection."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We want users to always see their own edits right after saving, even though reads go to replicas. Should we pass the LSN back to the client or pin them to the primary for a minute after a write?",
+    "expected": "Should not invoke timeliness-vs-integrity-distinction. This is choosing a read-your-writes mechanism, which replication-lag-as-correctness covers (leader routing for a window vs. LSN gating).",
+    "notes": "Decoy: staleness topic, but a routing-mechanism question. Sibling: replication-lag-as-correctness."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Can you explain the CAP theorem in plain terms for a new hire's onboarding doc?",
+    "expected": "Should not invoke timeliness-vs-integrity-distinction. This is a conceptual explanation, not a decision about relaxing consistency for specific operations. Answer directly.",
+    "notes": "Decoy: consistency vocabulary with no operation to classify."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're building an interbank settlement system under regulatory audit. Nothing can ever be over-applied, even temporarily. Is there any part of it where eventual consistency would be fine?",
+    "expected": "Boundary. The skill excludes systems where every operation clearly needs hard integrity enforcement and eventual consistency isn't viable, and sends those to consistency-model-selection. Might still note that pure display reads (reports, dashboards) could tolerate staleness, but shouldn't run the full classification as if relaxation were on the table for decisions. The skill's blind-spot note says some regulations rule out compensating transactions.",
+    "notes": "Boundary: the 'all operations require hard integrity' exclusion."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Checkout got slow after we wrapped the whole flow (cart view, recommendations, stock check, payment) in strongly consistent reads. How do we speed it up without breaking correctness?",
+    "expected": "Boundary, but the skill applies. Its boundary says the starting point for a performance problem caused by synchronous coordination is to scope the strong-consistency requirements with this framework. Classifies cart view and recommendations as display reads (relax), the stock check as a decision read (compensating-transaction test), and payment as a state mutation needing integrity. Implementation then moves to consistency-model-selection.",
+    "notes": "Boundary: a performance framing that the skill explicitly claims as its entry point; hands off to consistency-model-selection."
+  }
+]

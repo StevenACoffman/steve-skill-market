@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our CI started failing with 'MD022/blanks-around-headings' and 'MD032' errors across the docs. Fix them for me.",
+    "expected": "Invokes rumdl. Runs `rumdl check .` to see violations, previews with `rumdl check --diff .`, applies `rumdl check --fix .`, and re-runs to confirm exit 0 (exit 1 means unfixable violations remain). Uses `rumdl rule MD022` if a rule's meaning is unclear.",
+    "notes": "Positive scenario: fixing rumdl violations."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're moving off markdownlint-cli. We have a .markdownlint.json with a bunch of custom settings. Can we keep those rules with rumdl?",
+    "expected": "Invokes rumdl. Uses `rumdl import .markdownlint.json` to convert the config, and notes rumdl accepts `markdownlint-disable` inline directives for migration compatibility. May read references/flavors-integrations-migration.md.",
+    "notes": "Positive scenario: migration from markdownlint."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I need a .rumdl.toml for a docs-heavy repo. Long lines and inline HTML are fine, but I want tables aligned.",
+    "expected": "Invokes rumdl. Starts from the recommended config (references/recommended-config.md): `[global]` disable MD013 and MD033, `extend-enable` for MD060 with aligned table style, flavor gfm. Verifies with `rumdl config`.",
+    "notes": "Positive scenario: configuring .rumdl.toml."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "One paragraph in our README has to stay on a single very long line because it's a generated badge row. How do I exempt just that line from rumdl?",
+    "expected": "Invokes rumdl inline suppression: `<!-- rumdl-disable-next-line MD013 -->` above it or `<!-- rumdl-disable-line MD013 -->` on it. Rule IDs are case-insensitive and aliases like line-length work.",
+    "notes": "Positive scenario: inline suppression."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our docs say 'kubernetes' lowercase in some places and 'Kubernetes' in others. Can you make a linter enforce the capitalization?",
+    "expected": "Term casing is a prose/vocabulary concern. Should not invoke rumdl; vale (Vale.Terms, vocab accept.txt) handles product-name capitalization. If no Vale setup exists, vale-cli.",
+    "notes": "Decoy: lint topic, but terminology is vale's domain."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Why does mdformat put an <a name> anchor after every heading in my TOC section?",
+    "expected": "mdformat-toc 0.5.0+ behaviour. Should not invoke rumdl; mdformat explains anchors and `--no-anchors` in the start marker.",
+    "notes": "Decoy: Markdown formatter question for mdformat."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our pre-commit hooks don't run at all after I cloned the repo. How do I get them working?",
+    "expected": "Hook activation. Should not invoke rumdl; lefthook covers `lefthook install` to write the .git/hooks shims.",
+    "notes": "Decoy: adjacent to rumdl-in-hooks, but the problem is hook setup."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Lint all the markdown in this repo.",
+    "expected": "Ambiguous. rumdl (`rumdl check .`) for structural rules; vale's description also covers 'lint Markdown' for prose style. If the repo has `.rumdl.toml`, use rumdl; if it has `.vale/.vale.ini` and the user means prose, use vale. Ask or run what the repo is configured for.",
+    "notes": "Boundary: rumdl vs vale. Both claim 'lint Markdown'; one checks structure, the other prose."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Add a pre-commit hook that runs rumdl on staged Markdown files and re-stages what it fixes.",
+    "expected": "Shared with lefthook. rumdl's integrations reference gives the job: `glob: '*.md'`, `run: rumdl check --fix {staged_files}`, `stage_fixed: true`. lefthook owns the lefthook.yaml structure, installation and running hooks manually.",
+    "notes": "Boundary: rumdl vs lefthook. rumdl supplies the command; lefthook owns the hook file."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "rumdl --fix renumbers our ordered lists one way and mdformat renumbers them back. How do I stop the ping-pong?",
+    "expected": "Invokes rumdl and reads references/recommended-config.md, which aligns rumdl with mdformat: `[MD029] style = \"ordered\"` to match `mdformat --number`, `[MD004] style = \"dash\"`, `[MD003] style = \"atx\"`. mdformat's behaviour is fixed, so rumdl's config bends to it.",
+    "notes": "Boundary: rumdl vs mdformat flip-flop; resolved in rumdl config."
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our HR policy chatbot keeps quoting the 2022 travel policy instead of the 2024 one. The ingest job keeps only the newest copy of each policy by the file's modified_time. We moved everything to a new SharePoint site in March, and now every file shows 2024-03-11 as its modified date. Can you fix the dedup step? Here's the Python: `latest = max(versions, key=lambda f: f.modified_time)`.",
+    "expected": "Invokes ai-and-semistructured-data-guard and applies 'Crawl time used as validity': the migration restamped old files, so modified_time ties or favors superseded versions. Changes the delivered code to stop ranking by that timestamp. It ranks by an effective date or version from metadata or content, or else by the version or year parsed from the file name. It also excludes archive paths and closes prior versions with valid_to. Asks for an effective-date field if none exists. The fix goes into the code, with one sentence of why, not a warning beside unchanged code.",
+    "notes": "Positive scenario: clustered modified_time values after a migration, which is the guard's exact Spot cue."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Retrieval for our contracts assistant often comes back with zero or one usable chunk. The code is `hits = store.search(query_vec, top_k=8)` and then `[h for h in hits if h.metadata['status'] == 'effective']`. Most contracts have 5-10 near-identical amended revisions. What's going on?",
+    "expected": "Invokes ai-and-semistructured-data-guard and applies 'Validity filtered after top-k': near-identical superseded revisions fill the top-k, so the post-filter leaves few or no current chunks. Rewrites the retrieval so the filter runs inside the vector query before ranking, e.g. `WHERE status='effective'` (or `valid_from <= :as_of AND (valid_to IS NULL OR :as_of < valid_to)`) with `ORDER BY embedding <=> :q LIMIT k`.",
+    "notes": "Positive scenario: top_k followed by a status filter, named in the description's RAG retrieval cue."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I built a BigQuery view that runs ML.GENERATE_TEXT over app store reviews and returns one sentiment label per review. The product dashboard trends it weekly. Sample reviews: 'Love the lessons, but billing charged me twice' and 'Great content, the app crashes on login'. Can you make the view return a cleaner positive/negative/neutral column?",
+    "expected": "Invokes ai-and-semistructured-data-guard. Applies 'LLM attributes live or unversioned': a view re-infers on every read, and prompt or model changes rewrite history, so it changes the build to an incremental table that scores only new or changed rows, with model and prompt version columns. Applies 'Single blended score for multi-aspect text': the samples mix praise and complaints, so it changes the schema to (document_id, aspect, sentiment, span) and aggregates per aspect instead of tidying one blended label.",
+    "notes": "Positive scenario: an AI function in a view plus mixed-aspect sample text. Two guard items fire on one request."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Postgres query for average session length from our events table: `AVG((payload->>'duration_ms')::int)`. The mobile app's v3 SDK started sending `{\"timing\": {\"duration_s\": 41.5}}` instead. Can you add a breakdown by app version to this query?",
+    "expected": "Invokes ai-and-semistructured-data-guard and applies 'JSON drift yields silent NULLs'. The v3 shape extracts as NULL and silently drops out of the average. The delivered query COALESCEs both keys with unit and type conversion: duration_s times 1000 alongside duration_ms. It says the old expression undercounted and adds a per-version null-rate check, then adds the requested version breakdown.",
+    "notes": "Positive scenario: JSON arrow operators reading one key while the pasted payload shows another. The user asked about something else, and the guard still fixes it."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We get supplier invoices as PDFs with messy vendor names. I wrote a fuzzy matcher that picks the best vendor match and writes it into invoices.vendor_id, which the weekly AP payment run reads. Can you help me speed up the matcher? It does an O(n^2) comparison right now.",
+    "expected": "Invokes ai-and-semistructured-data-guard and applies 'Inferred links stored as facts': a wrong top candidate in an FK that payments read pays the wrong party, and nobody can audit it. Writes candidates to a link table with method, score, model version and review_status. Auto-accepts only above a threshold calibrated on labeled data, queues the rest for review, and sets vendor_id only from accepted links. Then it addresses the speed question.",
+    "notes": "Positive scenario: matcher score written into an _id column that feeds payments. The trap is outside the question the user asked."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We're building the feature pipeline for a churn model. Raw CSVs sometimes have strings in numeric columns and the training job just coerces them to NaN. Where should we enforce the schema?",
+    "expected": "Should not invoke ai-and-semistructured-data-guard. This is ML pipeline schema enforcement, which ml-data-pipeline-type-integrity covers: enforce types at ingestion, not at training, and fail loudly on bad data.",
+    "notes": "Decoy: an ML data-quality question with no RAG retrieval, LLM column, JSON payload or raw-data deletion. Belongs to ml-data-pipeline-type-integrity."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Write me a SQL query for trial-to-paid conversion by signup week for the last 12 weeks. Trials are 14 days long. The table is subscriptions(user_id, signup_at, converted_at).",
+    "expected": "Should not invoke ai-and-semistructured-data-guard. This is a cohort conversion metric. metric-population-guard handles it: keep only cohorts whose 14-day window has closed.",
+    "notes": "Decoy: sibling guard territory. A warehouse SQL task with no semi-structured or AI data."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our dbt model fct_events is incremental with a 3-day lookback on event_ts, and Airflow retries it twice on failure. Daily event totals look inflated after bad nights. Can you check the config? `{{ config(materialized='incremental') }}`",
+    "expected": "Should not invoke ai-and-semistructured-data-guard. This is an append-only incremental load: no unique_key, plus a lookback and retries. warehouse-key-and-load-guard covers it by adding unique_key and incremental_strategy='merge'.",
+    "notes": "Decoy: an event-table load problem that sounds like raw-event handling but belongs to warehouse-key-and-load-guard."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our raw clickstream table in BigQuery is 40 TB. We now have daily_page_stats with unique visitors and median time on page per page per day. Can you write the DDL to set a 30-day partition expiration on the raw table to cut storage cost?",
+    "expected": "Invokes ai-and-semistructured-data-guard and applies 'Raw data discarded after summarizing'. The rollup holds distinct counts and medians, which cannot be re-aggregated or re-cut by new dimensions later. Before delivering the expiration, it archives raw to cold storage first, or adds components and sketches to the rollup. It names the future cuts the delete makes impossible, e.g. weekly unique visitors or a breakdown by referrer.",
+    "notes": "Boundary: data retention overlaps system-of-record-vs-derived-data, which decides which store is authoritative. This guard owns the narrower check that a distinct-count or median rollup cannot replace the raw rows."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our review_aspects table stores (review_id, aspect, sentiment, span, model_version, prompt_version) and is filled incrementally from new reviews only. Write a query for the share of negative 'billing' mentions per month for 2025.",
+    "expected": "The guard's 'Not applicable when' section covers this: sentiment is already per aspect, and scoring is incremental and versioned. Just writes the query, perhaps filtering to one model and prompt version. Adds no guard sections or re-checks and does not mention the card.",
+    "notes": "Boundary: every protection is already in place. Tests that the guard stays silent rather than adding unneeded warnings."
+  }
+]

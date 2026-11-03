@@ -1,6 +1,6 @@
 ---
 name: merge-skills
-description: "Use when book2skill has run on several books and overlapping skills should become one merged skill drawing on both sources. Not for skills that are merely related, or when the source book2skill output is not present."
+description: "Use when book2skill has run on several books and overlapping skills should be merged or consolidated into one skill drawing on both sources. Not for skills that are merely related, or when the source book2skill output is not present."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the exegesis and skillsaw CLIs and the plain text of every source book.
 ---
 
@@ -336,7 +336,8 @@ skill's `## Related Skills` (idempotent). This is how Phase 3 step 1 records the
 edge.
 
 Validate every ledger under a tree with `exegesis merge-status check <dir>`. The
-schema (states, reason codes, required fields) is exactly the vocabulary below.
+schema (states, reason codes, required fields) is exactly the vocabulary that
+`references/merge-status-ledger.md` lists.
 
 Read `references/merge-status-ledger.md` for the block's format, the state and reason
 vocabularies, and how `merge_status` relates to `related_skills`, before appending an
