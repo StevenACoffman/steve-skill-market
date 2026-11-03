@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "software-design",
+  "version": "0.1.0",
+  "description": "Software design and refactoring: deep modules, information hiding, and incremental change.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

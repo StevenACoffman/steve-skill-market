@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "webapp",
+  "version": "0.1.0",
+  "description": "Skills specific to Khan Academy's webapp codebase.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

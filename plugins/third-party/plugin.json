@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "third-party",
+  "version": "0.1.0",
+  "description": "Skills for crit, a third-party review tool: the review loop, its CLI, and review stories.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}

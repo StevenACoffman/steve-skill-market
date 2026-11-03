@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "data-systems",
+  "version": "0.1.0",
+  "description": "Data-intensive systems: replication, consistency, sharding, transactions, and stream processing.",
+  "license": "MIT",
+  "repository": "https://github.com/StevenACoffman/steve-skill-market"
+}
