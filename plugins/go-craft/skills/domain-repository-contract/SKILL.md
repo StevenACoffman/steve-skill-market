@@ -4,6 +4,8 @@ description: |
   Apply when defining a repository interface in a Go DDD project — specifically when deciding where the interface declaration lives in the package tree, how mutation methods must be shaped to prevent transaction leakage, or when reviewing a two-call fetch+save pattern.
 tags: []
 allowed-tools: Bash, Read, Edit
+metadata:
+  merged-from: repository-interface-in-domain-package update-function-closure-repository
 ---
 
 # Domain Repository Contract

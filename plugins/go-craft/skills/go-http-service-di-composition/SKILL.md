@@ -4,6 +4,8 @@ description: |
   Invoke when wiring a Go HTTP service's dependency injection from the entrypoint down to handlers — specifically when choosing how to make startup logic testable, how to inject shared handler dependencies, and how to compose both concerns without globals.
 tags: []
 allowed-tools: Bash, Read, Edit
+metadata:
+  merged-from: letsgo-application-struct-di matryer-run-function
 ---
 
 # Go Http Service Di Composition
