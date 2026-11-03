@@ -336,7 +336,8 @@ skill's `## Related Skills` (idempotent). This is how Phase 3 step 1 records the
 edge.
 
 Validate every ledger under a tree with `exegesis merge-status check <dir>`. The
-schema (states, reason codes, required fields) is exactly the vocabulary below.
+schema (states, reason codes, required fields) is exactly the vocabulary that
+`references/merge-status-ledger.md` lists.
 
 Read `references/merge-status-ledger.md` for the block's format, the state and reason
 vocabularies, and how `merge_status` relates to `related_skills`, before appending an
