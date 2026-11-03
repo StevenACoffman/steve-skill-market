@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm adding tests for a pure string-formatting helper in webapp. No datastore, no services. What's the test skeleton supposed to look like?",
+    "expected": "Invokes webapp-testing. Uses khantest.Suite (no GCP or KAContext needed): type mySuite struct{ khantest.Suite }, test methods on the suite, and TestX(t) calling khantest.Run(t, new(mySuite)). Uses s.Require() for fail-fast checks and s.All(s.Assert()...) for several soft assertions, and never imports testify directly.",
+    "notes": "Positive scenario: suite selection for pure logic."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I ran go test ./services/foo/ -run TestTokenExpiry in webapp and it said ok, but my new test obviously didn't run. What's happening?",
+    "expected": "Invokes webapp-testing. go test -run matches the top-level Test function, not suite methods, so it reports [no tests to run] and exits 0. Use -run 'TestMyPackage/TestTokenExpiry', naming the registering function and the method.",
+    "notes": "Positive scenario: the silent-pass -run pitfall."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I need to test that a webapp token expires after 30 minutes without the test actually sleeping. How do I move time forward?",
+    "expected": "Invokes webapp-testing. In servicetest.Suite, assert ctx.Time() to *timectx.FakeTimer (there is no AdvancingTimer type) and call Advance(31 * time.Minute), or Set for an absolute instant. Production code must use ctx.Time().Now(), never time.Now().",
+    "notes": "Positive scenario: time travel with the fake timer."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "The webapp code I'm testing reads an API key from Secret Manager. How do I give it a fake value in a test?",
+    "expected": "Invokes webapp-testing. ctx := s.KAContext().Clone(), then secrets.NewTestClient(), RegisterSecret(name, \"test-value\"), and assign ctx.SecretsClient. Clone first so the change does not leak into other tests. SecretsClient is one of the fields replaceable by assignment.",
+    "notes": "Positive scenario: replacing a fake client."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "In a webapp servicetest, I want to assert my handler didn't log anything at error level or worse. Is there a helper?",
+    "expected": "Invokes webapp-testing. s.RequireNoLogEntryAtLevelOrHigher(ctx, minLogLevel); RequireSomeLogEntryMatches checks a specific entry. Both read from the test logger, so they work only under a test context.",
+    "notes": "Positive scenario: servicetest log assertion helpers."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I want property-based tests with random inputs for a parser in my own Go library. Where do I start?",
+    "expected": "Should invoke pbt, not webapp-testing. Property-based testing with rapid outside webapp is that skill's subject.",
+    "notes": "Decoy: Go testing, but not webapp and not its suite patterns."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Which command in webapp runs the full Go test suite for my service with the race detector before I deploy?",
+    "expected": "Should invoke webapp-make, not webapp-testing: make check runs lint first, then gotestsum with -race; make allcheck also checks pkg/.",
+    "notes": "Decoy: running tests via Make, not writing them."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "In a webapp test, how do I confirm the CEDAR event my handler published has the right content id and score?",
+    "expected": "Should invoke webapp-analytics, not webapp-testing: pass the message from ServerForTests().Messages() to the generated Verify function for that event version.",
+    "notes": "Decoy: a test assertion whose specific helper lives in webapp-analytics."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I need to test a field resolver on a federated type in webapp that has no root query. How?",
+    "expected": "Either webapp-testing or webapp-graphql applies. Use BuildTestClientForSchema, then gqltest.QueryType with a representation containing __typename and all @key fields plus a fields string. Variables in the fields string are inlined.",
+    "notes": "Boundary: resolver testing is documented in both skills."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "In a webapp servicetest I need a feature flag on for one user only. How do I get at the fake flag client?",
+    "expected": "webapp-testing shows reaching the fake by asserting ctx.FeatureFlags() to *featureflags.TestClient with an ok check. webapp-featureflags has the per-user detail: MockFlagValueForAttributes with Attributes{Kaid: ...}, and every evaluated flag must be mocked. Either may load.",
+    "notes": "Boundary: accessing fakes is webapp-testing; the flag API is webapp-featureflags."
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our product recommendations come from a Spark job that runs every night. The PM wants them 'real-time' so new browsing shows up in recs right away. Is it worth moving this to Flink or Kafka Streams, or are we overengineering?",
+    "expected": "Invokes batch-vs-stream-processing-selection. First checks that the input is an immutable, replayable log. Then asks for the latency requirement in concrete terms (maximum acceptable staleness and its user impact) and rejects 'real-time' unless it comes with a specific maximum latency in seconds. Maps the answer to a model: hours of tolerance means batch, minutes means micro-batch, under a minute means continuous stream processing with windowing, watermarks, and exactly-once state. Warns that stream processing carries much higher operational complexity, and teams often adopt it for latency users don't need.",
+    "notes": "Positive: trigger scenario 1, a nightly feature or recommendation job and a demand for fresher output."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We just found a bug in the job that computes daily revenue aggregates. It's been writing wrong numbers for about six weeks. Can we just fix the code and regenerate everything, or are those numbers lost?",
+    "expected": "Invokes batch-vs-stream-processing-selection and applies human fault tolerance. The key question is whether the source events are immutable and still retained. If they are, delete the buggy derived output, fix the code, and rerun the job against the unchanged input to regenerate all six weeks. If the pipeline mutated source data or the events are no longer retained, the gap must be documented, and reconstruction needs manual forensics or accepting the loss. Also notes that replay requires old events to still be decodable by the current code.",
+    "notes": "Positive: trigger scenario 2 and the book's recommendation-pipeline bug case; recovery depends on immutable inputs."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "After we redeployed our Flink job this morning, the events-per-second graph jumped to about 10x normal, the autoscaler added a bunch of nodes, and the on-call got paged. Upstream traffic looks totally flat. What happened?",
+    "expected": "Invokes batch-vs-stream-processing-selection and diagnoses event time vs. processing time confusion (failure pattern ce25). On restart the processor worked through a backlog of accumulated events, so metrics based on processing time spiked while the event-time rate stayed steady. Prescribes basing all metrics, windowing, and anomaly detection on the event timestamp embedded in each event, not on wall-clock processing time.",
+    "notes": "Positive: trigger scenario 3, a metric spike after a stream processor restart."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're building a new clickstream pipeline that will feed a search index and some ML features. One team wants RabbitMQ because they already run it; another wants Kafka. Does the choice actually matter for the downstream jobs?",
+    "expected": "Invokes batch-vs-stream-processing-selection. Explains that a traditional queue deletes messages on acknowledgment, so a buggy consumer's input is gone. A log-based broker like Kafka retains messages and tracks per-consumer offsets, so a consumer can reset to a checkpoint, fix its code, and reprocess, and a new consumer can process the entire history. Recommends the log-based broker when derived outputs must be recoverable (human fault tolerance).",
+    "notes": "Positive: trigger scenario 5, queue vs. log-based broker for a pipeline producing derived data."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Fraud scoring needs transaction data within about 30 seconds, but finance only needs the same data rolled up daily for billing reports. Do we need two separate pipelines for this?",
+    "expected": "Invokes batch-vs-stream-processing-selection. Writes down each consumer's latency requirement (30 seconds for fraud, daily for billing). Under one minute calls for continuous stream processing. Raises the kappa architecture: run the stream processor over the bounded historical log to get batch results from the same system. Warns that a lambda architecture (separate batch and stream layers) doubles the code and operational surface and creates consistency problems between the layers.",
+    "notes": "Positive: trigger scenario 4, two consumers with very different latency needs reading one derived pipeline."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our /checkout endpoint has a p99 of 1.4 seconds and someone on the team said we should 'move to streaming' to fix it. How should we go about bringing request latency down?",
+    "expected": "Should not invoke batch-vs-stream-processing-selection. The skill excludes online request-response latency: batch and stream processing produce derived data offline and don't speed up synchronous requests. Answer by profiling the request path first (queries, indexes, downstream calls), in the spirit of fowler-performance-sequencing.",
+    "notes": "Decoy: mentions streaming, but the problem is OLTP request latency, which the description excludes."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our dbt incremental model uses a 3-day lookback and a unique_key, but after Airflow retries we're seeing duplicate rows in the fact table. How do I fix the model config?",
+    "expected": "Should not invoke batch-vs-stream-processing-selection. This is a warehouse incremental-load correctness problem (unique_key, lookback, retries), which warehouse-key-and-load-guard covers. It's not a choice between batch and stream processing.",
+    "notes": "Decoy: batch pipeline vocabulary, but the question is about load keys and dedup in a specific tool. Sibling: warehouse-key-and-load-guard."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our app writes every product update to Postgres and then to Elasticsearch in the same request handler. The two have drifted apart and nobody can tell which copy is right. How do we fix this for good?",
+    "expected": "Should not invoke batch-vs-stream-processing-selection as the primary skill. This is the dual-write problem: designate Postgres as the system of record and feed Elasticsearch through CDC. system-of-record-vs-derived-data handles it. Batch vs. stream only matters later, when deciding how to compute the derived index.",
+    "notes": "Decoy: derived-data topic, but the question is which store is authoritative. Sibling: system-of-record-vs-derived-data."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Customer data lives in Salesforce, our Postgres app DB, and a couple of ops spreadsheets that people edit by hand. We want it all in the warehouse. Should we set up a nightly batch load or a streaming pipeline?",
+    "expected": "Boundary. The skill says not to choose a computation model before the system of record is settled. Selecting batch vs. stream first inverts the design. Should first apply (or defer to) system-of-record-vs-derived-data to decide which source owns each piece of customer data. Only after that should it use the latency and replayability criteria to choose batch or stream.",
+    "notes": "Boundary: the 'Do not use' clause on a missing system of record; depends-on system-of-record-vs-derived-data."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We have a cron job that runs one SQL query on our single Postgres box at 2am to compute yesterday's totals. It takes about 40 seconds. A new hire wants to rewrite it as a Kafka Streams app. Good idea?",
+    "expected": "Boundary. The skill excludes single-node computations with no fan-out, because batch vs. stream selection applies to pipeline-scale processing. If engaged at all, the latency criterion settles it: daily totals tolerate hours of staleness, so batch is simpler, and stream processing would add a lot of operational complexity for no user benefit. Should not run the full pipeline-selection procedure.",
+    "notes": "Boundary: the 'Do not use' clause for single-node computation; the latency criterion alone gives a quick answer."
+  }
+]

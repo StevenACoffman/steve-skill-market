@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "A nightly job in one webapp service needs to look up user details from another service over GraphQL. There's no logged-in user. Which client and auth should I use?",
+    "expected": "Invokes webapp-graphql. Gets the gqlclient.Client from ctx and calls AsServiceAdmin(), which uses the service admin secret with no user auth, then passes the resulting ClientAdapter to the genqlient-generated function. Optional With* options (WithService, WithKALocale and others) chain on the Client before the auth method. The call lives in cross_service/.",
+    "notes": "Positive scenario: choosing an auth adapter for a service-to-service call."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I added a query resolver to my webapp service and want a test that sends a real GraphQL query to it and checks the JSON result.",
+    "expected": "Invokes webapp-graphql. In a servicetest.Suite, calls s.BuildTestClientForSchema(ctx, generated.NewExecutableSchema(...)), then gqltest.Query(ctx, client.AsUser(), query, js.Obj{...}) and asserts the result with js.Obj. Notes headers are captured when the client is built.",
+    "notes": "Positive scenario: standard resolver test."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My webapp type is only reachable through Apollo Federation by its @key, so there's no top-level query field to call in a test. How do I exercise its field resolvers?",
+    "expected": "Invokes webapp-graphql. Uses gqltest.QueryType with a representation js.Obj holding __typename and every @key field, plus a fields string. Variables in the fields string are inlined, and gqltest.Enum keeps an enum value unquoted.",
+    "notes": "Positive scenario: federation entity testing."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I deleted the only caller of a cross-service query in webapp and now ka-genqlient fails on that file. What does it want?",
+    "expected": "Invokes webapp-graphql. Every # @genqlient operation must be referenced in the same .go file. With the last call site gone, remove the directive block too. If the operation is only run through tasks.GraphQLTask, keep it and add a _ = reference to its _Operation symbol.",
+    "notes": "Positive scenario: the ka-genqlient linter rules."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "A GraphQL query from my webapp Go service works locally and in tests, but in the deployed environment the server rejects it as unknown. What's going on?",
+    "expected": "Invokes webapp-graphql. Explains the GraphQL safelist: the server rejects any query not on the static allowlist that deploy tooling gathers and uploads. Generated operation files are included automatically, and queries in gqltest are not. Checks whether the deploy pipeline ran upload_graphql_safelist.py successfully.",
+    "notes": "Positive scenario: safelist rejection after deploy."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I'm setting up genqlient in a fresh Go project that talks to the GitHub GraphQL API. How should genqlient.yaml look?",
+    "expected": "Should invoke genqlient, not webapp-graphql. This is generic genqlient configuration outside github.com/Khan/webapp; the webapp skill covers webapp's gqlclient adapters and test helpers.",
+    "notes": "Decoy: same generator, different repository; the genqlient skill applies."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I'm starting a new standalone GraphQL server in Go with gqlgen and need dataloaders to avoid N+1 queries. Where do I begin?",
+    "expected": "Should invoke gqlgen-app, not webapp-graphql. Building a gqlgen server outside webapp is gqlgen-app's subject.",
+    "notes": "Decoy: GraphQL server work in Go but not in webapp."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I changed a .graphqls schema file in my webapp service. Which command regenerates everything, and which files do I need to commit?",
+    "expected": "Should invoke webapp-make, not webapp-graphql: make gqlgen in the service regenerates server types and triggers the root make graphql pipeline; commit gengraphql/composed_schema.graphql or make verify-gengraphql fails in CI.",
+    "notes": "Decoy: GraphQL schema change, but the question is about Make targets."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Rather than calling an enrollment mutation inline in webapp, I want it to run later in the background with retries. How do I set that up?",
+    "expected": "Should invoke webapp-tasks: tasks.GraphQLTask with a genqlient <service>_Task_<name>_Operation symbol (a raw string fails ka-graphql-task), a queue whose target is graphql-gateway, and an idempotent mutation. webapp-graphql contributes the # @genqlient directive and the _ = reference that keeps ka-genqlient happy.",
+    "notes": "Boundary: GraphQL operation authoring is shared; task enqueueing belongs to webapp-tasks."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "In one webapp resolver test I need to call the same query as a student and then as a teacher. The second call still sees the student. Why?",
+    "expected": "Either webapp-graphql or webapp-testing applies. Both say headers are captured from the KAContext when the test client is built, not per query. To test as another user, clone the context, set up the second user, and build a separate client with BuildTestClientForSchema.",
+    "notes": "Boundary: resolver testing appears in both webapp-graphql and webapp-testing."
+  }
+]

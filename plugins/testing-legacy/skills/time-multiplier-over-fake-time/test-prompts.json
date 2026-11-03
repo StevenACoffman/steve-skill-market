@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our raft test waits up to 5 seconds on a channel for a leader to be elected. It passes every time on my laptop but fails a few times a week in CI with 'timed out waiting for leader'. How should I fix it?",
+    "expected": "Invokes time-multiplier-over-fake-time. Keep the select with time.After, and derive the timeout from a package-level `var timeMultiplier = time.Duration(1)`: `timeout := 5 * time.Second * timeMultiplier`. TestMain or init() sets timeMultiplier from an env var such as TEST_TIMEOUT_MULTIPLIER, and CI sets it to 3-5. Local runs stay at full speed and no production code changes.",
+    "notes": "Positive scenario: an async wait that times out in CI but passes locally, the description's main cue."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "A teammate's PR adds a Clock interface and threads it through six constructors so that one test can wait for the background compaction job to finish. The test only checks that compaction eventually happens. Is this worth it?",
+    "expected": "Invokes time-multiplier-over-fake-time. Ask whether any test needs deterministic ordering with Advance(). This one only checks an eventual outcome, so the Clock field is unneeded complexity that reshapes production code for a test concern. Use select on a completion channel with time.After(timeout * timeMultiplier) instead.",
+    "notes": "Positive scenario: someone proposes a Clock interface for an eventual-outcome test."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "How do I write a Go test that waits for a worker goroutine to send its result on a channel without the test hanging forever if the worker never sends?",
+    "expected": "Invokes time-multiplier-over-fake-time and gives the canonical shape: `select { case <-done: case <-time.After(timeout): t.Fatal(\"timeout waiting for result\") }`. The timeout is derived from a multiplied constant (e.g. `3 * time.Minute * timeMultiplier`), with timeMultiplier declared as time.Duration(1), not untyped 1.",
+    "notes": "Positive scenario: how to test code that waits on a goroutine or channel."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We just moved CI to smaller ARM runners and dozens of our async tests now time out. I'd rather not edit every timeout by hand. Can I scale them all from one setting?",
+    "expected": "Invokes time-multiplier-over-fake-time. Declare `var timeMultiplier = time.Duration(1)` per package, multiply every async timeout by it, and read TEST_TIMEOUT_MULTIPLIER in TestMain: parse it with strconv.Atoi, exit on an invalid value, and assign time.Duration(n). Set the variable in the CI config (e.g. GitHub Actions env or a Makefile target). If the flakiness disappears, the cause was slow machines, not non-determinism.",
+    "notes": "Positive scenario: timing differences across hardware, solved by one knob."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "My integration test starts the HTTP server with `go run(ctx, args)` and immediately calls the API. It sometimes gets 'connection refused'. I added time.Sleep(100ms) but it still flakes.",
+    "expected": "Should not invoke time-multiplier-over-fake-time. This is a server readiness race. matryer-waitfor-ready covers it: add a /healthz endpoint and poll it with waitForReady until it returns 200.",
+    "notes": "Decoy: a flaky timing-related test whose fix is a readiness probe, not a timeout multiplier."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "In production our worker pool leaks goroutines: senders block on a channel after the consumer returns early on error. How do I restructure it?",
+    "expected": "Should not invoke time-multiplier-over-fake-time. This is goroutine lifetime in production code. structured-goroutine-lifetime covers it with errgroup or WaitGroup and bounded senders.",
+    "notes": "Decoy: goroutines and channels, but no test timeout."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our Go test suite takes 12 minutes in CI. Should we add t.Parallel() everywhere to speed it up?",
+    "expected": "Should not invoke time-multiplier-over-fake-time. The skill says timeMultiplier sets how long async waits may take and does not make tests faster. Test-level parallelism is a separate concern. No sibling skill in this repository covers it.",
+    "notes": "Decoy: 'slow CI tests' wording, which the skill's 'Confusion with t.Parallel()' section rules out."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "I need to test that a cache entry expires after 30 seconds, before the 45-second retry fires, so the retry refetches fresh data. Can I just use real time with a big timeout?",
+    "expected": "Invokes time-multiplier-over-fake-time to mark its boundary. Here the order of timed events is what is being tested, and real scheduling cannot guarantee it. A clock mock with Advance() is the right tool. The skill names clockwork and quartz as matured options worth the injection cost for TTL and retry logic.",
+    "notes": "Boundary: the description's 'Not when asserting the order of timed events' exclusion."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "The function under test already takes a context.Context and returns when the async job completes. Do I still need the select with time.After in the test?",
+    "expected": "Invokes time-multiplier-over-fake-time with its context alternative. Pass `ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute*timeMultiplier)` with `defer cancel()` into the call. No separate select is needed, and the multiplier still scales the deadline in CI.",
+    "notes": "Boundary: the skill's 'context.WithTimeout propagation' blind spot, a variant of the core pattern."
+  }
+]

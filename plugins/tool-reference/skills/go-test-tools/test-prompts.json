@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I touched some goroutine code in the roster module and want to run that module's tests with the race detector before I push. What's the command?",
+    "expected": "Invokes go-test-tools. Tests run per module, not from the workspace root: `cd roster && go test -count=1 -timeout 5m -race ./...`, or with gotestsum `cd roster && gotestsum -- -count=1 -timeout 5m -race ./...` (go test flags after --). Explains -count=1 disables the result cache and -timeout 5m matches the pre-push hook.",
+    "notes": "Positive scenario: running one module's tests with a common flag."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "There's a testify suite registered as TestClassroomRepo and I only want to run its TestArchiveClassroom method. -run TestArchiveClassroom matches nothing.",
+    "expected": "Invokes go-test-tools. A suite is one top-level TestXxx function, so target the method with a slash: `go test -count=1 -run TestClassroomRepo/TestArchiveClassroom ./...` from the module directory.",
+    "notes": "Positive scenario: running a single suite method, a documented gotcha."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm writing tests for a repository function that reads and writes the datastore. Which suite base should the test embed, and will data from one subtest leak into the next?",
+    "expected": "Invokes go-test-tools. Use servicetest.Suite (servicetest.BaseSuite, servicetest.Run) when code touches the datastore emulator; khantest.Suite is for pure logic. suite.Datastore() returns the emulator client, which is reset in SetupTest before each test method but not between subtests run with suite.Run/t.Run, so subtests can see each other's data.",
+    "notes": "Positive scenario: suite selection and emulator reset semantics."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "CI lint is failing on my new test file: thelper complains about assertRoster, and usetesting flags os.Setenv and os.MkdirTemp. How do I fix these?",
+    "expected": "Invokes go-test-tools. Adds t.Helper() as the first line of the assertRoster helper; replaces os.Setenv with t.Setenv (or suite.Setenv inside a suite) and os.MkdirTemp with t.TempDir(). May also mention testifylint preferences such as Require().NoError over Nil(err).",
+    "notes": "Positive scenario: linter-enforced test patterns."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "My manager wants per-function coverage numbers for the pkg module. How do I get those, and just the total?",
+    "expected": "Invokes go-test-tools. `cd pkg && go test -count=1 -coverprofile=coverage.out ./...`, then `go tool cover -func=coverage.out` per function, `go tool cover -func=coverage.out | grep total` for the total, and `go tool cover -html=coverage.out` for the browser view.",
+    "notes": "Positive scenario: coverage reporting."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I only changed two files in pkg/encryption on my branch. Instead of running every module, can I run only the tests that depend on those packages?",
+    "expected": "Should not invoke go-test-tools. Change-aware test selection is go-test-auto's job: `gta -base origin/main -include <repo prefix>` piped into go test or gotestsum.",
+    "notes": "Decoy: running Go tests in the same workspace, but limited to affected packages; sibling skill go-test-auto."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "In Khan/webapp, should my new test use khantest.Suite or servicetest.Suite, and how do I get a KAContext inside it?",
+    "expected": "Should not invoke go-test-tools; its suite guidance is for this 19-module workspace. Tests in Khan/webapp, including KAContext setup, belong to webapp-testing.",
+    "notes": "Decoy: the suite names match go-test-tools, but the repo is webapp; sibling skill webapp-testing."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "I want to throw thousands of random inputs at my slug normalizer and have failures shrink to a minimal example. What library and approach?",
+    "expected": "Should not invoke go-test-tools. Property-based testing with rapid belongs to pbt, for example an idempotence property using rapid.String().",
+    "notes": "Decoy: writing Go tests, but generative/property-based; sibling skill pbt."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Running the tests for every module before I push takes forever. How can I make my pre-push test run faster?",
+    "expected": "Sits between two siblings. go-test-tools offers the all-modules loop, -short to skip long tests, -failfast, and gotestsum --watch for TDD. The bigger win, running only packages affected by the branch, is go-test-auto's gta. A good answer names both and recommends go-test-auto for affected-only runs.",
+    "notes": "Boundary: 'make tests faster' fits go-test-tools (flags) and go-test-auto (change-aware selection)."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I need a test for a function that talks to a stateful dependency, with eight different scenarios. Should I write it table-driven, and how should I fake the dependency?",
+    "expected": "Partly go-test-tools, which shows table-driven tests inside a suite with suite.Run per case. The design question, a named map-based table plus a handwritten fake that asserts on observable state, belongs to go-test-state-driven-table. Should not invent a fake-client API that go-test-tools does not document.",
+    "notes": "Boundary: table-driven tests appear in go-test-tools, but the fake-collaborator design is sibling go-test-state-driven-table."
+  }
+]

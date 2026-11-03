@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I fixed the bug where expired session tokens were still accepted because we compared the wrong timestamp field. Write the commit message.",
+    "expected": "Invokes unconventional-commits. Reads `git diff --staged` and `git log --oneline -20` for scope vocabulary, writes a scope-first subject such as `auth: reject expired session tokens`, imperative, about 50 chars, no `fix:` prefix, no trailing period, then a body wrapped at ~72 explaining the wrong-field comparison and why it mattered.",
+    "notes": "Positive scenario: bugfix with an obvious scope."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "This change both adds YAML support to the config loader and folds two duplicate decode blocks into one helper. Is it a feat or a refactor? Help me commit it.",
+    "expected": "Invokes unconventional-commits. Drops the type question entirely: leads with the scope (`config:`) and lets the description and body say what changed (YAML support plus the decode helper). The skill's Example 3 covers this exact case.",
+    "notes": "Positive scenario: change that is several types at once."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Commit everything I've got staged. Fair warning, it's a dependency bump, a new health endpoint, and a DB pool fix all mixed together.",
+    "expected": "Invokes unconventional-commits step 6: proposes splitting into atomic commits, each with its own scope (e.g. `go.mod:`, `api/health:`, `db:`) and reasoning, rather than one blob.",
+    "notes": "Positive scenario: atomic-commit splitting."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We're writing CONTRIBUTING.md and I want to explain our commit style. We follow the Linux and Go style, not Conventional Commits. Can you draft that section?",
+    "expected": "Invokes unconventional-commits to set a convention: `scope: imperative description`, scope required, no type prefix, ~50 char subject, blank line, body wrapped at ~72 explaining what and why, breaking changes described in prose. Also states the guide-don't-gate stance on contributor commit linters.",
+    "notes": "Positive scenario: defining a project's commit convention."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our release pipeline uses semantic-release, so I need commits like 'feat(api): add pagination'. Write one for this change.",
+    "expected": "User explicitly wants Conventional Commits. Should not invoke unconventional-commits, which rejects type prefixes; write the Conventional Commits message requested.",
+    "notes": "Decoy: commit message request in the opposite convention."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I squash my last four commits into one before opening the PR?",
+    "expected": "Git history operation. Should not invoke unconventional-commits; explain `git rebase` or `git reset --soft` directly.",
+    "notes": "Decoy: commit-adjacent git mechanics."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Write the release notes for v2.3 from what's changed since v2.2.",
+    "expected": "Release notes are a curated user-facing artifact. Should not invoke unconventional-commits; the skill itself says changelogs should not be generated from commit messages.",
+    "notes": "Decoy: commit history as input, but the output is a changelog."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Draft my commit message and then check it doesn't sound like an AI wrote it.",
+    "expected": "Invokes unconventional-commits for the structure, then hands off to the vale skill for the lint loop with the `ai-tells-commits` style in a scratch dir (`vale --config=\"$SCRATCH/.vale.ini\" --no-global`, then `git commit -F`). If vale-ai-tells isn't installed, vale-cli covers installing and pinning it.",
+    "notes": "Boundary: structure (unconventional-commits) vs prose lint (vale / vale-cli)."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Can we add a CI check that rejects any PR whose commits don't follow our scope-first format?",
+    "expected": "Invokes unconventional-commits to answer, and argues against it: don't enforce a commit linter that rejects contributions; guide with examples, or squash PRs into the house style. Notes that an author linting their own message is fine.",
+    "notes": "Boundary: convention-setting request that the skill's 'does NOT do' section pushes back on."
+  }
+]

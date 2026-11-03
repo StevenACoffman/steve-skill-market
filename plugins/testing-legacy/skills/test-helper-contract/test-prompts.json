@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I wrote `func setupTestDB(t *testing.T) (*sql.DB, error)` that creates a temp SQLite file and runs migrations. Every one of my 30 tests now starts with `db, err := setupTestDB(t); if err != nil { t.Fatal(err) }`. Is there a cleaner way?",
+    "expected": "Invokes test-helper-contract. The helper should never return an error: it already has *testing.T, so it calls t.Fatalf internally and the setup boilerplate leaves every test body. It calls t.Helper() first, and registers removal of the temp file with t.Cleanup or returns a cleanup func(). The new signature is setupTestDB(t) *sql.DB, or (*sql.DB, func()).",
+    "notes": "Positive scenario: a helper returning error that is only called from tests, with the repeated setup checks at every call site."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "When my test helper calls t.Fatalf, the failure says `helpers_test.go:41`, which is inside the helper, not the test that called it. With twenty tests sharing that helper I can't tell which one broke.",
+    "expected": "Invokes test-helper-contract and adds t.Helper() as the helper's first statement. It marks the function as a test helper, so go test reports the failure at the caller's line. The skill says every test helper should call it.",
+    "notes": "Positive scenario: the t.Helper() part of the contract, described by its symptom."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Several of my CLI tests need to run from a fixture directory. Each one does os.Getwd, os.Chdir, checks both errors, and defers a Chdir back. That's about 10 lines before the test even starts. How should I factor that out?",
+    "expected": "Invokes test-helper-contract with the testChdir pattern: `func testChdir(t *testing.T, dir string) func()` calls t.Helper(), calls t.Fatalf on Getwd or Chdir failure, and returns a closure that restores the old directory. Tests use the one-liner `defer testChdir(t, dir)()`. The outer call does setup now, and the deferred inner func does teardown.",
+    "notes": "Positive scenario: OS-state setup and teardown repeated in many tests; the skill's testChdir worked case."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Reviewing a PR: the author added `func newTestServer() (*httptest.Server, func(), error)` and each test calls it, checks err, then defers the cleanup. Anything I should push back on?",
+    "expected": "Invokes test-helper-contract. Review feedback: the helper should take t *testing.T, call t.Helper() and t.Fatalf on failure, and never return error. It returns the server with a cleanup func, or better registers t.Cleanup(srv.Close) inside the helper (Go 1.14+), so callers write just `srv := newTestServer(t)`.",
+    "notes": "Positive scenario: code review of a test helper whose signature ends in error."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our package wraps the `helm` binary with exec.Command. CI doesn't have helm installed. How do I test the error path where helm exits with status 1?",
+    "expected": "Should not invoke test-helper-contract. This is faking an external subprocess. test-helper-process-subprocess-mock covers it: inject a command factory and re-run the test binary through TestHelperProcess with GO_WANT_HELPER_PROCESS=1.",
+    "notes": "Decoy: test infrastructure in the same plugin, but the question is subprocess mocking, not helper signatures."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My protocol tests use a bytes.Buffer as a fake net.Conn, and they keep missing bugs around partial reads and deadlines. What's a better approach?",
+    "expected": "Should not invoke test-helper-contract as the primary skill. never-mock-net-conn-use-loopback covers it: use a real loopback TCP pair (the testConn helper) instead of a buffer mock. That helper follows this contract, but the question is about what to use, not how to sign the helper.",
+    "notes": "Decoy: a composes-with sibling. The testConn helper applies the contract, but the decision belongs to never-mock-net-conn-use-loopback."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "In our production config package, should LoadConfig return an error or just log.Fatal when the file is missing? It's called from main and from a couple of library functions.",
+    "expected": "Should not invoke test-helper-contract. The contract is scoped to test code only. Production helpers must respect their callers by returning errors, so LoadConfig should return the error.",
+    "notes": "Decoy: the same 'return error vs fail' question in production code, which the skill's Boundaries section excludes."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Three other packages in our repo copy our in-memory store setup into their own tests. I want to move `newTestStore(t) (*Store, error)` out of store_test.go so they can import it. What should the exported version look like?",
+    "expected": "Invokes test-helper-contract alongside testing-go-public-test-api. testing-go-public-test-api decides the location: a regular testing.go file exporting TestStore(t), because _test.go files cannot be imported. test-helper-contract decides the signature: no error return, t.Helper(), t.Fatalf on failure, and cleanup via t.Cleanup or a returned func().",
+    "notes": "Boundary: the composes-with relationship. One skill governs where the helper lives, the other governs how it is signed."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We keep golden JSON files under testdata/. Should my loadGolden(t, name) helper return a cleanup func too, to match our other helpers?",
+    "expected": "The skill's Boundaries section separates dynamic resources from static fixtures. Static files in a fixtures directory need no cleanup function, so loadGolden returns only the content. It still follows the rest of the contract: take *testing.T, call t.Helper(), and call t.Fatalf on a read error instead of returning it. Uses os.ReadFile, not the deprecated ioutil.",
+    "notes": "Boundary: the 'Confusion with test fixtures' section. Part of the contract applies and the cleanup part does not."
+  }
+]

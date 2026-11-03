@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Run the linters across all the Go modules in this workspace and fix what you can.",
+    "expected": "Invokes lintme. Ensures lintme and golangci-lint are installed, runs `lintme run --fmt-only` for formatting, then `lintme branch` (default, lints branch-introduced issues with auto-fix) or `lintme run` for a full sweep, runs the separate repowrite analyzer loop over every module with a go.mod, and fixes remaining findings in code. Verifies with `lintme run --no-fix` plus repowrite, both exiting 0.",
+    "notes": "Positive scenario: full lint run across modules."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "golangci-lint says 'context.Context should be the first parameter' and 'fmt.Errorf can be replaced with errors.New' in a few files. What's the right fix?",
+    "expected": "Invokes lintme step 4: move ctx to the first parameter (revive/context-as-argument), replace `fmt.Errorf(\"msg\")` with `errors.New(\"msg\")` (perfsprint). Fix the code; never add //nolint.",
+    "notes": "Positive scenario: interpreting specific golangci-lint findings."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Can you lint only the changes in PR 412 rather than the whole repo?",
+    "expected": "Invokes lintme. Uses `lintme pr 412 --token=\"$GITHUB_TOKEN\"`.",
+    "notes": "Positive scenario: PR-scoped lint mode."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "The repowrite check is complaining that I'm calling dc.Put on a UserDistrictInfo. What should I do instead?",
+    "expected": "Invokes lintme step 3. Direct datastore writes to UserDistrictInfo, ClassroomDistrictInfo, District and School must go through `pkg/repo/` functions, e.g. `repo.UpdateUDI(ctx, dc, key, actorKaid, updater)` or `repo.CreateUDIs`; every repo function takes `actorKaid`, found from the call site. Test files are exempt from repowrite.",
+    "notes": "Positive scenario: the repo-specific analyzer lintme does not run itself."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Lint the Markdown docs and fix the heading spacing problems.",
+    "expected": "Markdown linting. Should not invoke lintme; rumdl handles Markdown structure rules.",
+    "notes": "Decoy: 'run linters' wording but the files are Markdown."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our pre-push hook runs golangci-lint for every module. How do I add a new module to it?",
+    "expected": "Hook configuration. Should not invoke lintme; lefthook owns the per-module pre-push job layout.",
+    "notes": "Decoy: golangci-lint mentioned, but the work is lefthook.yaml."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "ESLint is failing on our React components with 'react-hooks/exhaustive-deps'. How do I fix it?",
+    "expected": "JavaScript linting. Should not invoke lintme, which is a golangci-lint wrapper for Go workspaces.",
+    "notes": "Decoy: lint errors in a different language."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "This staticcheck warning is a false positive in a generated file. Just add //nolint so CI goes green.",
+    "expected": "Invokes lintme, which refuses the //nolint: the rule is never add //nolint. Generated files under `generated/` are already excluded; for a genuine false positive on a generated file, add an exclusion path to `.golangci.yml` instead.",
+    "notes": "Boundary: user asks for something the skill's Rules section forbids."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I'm working in Khan/webapp and the linter flagged one of the custom webapp lint rules. How do I fix it?",
+    "expected": "Should not use lintme's guidance; webapp has its own 31 custom linters, covered by the webapp skill. lintme's module discovery, repowrite analyzer and linter table are for a go.work multi-module repo, not webapp.",
+    "notes": "Boundary: Go lint fixing in a repo with its own dedicated skill."
+  }
+]

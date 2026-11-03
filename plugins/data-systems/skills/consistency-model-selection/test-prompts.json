@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our API rate limiter keeps per-user counters in a replicated Redis setup across three regions. The limit is 1,000 calls an hour, but some customers are getting 1,100+ through. Is that just how distributed counters behave, or is our design wrong?",
+    "expected": "Invokes consistency-model-selection. Quota enforcement is a check-then-act on replicated state, which requires linearizability. Under eventual consistency, concurrent requests read stale counts on different replicas and each approves. Eventual consistency is fine for observing usage (dashboards, estimates) but not for enforcing it. Recommends routing the enforcement decision through a linearizable path: a single-leader counter, a consensus-based compare-and-swap, or a strongly consistent counter service, with the rest left eventually consistent.",
+    "notes": "Positive: the book's rate-limiter case and trigger scenario 2."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Signup checks whether a username is taken by querying the nearest read replica, then inserts on the primary. Twice this month two people ended up with the same handle. What's the right way to enforce uniqueness?",
+    "expected": "Invokes consistency-model-selection. Uniqueness constraints always require linearizability: of concurrent attempts to claim the same name, at most one may succeed. A replica read gives no recency guarantee. Prescribes moving the check-and-claim onto a linearizable path (a unique constraint on the leader, a consensus-based CAS, or etcd/ZooKeeper) and documenting the consistency model per operation rather than per system.",
+    "notes": "Positive: a uniqueness constraint with a check-then-act read from a replica."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "When a user uploads a file, we write the metadata and immediately send an email with a download link. Some users click it and get a 404, then it works a minute later. The DB is replicated. What's going on and how should we fix it?",
+    "expected": "Invokes consistency-model-selection. Identifies a cross-channel timing dependency: the email (a second channel) goes out before the write is visible on the replica the link hits. Cross-channel coordination is one of the operation classes that require linearizability. Fixes: route that read to the leader, or otherwise guarantee the write is visible before the notification proceeds.",
+    "notes": "Positive: trigger scenario 4, cross-channel coordination."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our architect says we're fine with eventual consistency across the whole platform because a little staleness never hurts anyone. We have bookings, invoice numbering, a job scheduler with leader election, and user feeds. How do I check whether he's right?",
+    "expected": "Invokes consistency-model-selection. Enumerates the check-then-act operations and tags each as constraint enforcement or display. Booking-slot uniqueness, globally unique invoice numbers (read max then increment), and leader election require linearizability. Feeds are fine with eventual consistency. Recommends documenting the consistency model per operation and verifying that the store really provides linearizability for the operations that need it.",
+    "notes": "Positive: trigger scenario 5, a blanket 'eventual consistency everywhere' claim."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "We run a single Postgres instance, no replicas. Two concurrent requests both booked the same meeting room for the same hour. What isolation level should we be using?",
+    "expected": "Should not invoke consistency-model-selection. The skill excludes single, non-replicated databases and concurrency control inside one database. This is write skew under weak isolation; transaction-isolation-level-selection handles it (serializable or SELECT FOR UPDATE).",
+    "notes": "Decoy: concurrent double-booking, but on a single node. Sibling: transaction-isolation-level-selection."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "After a user edits their bio and hits save, the profile page sometimes still shows the old bio until they refresh a few times. We serve profile reads from replicas. How do we stop that?",
+    "expected": "Should not invoke consistency-model-selection as the primary skill. This is a read-your-writes violation from replication lag; replication-lag-as-correctness handles it with leader routing for a window after the write or LSN-gated replica reads.",
+    "notes": "Decoy: stale replica reads on a display path, which the skill's boundary sends to replication-lag-as-correctness."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We're expanding into the EU and want local write latency there. Should we go multi-leader, leaderless, or keep a single leader in us-east?",
+    "expected": "Should not invoke consistency-model-selection as the primary skill. Choosing a topology is replication-topology-selection's job. Consistency model selection may feed in later, to check whether the chosen topology gives the guarantees specific operations need.",
+    "notes": "Decoy: the topology decision belongs to replication-topology-selection."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We built a lock table on top of a database configured as SERIALIZABLE, so locks should always see the latest state, right? But we've had two workers both believe they hold the same lock.",
+    "expected": "Invokes consistency-model-selection for the linearizability vs. serializability confusion (ce22). Serializability doesn't imply linearizable reads, since a transaction can read a snapshot that predates recent writes. Neither property implies the other. Should mention transaction-isolation-level-selection as the contrasting skill, and fencing-tokens-distributed-locks if the lock has a TTL and the second holder appeared after a pause.",
+    "notes": "Boundary: overlaps transaction-isolation-level-selection; the confusion between the two properties is the deciding factor."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Inventory lives in Cassandra and we use QUORUM for both reads and writes. Since W + R > N, the stock check before checkout is strongly consistent, isn't it?",
+    "expected": "Invokes consistency-model-selection (or shares the prompt with replication-topology-selection). Quorum overlap is necessary but not sufficient: the overlapping replica may not have applied the write yet, and LWW with clock skew makes it worse. Cassandra with LWW is nonlinearizable even at QUORUM (ce23). Options: lightweight transactions (consensus), a single-leader store for the stock decrement, or a redesign that avoids needing linearizability.",
+    "notes": "Boundary: the 'quorum = strong consistency' belief appears in both this skill and replication-topology-selection."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Product wants inventory counts on product pages served from a cache that might be 30 seconds stale. Is that safe, given that checkout reads the same count?",
+    "expected": "Overlaps timeliness-vs-integrity-distinction, which supplies the decision rule: display reads may be stale, but decision reads that gate a state change can cause permanent integrity violations. consistency-model-selection then names the guarantee: the checkout decrement needs a linearizable or CAS path, and the product-page display can stay eventually consistent.",
+    "notes": "Boundary: composes-with timeliness-vs-integrity-distinction; either skill could reasonably lead."
+  }
+]

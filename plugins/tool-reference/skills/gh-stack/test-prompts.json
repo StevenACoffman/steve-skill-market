@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm about to build a feature that needs a new DB table, API handlers that use it, and a UI page. Reviewers hate giant PRs. Set me up so each layer becomes its own PR built on the previous one.",
+    "expected": "Invokes gh-stack. Plans layers by dependency order (models lowest, then API, then UI). Runs `gh stack init -p <prefix> <first-branch>`, commits with plain git add/git commit, `gh stack add <suffix>` for each next layer (suffix only when a prefix is set), then `gh stack submit --auto` (optionally --draft) and checks with `gh stack view --json`.",
+    "notes": "Positive scenario: create a stack from scratch."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "The bottom PR in my stack just got squash-merged on GitHub. The two PRs above it now show a pile of commits that are already in main. How do I clean this up?",
+    "expected": "Invokes gh-stack. Runs `gh stack sync`, which fetches, detects the squash merge, rebases the remaining branches onto the updated trunk with git rebase --onto, pushes, and reports the merged PR. Verifies with `gh stack view --json` (isMerged true). If sync hits a conflict it restores the branches and exits with code 3.",
+    "notes": "Positive scenario: squash-merge recovery."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I'm on the frontend branch of my stack and realized I need one more API endpoint. It belongs in the API PR below this one. What's the clean way to do that?",
+    "expected": "Invokes gh-stack. Navigates down (`gh stack down` or `gh stack checkout <api-branch>`), commits the endpoint there, runs `gh stack rebase --upstack`, then returns with `gh stack top`. Explains that committing on the frontend branch would put API changes in the wrong PR.",
+    "notes": "Positive scenario: mid-stack change, which the skill calls critical for agents."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "gh stack rebase stopped with exit code 3 and some conflict markers. What now?",
+    "expected": "Invokes gh-stack. Exit code 3 means a rebase conflict: read the conflicted paths from stderr, resolve the <<<<<<< / ======= / >>>>>>> markers, `git add` the files, run `gh stack rebase --continue`, and repeat if needed; `gh stack rebase --abort` restores everything.",
+    "notes": "Positive scenario: conflict recovery via the exit-code table."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "The middle branch of my four-branch stack turned out to be unnecessary. How do I drop it and keep the other three as a stack?",
+    "expected": "Invokes gh-stack. Runs `gh stack unstack` to tear the stack down, makes the structural change with git (delete or rename branches), then rebuilds with `gh stack init --base main --adopt <branch-1> <branch-3> <branch-4>`.",
+    "notes": "Positive scenario: restructuring a stack."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I've got a one-line typo fix on its own branch. Open a PR for it against main.",
+    "expected": "Should not invoke gh-stack; there is no chain of dependent branches. A single PR belongs to gh-cli: `gh pr create --base main --title ...`.",
+    "notes": "Decoy: PR creation without stacking; sibling skill gh-cli."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Which GitHub Actions workflows ran on my last push, and did any fail?",
+    "expected": "Should not invoke gh-stack. Use gh-cli: `gh run list --branch <branch>` and `gh run view <run-id>`.",
+    "notes": "Decoy: GitHub CLI work with no stack involved; sibling skill gh-cli."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Before I open a PR, I want to squash my last five commits on this branch into one.",
+    "expected": "Should not invoke gh-stack. This is local history editing on one branch (for example git reset --soft or a squash), with no stacked branches involved.",
+    "notes": "Decoy: branch and commit manipulation that sounds like stack maintenance but is plain git."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I manage my branches with jj, not plain git branches tracked by any tool. Can I still get GitHub to show my four PRs as one stack?",
+    "expected": "Invokes gh-stack and uses `gh stack link`, which does not depend on local tracking state and is meant for external tools like jj or Sapling: `gh stack link <branch-or-pr> <branch-or-pr> ...` with at least two branch names or PR numbers (optionally --base, --draft). Does not use init/add, which assume locally tracked branches.",
+    "notes": "Boundary: an external VCS tool, outside the normal init/add/submit flow; the skill's link rule covers it."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Two separate features both build on my auth-layer branch. Can I make one stack where auth-layer has two child branches, one per feature?",
+    "expected": "Invokes gh-stack to state its limitation: stacks are strictly linear, with one parent and at most one child per branch, so branching stacks are not supported. Recommends separate stacks for parallel workstreams and warns that a branch shared across stacks leads to exit code 6 (disambiguation required).",
+    "notes": "Boundary: a request the tool cannot satisfy, covered by Known Limitations and Agent Rule 6."
+  }
+]

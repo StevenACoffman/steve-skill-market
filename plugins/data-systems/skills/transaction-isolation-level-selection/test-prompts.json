@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our clinic booking app checks whether a slot is free and then inserts the booking, in two queries inside one transaction. It's Postgres with default settings. We still get the occasional double-booked slot. How can that happen inside a transaction?",
+    "expected": "Invokes transaction-isolation-level-selection. Postgres defaults to read committed, not serializable, so check-then-act inside a transaction still races. Classifies the anomaly (write skew or phantom: both transactions see the slot free and both insert). Prescribes serializable isolation for this path, or explicit locking (SELECT FOR UPDATE). Set the level explicitly and write a concurrent test that reproduces the double booking at the weaker level and passes at the chosen one.",
+    "notes": "Positive: trigger scenario 1 and failure pattern ce17 (weak isolation defaults)."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Stock counts drift under load. Our Rails code loads the product, does product.stock -= qty, and calls save. Each request is in its own transaction. Where's the bug?",
+    "expected": "Invokes transaction-isolation-level-selection and names the ORM read-modify-write lost update (ce18): save writes the full computed value (stock = :val) instead of stock = stock - qty, so concurrent updates overwrite each other. Fixes: an atomic update expression, or SELECT FOR UPDATE under snapshot isolation. Check what the configured level actually prevents.",
+    "notes": "Positive: trigger scenario 2."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our on-call scheduler runs on Oracle at SERIALIZABLE. The rule is at least one doctor on call per shift. Twice now two doctors have gone off call at the same moment and left a shift empty. How is that possible at serializable?",
+    "expected": "Invokes transaction-isolation-level-selection. Oracle's 'serializable' is actually snapshot isolation, which allows write skew: each transaction sees the condition as satisfied and both write, jointly breaking the invariant. Don't trust the label; check what the database actually guarantees. Fix with explicit locking (SELECT FOR UPDATE on the shift's rows) or a database that provides true serializable isolation (for example PostgreSQL SERIALIZABLE, CockroachDB, Spanner).",
+    "notes": "Positive: the book's Oracle-serializable case (ce16) applied to a write-skew invariant."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Code review question: inside a transaction we do `used = get_usage(acct); if used < limit: set_usage(acct, used + 1)`. The author says it's fine because it's in a transaction on a 'proper ACID database'. I'm not convinced.",
+    "expected": "Invokes transaction-isolation-level-selection. 'We use a transactional database' is the warning sign: most databases default to read committed, where this read-modify-write races. Labels the anomaly (lost update, or write skew if the check spans rows) and maps it to the weakest level that prevents it: an atomic increment with a conditional check, SELECT FOR UPDATE, or serializable. Requires a concurrency test.",
+    "notes": "Positive: trigger scenario 5 plus the 'ACID handles it' language signal."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Since upgrading our database version, load tests sometimes throw duplicate-key and constraint-violation errors that never show up in unit tests. Single-threaded runs are always clean. What should we look at?",
+    "expected": "Invokes transaction-isolation-level-selection. Errors that appear only under concurrency point to isolation anomalies in check-then-act paths. Find every read-decide-write path, label the anomaly class, confirm the actual isolation level after the upgrade (don't assume defaults or labels carried over), and reproduce with concurrent integration tests.",
+    "notes": "Positive: trigger scenario 4."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Right after a user updates their shipping preferences, the next page load sometimes shows the old preferences. Writes go to the primary and that page reads from a replica.",
+    "expected": "Should not invoke transaction-isolation-level-selection. The skill's boundary excludes stale reads from a read replica caused by replication lag. replication-lag-as-correctness handles this read-your-writes violation.",
+    "notes": "Decoy: stale read after write, but from a replica. Sibling: replication-lag-as-correctness."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Placing an order touches the Orders service's database and the Payments service's database. If payment fails after the order row is created, how do we roll everything back?",
+    "expected": "Should not invoke transaction-isolation-level-selection. Isolation levels are a single-database mechanism, and the skill excludes cross-service transactions, which need sagas, 2PC, or idempotency keys. grpc-saga-compensation-ordering is the relevant sibling for compensation design.",
+    "notes": "Decoy: transactional wording, but distributed across services. Sibling: grpc-saga-compensation-ordering."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We need a cluster-wide lock in etcd so only one scheduler instance runs at a time. How do we make sure every instance sees the latest lock state?",
+    "expected": "Should not invoke transaction-isolation-level-selection. This is linearizability across replicas and distributed-lock safety, not isolation between transactions in one database. consistency-model-selection and fencing-tokens-distributed-locks apply. The skill notes that linearizability, not serializability, is what distributed locking needs.",
+    "notes": "Decoy: consistency vocabulary with a distributed lock. Siblings: consistency-model-selection, fencing-tokens-distributed-locks."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our quota service reads current usage, compares it to the plan limit, and increments it. Usage lives in Cassandra. Should we be looking at isolation levels or something else?",
+    "expected": "Shared with consistency-model-selection. The skill's own trigger scenario 3 says the store here is eventually consistent, so the immediate problem is the lack of a linearizable read-decide-increment (consistency-model-selection). It also notes that even on a relational database, snapshot isolation would allow write skew here, so the check-then-act needs serializable or explicit locking wherever it ends up.",
+    "notes": "Boundary: a quota counter on an eventually consistent store spans both skills."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Only one nightly batch process ever writes to our reporting database, and it runs its steps one after another. Do I need to raise the isolation level to SERIALIZABLE to be safe?",
+    "expected": "Boundary. The skill doesn't apply when all writes come from a single sequential process, since concurrency anomalies need concurrent writers. Should say no isolation change is needed for correctness unless another concurrent writer exists, and not run the anomaly enumeration.",
+    "notes": "Boundary: the 'single sequential writer' exclusion."
+  }
+]

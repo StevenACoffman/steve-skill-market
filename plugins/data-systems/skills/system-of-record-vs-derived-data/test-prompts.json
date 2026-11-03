@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Every product edit in our app writes to Postgres and then to Elasticsearch from the same request handler. After six months the two disagree all the time and nobody can say which is right. We need a permanent fix, not another reconciliation script.",
+    "expected": "Invokes system-of-record-vs-derived-data and diagnoses the dual-write race (ce26): concurrent writes reach the two stores in different orders and nothing decides the order. Steps: make Postgres the system of record, remove all direct application writes to Elasticsearch, propagate changes in commit order through CDC from Postgres's WAL (Debezium, for example), and confirm the index can be rebuilt from scratch by replaying the stream.",
+    "notes": "Positive: the book's PostgreSQL + Elasticsearch case."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're adding a Snowflake warehouse for analytics. The plan is for the app to write each order to both our OLTP database and the warehouse. An architect raised an eyebrow. Is that a bad pattern?",
+    "expected": "Invokes system-of-record-vs-derived-data. Writing to both from application code is a dual write with no total order. The OLTP database should be the system of record and the warehouse derived from it through CDC or batch ETL (acceptable for analytical systems with high latency tolerance). Application code must not write to the derived store.",
+    "notes": "Positive: trigger scenario 2."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Someone accidentally deleted the mapping on our production search index. Before we panic: what are we supposed to rebuild it from?",
+    "expected": "Invokes system-of-record-vs-derived-data. A derived system can be discarded and regenerated from the system of record. Rebuild by replaying the CDC stream or event log from the beginning, or a full reload from the system of record. Afterward, record the rebuild time as the index's recovery time, and if no clear system of record exists, designate one.",
+    "notes": "Positive: trigger scenario 3, rebuilding a derived store."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "An audit found that our Postgres users table and the Redis user cache disagree on about 0.3% of records. Which one do we trust, and how do we stop it drifting again?",
+    "expected": "Invokes system-of-record-vs-derived-data. List every store the app writes to and flag pairs it writes to directly. Designate Postgres as the system of record and treat Redis as derived. Stop application writes to the cache, feed it from the system of record's ordered change stream, and verify it can be rebuilt from scratch.",
+    "notes": "Positive: trigger scenario 1, 'the cache and the database disagree, which wins?'."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Our accounts service is event-sourced: every change is an immutable event. The product team needs the current balance on every page load. Should we keep a materialized view or always fold the events at read time?",
+    "expected": "Invokes system-of-record-vs-derived-data. In an event-sourced system the log is the system of record, and a materialized current-state view is derived data that can be discarded and rebuilt by replaying the log. Notes that derived views update asynchronously, which matters for any feature needing read-your-writes, and that the event schema must stay readable for replay.",
+    "notes": "Positive: trigger scenario 5, event log as source of truth."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Postgres is our source of truth and Debezium already streams changes to Kafka. For keeping the recommendation features up to date, should we use a nightly Spark job or a Flink job reading the CDC topic?",
+    "expected": "Should not invoke system-of-record-vs-derived-data. The system of record is settled and propagation already exists; the open question is how to compute the derived output, which batch-vs-stream-processing-selection handles (latency requirement, replayability).",
+    "notes": "Decoy: derived-data topic after the authority question is answered. Sibling: batch-vs-stream-processing-selection."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I need to rename the cust_name column to customer_name on a busy production Postgres table without downtime. What's the safest sequence of steps?",
+    "expected": "Should not invoke system-of-record-vs-derived-data. This is a live schema change in one database, which fowler-database-parallel-change handles with expand-contract (expand, dual-write, backfill, migrate readers, contract).",
+    "notes": "Decoy: migration with dual writes inside one table. Sibling: fowler-database-parallel-change."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our Orders service and Inventory service each own their own database. When an order is placed, should Orders call Inventory synchronously, or publish an event and let Inventory catch up?",
+    "expected": "Should not invoke system-of-record-vs-derived-data. Each service owns a separate domain with no overlapping copy of the same data, which the skill's boundary excludes. Sync vs. async coordination between bounded contexts belongs to strong-consistency-across-bounded-contexts.",
+    "notes": "Decoy: two stores, but different data domains. Sibling: strong-consistency-across-bounded-contexts."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're moving from MySQL to Postgres. The plan is to have the app write to both for three months while we compare results, then cut over. Does that create the dual-write problem everyone warns about?",
+    "expected": "Invokes system-of-record-vs-derived-data (trigger scenario 4). Writing to both from the app has no total order, so the copies can diverge silently. Recommends keeping MySQL as the system of record during migration and feeding Postgres from its change stream until cutover, with an explicit exit criterion so the parallel period doesn't become permanent (the railway-gauge lesson). May also mention fowler-database-parallel-change for the schema-level expand-contract steps.",
+    "notes": "Boundary: a cross-database migration where this skill and fowler-database-parallel-change both touch dual writes."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We run active-active Postgres in two regions so each region can write locally, with conflict resolution between them. Which region's database is the system of record?",
+    "expected": "Boundary. The skill excludes co-equal systems built for geographic distribution with conflict resolution: that's multi-leader replication, not a system-of-record/derived-data relationship. Should defer to replication-topology-selection for conflict policies and topology trade-offs.",
+    "notes": "Boundary: the 'Do not use' clause on active-active multi-region. Sibling: replication-topology-selection."
+  }
+]

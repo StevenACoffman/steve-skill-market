@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Four services in our monorepo test against our auth package, and each one has its own 40-line copy of 'start an auth server on a random port with a test signing key'. Every time we change startup, all four break. How do we stop this?",
+    "expected": "Invokes testing-go-public-test-api. Create a regular testing.go file (not _test.go) in the auth package that exports a TestServer(t *testing.T) (net.Addr, io.Closer) factory, following the Vault example. It calls t.Fatalf on failure and never returns an error. Consumers call `addr, closer := auth.TestServer(t); defer closer.Close()`, and startup changes are fixed in one place.",
+    "notes": "Positive scenario: other packages duplicating setup, the description's first cue."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We have a BlobStore interface with S3, GCS and local-disk implementations owned by different teams. There are rules the type system can't capture, like 'Delete of a missing key returns nil' and 'Put creates parent prefixes'. Implementations keep getting them wrong. How do we enforce them?",
+    "expected": "Invokes testing-go-public-test-api with the compliance-suite pattern. Export TestBlobStore(t *testing.T, impl BlobStore) from testing.go, with a t.Run subtest named after each plain-English contract. Every implementor calls it once from their own _test.go. Because it takes an extra argument, go test does not run it automatically in the defining package.",
+    "notes": "Positive scenario: behavioral contracts the type system cannot express, as in the skill's TestDownloader case."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I put a nice fake PaymentGateway and a validConfig() helper in gateway_test.go, but the checkout package can't import them. Do I have to copy them over?",
+    "expected": "Invokes testing-go-public-test-api. _test.go files cannot be imported by other packages, and neither can helpers in an external foo_test package. Move them into a regular testing.go in package gateway: export a PaymentGatewayMock with fields that record calls and allow scripted returns, and a TestConfig(t) factory. The cost is that they compile into the production binary.",
+    "notes": "Positive scenario: the _test.go importability wall, the description's second cue."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "We publish a Go SDK for our queue service. Customers keep asking how to unit test code that uses our client without running a real broker. What should we ship?",
+    "expected": "Invokes testing-go-public-test-api. Ship testing.go in the SDK with an in-memory server constructor shaped like TestServer(t) (net.Addr, io.Closer), a mock struct implementing the client interface, and optionally a TestConfig(t) factory. These form a supported public test API that customers call from their own tests.",
+    "notes": "Positive scenario: a library author providing test infrastructure for consumers."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "My test helper `startFakeSMTP(t)` returns (addr string, err error), and every test checks the error. Should the helper just fail the test itself?",
+    "expected": "Should not invoke testing-go-public-test-api. The question is about the helper's signature, not its location or importability. test-helper-contract covers it: no error return, t.Helper(), t.Fatalf internally.",
+    "notes": "Decoy: the composes-with sibling. The skill's own Boundaries section says test-helper-contract governs signatures."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "How do I unit test my gRPC OrderService handlers against a real gRPC server without opening a TCP port?",
+    "expected": "Should not invoke testing-go-public-test-api. This is in-process gRPC testing. grpc-bufconn-unit-testing covers it with bufconn.",
+    "notes": "Decoy: test-server setup for one's own package, with no cross-package sharing."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "I'm testing a Withdraw function with five scenarios: insufficient funds, frozen account, and so on. It depends on an account store. How should I lay out the test?",
+    "expected": "Should not invoke testing-go-public-test-api. This is test-case design within one package. go-test-state-driven-table covers it: a named map-based table with a handwritten fake, asserting on state.",
+    "notes": "Decoy: a fake collaborator inside one package's tests, with no need to export it."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We have a plugin system where third parties write storage backends. Each needs to pass the same multi-step acceptance scenario: create, write, read back, delete, verify it's gone, with a PreCheck to skip when credentials are missing. Where does that harness go, and how should it be shaped?",
+    "expected": "Invokes testing-go-public-test-api together with custom-framework-within-go-test. custom-framework-within-go-test defines the harness structure: a TestCase with steps, PreCheck and cleanup. This skill supplies the mechanism: publish it from a regular testing.go so plugin authors in other packages can import it. The two skills often appear together.",
+    "notes": "Boundary: the skill's 'Confusion: Testing.go vs Custom-Framework-Within-Go-Test' section."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I added `func TestEndToEndCheckout(t *testing.T)` to our package's testing.go so other packages could reuse it. Now it runs every time anyone runs go test on our package. Also, our CLI binary is size-audited and I'm worried this test code ships in releases.",
+    "expected": "Invokes testing-go-public-test-api and applies its Boundaries. A zero-argument TestXxx(t *testing.T) in testing.go runs as a test case in the package, so standalone tests belong in _test.go. Exported helpers in testing.go take extra arguments or are factories or mocks. For the size-audited CLI, add `//go:build !production` at the top of testing.go to exclude it from release builds.",
+    "notes": "Boundary: the 'What Does NOT Belong in Testing.go' and 'Binary Size' sections."
+  }
+]

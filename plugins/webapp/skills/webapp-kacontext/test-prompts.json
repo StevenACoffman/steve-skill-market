@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm writing a webapp service function that loads a record from datastore, logs a line, and sends an email. How should I type its ctx parameter?",
+    "expected": "Invokes webapp-kacontext. Declares a named interface embedding kacontext.Base, log.KAContext, datastore.KAContext and emails.KAContext, and nothing else, because ka-context-interface requires every embedded sub-interface to be used. Does not take kacontext.TestContext or *kacontext.KAContext in production signatures. Inline anonymous interfaces suit one- or two-capability helpers.",
+    "notes": "Positive scenario: sub-interface selection for a new function."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "ka-context-interface is complaining that my webapp function embeds gqlclient.KAContext and emails.KAContext. I removed them and now go vet says imported and not used. Help me clean this up.",
+    "expected": "Invokes webapp-kacontext. Confirms the linter wants only sub-interfaces the body calls or passes to callees, then cleans up the now-unused imports per references/stale-imports.md: collect the files go vet ./... reports as imported and not used, and run goimports -w on each.",
+    "notes": "Positive scenario: lint fix followed by the stale-import follow-up the skill documents."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "My gqlgen resolver in webapp receives a plain context.Context. How do I get the logger and the current user inside it?",
+    "expected": "Invokes webapp-kacontext. Calls kacontext.Upgrade(ctx) at the top of the resolver, assigning it to an inline interface with kacontext.Base, context.Context (so ktx can go to library code), log.KAContext, web.AuthedUserContext and whatever else is used. Then ktx.RequestUser() and ktx.Log(). Resolvers are an approved Upgrade entry point.",
+    "notes": "Positive scenario: Upgrade at a resolver entry point."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I have a sub.Receive callback in webapp processing Pub/Sub messages, and the log lines from different messages can't be told apart. No request or trace IDs. What's missing?",
+    "expected": "Invokes webapp-kacontext. The callback gets a plain context.Context, so it calls kacontext.Upgrade(baseCtx).MaybeSetRequestIDAndTraceID() to give each message a fresh trace and request ID, typed to an inline interface with the sub-interfaces it uses (for example pubsub.LogContext).",
+    "notes": "Positive scenario: the Pub/Sub handler Upgrade case."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "In webapp I wrote ctx.Log().Error(fmt.Sprintf(\"sync failed for %s\", kaid)) and lint doesn't like it. How are you supposed to log errors with some context attached?",
+    "expected": "Invokes webapp-kacontext. Warn, Error and Panic take only a Khan error; attach context with errors.Wrap(err, \"kaid\", kaid). Debug and Info take a fixed message plus optional log.Fields. Never pass fmt.Sprintf as a message (ka-log), and do not mix up log.Fields and errors.Fields.",
+    "notes": "Positive scenario: the two logging calling conventions."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I need to publish a protobuf message with an ordering key from webapp so a user's events are processed in order. What's the call?",
+    "expected": "Should invoke webapp-pubsub, not webapp-kacontext: SendProtobufWithOrderingKey, enableMessageOrdering true on the subscription in pubsub.yaml, and ResumePublish after a failed key.",
+    "notes": "Decoy: involves pubsub.KAContext, but the question is about the Pub/Sub API."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "In my own Go HTTP library I want to record why a context was cancelled so callers can see the reason. What's the modern way?",
+    "expected": "Should not invoke webapp-kacontext; the skill is limited to github.com/Khan/webapp. The context-cancellation-cause skill covers context.WithCancelCause and context.Cause in general Go code.",
+    "notes": "Decoy: Go context question outside webapp."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "What's the cleanest way to make a webapp test return a specific flag value for one user and not others?",
+    "expected": "Should invoke webapp-featureflags (or webapp-testing), not webapp-kacontext: assert to *featureflags.TestClient and use MockFlagValueForAttributes.",
+    "notes": "Decoy: touches the test KAContext, but it's about flag mocking."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "My webapp test needs a KAContext with a custom secrets client that returns a known value. Where do I get the context and how do I swap the client?",
+    "expected": "Likely invokes webapp-testing: servicetest.Suite's s.KAContext().Clone(), then secrets.NewTestClient(), RegisterSecret and assign ctx.SecretsClient. webapp-kacontext's references/kacontext-testing.md also covers test contexts (suite.KAContext() and With* helpers such as WithDatastore), so either may load.",
+    "notes": "Boundary: test contexts appear in both skills; webapp-testing has the fuller replacement table."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Reviewing a webapp PR, I see a helper that takes ctx kacontext.TestContext in production code. The author says it saves typing. Is that OK?",
+    "expected": "Invokes webapp-kacontext. kacontext.TestContext is the test omnibus and must not appear in production signatures; ka-context-interface fires for every unused capability. Replace it with a named or inline interface of only what the body calls. The umbrella webapp checklist says the same (KAContext interfaces embed only what is used), and webapp-review applies if the findings are to be posted on the PR.",
+    "notes": "Boundary: a review finding that the umbrella checklist also covers; kacontext has the specific guidance."
+  }
+]

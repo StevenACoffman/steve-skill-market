@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I want to start using vale on my personal blog repo. Nothing is set up yet. What do I install and what does the config file look like?",
+    "expected": "Invokes vale-cli. Checks for the vale binary (brew/scoop/snap or GitHub releases), explains global vs project-local setup, writes a `.vale.ini` with StylesPath, MinAlertLevel, Packages and a `[*.md]` BasedOnStyles section, runs `vale sync`, then lints with `vale --glob='*.md' .` or with `--config` when the config lives in a subdirectory.",
+    "notes": "Positive scenario: first-time install and configuration."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I added Vocab = MyTerms under the [*.md] section of .vale.ini and vale still flags all our product names. The accept.txt file definitely exists.",
+    "expected": "Invokes vale-cli. Identifies the common mistake: `Vocab` is a top-level key and is silently ignored under a section header. Moves it above the sections, and confirms the accept.txt lives at `StylesPath/config/vocabularies/MyTerms/accept.txt`.",
+    "notes": "Positive scenario: misplaced Vocab key, a failure the skill names explicitly."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our team writes 'utilize' and 'leverage' all over the place. Can you write a vale rule that suggests 'use' instead and wire it into our config?",
+    "expected": "Invokes vale-cli custom-rule guidance. Writes a `substitution` rule YAML with a `swap` map under a style directory in StylesPath, adds that style to `BasedOnStyles`, and validates it with `vale compile path/to/rule.yml` before linting. May read references/custom-rules.md for rule types and scopes.",
+    "notes": "Positive scenario: custom rule authoring."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I keep hearing about the vale-ai-tells package for catching AI-written prose. How do I add it to my vale setup and keep it from changing under me?",
+    "expected": "Invokes vale-cli and its vale-ai-tells reference. Explains the two styles (ai-tells for prose, ai-tells-commits for commit messages), discovers the latest release tag via GitHub's /releases/latest redirect, pins full release-zip URLs in `Packages =`, lists the chosen style(s) in BasedOnStyles, and runs `vale sync`. Pinning instead of tracking latest keeps sync reproducible.",
+    "notes": "Positive scenario: third-party package install and version pinning."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Can you check my Markdown files for line-length violations and fix heading levels that skip from h2 to h4?",
+    "expected": "Structural Markdown lint (MD013 line length, MD001 heading increment). Should not invoke vale-cli; rumdl owns these rules.",
+    "notes": "Decoy: Markdown linting, but rule set belongs to rumdl, not a prose linter."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our docs CI uses a markdown formatter that keeps turning --- into a long row of underscores. Why?",
+    "expected": "mdformat's thematic-break normalization. Should not invoke vale-cli; mdformat explains that `---` becomes 70 underscores and how to preserve it with `<!-- mdformat off -->`.",
+    "notes": "Decoy: Markdown tooling question for a different tool."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Rewrite this paragraph from our onboarding doc so it sounds friendlier and less formal.",
+    "expected": "Plain editing request with no linter. Should not invoke vale-cli; just rewrite the paragraph.",
+    "notes": "Decoy: prose quality topic with no Vale involvement."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "This repo already has .vale/.vale.ini and a bunch of vocab files. Just run vale on the changed docs and clean up whatever it finds.",
+    "expected": "Primarily the vale skill: the repo is already configured with `.vale/.vale.ini`, so the task is vale's run-triage-fix loop with `--config=.vale/.vale.ini --no-global`. vale-cli adds nothing beyond its own generic linting workflow here; it applies if the config itself needs changing.",
+    "notes": "Boundary: vale-cli vs vale. Both descriptions mention running vale; the existing project config tips this one to vale."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I want to lint a commit message I'm about to make with ai-tells-commits. I've never installed vale-ai-tells. Walk me through it.",
+    "expected": "Both skills apply in sequence. vale-cli owns installing vale, discovering the latest vale-ai-tells tag, and writing the scratch `.vale.ini`; then the vale skill owns the lint loop (`vale --config=\"$SCRATCH/.vale.ini\" --no-global`, triage, `git commit -F`). Message structure itself is unconventional-commits' job.",
+    "notes": "Boundary: install (vale-cli) vs lint-and-fix (vale) vs message structure (unconventional-commits)."
+  }
+]

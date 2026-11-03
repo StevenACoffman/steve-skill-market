@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I need to stand up a GraphQL API in Go for a small todo service. I want to write the schema first and have the Go types generated. Where do I start?",
+    "expected": "Invokes gqlgen-app. Runs `go get github.com/99designs/gqlgen` and `gqlgen init`, then explains the layout: graph/schema.graphqls (edit), generated.go and models_gen.go (do not edit), resolver.go and schema.resolvers.go (edit). Adds a `//go:generate go run github.com/99designs/gqlgen generate` directive and regenerates with `go generate ./...`.",
+    "notes": "Positive scenario: schema-first GraphQL server setup from scratch."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I swapped our gqlgen server setup over to handler.New(schema) and now every single request comes back 400. The schema didn't change. What broke?",
+    "expected": "Invokes gqlgen-app. Diagnoses the missing-transports mistake: handler.New adds no transports, so the server rejects requests. Fix with srv.AddTransport(transport.POST{}) at minimum, plus Options, GET, Websocket or MultipartForm as needed. May also note that introspection is off until srv.Use(extension.Introspection{}) is added.",
+    "notes": "Positive scenario: the skill's first Common Mistake, given as a symptom rather than named."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Our gqlgen API lists 200 orders and each order has a customer field. The logs show 201 SQL queries per request. How do I batch the customer lookups?",
+    "expected": "Invokes gqlgen-app and loads references/dataloaders.md. Uses a dataloader (the reference's examples use github.com/vikstrous/dataloadgen; vektah/dataloaden is the code-generated option), creates loaders per request in HTTP middleware, attaches them to the context, and makes the order's customer field resolver call the loader. Field resolvers can be forced with @goField(forceResolver: true).",
+    "notes": "Positive scenario: N+1 query fix with dataloaders."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "My gqlgen resolvers need a Postgres handle and a Redis client. Right now I'm using package-level globals. What's the idiomatic way to inject them?",
+    "expected": "Invokes gqlgen-app. Puts dependencies as fields on the root Resolver struct in resolver.go, constructed in main and passed through generated.Config{Resolvers: resolver}. Shows the type-cast pattern (type queryResolver Resolver) so query, mutation and field resolvers share the fields with no copy.",
+    "notes": "Positive scenario: dependency injection via the Resolver struct."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Someone hit our public GraphQL endpoint with a deeply nested query and pinned the CPU. We're on gqlgen. How do I cap how expensive a query can be, and make the paginated list fields cost more?",
+    "expected": "Invokes gqlgen-app. Adds srv.Use(extension.FixedComplexityLimit(1000)); explains each field defaults to complexity 1, then sets Config.Complexity (ComplexityRoot) functions such as childComplexity * limit for paginated fields.",
+    "notes": "Positive scenario: query complexity limiting."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I'm writing a Go CLI that pulls product data from a vendor's GraphQL API. I'd like typed Go structs for the responses instead of map[string]any.",
+    "expected": "Should not invoke gqlgen-app; this is a GraphQL client. Belongs to genqlient: write .graphql operations, configure genqlient.yaml, and call the generated functions.",
+    "notes": "Decoy: GraphQL code generation in Go, but client side; sibling skill genqlient."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "How do I test a GraphQL resolver in Khan/webapp? I keep seeing BuildTestClientForSchema and gqltest.Query in other tests.",
+    "expected": "Should not invoke gqlgen-app. Resolver tests inside Khan/webapp use webapp's own helpers (BuildTestClientForSchema, gqltest.Query/Mutate/QueryType), which webapp-testing and webapp-graphql cover.",
+    "notes": "Decoy: resolver testing, but in a repo with its own GraphQL test harness; sibling skills webapp-testing / webapp-graphql."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "We're exposing a public API to third-party developers. Is GraphQL a better fit than REST for that, or is it overkill?",
+    "expected": "Should not invoke gqlgen-app; no server is being built yet. Protocol selection belongs to grpc-vs-rest-vs-graphql.",
+    "notes": "Decoy: GraphQL architecture choice, not gqlgen usage."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our Go backend needs to receive real-time price updates from a partner's GraphQL subscription endpoint. How do I set up the subscription?",
+    "expected": "Should not invoke gqlgen-app even though subscriptions appear in its references: here the Go service is the subscriber, not the server. genqlient handles it with graphql.NewClientUsingWebSocket (references/subscriptions.md). gqlgen-app would apply only if this service were serving subscriptions over transport.Websocket or transport.SSE.",
+    "notes": "Boundary: 'subscriptions' is in both skills' scope; direction (client versus server) decides between genqlient and gqlgen-app."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "For integration tests of my gqlgen server, should I generate a genqlient client against my own schema and call the server with it, or is there something built in?",
+    "expected": "Invokes gqlgen-app for the built-in path: the github.com/99designs/gqlgen/client package, client.New(srv) and c.MustPost(query, &resp) with variables and headers (references/testing.md). A genqlient client against the server is a client-side concern that genqlient covers. gqlgen-app should not claim one approach is wrong; it documents only the client helper.",
+    "notes": "Boundary: testing a gqlgen server with a genqlient client mixes both siblings; gqlgen-app owns the built-in test helper."
+  }
+]

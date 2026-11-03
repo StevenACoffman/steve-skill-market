@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're launching in Europe and the EU team wants writes to land locally instead of crossing the Atlantic to us-east. Someone suggested multi-leader Postgres. What should we think through before doing that?",
+    "expected": "Invokes replication-topology-selection. Default to single-leader and move to multi-leader only after cross-region write latency is shown to be a measured problem. Write down the write-availability requirement during a partition and the read consistency requirement per data type. If multi-leader is chosen, conflicts are certain, so every writable data type needs an explicit resolution policy (LWW only where silent loss is acceptable, application merge, or CRDTs). Notes the book calls multi-leader for shared data dangerous territory.",
+    "notes": "Positive: trigger scenario 1, multi-region writes."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "During last week's incident, after the automatic failover, two database nodes both thought they were primary and both accepted order writes for a few minutes. How do we make sure that can't happen again?",
+    "expected": "Invokes replication-topology-selection and identifies split-brain (ce10) from timeout-based failover. Prescribes explicit fencing so the old leader can't accept writes (STONITH, epoch tokens, or a Raft leadership term), plus failover safety for single-leader: semi-synchronous replication or catching up before promotion. Mentions fencing-tokens-distributed-locks as the composing mechanism.",
+    "notes": "Positive: trigger scenario 3, split-brain post-mortem."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're picking a database for a new payments ledger. It's CockroachDB versus Cassandra. Cassandra's write availability is attractive. How should we decide?",
+    "expected": "Invokes replication-topology-selection. CockroachDB is consensus-based single-leader per shard; Cassandra is leaderless. Leaderless with quorum doesn't give linearizability, because of variable network delay and LWW with clock skew, so it can't safely back uniqueness checks or financial totals. For a ledger, the read-consistency requirement points to consensus or single-leader. Choose leaderless only when availability during partition is the explicit requirement and the data merges naturally (the Dynamo shopping-cart case).",
+    "notes": "Positive: trigger scenario 5."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our MySQL primary died, and we promoted an async replica that was behind. Afterward, new rows got auto-increment IDs that the old primary had already handed out, and those IDs are referenced in our Redis cache. Now cached data points at the wrong records. What in our setup allowed this?",
+    "expected": "Invokes replication-topology-selection and matches the GitHub case: fully asynchronous single-leader replication left a durability window, and promoting a lagging follower reused primary keys that external systems already referenced. Prescribes semi-synchronous replication or requiring the follower to catch up before promotion, plus fencing. When external systems reference primary keys, async failover without fencing is unsafe.",
+    "notes": "Positive: the book's GitHub MySQL case and failure pattern ce09."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Our events table is 6 TB and write throughput is more than a single Postgres node can take, even on the biggest instance. How should we split the data across machines?",
+    "expected": "Should not invoke replication-topology-selection. Splitting different data across nodes is sharding, not replication, and the skill's boundary sends it to sharding-strategy-selection (partition key, hash vs. range, hot spots).",
+    "notes": "Decoy: scaling across nodes, but data volume and write throughput point to sharding-strategy-selection."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Does our coupon redemption check need linearizable reads, or is eventual consistency good enough? Each coupon can only be used once.",
+    "expected": "Should not invoke replication-topology-selection. Whether one operation needs linearizability is a consistency-model question, and the skill's boundary sends it to consistency-model-selection. (Single-use is a uniqueness constraint, so it does need linearizability.)",
+    "notes": "Decoy: per-operation guarantee question. Sibling: consistency-model-selection."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We already run single-leader Postgres with two read replicas. Users sometimes see their old avatar right after uploading a new one. How do we fix that without dropping the replicas?",
+    "expected": "Should not invoke replication-topology-selection. The topology is already chosen and fine; this is a read-your-writes problem inside it, which replication-lag-as-correctness handles with leader routing or LSN gating.",
+    "notes": "Decoy: replica staleness within an existing topology. Sibling: replication-lag-as-correctness."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We're on Cassandra with QUORUM reads and writes. The team believes this gives us strong consistency for the inventory check before we accept an order. Is that belief safe to build on?",
+    "expected": "Shared with consistency-model-selection. replication-topology-selection fits because it lists this exact scenario: quorum (w + r > n) doesn't give linearizability with variable network delay and LWW under clock skew. Recommends documenting which operations can't run on leaderless (inventory enforcement, uniqueness) and using single-leader or consensus for them. Either skill could lead; both reach the same conclusion.",
+    "notes": "Boundary: the 'quorum = strong consistency' misconception is covered by this skill and consistency-model-selection."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "In our leaderless key-value store with last-write-wins, users say recent edits sometimes just disappear. Is the problem our topology or something else?",
+    "expected": "Overlaps clock-skew-ordering-hazard. replication-topology-selection notes that leaderless with LWW loses writes silently (ce11) and that clock skew makes causally later writes look older (ce20), so the topology choice requires an explicit conflict policy. clock-skew-ordering-hazard gives the concrete remedy (logical clocks or version vectors instead of wall-clock comparison). Should point to both.",
+    "notes": "Boundary: LWW data loss straddles topology choice and clock-based conflict resolution."
+  }
+]

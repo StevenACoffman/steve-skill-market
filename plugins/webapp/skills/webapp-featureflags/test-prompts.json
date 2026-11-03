@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I'm adding a streaming translation path to a webapp HTTP handler and want it behind a GrowthBook flag so we can turn it on per user. How do I check the flag in Go?",
+    "expected": "Invokes webapp-featureflags. Embeds featureflags.KAContext in the handler's context interface, defines a named FeatureFlagName constant, and calls ctx.FeatureFlags().IsOn(ctx, flag, featureflags.Attributes{Kaid: kaid}), getting the kaid from RequestUser when present. Returns the error and branches on the boolean.",
+    "notes": "Positive scenario: the production usage pattern."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "My webapp test started failing with \"You must set a mock value for this flagname\" after I added a flag check to the code under test. What am I missing?",
+    "expected": "Invokes webapp-featureflags. servicetest.Suite wires a featureflags.TestClient, and every flag the code evaluates must be mocked. Asserts ctx.FeatureFlags() to *featureflags.TestClient and calls MockFlagValue(flagName, true) before running the code.",
+    "notes": "Positive scenario: the exact unmocked-flag error the skill documents."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We want the new webapp feature on only for Spanish-locale users at first. What can I pass to GrowthBook from Go so the rule can target that?",
+    "expected": "Invokes webapp-featureflags. Attributes supports only Kaid and KALocale; pass KALocale (for example \"es\") and let the GrowthBook rule target that value. No other attributes are available.",
+    "notes": "Positive scenario: Attributes struct limits."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our webapp flag isn't a boolean, it returns a variant string like control or treatment-a. IsOn just says true for both. How do I read the actual variant?",
+    "expected": "Invokes webapp-featureflags. IsOn uses truthy semantics, so any non-empty string is on. Use GetFeatureValue to get the raw value (bool, string, int and so on) and switch on it.",
+    "notes": "Positive scenario: IsOn truthiness vs GetFeatureValue."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "In a webapp test I need the flag on for one specific teacher kaid and off for everyone else. How do I mock that?",
+    "expected": "Invokes webapp-featureflags. Uses TestClient.MockFlagValueForAttributes(flag, featureflags.Attributes{Kaid: ...}, true) for the one teacher, plus a global MockFlagValue(flag, false); other kaids fall through to the global mock, or error if none is set.",
+    "notes": "Positive scenario: attribute-specific mocking."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "In webapp, after a learner signs up, I need to run a follow-up job 30 minutes later exactly once. What's the right mechanism?",
+    "expected": "Should invoke webapp-tasks, not webapp-featureflags: CreateTask with ScheduleTime, optionally a Name for deduplication, handled by serve.CreateTaskHandler.",
+    "notes": "Decoy: a rollout-adjacent backend request with no flag involved."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our React frontend needs to read the same GrowthBook flag the Go backend uses. How do I check it in a component?",
+    "expected": "Should not invoke webapp-featureflags. The skill covers the Go featureflags package in webapp only; frontend flag reads need general GrowthBook or frontend guidance.",
+    "notes": "Decoy: same flag, different language and layer than the skill covers."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "How do I create a new feature flag and set up a percentage rollout rule in GrowthBook's dashboard?",
+    "expected": "Should not invoke webapp-featureflags. That is GrowthBook configuration, not webapp Go code; the skill does not describe creating flags or rules in GrowthBook.",
+    "notes": "Decoy: flag topic with no code to write."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "A reviewer flagged that my webapp service function three layers down calls ctx.FeatureFlags().IsOn. They said to move it but didn't say where. What's the pattern?",
+    "expected": "Invokes webapp-featureflags. Evaluate flags at the outermost layer (HTTP handler, task handler or cron function) and pass the resulting bool or variant inward as a plain parameter, so the service function drops its featureflags.KAContext dependency and its tests need no flag mocks. webapp-kacontext may also help with narrowing the context interface after the change.",
+    "notes": "Boundary: flag placement is this skill's, but narrowing ctx afterwards overlaps webapp-kacontext."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Which test suite should I use in webapp for code that checks a feature flag, and how do I get at the fake flag client?",
+    "expected": "Likely invokes webapp-testing for suite selection: servicetest.Suite, because the code needs a KAContext with fake clients, and khantest.Suite has none. webapp-featureflags supplies the mocking API (assert to *featureflags.TestClient, MockFlagValue). Either skill may load; both describe the TestClient.",
+    "notes": "Boundary: suite choice belongs to webapp-testing; flag mocking detail to webapp-featureflags."
+  }
+]

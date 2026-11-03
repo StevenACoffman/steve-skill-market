@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "A customer changed their delivery address, got a success message, and the order confirmation page still showed the old address. They panicked and submitted the change again. Our backend lead says it's eventual consistency and it'll catch up in a second. Is that an acceptable answer?",
+    "expected": "Invokes replication-lag-as-correctness and names a read-your-writes violation. 'It'll catch up' isn't a fix: there's no bound on when, and the user acts on the stale read in the meantime (here a duplicate submit). Prescribes structural routing: send reads of recently written data to the leader for a window after the user's write, or return the write's LSN and gate replica reads until the replica has caught up to it.",
+    "notes": "Positive: the book's address-update case; read-your-writes plus the 'it'll catch up' signal."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "People are reporting that posts vanish from their feed when they refresh: 20 items, then 17, then 20 again a bit later. Nothing was deleted. Reads are load-balanced across several replicas.",
+    "expected": "Invokes replication-lag-as-correctness and names a monotonic reads violation: successive requests hit replicas at different replication positions. Prescribes session-sticky routing, sending a user's reads to the same replica for the session with the replica ID stored in the session, and accepting a one-time regression if that replica fails.",
+    "notes": "Positive: the book's social-feed case."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "In our Q&A comments, some users see an answer before the question it's replying to. It sorts itself out after a few seconds, but it looks broken. Comments are spread across shards with their own replicas.",
+    "expected": "Invokes replication-lag-as-correctness and names a consistent prefix reads violation: causally related writes replicated through different shards at different speeds. Prescribes sending causally related writes (a question and its replies) to the same shard or replication stream so their order is preserved.",
+    "notes": "Positive: trigger scenario 3, consistent prefix."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "A user resets their password and immediately tries to log in with the new one, and it fails. Thirty seconds later it works. The auth service reads credentials from a read replica. What's the right fix?",
+    "expected": "Invokes replication-lag-as-correctness and names a read-your-writes violation on the credential read path. Maps which read paths need the guarantee, then routes credential reads after a recent password change to the leader, or gates them on the write's LSN. Recommends testing by artificially pausing a replica.",
+    "notes": "Positive: trigger scenario 1."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "Users complain that after editing a post title, the post page shows the old title and some of them edit it again. Our DBA's plan is to move replicas to bigger instances to cut lag from about 200ms to 20ms. Will that solve it?",
+    "expected": "Invokes replication-lag-as-correctness and applies 'do not treat lag reduction as the fix': lower lag shrinks the window but doesn't remove the violation, because a user who acts within 20ms still sees stale data. The fix is structural (leader routing or LSN gating for the post-edit read path), and the architecture doc should say which paths are leader-routed or LSN-gated rather than 'we minimize lag'.",
+    "notes": "Positive: trigger scenario 2 plus the lag-reduction-vs-routing confusion."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our analytics dashboard is fed by a pipeline that runs every 15 minutes, so the numbers are always a bit behind. Leadership is fine with that. Can you help me add a 'last updated' timestamp to the dashboard header?",
+    "expected": "Should not invoke replication-lag-as-correctness. The skill excludes lag in a batch analytics pipeline feeding a dashboard, which is expected and accepted. This is a small UI task.",
+    "notes": "Decoy: staleness that is accepted and comes from a batch pipeline, not replica routing."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We cache user profiles in Redis and delete the key on update, but sometimes the old profile shows up again right after an update. How should our cache invalidation work?",
+    "expected": "Should not invoke replication-lag-as-correctness. The skill excludes stale reads from a cache invalidated on write, which is a related but separate problem. system-of-record-vs-derived-data is the better fit (the cache is derived data, fed from the system of record), or answer directly about invalidation races.",
+    "notes": "Decoy: stale reads from a cache rather than a replica; listed in the skill's 'Do not use'."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Two admins edited the same product price at the same time on our primary database, and one admin's change just vanished. Which isolation level prevents this?",
+    "expected": "Should not invoke replication-lag-as-correctness. This is a lost update between concurrent writers on the primary, which transaction-isolation-level-selection handles. It has nothing to do with replicas.",
+    "notes": "Decoy: lost data on the primary. Sibling: transaction-isolation-level-selection."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our fulfillment workflow reads order status from a replica, and sometimes sees 'payment pending' for an order whose payment was confirmed half a second earlier on the primary, so it skips shipping it. Is this the same kind of issue as users seeing stale profile data?",
+    "expected": "Invokes replication-lag-as-correctness for the mechanism (a stale replica read on a path that needs read-after-write, fixed by leader routing or LSN gating). Should also draw on timeliness-vs-integrity-distinction: this is a decision read gating a workflow step, not a display read, so the stale value can produce a wrong action rather than just a confusing view.",
+    "notes": "Boundary: trigger scenario 5 here, but classifying it as decision vs. display belongs to timeliness-vs-integrity-distinction."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our primary crashed and we promoted a replica that was a few seconds behind. Some orders customers were told had succeeded are now just gone. Is this a replication lag problem we can fix with read routing?",
+    "expected": "Boundary. The skill's own counter-example (ce09) separates this from its scope: lag lost acknowledged writes on failover, which is a durability problem, not a read-side visibility problem, and read routing won't fix it. Should defer to replication-topology-selection for failover safety (semi-synchronous replication, catching up before promotion).",
+    "notes": "Boundary: a lag consequence outside the read-correctness scope. Sibling: replication-topology-selection."
+  }
+]

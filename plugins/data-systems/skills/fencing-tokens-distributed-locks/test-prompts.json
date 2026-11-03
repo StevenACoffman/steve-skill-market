@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Our invoicing job grabs a Redis lock with SETNX and a 30-second TTL so only one worker runs it. The post-mortem shows it ran twice last night and customers got double invoices. Both workers saw the lock correctly. Should we just shorten the TTL?",
+    "expected": "Invokes fencing-tokens-distributed-locks. Diagnoses a zombie leaseholder: one worker paused (GC, VM suspension, network delay) past the TTL, the lock went to the second worker, and the first resumed still believing it held the lock. Shortening the TTL can't fix this because pause length has no lower bound. Redis doesn't issue fencing tokens natively, so either replace the lock service or use a Lua script that atomically increments a counter and returns it with the grant. The protected storage must then reject any write whose token is lower than the highest it has seen.",
+    "notes": "Positive: trigger scenario 1, Redis SETNX with a TTL and a duplicate job run."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We use etcd leases for leader election, and the leader writes reconciliation results to Postgres. How do we make sure a leader that just lost its lease can't still sneak in a write?",
+    "expected": "Invokes fencing-tokens-distributed-locks. Use etcd's revision number as the fencing token, pass it with every write, and have the database enforce it: add a lock_token column, make writes conditional on the stored token being lower than the incoming one, and update the stored token atomically with the write. Rejected writes should return an explicit error, not be silently discarded. Test it by pausing the old leader past its lease and confirming its write with the stale token is rejected.",
+    "notes": "Positive: trigger scenario 3, etcd leader election driving database writes."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "A service takes a ZooKeeper lease before writing objects to S3. Kubernetes sometimes preempts and freezes pods for a while. If that happens mid-write, are we still safe?",
+    "expected": "Invokes fencing-tokens-distributed-locks. A frozen pod can resume after its lease expired and write as a zombie. Prescribes ZooKeeper's zxid or cversion as the fencing token and enforcement at the storage target with S3 conditional writes (If-Match / If-None-Match). The lock service and the storage service don't need to be the same system, because the token is a portable proof of the lock generation.",
+    "notes": "Positive: trigger scenario 2 and the book's ZooKeeper case."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Reviewing a PR that adds a distributed lock around our ledger compaction step. The author says the lease is 10 seconds and our GC pauses never exceed 200ms, so we're safe. Should I approve it?",
+    "expected": "Invokes fencing-tokens-distributed-locks. Rejects the TTL-margin argument: no bound on process pauses or network delay is guaranteed, so a TTL lock alone doesn't give mutual exclusion. Requests a monotonically increasing token from the lock service, token checks at the protected resource, and a test that simulates a pause longer than the TTL, confirming the stale-token write is rejected and the newer one succeeds.",
+    "notes": "Positive: the language signal 'our lease has a 10-second TTL, so we should be safe' in a code-review setting."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Inside one Postgres transaction I do SELECT ... FOR UPDATE on the account row, then update the balance. Is there any chance two transactions update the same row at once?",
+    "expected": "Should not invoke fencing-tokens-distributed-locks. The description excludes single-transaction row locks: the database provides mutual exclusion atomically and row locks don't expire on a TTL. Answer directly, or with transaction-isolation-level-selection if the question widens to isolation levels.",
+    "notes": "Decoy: locking vocabulary, but a single-database row lock is explicitly out of scope."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I have a Go struct with a map that several goroutines update. Should I wrap it in a sync.Mutex or use a sync.RWMutex?",
+    "expected": "Should not invoke fencing-tokens-distributed-locks. This is an in-process lock with no lease or distributed state. Answer as a Go concurrency question; mutex-closure-atomic-mutation is the relevant go-craft skill.",
+    "notes": "Decoy: 'lock' keyword, but in-process. Sibling: mutex-closure-atomic-mutation."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Our mobile client retries the 'place order' POST when it times out, and sometimes a customer gets charged twice. How do we stop duplicate charges?",
+    "expected": "Should not invoke fencing-tokens-distributed-locks. No lock is involved: these are duplicate retries from the same client, which idempotency keys handle. The skill itself separates the two: fencing tokens stop concurrent zombie writers, idempotency keys stop retry duplicates. timeliness-vs-integrity-distinction may help classify the double charge as an integrity violation.",
+    "notes": "Decoy: duplicate writes, but caused by retries rather than an expired lease."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "We use a distributed lock so only one worker rebuilds a cached product summary at a time. The rebuild just overwrites the cache entry with a freshly computed value. Do we need fencing tokens here too?",
+    "expected": "Boundary. The skill doesn't apply when the protected operation is idempotent and duplicate writes are safe: fencing tokens fix concurrent-write correctness, and overwriting with a recomputed value isn't a correctness risk (at most wasted work). Should say so and not prescribe fencing.",
+    "notes": "Boundary: the 'Do not use' clause for idempotent protected resources."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "After a network blip our database failover promoted a replica, but the old primary kept taking writes from some app servers for about a minute. Now we have two conflicting sets of orders. How do we prevent split-brain next time?",
+    "expected": "Shares the topic with replication-topology-selection, which owns failover safety for single-leader setups (semi-synchronous replication, catching up before promotion). fencing-tokens-distributed-locks contributes the mechanism: an epoch or term number issued with each promotion and checked by the storage target, so the demoted leader's writes are rejected. Notes that STONITH alone is less reliable because delayed writes can still arrive.",
+    "notes": "Boundary: replication-topology-selection composes-with this skill for split-brain prevention."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're designing leases for workers on customer-owned edge devices we don't control. Could a compromised device just send a really high fencing token to get its writes accepted?",
+    "expected": "Boundary. Fencing tokens assume honest nodes; the skill explicitly scopes out Byzantine faults, where a malicious process could forge a token. Should say that untrusted participants fall outside what fencing tokens protect against, and not present fencing as a defense against a lying node.",
+    "notes": "Boundary: the 'Do not use' clause on Byzantine faults."
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I have three Markdown style guides for Go from different teams. I want them turned into one ruleset an agent must follow, with every rule traced back to a source.",
+    "expected": "Invokes canonizer. `canonizer distill --source SRC_DIR --out PROMPTS_DIR --rulesout RULES_DIR`, run each prompt, `canonizer synthesize`, then `fmt`, `verify --source` with every source, a cold-critic prompt run in a fresh session, `loop --attempt 1 --max 3`, and `rework` on exit 2. Or `./pipeline.sh --src-dir ... --out-root ... --max-attempts 3 SUBDIR`.",
+    "notes": "Positive scenario: sources to gated ruleset."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "canonizer verify exited 0 on my go_rules.md, so it's good to ship, right?",
+    "expected": "Invokes canonizer. No: verify exits 0 even when findings block; it reports, it does not decide. Feed findings to `gate`, `budget` or `loop` and branch on their exit code. Also confirm `--source` was passed, or unchecked anchors only warn.",
+    "notes": "Positive scenario: misreading verify's exit code."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "canonizer loop just exited 2 on attempt 1 of 3. What now?",
+    "expected": "Invokes canonizer. Exit 2 = rework. Run `canonizer rework --ruleset R.md --findings findings.json --findings critic_findings.json --out rework_prompt.md`, run it (it edits R.md in place without renumbering §), increment the attempt, then fmt/verify/critic/loop again. Exit 1 would mean needs-human.",
+    "notes": "Positive scenario: interpreting a loop exit code."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "I hand-edited a few rules in our ruleset and now verify reports 'non-canonical'. What did I break?",
+    "expected": "Invokes canonizer. Run `canonizer fmt --ruleset R.md` after hand edits; non-canonical fires against exactly what fmt would write, and fmt loses no text.",
+    "notes": "Positive scenario: canonical form."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Score my SKILL.md against the quality rubric and suggest the weakest dimension to fix.",
+    "expected": "Skill grading. Should not invoke canonizer; it says to use skillsaw-skill for a skill's SKILL.md.",
+    "notes": "Decoy: same independent-grader idea, applied to skills instead of rulesets."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Turn this book on distributed systems into a set of skills agents can invoke.",
+    "expected": "Book to invocable skills. Should not invoke canonizer; book2skill does this.",
+    "notes": "Decoy: distillation of a different output form."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Write a CLAUDE.md with some coding conventions for our repo, like using table-driven tests and wrapping errors.",
+    "expected": "Free-form guidance with no source documents. Should not invoke canonizer; it is not for free-form Markdown rules with no source. Write the file directly.",
+    "notes": "Decoy: rule-writing without sources."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "You just wrote this ruleset from the sources. Now act as the cold critic and grade it.",
+    "expected": "Invokes canonizer but refuses to grade in the same session: never grade a ruleset you wrote; run the critic prompt (`canonizer critic --source ... --ruleset ... --out critic_prompt.md`) in a new session that sees only sources and ruleset.",
+    "notes": "Boundary: the cold-critic rule blocks the requested shortcut."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "The rework findings say rule §3.2 has an anchor that isn't in any source. Can I just downgrade it to [CONSIDER] so it stops blocking?",
+    "expected": "Invokes canonizer's rework rules: do not downgrade to [CONSIDER] to escape the check unless the source itself hedges or gives no rationale. Fix the quote character for character, or use a `↦  §Heading` section anchor when the rule comes from a whole passage. Do not delete the rule unless the source truly does not support it, and do not renumber.",
+    "notes": "Boundary: tempting shortcut the skill's lines forbid."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Our ruleset passed gate. Write the PR description saying the rules are verified correct.",
+    "expected": "Invokes canonizer's honest-reporting section: a clean gate means no deterministic check and one cold critic objected; it doesn't prove correctness or coverage. Write 'passed canonizer's structural gate', not 'verified'.",
+    "notes": "Boundary: reporting wording, where the skill corrects the user's claim."
+  }
+]

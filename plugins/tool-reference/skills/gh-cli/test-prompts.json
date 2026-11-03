@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I've pushed my branch. Open a draft pull request against main with a title, the body from our PR template file, and request reviews from two teammates.",
+    "expected": "Invokes gh-cli. Uses `gh pr create --draft --base main --title \"...\" --body-file .github/PULL_REQUEST_TEMPLATE.md --reviewer user1,user2` (references/pull-requests.md).",
+    "notes": "Positive scenario: single PR creation with common flags."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Give me the numbers and titles of every open issue labeled 'bug' in this repo as JSON I can pipe into a script, including the label names.",
+    "expected": "Invokes gh-cli. `gh issue list --label bug --json number,title,labels --jq ...` using the --json/--jq output-formatting pattern; adds --paginate or --limit for large result sets.",
+    "notes": "Positive scenario: issue listing with JSON output."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "CI on main went red about ten minutes ago. From the terminal, how do I find that run and read the log for the job that failed, then retry it?",
+    "expected": "Invokes gh-cli. `gh run list --branch main` (or --workflow ci.yml) to find the run ID, `gh run view <run-id> --log` or `--job <job-id>` to read logs, and `gh run rerun <run-id>` to retry (references/actions.md).",
+    "notes": "Positive scenario: GitHub Actions inspection."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Cut a v2.3.0 release from main with the notes in CHANGELOG-2.3.md and attach the two tarballs from dist/.",
+    "expected": "Invokes gh-cli. `gh release create v2.3.0 dist/*.tar.gz --target main --notes-file CHANGELOG-2.3.md` (references/releases.md).",
+    "notes": "Positive scenario: release creation with assets."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "I'm logged into gh with my personal account, but this repo belongs to my work account on github.com. How do I flip between the two without logging out each time?",
+    "expected": "Invokes gh-cli. Logs in both accounts with gh auth login, then `gh auth switch --hostname github.com --user <name>`; checks with `gh auth status`.",
+    "notes": "Positive scenario: multi-account auth."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "My feature branch is 2,000 lines. I want to split it into three PRs, models then API then UI, where each one is reviewed against the one below it.",
+    "expected": "Should not invoke gh-cli for this. Dependent, stacked PRs belong to gh-stack: `gh stack init -p <prefix> <branch>`, `gh stack add`, then `gh stack submit --auto`.",
+    "notes": "Decoy: PR creation, but a chain of dependent PRs; sibling skill gh-stack."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Write the commit message for the change I just staged. Scope first, please, not feat:/fix: prefixes.",
+    "expected": "Should not invoke gh-cli; nothing touches GitHub. Commit-message style belongs to unconventional-commits.",
+    "notes": "Decoy: git workflow adjacent to PRs, but commit authoring; sibling skill unconventional-commits."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "My branch is behind main and has conflicts in two files. How do I rebase it onto main locally?",
+    "expected": "Should not invoke gh-cli. This is plain git (git fetch, git rebase origin/main, resolve, git rebase --continue) with no GitHub API involved.",
+    "notes": "Decoy: branch work near PRs, but pure local git; no skill needed."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I created a stack of PRs with gh stack submit --auto, and the titles it generated are just my first commit messages. How do I give PR #3 a proper title and description?",
+    "expected": "Invokes gh-cli for the edit. gh-stack documents that submit has no flag for a custom title or body and says to use `gh pr edit` afterward: `gh pr edit 3 --title \"...\" --body-file ...`.",
+    "notes": "Boundary: the PRs belong to a gh-stack stack, but editing one PR's metadata is gh-cli's job, as gh-stack itself says."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "The bottom PR of my stack is approved. Can I just run gh pr merge on it, and what do I do with the rest of the stack afterward?",
+    "expected": "Shares ground with gh-stack, whose Known Limitations say merging stacked PRs from the CLI is not supported yet and to open the PR URL in a browser to merge. After the merge, `gh stack sync` rebases the remaining branches. Should not promise that gh pr merge handles stacked PRs correctly.",
+    "notes": "Boundary: gh pr merge is a gh-cli command, but for stacked PRs gh-stack's limitation governs."
+  }
+]

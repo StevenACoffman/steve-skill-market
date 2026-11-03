@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "We're designing storage for readings from about 40,000 industrial sensors. The proposal is to partition by reading timestamp, since almost every query is 'give me data between T1 and T2'. Any concerns before we build it?",
+    "expected": "Invokes sharding-strategy-selection. A monotonically increasing key under key-range sharding sends every current write to the single 'now' shard while the others sit idle (ce13). Prescribes a compound key with sensor ID first, then timestamp, which spreads writes across sensors and keeps per-sensor range queries efficient. States the trade-off: queries across all sensors in a time window become scatter-gather (one range scan per sensor).",
+    "notes": "Positive: the book's sensor-timestamp case and trigger scenario 1."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "One shard in our cluster sits at 90% CPU while the other eleven are under 10%. The shard key is the auto-increment order_id with range-based shards. What's going on?",
+    "expected": "Invokes sharding-strategy-selection and diagnoses a hot spot from a monotonically increasing key under key-range sharding: every new order lands in the newest range. Recommends hashing the entity dimension, or a compound key, and listing which queries become scatter-gather as a result. Write throughput can't scale with cluster size until the key changes.",
+    "notes": "Positive: trigger scenario 2."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "We're adding two nodes to our cache cluster, and because we assign keys with hash(key) % N, it looks like nearly every key will move. Is there a better way to do this?",
+    "expected": "Invokes sharding-strategy-selection and names hash-modulo-N rebalancing (ce14). Don't use hash(key) % N. Use a fixed number of shards, many more than nodes, mapped to nodes, or consistent hashing, so adding or removing a node moves about K/N keys instead of nearly all K. Notes that consistent hashing is a rebalancing algorithm, not a range-vs-hash strategy.",
+    "notes": "Positive: trigger scenario 4."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "When one of the big streamers on our platform goes live, the shard holding their chat channel gets crushed while everything else is fine. Re-sharding the whole cluster doesn't seem to help. What can we do?",
+    "expected": "Invokes sharding-strategy-selection and identifies a hot key, not a hot shard from key ranges. No uniform sharding strategy fixes load concentrated on one key, so it needs a per-key routing exception: a separate store, read-time merge (like the celebrity timeline case), or splitting the key with a random suffix. Also add monitoring that flags keys with load an order of magnitude above average, and a documented response.",
+    "notes": "Positive: the book's celebrity hot-key case and trigger scenario 5."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We need two queries to be fast on our activity store: everything user X did in a date range, and everything any user did in the last 5 minutes. Writes are too heavy for one node. How do we pick the shard key?",
+    "expected": "Invokes sharding-strategy-selection. Lists the query patterns with relative frequency, picks the dominant one, and designs the key for it: a compound key (hash(user_id), timestamp) makes per-user range queries cheap and spreads writes, while the global 5-minute window becomes scatter-gather. Records the accepted trade-off in the architecture decision record, since no single key serves both patterns.",
+    "notes": "Positive: trigger scenario 3, competing query patterns."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our Postgres primary is pegged by read traffic from the dashboard pages; writes are a small fraction of the load. Should we start sharding?",
+    "expected": "Should not invoke sharding-strategy-selection beyond its first check. The skill says that when reads are the bottleneck, read replicas are enough and avoid sharding's complexity. Recommend read replicas; replication-lag-as-correctness becomes relevant once reads are routed to replicas.",
+    "notes": "Decoy: read-only scaling, which the description excludes."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Should I use PARTITION BY RANGE on created_at for our audit_logs table in Postgres so old months can be dropped cheaply and queries prune partitions?",
+    "expected": "Should not invoke sharding-strategy-selection. Postgres declarative partitioning on a single machine is explicitly excluded: it manages data and prunes queries within one node and doesn't distribute data across machines. Answer as a Postgres table-partitioning question.",
+    "notes": "Decoy: 'partition' and a timestamp key, but single-machine table partitioning is excluded in the description."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "For a write-heavy event ingestion service, should each node run RocksDB or a B-tree store like Postgres underneath?",
+    "expected": "Should not invoke sharding-strategy-selection. Choosing the on-disk engine for a single node is storage-engine-workload-selection's job (high write throughput points to LSM, with compaction planned).",
+    "notes": "Decoy: same distributed-storage area, but an engine choice. Sibling: storage-engine-workload-selection."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Our whole database is about 60 GB and runs fine on one Postgres instance, but the CTO wants us to shard now 'so we're ready to scale'. How should we design the sharding scheme?",
+    "expected": "Invokes sharding-strategy-selection only far enough to apply step 1's stop condition: sharding is warranted only when write throughput or data volume exceeds single-node capacity after vertical scaling and read replicas are ruled out. A dataset that fits one machine with headroom gets added complexity and no benefit, so recommend not sharding yet rather than designing a scheme.",
+    "notes": "Boundary: the 'dataset fits on a single machine' exclusion; the skill's own first step says to stop."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're a B2B SaaS and want each large enterprise tenant on its own database cell, mainly so one noisy customer can't hurt the others, not because we're out of capacity. Does the usual sharding advice apply?",
+    "expected": "Boundary. The skill's framework is driven by capacity (data volume and write throughput) and admits that per-tenant sharding for isolation is only partly covered. It can still help with routing and hot keys (a very large tenant is effectively a hot key), but should say the isolation motive is outside its main decision procedure.",
+    "notes": "Boundary: the 'Author's blind spots' note on isolation-driven, cell-based sharding."
+  }
+]

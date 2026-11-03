@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "I ran book2skill on two SRE books and both produced a skill about error-budget policies. They overlap almost completely. Merge them into one.",
+    "expected": "Invokes merge-skills. Confirms both books/<slug>/ trees finished Phase 4, the source texts are available, and a merge slug. Phase 0 classifies the pair (genuine convergence vs surface resemblance vs complementary) and shows the overlap map before spawning the five Phase 1 agents; Phase 1.5 source verification with `exegesis quotecheck`; Phase 1.5.5 V1-V4; then merged construction, superseded-by links via `exegesis merge-status append --link`, `exegesis merge-index`, and Phase 4 tests with --merge.",
+    "notes": "Positive scenario: core merge request."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I've distilled four architecture books and the skill list feels noisy. Can you find which skills across the books are really saying the same thing?",
+    "expected": "Invokes merge-skills Phase 0 overlap detection: compares cross-book pairs on core claim, mechanism and application domain, writes candidates/overlap-candidates.md, and reports genuine convergence, rejected surface resemblances, and complementary pairs (Zettelkasten only) before going further. Recommends piloting one pair.",
+    "notes": "Positive scenario: overlap detection across several book trees."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "The merged skill from our last merge run needs its Phase 4 tests. What has to be in them beyond the normal ones?",
+    "expected": "Invokes merge-skills Phase 4: four categories, including 2-3 `prefer_merged_over_source` cases where the merge beats both sources and a no-skill baseline; scaffold and gate with `exegesis tests --merge`; run `skillsaw activation`. If no such scenario can be written, the merge fails V4 and dissolves.",
+    "notes": "Positive scenario: merged-skill stress testing."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Two of my book2skill skills both talk about blameless postmortems, but one is about the meeting facilitation and the other about the written report. Should they become one skill?",
+    "expected": "Invokes merge-skills Phase 0 judgment: same problem space, different mechanisms suggests 'complementary', which gets a Zettelkasten link, not a merge. Only all three dimensions aligning makes genuine convergence.",
+    "notes": "Positive scenario: deciding merge vs link."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Distill this PDF of 'Site Reliability Engineering' into skills.",
+    "expected": "Single-book distillation. Should not invoke merge-skills; book2skill does this.",
+    "notes": "Decoy: sibling's job; nothing to merge yet."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Score my merged skill against the rubric and try to improve its weakest dimension.",
+    "expected": "Quality optimization. Should not invoke merge-skills; skillsaw-skill runs eval, diagnose, one edit, gate.",
+    "notes": "Decoy: post-merge optimization belongs to skillsaw-skill."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "These two skills are related; one is about canary deploys and one about error budgets. Add a cross-reference between them.",
+    "expected": "Related, not overlapping. Should not invoke merge-skills; the skill says merely related skills get Zettelkasten links (book2skill's `exegesis link`/`relate`), not a merge.",
+    "notes": "Decoy: adjacency handled by linking."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Merge the overlapping skills from my two book trees. I don't have the books anymore, just the generated skill folders.",
+    "expected": "Invokes merge-skills but stops: Phase 1.5 source verification is non-negotiable. Without source texts, write rejected/<pair-id>.md with reason `source-text-unavailable` and do not proceed from memory or web search.",
+    "notes": "Boundary: missing source text, the skill's own 'Do not' case."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Last month we produced a merged skill on retries. Now a third book covers retries too. Merge the third book's skill with the merged one.",
+    "expected": "Invokes merge-skills' reuse policy: do not use a merged skill as a source. Use the original source skills from each books/<slug>/ tree with their source texts, and note the reuse in each MERGE_OVERVIEW.md.",
+    "notes": "Boundary: reuse restriction on merged skills as inputs."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "I have two hand-written skills (not from book2skill) that cover the same Go testing advice. Can you merge them?",
+    "expected": "Boundary: merge-skills expects book2skill output trees through Phase 4 and their source books; hand-written skills lack R/A1 provenance to verify. Not a fit for this pipeline; consolidate by hand or with a general skill-editing workflow, then optimize with skillsaw-skill.",
+    "notes": "Boundary: merging skills without book2skill provenance."
+  }
+]

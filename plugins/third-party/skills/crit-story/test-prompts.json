@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Generate a crit story for this branch.",
+    "expected": "Invokes crit-story on an explicit request. Step 1: run `crit story --guide` and follow the guide it prints, not the skill's own prose. Step 2: run `crit story --prep <path>` and read the prep file. Step 3: cluster hunks by theme, not by file, into JSON containing only prologue, chapters and support. Step 4: ingest with `crit story --story-file <path>`.",
+    "notes": "Positive scenario: the plainest explicit request for a crit story."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "/crit-story",
+    "expected": "Invokes crit-story through direct invocation and runs the four steps: --guide, --prep, author the JSON from the prep file, then --story-file.",
+    "notes": "Positive scenario: explicit slash invocation of the skill."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Can you write a crit story for my rate-limiter PR? I want reviewers to read it as themed chapters instead of file by file.",
+    "expected": "Invokes crit-story. Fetches the guide at runtime, reads the full diff from the prep file, groups hunks by theme into chapters and puts the rest in support. Leaves out version, generated_at, agent, base_sha, head_sha, scope_fingerprint and coverage, because crit fills those in.",
+    "notes": "Positive scenario: an explicit crit story request with the motivation spelled out."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "The crit story ingest just exited 1. The coverage report shows hunk (internal/limiter/bucket.go, 88) under duplicated. Please fix the story and try again.",
+    "expected": "Invokes crit-story and reads the coverage JSON. A duplicated hunk is claimed by two chapters, or by a chapter and support. It decides where the hunk belongs, removes the other claim, and re-ingests with `crit story --story-file`.",
+    "notes": "Positive scenario: an explicit follow-up on a rejected story, using the skill's rejection handling."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "Walk me through what changed in this PR. It's big and I don't know where to start.",
+    "expected": "Should not invoke crit-story. The skill must not be inferred from generic review, PR or diff requests. Explains the changes directly in chat.",
+    "notes": "Decoy: the 'narrate the diff' need a story serves, but with no explicit request for a crit story."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Start a crit review of my branch so I can leave inline comments.",
+    "expected": "Should not invoke crit-story. This is the interactive crit review loop: run crit in the background, relay the URL, wait for Finish Review. crit-story does not run inside that loop.",
+    "notes": "Decoy: an explicit crit request for the sibling crit skill."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Summarize the commits on this branch into a PR description.",
+    "expected": "Should not invoke crit-story. It is a generic PR summary with no request for a crit story. Writes the description directly.",
+    "notes": "Decoy: a narrative summary of a diff, which the description says not to infer from."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "Generate a crit story for this branch, then share it and give me the link.",
+    "expected": "Invokes crit-story for the story part only, through --guide, --prep, authoring and --story-file. The skill does not call crit share, so sharing is a separate flow covered by crit-cli (`crit share <file>`, relaying the full URL).",
+    "notes": "Boundary: the 'What this skill does NOT do' section. One request spans crit-story and crit-cli."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Tell the story of this refactor for the reviewers. Why we did it and how the pieces fit.",
+    "expected": "Should not invoke crit-story. The word 'story' appears, but the user did not name crit or ask for a crit story, and the description allows use only on an explicit request. Writes the narrative in chat, and may offer to generate a crit story if the user wants one.",
+    "notes": "Boundary: matching wording without an explicit invocation tests the 'use only when' gate."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "crit story --story-file failed with 'diff changed since prep'. I pushed one more commit after you started. Can you finish the story?",
+    "expected": "Invokes crit-story and handles the drift error. Re-runs `crit story --prep`, re-reads the fresh prep file, and re-authors the story from it before re-ingesting. It does not patch the old JSON.",
+    "notes": "Boundary: a recovery path where the earlier work must be redone from a fresh prep file."
+  }
+]

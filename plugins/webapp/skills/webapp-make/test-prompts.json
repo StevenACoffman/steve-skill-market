@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "In webapp, I've touched four files in one service. I want to test and lint just those before I commit, not the whole service. What should I run?",
+    "expected": "Invokes webapp-make. make tesc runs incremental test plus lint on files changed relative to the upstream tracking branch (@{u}), works from a service directory, and takes JOBS=4 to parallelise. make linc lints only. make check runs the full service suite with lint first and is for before deploying.",
+    "notes": "Positive scenario: tesc vs check in the daily workflow."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "After upgrading Go, make lint in webapp dies with a plugin load error before it lints anything. How do I fix the linter itself?",
+    "expected": "Invokes webapp-make. Runs make -B go_lint_deps from the repo root to rebuild the golangci-lint binary and all 30 custom ka-* plugin .so files; -B forces the rebuild. After a Go upgrade also run make deps. Explains webapp builds golangci-lint from source rather than using a release.",
+    "notes": "Positive scenario: linting infrastructure rebuild."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "I added a new Go file to a webapp service and make lint passes, but I know that file has issues. Why isn't it being checked?",
+    "expected": "Invokes webapp-make. make lint and make fix enumerate only git-tracked, non-symlink files via git ls-files, so a new file must be git add-ed before lint sees it.",
+    "notes": "Positive scenario: lint only sees tracked files."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "CI on my webapp branch fails verify-gengraphql after I changed a schema. What do I run locally?",
+    "expected": "Invokes webapp-make. From the repo root, run make gengraphql to regenerate gengraphql/composed_schema.graphql, then git add and commit it. Notes that make gqlgen in the service chains to the root make graphql pipeline.",
+    "notes": "Positive scenario: a CI verify target failing."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "How do I run a single webapp service locally so I can attach a debugger to it?",
+    "expected": "Invokes webapp-make. From services/<name>, make serve builds with debug flags (-gcflags=all=-N -l) to genfiles/go/bin/serve-<name>, sets the required env vars itself, and takes PORT from services/PORTS.toml. The Docker-based serve-* targets at the root are for the full dev server.",
+    "notes": "Positive scenario: running a service locally."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "I'm writing a Makefile for my own Go side project. How should I lay out test and lint targets?",
+    "expected": "Should not invoke webapp-make; its targets and conventions apply only to github.com/Khan/webapp. Give general Makefile guidance.",
+    "notes": "Decoy: Makefile topic outside webapp."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "make check in webapp fails on ka-errors-wrap: errors.Wrap(err, \"user\") in my code. How do I fix the code?",
+    "expected": "Should invoke the umbrella webapp skill, not webapp-make: errors.Wrap needs an odd argument count, so use errors.Wrap(err) or errors.Wrap(err, \"user\", val). The Make target ran fine; the fix is a code rule.",
+    "notes": "Decoy: surfaced by a Make target, but the fix belongs to the umbrella's lint rules."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Run golangci-lint across every module in this multi-module Go workspace and auto-fix what you can.",
+    "expected": "Should invoke lintme, not webapp-make. No webapp checkout is involved; lintme covers running lint across modules.",
+    "notes": "Decoy: linting request in a non-webapp repo; lintme is the sibling."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "I bumped an event to version 3 in analytics_events.yml in my webapp service. What do I run now?",
+    "expected": "Either webapp-make or webapp-analytics applies. make eventgen runs eventsync then eventgen to regenerate the generated/analytics_events files; commit them so make verify-eventgen passes. webapp-analytics adds that version 3 must already be merged in the event-schemas repo.",
+    "notes": "Boundary: codegen target shared with webapp-analytics."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "git push on my webapp branch aborts with FileNotFoundError: 'ka-lint'. Is there a make target that installs it?",
+    "expected": "Should invoke the umbrella webapp skill: the pre-push hook calls ka-lint at testing/ka-lint, so put webapp/testing on PATH (PATH=\"$PWD/testing:$PATH\" git push) instead of --no-verify. webapp-make covers make hooks and go_lint_deps, but neither target fixes a PATH problem.",
+    "notes": "Boundary: looks like a tooling or Make question, but the umbrella's Pull Requests section has the answer."
+  }
+]

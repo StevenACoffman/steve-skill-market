@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Write revenue by account region for Q3 in Snowflake. Tables: fct_orders(order_id, account_id, amount) and dim_account(account_id, region, _fivetran_synced) with `PRIMARY KEY (account_id)` in its DDL. Fivetran did a full historical re-sync of dim_account last week.",
+    "expected": "Invokes warehouse-key-and-load-guard and applies 'Declared but unenforced key'. It says Snowflake does not enforce the primary key, so re-synced rows can duplicate account_id and fan out revenue in the join. It puts a dedup CTE into the delivered query, not an optional note: `QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY _fivetran_synced DESC) = 1`. It gives the check COUNT(*) vs COUNT(DISTINCT account_id).",
+    "notes": "Positive scenario: a declared PK on a Fivetran dim after a full re-sync, joined in the deliverable."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "Can you add a `country` column to this dbt model? `{{ config(materialized='incremental') }} select * from {{ source('app','page_views') }} {% if is_incremental() %} where viewed_at > (select max(viewed_at) - interval '3 days' from {{ this }}) {% endif %}`. It runs hourly in Airflow with retries=2.",
+    "expected": "Invokes warehouse-key-and-load-guard and applies 'Append-only incremental load'. With no unique_key, the 3-day lookback and the retries insert the same rows again and inflate totals. The delivered config adds unique_key='<grain id>' (e.g. page_view_id) plus incremental_strategy='merge', alongside the requested country column. If adding country needs a join, it makes sure the model still returns one row per unique_key.",
+    "notes": "Positive scenario: incremental with a lookback and retries but no unique_key. The user asked for a different change, and the guard fixes it anyway."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "dim_customer in Databricks is built as a UNION ALL of our Salesforce and HubSpot customers. Queries joining to it are slow. Please give me the ALTER TABLE to add the primary key with RELY so the optimizer can skip joins.",
+    "expected": "Invokes warehouse-key-and-load-guard and applies 'RELY on unvalidated constraints'. It does not emit an unconditional RELY: the optimizer would drop joins and DISTINCTs on a key that a UNION of two systems may violate. It delivers the duplicate-key and orphan-FK queries first and sets RELY only if both return zero, else leaves NORELY. For this UNION-built dim it fixes the key first, e.g. a composite of source and id.",
+    "notes": "Positive scenario: a RELY request on a UNION-built dimension with no passing tests shown."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Our nightly sync copies changed products from MySQL to BigQuery with `WHERE last_modified > :watermark`. Price edits never show up in BigQuery. Schema: `last_modified DATETIME DEFAULT CURRENT_TIMESTAMP`. The app updates prices with `UPDATE products SET price = ? WHERE id = ?`.",
+    "expected": "Invokes warehouse-key-and-load-guard and leads with 'updated_at that never updates': DEFAULT fires only on INSERT, so last_modified never moves and the sync misses every edit. Delivers `ALTER TABLE products MODIFY last_modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` (or CDC). Verifies with the share of rows where last_modified equals the created time. Adds one line: ON UPDATE is skipped when an UPDATE sets the column itself or changes nothing.",
+    "notes": "Positive scenario: a watermark sync on a DEFAULT-only timestamp, with pasted UPDATEs that never set it."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "ksqlDB counts clicks per ad in 1-minute tumbling windows with EMIT CHANGES. A JDBC sink with insert.mode=insert writes them to Postgres, and the daily report does SUM(click_count) per ad. Our biggest advertisers show 10x the clicks the ad server logged. Sample rows repeat (ad_42, 12:01) with counts 3, 7, 12.",
+    "expected": "Invokes warehouse-key-and-load-guard and applies 'Updating window aggregate in an append sink'. Every intermediate update became a row, so SUM counts each update, and busy keys inflate most. Delivers a fix that keeps the latest row per (key, window_start) before summing. Recommends an upsert sink keyed on (key, window_start), or emit-final (EMIT FINAL or suppress(untilWindowCloses)).",
+    "notes": "Positive scenario: EMIT CHANGES into an insert-mode JDBC sink, with repeated window rows in the sample."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "We need to rebuild our product search index from the catalog database. Should this be a nightly batch job or a streaming pipeline off the change log?",
+    "expected": "Should not invoke warehouse-key-and-load-guard. This is choosing how a derived output is built. batch-vs-stream-processing-selection covers it; there is no key, sink or incremental config to check.",
+    "notes": "Decoy: a data pipeline architecture question with no DDL, incremental model or sink configuration."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "Write a Snowflake query for monthly churn rate by plan. My draft: `COUNT_IF(plan = 'team' AND churned) / COUNT(*)` from subscriptions.",
+    "expected": "Should not invoke warehouse-key-and-load-guard. The issue is the metric's population: the plan filter is on the numerator only. metric-population-guard applies the same plan condition to the denominator.",
+    "notes": "Decoy: a Snowflake query with a rate bug that is not a key or load problem. Belongs to metric-population-guard."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our multi-region Cassandra cluster uses last-write-wins, and some profile updates vanish when two regions write within the same second. Is NTP good enough to rely on here?",
+    "expected": "Should not invoke warehouse-key-and-load-guard. This is ordering by wall-clock timestamps across nodes, covered by clock-skew-ordering-hazard in the data-systems plugin.",
+    "notes": "Decoy: lost updates and timestamps, but in an OLTP store's conflict resolution, not a warehouse load or watermark."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Add a `device_type` column to this dbt model: `{{ config(materialized='incremental', unique_key='event_id', incremental_strategy='merge') }}` with a 3-day lookback on event_ts. It has unique and not_null tests on event_id.",
+    "expected": "The 'Not applicable when' section holds: incremental with unique_key plus merge on a unique id. Names that protection in at most one clause (e.g. 'merge on event_id absorbs the lookback overlap') and adds the column. Adds no dedup steps, verification queries or guard checklist.",
+    "notes": "Boundary: the same shape as the incremental trap, but already protected. Tests that the guard stays quiet."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We sync new and edited app reviews nightly from Postgres using `updated_at > :last_run`, where updated_at is `timestamptz DEFAULT now()` with no trigger. Then a BigQuery job runs ML.GENERATE_TEXT on the synced rows to tag sentiment. Edited reviews keep their old sentiment. How do I fix that?",
+    "expected": "warehouse-key-and-load-guard leads with 'updated_at that never updates': DEFAULT now() fires only on INSERT, so edits are never synced. It delivers a Postgres BEFORE UPDATE trigger (or CDC) and a check on the share of rows where updated_at equals created_at. The LLM tagging step belongs to ai-and-semistructured-data-guard: score only new or changed rows, with model and prompt version columns.",
+    "notes": "Boundary: the root cause is this guard's watermark trap, while the downstream AI column belongs to ai-and-semistructured-data-guard."
+  }
+]

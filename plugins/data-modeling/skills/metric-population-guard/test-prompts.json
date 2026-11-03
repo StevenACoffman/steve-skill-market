@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Turn this into a SQL function that takes a plan name and returns that plan's checkout conversion rate: `SELECT COUNT(*) FILTER (WHERE plan = 'pro' AND converted) * 1.0 / COUNT(*) FROM checkout_sessions;`",
+    "expected": "Invokes metric-population-guard and applies 'Segment filter on numerator only': the plan condition is only in the numerator, so the query returns pro's share of all sessions, not pro's conversion rate, and parameterizing it copies the bug. The delivered function applies the plan parameter to the denominator as well (WHERE plan = $1 on both sides, or GROUP BY plan) and says it changed that.",
+    "notes": "Positive scenario: a rate parameterized by segment with an unsegmented COUNT(*) denominator."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "I need a chart of trial-to-paid conversion by signup week for the last 8 weeks. Trials last 14 days and billing posts the charge about 2 days after the trial ends. Table: trials(user_id, started_at, paid_at).",
+    "expected": "Invokes metric-population-guard and applies 'Outcome measured before its window closes'. It computes maturity as cohort length plus window plus lag: 7 + 14 + 2 = 23 days. It keeps only cohorts with cohort_start + 23 days <= CURRENT_DATE, and shifts the whole 8-week range back rather than shrinking it, so recent weeks are not biased low.",
+    "notes": "Positive scenario: a cohort outcome with a stated trial length and lag, matching the guard's worked maturity example."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "Customer success wants a list of 'slipping' accounts: anyone with no invoice in the last 45 days. We bill monthly, quarterly and annually. Here's the invoices table: invoices(account_id, issued_at, amount, billing_interval).",
+    "expected": "Invokes metric-population-guard and applies 'Activity window shorter than the customer cycle'. Quarterly and annual customers fall out between bills and would appear to be slipping. Delivers a corrected query that defines activity by subscription coverage (period_start <= d AND d < period_end) or by a per-billing-interval window (monthly 31, quarterly 93, annual 366 days), and states the change.",
+    "notes": "Positive scenario: an active/slipping list from recent invoices with mixed billing intervals."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "Quick one: total GMV for October from orders(order_id, amount, status, is_test, customer_email, created_at). Status values are completed, refunded, cancelled and pending.",
+    "expected": "Invokes metric-population-guard and applies 'Status/type flags not classified'. Decides in or out for every status value and for is_test, and encodes the choices in WHERE. It also considers company email domains in customer_email for internal orders. It states the decisions, so test, internal and cancelled orders don't count as real business. Adds no filters on columns that are not shown.",
+    "notes": "Positive scenario: a total from a table with status and test columns, named in the description."
+  },
+  {
+    "id": 5,
+    "type": "should_trigger",
+    "prompt": "We have a certified semantic-layer metric `net_revenue` defined as SUM(amount) WHERE channel NOT IN ('wholesale', 'marketplace'). The wholesale team wants their monthly net revenue. Can I just add `channel = 'wholesale'` when I query net_revenue?",
+    "expected": "Invokes metric-population-guard and applies 'Reused metric excludes the requested segment'. The definition's NOT IN filter removes wholesale, so the result is empty or zero, and a query-time filter cannot undo the definition's filter. It says so, then queries the underlying measure or defines a separate wholesale metric.",
+    "notes": "Positive scenario: a certified metric reused for a segment its own filter excludes."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Revenue by region doubled overnight after Fivetran did a full re-sync of dim_customer in Snowflake. The table has PRIMARY KEY (customer_id) declared. Our query joins orders to dim_customer on customer_id.",
+    "expected": "Should not invoke metric-population-guard. The inflation comes from a declared but unenforced key: the re-sync duplicated rows and the join fans out. warehouse-key-and-load-guard covers this with a QUALIFY ROW_NUMBER() dedup and a COUNT(*) vs COUNT(DISTINCT key) check.",
+    "notes": "Decoy: a revenue number is wrong, but the cause is the load and the key, not the metric's population. Belongs to warehouse-key-and-load-guard."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We're defining the availability SLI for our public API. Should it be good requests over total requests at the load balancer, or synthetic probe success?",
+    "expected": "Should not invoke metric-population-guard. This is SLI definition and measurement placement, covered by sli-formula-measurement in the sre plugin, not warehouse SQL for a business rate.",
+    "notes": "Decoy: a ratio metric in reliability engineering, not a KPI query over business tables."
+  },
+  {
+    "id": 8,
+    "type": "should_not_trigger",
+    "prompt": "Our support ticket table has a JSON column `meta`, and newer tickets store priority under `meta->'triage'->>'level'` instead of `meta->>'priority'`. The count of urgent tickets per week dropped in June. Why?",
+    "expected": "Should not invoke metric-population-guard. The drop is JSON drift: the new key extracts as NULL and silently falls out of the count. ai-and-semistructured-data-guard covers it by COALESCEing both keys and adding a per-version null-rate check.",
+    "notes": "Decoy: a weekly count looks like a metric problem, but the cause is semi-structured extraction. Belongs to ai-and-semistructured-data-guard."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "Hourly order volume chart for our stores in New York, Denver and Los Angeles. The query already does `date_trunc('hour', created_at AT TIME ZONE s.timezone)` joined to stores s. Can you add a 7-day moving average?",
+    "expected": "The 'Day/week boundaries undeclared' item's Not-applicable cue holds: the query already converts to each site's zone. Adds the moving average and says nothing about time zones or the guard. Adds no checklist, verification steps or extra filters.",
+    "notes": "Boundary: a bucketed metric where the protection is already in place. Tests that the guard stays silent."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "Build 30-day retention by signup month from fct_user_activity. That model is a dbt incremental with a 2-day lookback and no unique_key. Show the last 6 months.",
+    "expected": "metric-population-guard handles the retention logic. It applies 'Outcome measured before its window closes': keep only signup months whose 30-day window plus month length has closed, and shift the 6-month range back. The append-only incremental source belongs to warehouse-key-and-load-guard (add unique_key with incremental_strategy='merge'). Lookback overlap duplicates activity rows, so both guards apply.",
+    "notes": "Boundary: one request crosses both siblings. Cohort maturity is this guard's; duplicate rows from the load are warehouse-key-and-load-guard's."
+  }
+]

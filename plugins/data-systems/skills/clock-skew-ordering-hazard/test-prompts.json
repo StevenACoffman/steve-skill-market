@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "type": "should_trigger",
+    "prompt": "Users keep telling us their notification settings 'revert' to old values a while after they change them. We store settings in a 6-node Cassandra cluster with default config. Nothing shows up in the logs. Where would I even start?",
+    "expected": "Invokes clock-skew-ordering-hazard. Diagnoses Cassandra's default last-write-wins, which compares wall-clock timestamps from different nodes. A node with a lagging clock produces causally later writes with earlier timestamps, and LWW silently discards them with no error. Notes that quorum settings don't fix this, because the comparator is the problem. Prescribes logical clocks or version vectors for conflict resolution. Applies the stop condition: if Cassandra can't take a custom comparator, either change databases or move conflict resolution into the application layer.",
+    "notes": "Positive: trigger scenario 2 and the book's Cassandra LWW case; silent rollbacks with no errors."
+  },
+  {
+    "id": 2,
+    "type": "should_trigger",
+    "prompt": "We're building an audit trail for patient record access. Each of our six app servers stamps events with its own system clock, and the auditor view sorts everything by that timestamp. Compliance wants to know the order is trustworthy. Is it?",
+    "expected": "Invokes clock-skew-ordering-hazard. Classifies each timestamp use as display-only or ordering. Sorting events from multiple servers by their own wall clocks is ordering and isn't safe: NTP accuracy is limited to milliseconds or worse and clocks can jump backward. Prescribes keeping a recorded_at wall-clock field for display and adding a separate logical timestamp (Lamport, or a Hybrid Logical Clock if real-time correlation is needed) as the sort key. No query or index should order by recorded_at.",
+    "notes": "Positive: trigger scenario 1, an audit log sorted by per-node timestamps."
+  },
+  {
+    "id": 3,
+    "type": "should_trigger",
+    "prompt": "For our multi-leader setup the plan for conflicts is simple: whichever write has the newest timestamp wins. Our NTP is solid, usually under 10ms of drift. Anyone see a problem with that?",
+    "expected": "Invokes clock-skew-ordering-hazard. Explains that even 1ms of skew lets a causally later write carry an earlier timestamp (the book's x=1 / x=2 example), so LWW silently drops it. A 10ms NTP bound is well above that. NTP gives microsecond resolution but not microsecond accuracy, and backward corrections break monotonicity. Recommends version vectors to detect and merge concurrent writes, or Lamport timestamps or HLC for causal ordering. Wall-clock time can be kept as metadata only.",
+    "notes": "Positive: trigger scenario 3, 'our NTP is good enough' plus highest-timestamp-wins."
+  },
+  {
+    "id": 4,
+    "type": "should_trigger",
+    "prompt": "In our event-sourced system, five microservices publish events, each stamped with the producer's own time. The projector merges them into one stream ordered by that timestamp before applying state changes. Occasionally the projected state just looks wrong. Could the ordering be the cause?",
+    "expected": "Invokes clock-skew-ordering-hazard. Producer-assigned wall-clock timestamps from different nodes can't establish causal order, so state changes get applied out of order without any error. Walks through the steps: find every merge or sort by timestamp, flag the ordering uses, and replace the sort key with a logical clock (Lamport for causal order, HLC if the order must also track real time). Keep the wall-clock time as display metadata.",
+    "notes": "Positive: trigger scenario 4, a global event stream sorted by producer timestamps."
+  },
+  {
+    "id": 5,
+    "type": "should_not_trigger",
+    "prompt": "In Go, what's the right way to measure how long a function call takes so I can log its duration?",
+    "expected": "Should not invoke clock-skew-ordering-hazard. This is elapsed time on a single machine, which the skill explicitly excludes. Answer directly: time.Since(start), since Go's time.Time carries a monotonic clock reading that doesn't jump backward.",
+    "notes": "Decoy: clock and time topic, but single-node duration measurement is a listed exclusion."
+  },
+  {
+    "id": 6,
+    "type": "should_not_trigger",
+    "prompt": "Our nightly report job takes a Redis lock with a 60s TTL so only one worker runs it. Last week a worker hit a long GC pause and the report got generated twice. How do we make the lock actually safe?",
+    "expected": "Should not invoke clock-skew-ordering-hazard. This is a lease expiring during a process pause, which fencing-tokens-distributed-locks handles: a monotonically increasing token checked by the storage target. The two skills are complementary, but the clock-skew skill covers ordering events across nodes, not lock expiry.",
+    "notes": "Decoy: a timing hazard, but it's lock expiry, not timestamp ordering. Sibling: fencing-tokens-distributed-locks."
+  },
+  {
+    "id": 7,
+    "type": "should_not_trigger",
+    "prompt": "We store updated_at in UTC in Postgres. How should I display it as 'edited 5 minutes ago' in the user's local time zone in our React app?",
+    "expected": "Should not invoke clock-skew-ordering-hazard. Display-only timestamp formatting is fine with wall-clock time, and the skill's own classification marks display as acceptable. Answer with time-zone conversion and relative-time formatting.",
+    "notes": "Decoy: timestamp topic with no cross-node ordering or conflict resolution."
+  },
+  {
+    "id": 8,
+    "type": "edge_case",
+    "prompt": "All writes go through our single Postgres primary, and we order the activity feed by a created_at column that the primary fills in with now() at insert time. Do we have the same clock skew problem people warn about with Cassandra?",
+    "expected": "Boundary. The skill doesn't apply when timestamps come from a single authoritative sequencer such as the leader in single-leader replication: with one node assigning timestamps, there's no skew between competing timestampers. Should confirm that only the primary assigns the value (not app servers) and then decline the full procedure.",
+    "notes": "Boundary: the 'Do not use' clause for a single authoritative sequencer."
+  },
+  {
+    "id": 9,
+    "type": "edge_case",
+    "prompt": "We're on Cloud Spanner and rely on commit timestamps to order transactions across regions. A colleague says wall-clock ordering is always unsafe. Should we redesign around logical clocks?",
+    "expected": "Boundary. The skill names Spanner TrueTime with commit wait as the one correct use of wall-clock time for global ordering, because GPS and atomic clocks give a bounded uncertainty interval that Spanner waits out. No redesign is needed as long as the ordering comes from Spanner commit timestamps rather than application-server clocks.",
+    "notes": "Boundary: the TrueTime exception in 'Do not use this skill when'."
+  },
+  {
+    "id": 10,
+    "type": "edge_case",
+    "prompt": "We're deciding between multi-leader replication with last-write-wins and plain single-leader for our US and EU regions. How should we weigh it?",
+    "expected": "Mostly replication-topology-selection, which owns the topology choice (start single-leader, go multi-leader only for measured cross-region write latency, and define a conflict policy per data type). clock-skew-ordering-hazard applies to the LWW part: if multi-leader is chosen, conflict resolution must not compare wall-clock timestamps, and causally later writes will be dropped silently if it does.",
+    "notes": "Boundary: shared topic with replication-topology-selection; this skill covers conflict resolution inside the chosen topology."
+  }
+]
