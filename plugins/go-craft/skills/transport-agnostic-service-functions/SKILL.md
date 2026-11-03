@@ -1,6 +1,6 @@
 ---
 name: transport-agnostic-service-functions
-description: "Use when a Go service exposes the same operation over HTTP and gRPC, or handlers repeat decode, validate, call, encode in every endpoint. Uses transport-free service functions with a generic Wrap adapter, and wraps generated gRPC clients behind Go-native interfaces."
+description: "Use when a Go service exposes the same operation over HTTP and gRPC, or handlers repeat decode, validate, call, encode per endpoint. Uses transport-free service functions with a generic Wrap adapter; wraps gRPC clients so gRPC status codes become domain errors and protobuf types don't leak."
 tags: [go, architecture, http, grpc, handlers, generics]
 ---
 

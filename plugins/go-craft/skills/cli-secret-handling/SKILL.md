@@ -1,6 +1,6 @@
 ---
 name: cli-secret-handling
-description: "Use when a CLI must accept a secret such as a password, API key, or token: choosing between flags, env vars, files, and stdin, reviewing a --password or --token flag, or judging whether shell substitution like $(cat file) is safe. Keeps secrets out of process lists and logs."
+description: "Use when a CLI must accept a secret or credentials such as a password, API key, or token: choosing between flags, env vars, files, and stdin, reviewing a --password or --token flag, or judging whether shell substitution like $(cat file) is safe. Keeps secrets out of process lists and logs."
 tags: [cli, security, secrets, credentials, authentication]
 ---
 

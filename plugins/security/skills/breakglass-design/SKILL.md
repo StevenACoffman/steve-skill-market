@@ -1,6 +1,6 @@
 ---
 name: breakglass-design
-description: Use when a strict access control (Zero Trust, MFA, least privilege) meets the objection "what if we get locked out?", or when reviewing an ad-hoc emergency access path. Designs breakglass emergency access deliberately. Not for designing the normal access path.
+description: Use when a strict access control (Zero Trust, MFA, least privilege) meets the objection "what if we get locked out?" or "what if the auth system is down?", or when reviewing an ad-hoc emergency access path. Designs breakglass emergency access deliberately. Not for the normal access path.
 tags: [breakglass, least-privilege, access-control, audit, emergency-access, zero-trust]
 ---
 

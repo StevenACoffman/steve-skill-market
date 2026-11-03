@@ -1,6 +1,6 @@
 ---
 name: webapp-testing
-description: "Use when writing or reading Go tests in github.com/Khan/webapp. Covers khantest.Suite vs servicetest.Suite, KAContext in tests, fake datastore, pubsub, tasks, secrets, and featureflags clients, BuildTestClientForSchema, and gqltest.Query/Mutate/QueryType. Only for github.com/Khan/webapp."
+description: "Use when writing or reading Go tests in github.com/Khan/webapp. Covers khantest.Suite vs servicetest.Suite, KAContext in tests, fake datastore, pubsub, tasks, secrets, and featureflags clients, and GraphQL resolver tests with BuildTestClientForSchema and gqltest.Query/Mutate/QueryType."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

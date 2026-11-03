@@ -1,6 +1,6 @@
 ---
 name: webapp-tasks
-description: "Use when writing Go code in github.com/Khan/webapp that enqueues or handles Cloud Tasks. Covers TaskConfig, queue.yaml, CreateTask/DeleteTask, the GraphQLTask helper, serve.CreateTaskHandler, header forwarding, and taskstest patterns such as RunAllTasks. Only for github.com/Khan/webapp."
+description: "Use when writing Go code in github.com/Khan/webapp that enqueues or handles Cloud Tasks. Covers TaskConfig, queue.yaml, CreateTask/DeleteTask, the GraphQLTask helper for deferred mutations, serve.CreateTaskHandler, header forwarding, and taskstest with RunAllTasks. Only for github.com/Khan/webapp."
 allowed-tools: Bash, Read, Edit, Write
 ---
 

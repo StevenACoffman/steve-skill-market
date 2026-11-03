@@ -1,6 +1,6 @@
 ---
 name: merge-skills
-description: "Use when book2skill has run on several books and overlapping skills should become one merged skill drawing on both sources. Not for skills that are merely related, or when the source book2skill output is not present."
+description: "Use when book2skill has run on several books and overlapping skills should be merged or consolidated into one skill drawing on both sources. Not for skills that are merely related, or when the source book2skill output is not present."
 compatibility: Needs about 64k tokens of context; 32k is best effort. Requires the exegesis and skillsaw CLIs and the plain text of every source book.
 ---
 

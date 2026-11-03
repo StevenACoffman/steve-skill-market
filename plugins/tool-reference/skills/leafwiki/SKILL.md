@@ -1,6 +1,6 @@
 ---
 name: leafwiki
-description: "Use when running or curating a LeafWiki knowledge base (self-hosted Go wiki, markdown on disk under data/root/): editing or ingesting pages, resyncing after external edits, wiki lint passes, and adding frontmatter so pages are also valid Open Knowledge Format (OKF) concepts."
+description: "Use when running or curating an LLM wiki or other self-hosted wiki knowledge base with LeafWiki (Go, markdown on disk under data/root/): editing or ingesting pages, resyncing after external edits, wiki lint passes, and adding frontmatter so pages are also valid Open Knowledge Format (OKF) concepts."
 ---
 
 # LeafWiki as an LLM-maintained, OKF-compatible knowledge base

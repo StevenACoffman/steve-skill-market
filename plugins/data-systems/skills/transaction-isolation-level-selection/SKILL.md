@@ -1,6 +1,6 @@
 ---
 name: transaction-isolation-level-selection
-description: "Use when choosing or verifying a database isolation level, or debugging intermittent concurrency anomalies (lost updates, dirty reads, write skew, phantoms): check-then-act bookings or quotas, ORM read-modify-write, or assuming ACID or Postgres defaults make it safe."
+description: "Use when choosing or verifying a database isolation level, or debugging intermittent concurrency anomalies (lost updates, dirty reads, write skew, phantoms): check-then-act bookings or quotas, ORM read-modify-write, or assuming ACID, serializable, or Postgres or MySQL defaults make it safe."
 tags: [transactions, isolation-levels, concurrency, serializability, snapshot-isolation, write-skew]
 allowed-tools: Bash, Read, Edit
 ---
